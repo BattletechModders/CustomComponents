@@ -9,5 +9,10 @@
 	"DLLEntryPoint": "CustomComponents.Control.Init",
 	
 	"Manifest": [
+		{
+			"Type": "UpgradeDef",
+			"Path": "data/test/",
+			"ShouldMergeJSON": false
+		},
 	]
 }

@@ -49,6 +49,9 @@
       <HintPath>$(BattleTechDir)\BattleTech_Data\Managed\System.Core.dll</HintPath>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization">
+      <HintPath>$(BattleTechDir)\BattleTech_Data\Managed\System.Runtime.Serialization.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq">
       <HintPath>$(BattleTechDir)\BattleTech_Data\Managed\System.Xml.Linq.dll</HintPath>
@@ -67,8 +70,29 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ColorChanger\IColorComponent.cs" />
+    <Compile Include="ColorChanger\MechComponentRef_GetUIColor_Patch.cs" />
     <Compile Include="Control.cs" />
+    <Compile Include="CustomComponent.cs" />
+    <Compile Include="CustomTypes\CustomAmmunitionBoxDef.cs" />
+    <Compile Include="CustomTypes\CustomJumpJetDef.cs" />
+    <Compile Include="CustomTypes\CustomWeaponDef.cs" />
+    <Compile Include="CustomTypes\CustomHeatSinkDef.cs" />
+    <Compile Include="Properties\Validator.cs" />
+    <Compile Include="Test\TestUpgradeDef.cs" />
+    <Compile Include="HarmonyNested\HarmonyNestedAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="CustomTypes\CustomUpgrade.cs" />
+    <Compile Include="TypePatch\AmmoBoxPatch.cs" />
+    <Compile Include="TypePatch\WeaponDefPatch.cs" />
+    <Compile Include="TypePatch\JumpJetPatch.cs" />
+    <Compile Include="TypePatch\HeatSinkPatch.cs" />
+    <Compile Include="TypePatch\UpgradePatch.cs" />
+    <Compile Include="WeightLimitation\MechLabLocationWidget_ValidateAdd_Patch.cs" />
+    <Compile Include="WeightLimitation\Class2.cs" />
+    <Compile Include="WeightLimitation\IWeightLimited.cs" />
+    <Compile Include="WeightLimitation\MechLabInventoryWidget_ApplyFiltering_Patch.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
