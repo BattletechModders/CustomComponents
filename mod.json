@@ -1,0 +1,13 @@
+{
+	"Name": "CustomComponents",
+	"Author": "Denadan",
+	"Website": "https://github.com/CptMoore/MechEngineer",
+
+	"Enabled": true,
+	"DependsOn": ["DynModLib"],
+	"DLL": "CustomComponents.dll",
+	"DLLEntryPoint": "CustomComponents.Control.Init",
+	
+	"Manifest": [
+	]
+}
