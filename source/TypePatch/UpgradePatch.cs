@@ -5,7 +5,7 @@ using Harmony;
 namespace CustomComponents
 {
     [HarmonyNested(typeof(DataManager), "UpgradeDefLoadRequest", "OnLoadedWithJSON")]
-    public static class DataManager_Upgrade_Patch
+    internal static class DataManager_Upgrade_Patch
     {
         public static bool Prefix(DataManager.ResourceLoadRequest<UpgradeDef> __instance,
             string json, ref UpgradeDef ___resource)
@@ -17,7 +17,7 @@ namespace CustomComponents
     }
 
     [HarmonyPatch(typeof(UpgradeDef), "ToJSON")]
-    public static class UpgradeDef_ToJSON_Patch
+    internal static class UpgradeDef_ToJSON_Patch
     {
         public static bool Prefix(UpgradeDef __instance, ref string __result)
         {

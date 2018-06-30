@@ -7,6 +7,10 @@ using System.Text;
 
 namespace CustomComponents
 {
+    /// <summary>
+    /// Custom ammobox definition
+    /// </summary>
+    /// <typeparam name="T">Your type</typeparam>
     public class CustomAmmunitionBoxDef<T> : BattleTech.AmmunitionBoxDef, ICustomComponent
         where T : CustomAmmunitionBoxDef<T>
     {

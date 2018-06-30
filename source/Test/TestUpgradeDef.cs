@@ -9,7 +9,6 @@ namespace CustomComponents
 
         public TestUpgradeDef()
         {
-
         }
     }
 

@@ -5,7 +5,7 @@ using Harmony;
 namespace CustomComponents
 {
     [HarmonyNested(typeof(DataManager), "HeatSinkDefLoadRequest", "OnLoadedWithJSON")]
-    public static class DataManager_HeatSink_Patch
+    internal static class DataManager_HeatSink_Patch
     {
         public static bool Prefix(DataManager.ResourceLoadRequest<HeatSinkDef> __instance,
             string json, ref HeatSinkDef ___resource)
@@ -17,7 +17,7 @@ namespace CustomComponents
     }
 
     [HarmonyPatch(typeof(HeatSinkDef), "ToJSON")]
-    public static class HeatSinkDef_ToJSON_Patch
+    internal static class HeatSinkDef_ToJSON_Patch
     {
         public static bool Prefix(HeatSinkDef __instance, ref string __result)
         {

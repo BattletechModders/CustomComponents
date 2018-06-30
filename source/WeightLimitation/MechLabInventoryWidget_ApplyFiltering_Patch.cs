@@ -6,9 +6,9 @@ using System.Collections.Generic;
 namespace CustomComponents
 {
     [HarmonyPatch(typeof(MechLabInventoryWidget), "ApplyFiltering")]
-    public static class MechLabInventoryWidget_ApplyFiltering
+    internal static class MechLabInventoryWidget_ApplyFiltering
     {
-        public static void Postfix(MechLabInventoryWidget __instance, float ___mechTonnage,
+        internal static void Postfix(MechLabInventoryWidget __instance, float ___mechTonnage,
             List<InventoryItemElement_NotListView> ___localInventory)
         {
             foreach (var item in ___localInventory)

@@ -5,7 +5,7 @@ using Harmony;
 namespace CustomComponents
 {
     [HarmonyPatch(typeof(MechComponentRef), "GetUIColor")]
-    public static class MechComponentRef_GetUIColor
+    internal static class MechComponentRef_GetUIColor
     {
 
         [HarmonyPostfix]

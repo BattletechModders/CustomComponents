@@ -6,26 +6,33 @@ using System.Linq;
 using System.Collections.Generic;
 using BattleTech.Data;
 using System.Text.RegularExpressions;
+using BattleTech;
 
 namespace CustomComponents
 {
     public static class Control
     {
-        internal static Mod mod;
+        public static Mod mod;
+        public static CustomCompoentSettings settings = new CustomCompoentSettings();
 
         public static void Init(string directory, string settingsJSON)
         {
             mod = new Mod(directory);
+
             try
             {
                 //   mod.LoadSettings(settings);
+                mod.LoadSettings(settings);
 
                 var harmony = HarmonyInstance.Create("io.github.denadan.CustomComponents");
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
                 RegisterCustomTypes(Assembly.GetExecutingAssembly());
 
-                Validator.RegisterValidator(WeighLimitedController.ValidateMech);
-                Validator.RegisterAddValidator(typeof(IWeightLimited), WeighLimitedController.ValidateAdd);
+                if (settings.LoadDefaultValidators)
+                {
+                    Validator.RegisterValidator(WeighLimitedController.ValidateMech);
+                    Validator.RegisterAddValidator(typeof(IWeightLimited), WeighLimitedController.ValidateAdd);
+                }
 
                 // logging output can be found under BATTLETECH\BattleTech_Data\output_log.txt
                 // or also under yourmod/log.txt
@@ -49,6 +56,11 @@ namespace CustomComponents
 
         private static Dictionary<string, CustomComponentDescriptor> descriptors = new Dictionary<string, CustomComponentDescriptor>();
 
+
+        /// <summary>
+        /// register custom types for your assamble
+        /// </summary>
+        /// <param name="assembly"></param>
         public static void RegisterCustomTypes(Assembly assembly)
         {
             var desc_list = from type in assembly.GetTypes()
@@ -81,7 +93,8 @@ namespace CustomComponents
                 return true;
 
             string custom_type = custom.Result("$1");
-            Control.mod.Logger.Log("Loading custom: " + custom_type);
+
+            Control.mod.Logger.LogDebug("Loading custom: " + custom_type);
 
             var custom_obj = Control.CreateNew(custom_type) as ICustomComponent;
             if (custom_obj == null || !(custom_obj is T))
@@ -97,6 +110,8 @@ namespace CustomComponents
 
             resource = custom_obj as T;
             Traverse.Create(loader).Method("TryLoadDependencies", resource).GetValue();
+            if(custom_obj is MechComponentDef)
+                Control.mod.Logger.LogDebug("Loaded: " + (custom_obj as MechComponentDef).Description.Id);
 
             return false;
         }

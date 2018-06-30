@@ -5,7 +5,7 @@ using Harmony;
 namespace CustomComponents
 {
     [HarmonyNested(typeof(DataManager), "AmmunitionBoxDefLoadRequest", "OnLoadedWithJSON")]
-    public static class DataManager_AmmunitionBoxDef_Patch
+    internal static class DataManager_AmmunitionBoxDef_Patch
     {
         public static bool Prefix(DataManager.ResourceLoadRequest<AmmunitionBoxDef> __instance,
             string json, ref AmmunitionBoxDef ___resource)
@@ -17,7 +17,7 @@ namespace CustomComponents
     }
 
     [HarmonyPatch(typeof(AmmunitionBoxDef), "ToJSON")]
-    public static class AmmunitionBoxDef_ToJSON_Patch
+    internal static class AmmunitionBoxDef_ToJSON_Patch
     {
         public static bool Prefix(AmmunitionBoxDef __instance, ref string __result)
         {

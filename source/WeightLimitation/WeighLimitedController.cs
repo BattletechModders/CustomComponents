@@ -7,7 +7,7 @@ namespace CustomComponents
 {
     internal static class WeighLimitedController
     {
-        public static bool ValidateAdd(MechComponentDef component, MechLabLocationWidget widget,
+        internal static bool ValidateAdd(MechComponentDef component, MechLabLocationWidget widget,
             bool current_result, ref string errorMessage, MechLabPanel mechlab)
         {
             if (!current_result)
@@ -29,7 +29,7 @@ namespace CustomComponents
             return true;
         }
 
-        public static void ValidateMech(Dictionary<MechValidationType, List<string>> errors,
+        internal static void ValidateMech(Dictionary<MechValidationType, List<string>> errors,
             MechValidationLevel validationLevel, MechDef mechDef)
         {
             foreach (var component in mechDef.Inventory.Where(i => i.Def != null).Select(i => i.Def).OfType<IWeightLimited>())

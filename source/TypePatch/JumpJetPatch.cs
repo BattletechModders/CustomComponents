@@ -5,7 +5,7 @@ using Harmony;
 namespace CustomComponents
 {
     [HarmonyNested(typeof(DataManager), "JumpJetDefLoadRequest", "OnLoadedWithJSON")]
-    public static class DataManager_JumpJet_Patch
+    internal static class DataManager_JumpJet_Patch
     {
         public static bool Prefix(DataManager.ResourceLoadRequest<JumpJetDef> __instance,
             string json, ref JumpJetDef ___resource)
@@ -17,7 +17,7 @@ namespace CustomComponents
     }
 
     [HarmonyPatch(typeof(JumpJetDef), "ToJSON")]
-    public static class JumpJetDef_ToJSON_Patch
+    internal static class JumpJetDef_ToJSON_Patch
     {
         public static bool Prefix(JumpJetDef __instance, ref string __result)
         {

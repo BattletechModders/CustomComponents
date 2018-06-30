@@ -4,26 +4,31 @@ using Harmony;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace CustomComponents
 {
-    public delegate bool ValidateAddDelegate(MechComponentDef component, MechLabLocationWidget widget, 
-        bool current_result, ref string errorMessage, MechLabPanel mechlab);
-
-    public delegate void ValidateMechDelegate(Dictionary<MechValidationType, List<string>> errors,
-        MechValidationLevel validationLevel, MechDef mechDef);
-
+    /// <summary>
+    /// Static class to make validation 
+    /// </summary>
     public static class Validator
     {
         static Dictionary<Type, ValidateAddDelegate> add_validators = new Dictionary<Type, ValidateAddDelegate>();
         static List<ValidateMechDelegate> validators = new  List<ValidateMechDelegate>();
 
+        /// <summary>
+        /// register new AddValidator
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="validator"></param>
         public static void RegisterAddValidator(Type type, ValidateAddDelegate validator)
         {
             add_validators.Add(type, validator);
         }
 
+        /// <summary>
+        /// register new mech validator
+        /// </summary>
+        /// <param name="validator"></param>
         public static void RegisterValidator(ValidateMechDelegate validator)
         {
             validators.Add(validator);
@@ -71,7 +76,7 @@ namespace CustomComponents
     }
 
     [HarmonyPatch(typeof(MechValidationRules), "ValidateMechDef")]
-    public static class MechValidationRulesValidate_ValidateMech_Patch
+    internal static class MechValidationRulesValidate_ValidateMech_Patch
     {
         public static void Postfix(Dictionary<MechValidationType, List<string>> __result,
             MechValidationLevel validationLevel, MechDef mechDef)

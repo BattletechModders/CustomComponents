@@ -6,9 +6,11 @@ using Harmony;
 
 namespace CustomComponents
 {
+    /// <summary>
+    /// mark a patch for private nested class
+    /// </summary>
     public class HarmonyNestedAttribute : HarmonyPatch
     {
-
         public HarmonyNestedAttribute(Type baseType, string nestedType, string method, Type[] parameters = null)
             : base(null, method, null)
         {
@@ -19,7 +21,7 @@ namespace CustomComponents
             this.info.parameter = parameters;
             this.info.methodName = method;
 
-            Control.mod.Logger.Log(string.Format("Type: {0}\tMethod: {1}",
+            Control.mod.Logger.LogDebug(string.Format("Type: {0}\tMethod: {1}",
                 this.info.originalType, this.info.methodName));
         }
     }
