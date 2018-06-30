@@ -1,7 +1,7 @@
 {
 	"Name": "CustomComponents",
 	"Author": "Denadan",
-	"Website": "https://github.com/CptMoore/MechEngineer",
+	"Website": "https://github.com/Denadan/CustomComponets",
 
 	"Enabled": true,
 	"DependsOn": ["DynModLib"],

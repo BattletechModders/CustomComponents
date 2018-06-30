@@ -1,5 +1,4 @@
-﻿using DynModLib;
-using Harmony;
+﻿using Harmony;
 using System;
 using System.Reflection;
 using System.Linq;
@@ -7,13 +6,19 @@ using System.Collections.Generic;
 using BattleTech.Data;
 using System.Text.RegularExpressions;
 using BattleTech;
+using DynModLib;
+
 
 namespace CustomComponents
 {
     public static class Control
     {
+        private static Dictionary<string, CustomComponentDescriptor> descriptors = new Dictionary<string, CustomComponentDescriptor>();
+        private static Dictionary<string, CategoryDescriptor> categories = new Dictionary<string, CategoryDescriptor>();
+
         public static Mod mod;
         public static CustomCompoentSettings settings = new CustomCompoentSettings();
+
 
         public static void Init(string directory, string settingsJSON)
         {
@@ -31,6 +36,8 @@ namespace CustomComponents
                 if (settings.LoadDefaultValidators)
                 {
                     Validator.RegisterValidator(WeighLimitedController.ValidateMech);
+                    Validator.RegisterValidator(CategoryController.ValidateMech);
+
                     Validator.RegisterAddValidator(typeof(IWeightLimited), WeighLimitedController.ValidateAdd);
                 }
 
@@ -53,9 +60,6 @@ namespace CustomComponents
             }
             return null;
         }
-
-        private static Dictionary<string, CustomComponentDescriptor> descriptors = new Dictionary<string, CustomComponentDescriptor>();
-
 
         /// <summary>
         /// register custom types for your assamble
@@ -82,7 +86,7 @@ namespace CustomComponents
 
         public static bool LoaderPatch<T>(DataManager.ResourceLoadRequest<T> loader,
             string json, ref T resource)
-            where T: class
+            where T : class
         {
             var id = Regex.Match(json, "\"UIName\" : \"(.+?)\"");
 
@@ -110,7 +114,7 @@ namespace CustomComponents
 
             resource = custom_obj as T;
             Traverse.Create(loader).Method("TryLoadDependencies", resource).GetValue();
-            if(custom_obj is MechComponentDef)
+            if (custom_obj is MechComponentDef)
                 Control.mod.Logger.LogDebug("Loaded: " + (custom_obj as MechComponentDef).Description.Id);
 
             return false;
@@ -124,6 +128,39 @@ namespace CustomComponents
             var custom = value as ICustomComponent;
             result = custom.ToJson();
             return false;
+        }
+
+        internal static void AddNewCategory(string category)
+        {
+            CategoryDescriptor c = null;
+            if (categories.TryGetValue(category, out c))
+                return;
+            c = new CategoryDescriptor(category);
+            categories.Add(category, c);
+        }
+
+        public static void AddCategory(CategoryDescriptor category)
+        {
+            CategoryDescriptor c = null;
+            if (categories.TryGetValue(category.Name, out c))
+                c.Apply(category);
+            else
+                categories.Add(category.Name, category);
+        }
+
+        public static CategoryDescriptor GetCategory(string name)
+        {
+            CategoryDescriptor c = null;
+            if (categories.TryGetValue(name, out c))
+                return c;
+            c = new CategoryDescriptor(name);
+            categories.Add(name, c);
+            return c;
+        }
+
+        public static IEnumerable<CategoryDescriptor> GetCategories()
+        {
+            return categories.Values;
         }
     }
 }

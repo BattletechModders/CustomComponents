@@ -37,8 +37,9 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>$(BattleTechDir)\BattleTech_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="DynModLib">
-      <HintPath>$(BattleTechDir)\DynModLib\DynModLib.dll</HintPath>
+    <Reference Include="DynModLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DynModLib\DynModLib.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>$(BattleTechDir)\BattleTech_Data\Managed\Newtonsoft.Json.dll</HintPath>
@@ -69,6 +70,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Category\CategoryController.cs" />
+    <Compile Include="Category\CategoryDescriptor.cs" />
+    <Compile Include="Category\ICategory.cs" />
     <Compile Include="ColorChanger\IColorComponent.cs" />
     <Compile Include="ColorChanger\MechComponentRef_GetUIColor_Patch.cs" />
     <Compile Include="Control.cs" />
@@ -79,6 +83,8 @@
     <Compile Include="CustomTypes\CustomWeaponDef.cs" />
     <Compile Include="CustomTypes\CustomHeatSinkDef.cs" />
     <Compile Include="Test\WeightLimitedHeatSink.cs" />
+    <Compile Include="Validators\LocationHelper.cs" />
+    <Compile Include="Validators\MechLabHelper.cs" />
     <Compile Include="Validators\ValidatorInterfaces.cs" />
     <Compile Include="Validators\Validator.cs" />
     <Compile Include="Test\TestUpgradeDef.cs" />
