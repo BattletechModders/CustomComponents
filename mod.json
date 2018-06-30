@@ -9,20 +9,5 @@
 	"DLLEntryPoint": "CustomComponents.Control.Init",
 	
 	"Manifest": [
-		{
-			"Type": "UpgradeDef",
-			"Path": "data/test/",
-			"ShouldMergeJSON": false
-		},		
-		{
-			"Type": "HeatSinkDef",
-			"Path": "data/heatsink/",
-			"ShouldMergeJSON": false
-		},		
-		{
-			"Type": "ShopDef",
-			"Path": "data/shops/",
-			"ShouldMergeJSON": false
-		}
 	]
 }
