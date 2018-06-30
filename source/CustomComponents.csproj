@@ -40,9 +40,8 @@
     <Reference Include="DynModLib">
       <HintPath>$(BattleTechDir)\DynModLib\DynModLib.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.$(BattleTechDir)\BattleTech_Data\Managed\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>$(BattleTechDir)\BattleTech_Data\Managed\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -78,7 +77,9 @@
     <Compile Include="CustomTypes\CustomJumpJetDef.cs" />
     <Compile Include="CustomTypes\CustomWeaponDef.cs" />
     <Compile Include="CustomTypes\CustomHeatSinkDef.cs" />
-    <Compile Include="Properties\Validator.cs" />
+    <Compile Include="Test\WeightLimitedHeatSink.cs" />
+    <Compile Include="Validators\ValidatorInterfaces.cs" />
+    <Compile Include="Validators\Validator.cs" />
     <Compile Include="Test\TestUpgradeDef.cs" />
     <Compile Include="HarmonyNested\HarmonyNestedAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -88,10 +89,9 @@
     <Compile Include="TypePatch\JumpJetPatch.cs" />
     <Compile Include="TypePatch\HeatSinkPatch.cs" />
     <Compile Include="TypePatch\UpgradePatch.cs" />
-    <Compile Include="WeightLimitation\MechLabLocationWidget_ValidateAdd_Patch.cs" />
-    <Compile Include="WeightLimitation\Class2.cs" />
     <Compile Include="WeightLimitation\IWeightLimited.cs" />
     <Compile Include="WeightLimitation\MechLabInventoryWidget_ApplyFiltering_Patch.cs" />
+    <Compile Include="WeightLimitation\WeighLimitedController.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

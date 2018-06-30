@@ -3,7 +3,7 @@ using BattleTech.UI;
 using Harmony;
 using System.Collections.Generic;
 
-namespace CustomComponents.WeightLimitation
+namespace CustomComponents
 {
     [HarmonyPatch(typeof(MechLabInventoryWidget), "ApplyFiltering")]
     public static class MechLabInventoryWidget_ApplyFiltering
@@ -22,11 +22,11 @@ namespace CustomComponents.WeightLimitation
 
                 if (component != null && (component is IWeightLimited))
                 {
-                    var tonnage = (component as IWeightLimited).AllowedTonnage;
+                    var limit = component as IWeightLimited;
 
                     item.gameObject.SetActive(
                         (___mechTonnage < 0 ||
-                        ___mechTonnage == tonnage) && item.gameObject.activeSelf
+                        ___mechTonnage >= limit.MinTonnage && ___mechTonnage <= limit.MaxTonnage) && item.gameObject.activeSelf
                         );
                 }
             }

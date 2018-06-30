@@ -6,6 +6,7 @@ namespace CustomComponents
 {
     public interface IWeightLimited
     {
-        int AllowedTonnage { get; }
+        int MinTonnage { get; }
+        int MaxTonnage { get; }
     }
 }

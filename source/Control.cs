@@ -24,6 +24,9 @@ namespace CustomComponents
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
                 RegisterCustomTypes(Assembly.GetExecutingAssembly());
 
+                Validator.RegisterValidator(WeighLimitedController.ValidateMech);
+                Validator.RegisterAddValidator(typeof(IWeightLimited), WeighLimitedController.ValidateAdd);
+
                 // logging output can be found under BATTLETECH\BattleTech_Data\output_log.txt
                 // or also under yourmod/log.txt
                 mod.Logger.Log("Loaded " + mod.Name);
@@ -71,14 +74,14 @@ namespace CustomComponents
         {
             var id = Regex.Match(json, "\"UIName\" : \"(.+?)\"");
 
-            Control.mod.Logger.Log("loading " + (id.Success ? id.Result("$1") : "not found"));
+            //Control.mod.Logger.Log("loading " + (id.Success ? id.Result("$1") : "not found"));
 
             var custom = Regex.Match(json, "\"CustomType\" : \"(.+?)\"");
             if (!custom.Success)
                 return true;
 
             string custom_type = custom.Result("$1");
-            Control.mod.Logger.Log("found custom: " + custom_type);
+            Control.mod.Logger.Log("Loading custom: " + custom_type);
 
             var custom_obj = Control.CreateNew(custom_type) as ICustomComponent;
             if (custom_obj == null || !(custom_obj is T))
@@ -90,7 +93,7 @@ namespace CustomComponents
             custom_obj.FromJson(json);
 
             string new_json = custom_obj.ToJson();
-            Control.mod.Logger.Log(new_json);
+            //Control.mod.Logger.Log(new_json);
 
             resource = custom_obj as T;
             Traverse.Create(loader).Method("TryLoadDependencies", resource).GetValue();
