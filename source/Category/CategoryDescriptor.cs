@@ -12,8 +12,8 @@
         public int MaxEquipedPerLocation = -1;
         public int MinEquiped = 0;
 
-        public string AddAlreadyEquiped = "{0} already fitted on mech";
-        public string AddAlreadyEquipedLocation = "{0} already present at {1}";
+        public string AddAlreadyEquiped = "{0} already installed on mech";
+        public string AddAlreadyEquipedLocation = "{0} already installed on {1}";
         public string AddMaximumReached = "Mech already have {1} of {0} installed";
         public string AddMaximumLocationReached = "Mech already have {1} of {0} installed at {2}";
         public string AddMixed = "Mech can have only one type of {0}";

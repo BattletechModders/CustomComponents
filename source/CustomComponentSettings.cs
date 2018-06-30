@@ -2,7 +2,7 @@
 
 namespace CustomComponents
 {
-    public class CustomCompoentSettings : ModSettings
+    public class CustomComponentSettings : ModSettings
     {
         public bool LoadDefaultValidators = true;
     }

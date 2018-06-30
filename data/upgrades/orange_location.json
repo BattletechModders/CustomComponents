@@ -1,0 +1,39 @@
+{
+    "StatName" : null,
+    "RelativeModifier" : 0,
+    "AbsoluteModifier" : 0,
+	"CustomType" : "CategoryTest",
+	"Color" : "Gold",
+	"Category" : "Location"
+    "Description" : {
+        "Cost" : 50000,
+        "Rarity" : 0,
+        "Purchasable" : true,
+        "Manufacturer" : "LOCATION",
+        "Model" : "Load Lifter",
+        "UIName" : "OneLocation",
+        "Id" : "orange_location",
+        "Name" : "OneLocation",
+        "Details" : "",
+        "Icon" : "uixSvgIcon_equipment_ActuatorArm"
+    },
+    "BonusValueA" : "",
+    "BonusValueB" : "",
+    "ComponentType" : "Upgrade",
+    "ComponentSubType" : "NotSet",
+    "PrefabIdentifier" : "",
+    "BattleValue" : 0,
+    "InventorySize" : 1,
+    "Tonnage" : 2,
+    "AllowedLocations" : "All",
+    "DisallowedLocations" : "All",
+    "CriticalComponent" : false,
+    "statusEffects" : [
+    ],
+    "ComponentTags" : {
+        "items" : [
+            "component_type_stock",
+        ],
+        "tagSetSourceFile" : ""
+    }
+}

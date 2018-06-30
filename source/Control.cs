@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using BattleTech.Data;
 using System.Text.RegularExpressions;
 using BattleTech;
+using BattleTech.UI;
 using DynModLib;
 
 
@@ -17,7 +18,7 @@ namespace CustomComponents
         private static Dictionary<string, CategoryDescriptor> categories = new Dictionary<string, CategoryDescriptor>();
 
         public static Mod mod;
-        public static CustomCompoentSettings settings = new CustomCompoentSettings();
+        public static CustomComponentSettings settings = new CustomComponentSettings();
 
 
         public static void Init(string directory, string settingsJSON)
@@ -39,11 +40,19 @@ namespace CustomComponents
                     Validator.RegisterValidator(CategoryController.ValidateMech);
 
                     Validator.RegisterAddValidator(typeof(IWeightLimited), WeighLimitedController.ValidateAdd);
+                    Validator.RegisterAddValidator(typeof(ICategory), CategoryController.ValidateAdd);
                 }
 
                 // logging output can be found under BATTLETECH\BattleTech_Data\output_log.txt
                 // or also under yourmod/log.txt
                 mod.Logger.Log("Loaded " + mod.Name);
+
+                AddCategory(new CategoryDescriptor("Unique") { MaxEquiped = 1 });
+                AddCategory(new CategoryDescriptor("Unique2") { MaxEquiped = 2 });
+                AddCategory(new CategoryDescriptor("Unique2Location") { MaxEquiped = 2, MaxEquipedPerLocation = 1 });
+                AddCategory(new CategoryDescriptor("Location") { MaxEquipedPerLocation = 1 });
+                AddCategory(new CategoryDescriptor("UniqueRequred") { MaxEquiped = 1, MinEquiped = 1 });
+                AddCategory(new CategoryDescriptor("NoMixed") { AllowMix = false, MaxEquiped = 3});
             }
             catch (Exception e)
             {
@@ -109,7 +118,13 @@ namespace CustomComponents
 
             custom_obj.FromJson(json);
 
-            string new_json = custom_obj.ToJson();
+            if (custom_obj is ICategory)
+            {
+                var cat = custom_obj as ICategory;
+                cat.CategoryDescriptor = GetCategory(cat.Category);
+            }
+
+            //string new_json = custom_obj.ToJson();
             //Control.mod.Logger.Log(new_json);
 
             resource = custom_obj as T;

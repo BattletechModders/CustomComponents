@@ -99,7 +99,55 @@ namespace CustomComponents
         public static bool ValidateAdd(MechComponentDef component, MechLabLocationWidget widget,
             bool current_result, ref string errorMessage, MechLabPanel mechlab)
         {
-            return current_result;
+            if (!current_result)
+                return false;
+
+            if (!(component is ICategory))
+                return current_result;
+
+            var category = (component as ICategory).CategoryDescriptor;
+
+            var items = mechlab.activeMechDef.Inventory
+                .Where(i => (i.Def is ICategory) && (i.Def as ICategory).CategoryDescriptor == category).ToList();
+
+            if (category.MaxEquiped > 0)
+            {
+                if (items.Count >= category.MaxEquiped)
+                {
+                    if (category.Unique)
+                        errorMessage = string.Format(category.AddAlreadyEquiped, category.DisplayName);
+                    else
+                        errorMessage = string.Format(category.AddMaximumReached, category.DisplayName, items.Count);
+                    return false;
+                }
+            }
+
+            if (category.MaxEquipedPerLocation > 0)
+            {
+                int count_per_location = items.Count(i => i.MountedLocation == widget.loadout.Location);
+                if (count_per_location >= category.MaxEquipedPerLocation)
+                {
+                    var helper = new LocationHelper(widget);
+                    string location_name = helper.LocationName;
+
+                    if(category.UniqueForLocation)
+                        errorMessage = string.Format(category.AddAlreadyEquipedLocation, category.DisplayName, location_name);
+                    else
+                        errorMessage = string.Format(category.AddMaximumLocationReached, category.DisplayName, items.Count, location_name);
+                    return false;
+                }
+            }
+
+            if (!category.AllowMix)
+            {
+                if (items.Any(i => i.Def.Description.Id != component.Description.Id))
+                {
+                    errorMessage = string.Format(category.AddMixed, category.DisplayName);
+                    return false;
+                }
+            }
+        
+            return true;
         }
     }
 }

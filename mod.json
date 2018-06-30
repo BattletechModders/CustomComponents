@@ -23,6 +23,11 @@
 			"Type": "ShopDef",
 			"Path": "data/shops/",
 			"ShouldMergeJSON": false
+		},		
+		{
+			"Type": "UpgradeDef",
+			"Path": "data/upgrades/",
+			"ShouldMergeJSON": false
 		}
 	]
 }

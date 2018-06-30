@@ -1,0 +1,39 @@
+{
+    "StatName" : null,
+    "RelativeModifier" : 0,
+    "AbsoluteModifier" : 0,
+	"CustomType" : "CategoryTest",
+	"Color" : "Gold",
+	"Category" : "Unique2Location"
+    "Description" : {
+        "Cost" : 50000,
+        "Rarity" : 0,
+        "Purchasable" : true,
+        "Manufacturer" : "Unique2Location",
+        "Model" : "Load Lifter",
+        "UIName" : "Unique2Location",
+        "Id" : "gold_Unique2Location",
+        "Name" : "Unique2Location",
+        "Details" : "",
+        "Icon" : "uixSvgIcon_equipment_ActuatorArm"
+    },
+    "BonusValueA" : "",
+    "BonusValueB" : "",
+    "ComponentType" : "Upgrade",
+    "ComponentSubType" : "NotSet",
+    "PrefabIdentifier" : "",
+    "BattleValue" : 0,
+    "InventorySize" : 1,
+    "Tonnage" : 2,
+    "AllowedLocations" : "All",
+    "DisallowedLocations" : "All",
+    "CriticalComponent" : false,
+    "statusEffects" : [
+    ],
+    "ComponentTags" : {
+        "items" : [
+            "component_type_stock",
+        ],
+        "tagSetSourceFile" : ""
+    }
+}

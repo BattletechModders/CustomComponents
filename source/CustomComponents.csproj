@@ -76,12 +76,13 @@
     <Compile Include="ColorChanger\IColorComponent.cs" />
     <Compile Include="ColorChanger\MechComponentRef_GetUIColor_Patch.cs" />
     <Compile Include="Control.cs" />
-    <Compile Include="CustomCompoentSettings.cs" />
+    <Compile Include="CustomComponentSettings.cs" />
     <Compile Include="CustomComponent.cs" />
     <Compile Include="CustomTypes\CustomAmmunitionBoxDef.cs" />
     <Compile Include="CustomTypes\CustomJumpJetDef.cs" />
     <Compile Include="CustomTypes\CustomWeaponDef.cs" />
     <Compile Include="CustomTypes\CustomHeatSinkDef.cs" />
+    <Compile Include="Test\CategoryTestItem.cs" />
     <Compile Include="Test\WeightLimitedHeatSink.cs" />
     <Compile Include="Validators\LocationHelper.cs" />
     <Compile Include="Validators\MechLabHelper.cs" />
