@@ -18,7 +18,7 @@ namespace CustomComponents
 
         public virtual void FromJson(string json)
         {
-            JSONSerializationUtility.FromJSON<T>(this as T, json, null);
+            JSONSerializationUtility.FromJSON(this as T, json, null);
             if (base.statusEffects == null)
             {
                 base.statusEffects = new EffectData[0];
@@ -30,4 +30,29 @@ namespace CustomComponents
             return JSONSerializationUtility.ToJSON<T>(this as T);
         }
     }
+
+    [Custom("CategoryAmmunitionBox")]
+    public class CategoryCustomAmmunitionBoxDef : CustomAmmunitionBoxDef<CategoryCustomAmmunitionBoxDef>, ICategory
+    {
+        public string CategoryID { get; set; }
+        public string Tag { get; set; }
+        public CategoryDescriptor CategoryDescriptor { get; set; }
+    }
+
+    [Custom("ColorCategoryAmmunitionBox")]
+    public class ColorCategoryCustomAmmunitionBoxDef : CustomAmmunitionBoxDef<ColorCategoryCustomAmmunitionBoxDef>, ICategory, IColorComponent
+    {
+        public string CategoryID { get; set; }
+        public string Tag { get; set; }
+        public CategoryDescriptor CategoryDescriptor { get; set; }
+        public UIColor Color { get; set; }
+    }
+
+
+    [Custom("ColorAmmunitionBox")]
+    public class ColorCustomAmmunitionBoxDef : CustomAmmunitionBoxDef<ColorCustomAmmunitionBoxDef>, IColorComponent
+    {
+        public UIColor Color { get; set; }
+    }
+
 }

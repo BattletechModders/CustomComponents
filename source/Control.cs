@@ -37,9 +37,12 @@ namespace CustomComponents
                 try
                 {
                     settings = JsonConvert.DeserializeObject<CustomComponentSettings>(settingsJSON);
+                    Logger.LogError("TEST: Loaded");
+                    Logger.LogError(settingsJSON);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Logger.LogError("TEST: Erorr", e);
                     settings = new CustomComponentSettings();
                 }
 
@@ -51,19 +54,21 @@ namespace CustomComponents
 
                 if (settings.LoadDefaultValidators)
                 {
-                    Validator.RegisterValidator(WeighLimitedController.ValidateMech);
-                    Validator.RegisterValidator(CategoryController.ValidateMech);
+                    Validator.RegisterMechValidator(WeighLimitedController.ValidateMech, WeighLimitedController.ValidateMechCanBeFielded);
+                    Validator.RegisterMechValidator(CategoryController.ValidateMech, CategoryController.ValidateMechCanBeFielded);
 
                     Validator.RegisterAddValidator(typeof(IWeightLimited), WeighLimitedController.ValidateAdd);
                     Validator.RegisterAddValidator(typeof(ICategory), CategoryController.ValidateAdd);
                 }
 
-                // logging output can be found under BATTLETECH\BattleTech_Data\output_log.txt
-                // or also under yourmod/log.txt
                 Logger.Log("Loaded CustomComponents");
-
-                AddCategory(new CategoryDescriptor("Unique") { MaxEquiped = 1, AutoReplace = true });
-                AddCategory(new CategoryDescriptor("HeatSink") { AllowMix = false });
+                Logger.LogDebug("Loading Categories");
+                foreach (var categoryDescriptor in settings.Categories)
+                {
+                    AddCategory(categoryDescriptor);
+                    Logger.LogDebug(categoryDescriptor.Name + " " + categoryDescriptor.DisplayName);
+                }
+                Logger.LogDebug("done");
             }
             catch (Exception e)
             {
@@ -133,7 +138,7 @@ namespace CustomComponents
             if (custom_obj is ICategory)
             {
                 var cat = custom_obj as ICategory;
-                cat.CategoryDescriptor = GetCategory(cat.Category);
+                cat.CategoryDescriptor = GetCategory(cat.CategoryID);
             }
 
             //string new_json = custom_obj.ToJson();
@@ -157,12 +162,14 @@ namespace CustomComponents
             return false;
         }
 
+
+
         internal static void AddNewCategory(string category)
         {
             CategoryDescriptor c = null;
             if (categories.TryGetValue(category, out c))
                 return;
-            c = new CategoryDescriptor(category);
+            c = new CategoryDescriptor { Name = category };
             categories.Add(category, c);
         }
 
@@ -179,7 +186,7 @@ namespace CustomComponents
         {
             if (categories.TryGetValue(name, out var c))
                 return c;
-            c = new CategoryDescriptor(name);
+            c = new CategoryDescriptor { Name = name };
             categories.Add(name, c);
             return c;
         }

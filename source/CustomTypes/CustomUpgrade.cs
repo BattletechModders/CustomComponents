@@ -1,4 +1,5 @@
 ﻿using BattleTech;
+using BattleTech.UI;
 using HBS.Util;
 
 namespace CustomComponents
@@ -23,5 +24,30 @@ namespace CustomComponents
             return JSONSerializationUtility.ToJSON<T>(this as T);
         }
     }
+
+    [Custom("CategoryUpgrade")]
+    public class CategoryCustomUpgradeDef : CustomUpgradeDef<CategoryCustomUpgradeDef>,  ICategory
+    {
+        public string CategoryID { get; set; }
+        public string Tag { get; set; }
+        public CategoryDescriptor CategoryDescriptor { get; set; }
+    }
+
+    [Custom("ColorCategoryUpgrade")]
+    public class ColorCategoryCustomUpgradeDef : CustomUpgradeDef<ColorCategoryCustomUpgradeDef>, ICategory, IColorComponent
+    {
+        public string CategoryID { get; set; }
+        public string Tag { get; set; }
+        public CategoryDescriptor CategoryDescriptor { get; set; }
+        public UIColor Color { get; set; }
+    }
+
+
+    [Custom("ColorUpgrade")]
+    public class ColorCustomUpgradeDef : CustomUpgradeDef<ColorCustomUpgradeDef>, IColorComponent
+    {
+        public UIColor Color { get; set; }
+    }
+
 
 }

@@ -6,8 +6,8 @@ namespace CustomComponents
 {
     public interface ICategory
     {
-        string Category { get; }
-        string MixCategory { get; }
+        string CategoryID { get; }
+        string Tag { get; }
 
         [JsonIgnore]
         CategoryDescriptor CategoryDescriptor { get; set; }
@@ -15,17 +15,17 @@ namespace CustomComponents
 
     public static class CategoryExtensions
     {
-        public static string GetMixCategory(this ICategory item)
+        public static string GetCategoryTag(this ICategory item)
         {
             if(item == null)
                 return String.Empty;
 
-            if (string.IsNullOrEmpty(item.MixCategory))
+            if (string.IsNullOrEmpty(item.Tag))
             {
                 return item is MechComponentDef def ? def.Description.Id : string.Empty;
             }
 
-            return item.MixCategory;
+            return item.Tag;
         }
     }
 }

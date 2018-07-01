@@ -83,9 +83,6 @@
     <Compile Include="CustomTypes\CustomJumpJetDef.cs" />
     <Compile Include="CustomTypes\CustomWeaponDef.cs" />
     <Compile Include="CustomTypes\CustomHeatSinkDef.cs" />
-    <Compile Include="Test\CategoryTestItem.cs" />
-    <Compile Include="Test\TestUpgradeDef.cs" />
-    <Compile Include="Test\WeightLimitedHeatSink.cs" />
     <Compile Include="Validators\LocationHelper.cs" />
     <Compile Include="Validators\MechLabHelper.cs" />
     <Compile Include="Validators\ValidatorInterfaces.cs" />

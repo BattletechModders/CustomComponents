@@ -1,7 +1,7 @@
 {
 	"CustomType" : "CategoryHeatSink",
-	"Category" : "HeatSink",
-	"MixCategory" : "IS-Double",
+	"CategoryID" : "HeatSink",
+	"Tag" : "IS-Double",
     "DissipationCapacity" : 8,
     "Description" : {
         "Cost" : 630000,

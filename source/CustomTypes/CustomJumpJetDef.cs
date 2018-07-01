@@ -27,4 +27,28 @@ namespace CustomComponents
             return JSONSerializationUtility.ToJSON<T>(this as T);
         }
     }
+
+    [Custom("CategoryJumpJet")]
+    public class CategoryCustomJumpJetDef : CustomJumpJetDef<CategoryCustomJumpJetDef>, ICategory
+    {
+        public string CategoryID { get; set; }
+        public string Tag { get; set; }
+        public CategoryDescriptor CategoryDescriptor { get; set; }
+    }
+
+    [Custom("ColorCategoryJumpJet")]
+    public class ColorCategoryCustomJumpJetDef : CustomJumpJetDef<ColorCategoryCustomJumpJetDef>, ICategory, IColorComponent
+    {
+        public string CategoryID { get; set; }
+        public string Tag { get; set; }
+        public CategoryDescriptor CategoryDescriptor { get; set; }
+        public UIColor Color { get; set; }
+    }
+
+    [Custom("ColorJumpJet")]
+    public class ColorCustomJumpJetDef : CustomJumpJetDef<ColorCustomJumpJetDef>, IColorComponent
+    {
+        public UIColor Color { get; set; }
+    }
+
 }

@@ -13,7 +13,10 @@ namespace CustomComponents
     public static class Validator
     {
         static Dictionary<Type, ValidateAddDelegate> add_validators = new Dictionary<Type, ValidateAddDelegate>();
-        static List<ValidateMechDelegate> validators = new  List<ValidateMechDelegate>();
+        static List<ValidateMechDelegate> mech_validators = new  List<ValidateMechDelegate>();
+
+        private static List<ValidateMechCanBeFieldedDelegate> field_validators =
+            new List<ValidateMechCanBeFieldedDelegate>();
 
         /// <summary>
         /// register new AddValidator
@@ -29,9 +32,10 @@ namespace CustomComponents
         /// register new mech validator
         /// </summary>
         /// <param name="validator"></param>
-        public static void RegisterValidator(ValidateMechDelegate validator)
+        public static void RegisterMechValidator(ValidateMechDelegate mechvalidator, ValidateMechCanBeFieldedDelegate fieldvalidator)
         {
-            validators.Add(validator);
+            if(mechvalidator != null) mech_validators.Add(mechvalidator);
+            if (fieldvalidator != null) field_validators.Add(fieldvalidator);
         }
 
 
@@ -51,10 +55,20 @@ namespace CustomComponents
         internal static void ValidateMech(Dictionary<MechValidationType, List<string>> errors,
             MechValidationLevel validationLevel, MechDef mechDef)
         {
-            foreach (var validator in validators)
+            foreach (var validator in mech_validators)
             {
-                    validator(errors, validationLevel, mechDef);
+                validator(errors, validationLevel, mechDef);
             }
+        }
+
+        internal static bool ValidateMechCanBeFielded(MechDef mechDef)
+        {
+            foreach (var validateMechCanBeFieldedDelegate in field_validators)
+            {
+                if (!validateMechCanBeFieldedDelegate(mechDef))
+                    return false;
+            }
+            return true;
         }
     }
 
@@ -82,9 +96,45 @@ namespace CustomComponents
             MechValidationLevel validationLevel, MechDef mechDef)
         {
             Validator.ValidateMech(__result, validationLevel, mechDef);
-            foreach (var component in mechDef.Inventory.Where(i => i.Def != null).Select(i => i.Def).OfType<IMechValidate>())
+            foreach (var component in mechDef.Inventory.Where(i => i.Def != null)
+                .Select(i => i.Def)
+                .GroupBy(i => i.Description.Id)
+                .Select(i => i.First())
+                .OfType<IMechValidate>())
             {
                 component.ValidateMech(__result, validationLevel, mechDef);
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(MechValidationRules), "ValidateMechCanBeFielded")]
+    public static class MechValidationRules_ValidateMechCanBeFielded_Patch
+    {
+        public static void Postfix(MechDef mechDef, ref bool __result)
+        {
+            try
+            {
+                if (!__result)
+                {
+                    return;
+                }
+
+                if (!Validator.ValidateMechCanBeFielded(mechDef))
+                {
+                    __result = false;
+                    return;
+                }
+
+                foreach (var component in mechDef.Inventory.Where(i => i.Def != null).Select(i => i.Def).OfType<IMechValidate>())
+                {
+                    __result = component.ValidateMechCanBeFielded(mechDef);
+                    if (__result)
+                        return;
+                }
+            }
+            catch (Exception e)
+            {
+                Control.Logger.LogError(e);
             }
         }
     }

@@ -33,6 +33,8 @@ namespace CustomComponents
         /// <param name="mechDef">mech to check</param>
         void ValidateMech(Dictionary<MechValidationType, List<string>> errors,
             MechValidationLevel validationLevel, MechDef mechDef);
+
+        bool ValidateMechCanBeFielded(MechDef mechDef);
     }
 
     /// <summary>
@@ -56,4 +58,6 @@ namespace CustomComponents
     public delegate void ValidateMechDelegate(Dictionary<MechValidationType, List<string>> errors,
         MechValidationLevel validationLevel, MechDef mechDef);
 
+
+    public delegate bool ValidateMechCanBeFieldedDelegate(MechDef mechDef);
 }

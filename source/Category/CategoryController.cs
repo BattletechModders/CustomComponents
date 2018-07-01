@@ -30,10 +30,10 @@ namespace CustomComponents
                                          category = def.CategoryDescriptor,
                                          itemdef = item.Def,
                                          itemref = item,
-                                         mix = def.GetMixCategory()
+                                         mix = def.GetCategoryTag()
                                      }).GroupBy(i => i.category).ToDictionary(i => i.Key, i => i.ToList());
 
-            foreach (var category in Control.GetCategories().Where(i => i.Requred))
+            foreach (var category in Control.GetCategories().Where(i => i.Required))
             {
                 if (!items_by_category.ContainsKey(category) || items_by_category[category].Count < category.MinEquiped)
                     if (category.MinEquiped == 1)
@@ -52,7 +52,7 @@ namespace CustomComponents
                         errors[MechValidationType.InvalidInventorySlots].Add(string.Format(pair.Key.ValidateMaximum,
                             pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName, pair.Key.MaxEquiped));
 
-                if (!pair.Key.AllowMix)
+                if (!pair.Key.AllowMixTags)
                 {
                     string def = pair.Value[0].mix;
 
@@ -69,12 +69,11 @@ namespace CustomComponents
                     var max = pair.Value.GroupBy(i => i.itemref.MountedLocation).Max(i => i.Count());
                     if (max > pair.Key.MaxEquipedPerLocation)
                         if (pair.Key.MaxEquipedPerLocation == 1)
-                            if (pair.Key.MaxEquiped == 1)
-                                errors[MechValidationType.InvalidInventorySlots].Add(string.Format(pair.Key.ValidateUniqueLocation,
-                                    pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName));
-                            else
-                                errors[MechValidationType.InvalidInventorySlots].Add(string.Format(pair.Key.ValidateMaximumLocation,
-                                    pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName, pair.Key.MaxEquipedPerLocation));
+                            errors[MechValidationType.InvalidInventorySlots].Add(string.Format(pair.Key.ValidateUniqueLocation,
+                                pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName));
+                        else
+                            errors[MechValidationType.InvalidInventorySlots].Add(string.Format(pair.Key.ValidateMaximumLocation,
+                                pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName, pair.Key.MaxEquipedPerLocation));
                 }
             }
         }
@@ -116,9 +115,9 @@ namespace CustomComponents
                 }
             }
 
-            if (!category.AllowMix)
+            if (!category.AllowMixTags)
             {
-                if (items.Any(i => (i.Def as ICategory).GetMixCategory() != component.GetMixCategory()))
+                if (items.Any(i => (i.Def as ICategory).GetCategoryTag() != component.GetCategoryTag()))
                     return CategoryError.AllowMix;
             }
 
@@ -139,7 +138,7 @@ namespace CustomComponents
             if (error == CategoryError.None)
                 return true;
 
-            var category = ((ICategory) component).CategoryDescriptor;
+            var category = ((ICategory)component).CategoryDescriptor;
 
             switch (error)
             {
@@ -161,6 +160,48 @@ namespace CustomComponents
                 default:
                     return true;
             }
+        }
+
+
+        internal static bool ValidateMechCanBeFielded(MechDef mechDef)
+        {
+            var items_by_category = (from item in mechDef.Inventory
+                                     where item.Def is ICategory
+                                     let def = item.Def as ICategory
+                                     select new
+                                     {
+                                         category = def.CategoryDescriptor,
+                                         itemdef = item.Def,
+                                         itemref = item,
+                                         mix = def.GetCategoryTag()
+                                     }).GroupBy(i => i.category).ToDictionary(i => i.Key, i => i.ToList());
+
+            foreach (var category in Control.GetCategories().Where(i => i.Required))
+                if (!items_by_category.ContainsKey(category) || items_by_category[category].Count < category.MinEquiped)
+                    return false;
+
+            foreach (var pair in items_by_category)
+            {
+                if (pair.Key.MaxEquiped > 0 && pair.Value.Count > pair.Key.MaxEquiped)
+                    return false;
+
+                if (!pair.Key.AllowMixTags)
+                {
+                    string def = pair.Value[0].mix;
+
+                    bool flag = pair.Value.Any(i => i.mix != def);
+                    if (flag) return false;
+                }
+
+                if (pair.Key.MaxEquipedPerLocation > 0)
+                {
+                    var max = pair.Value.GroupBy(i => i.itemref.MountedLocation).Max(i => i.Count());
+                    if (max > pair.Key.MaxEquipedPerLocation)
+                        return false;
+                }
+            }
+
+            return true;
         }
     }
 
@@ -194,8 +235,8 @@ namespace CustomComponents
 
             Control.Logger.LogDebug("Dropped item: " + drag_item.ComponentRef.ComponentDefID);
 
-            if (!(drag_item.ComponentRef.Def is ICategory item) || !item.CategoryDescriptor.AutoReplace || 
-                (item.CategoryDescriptor.MaxEquiped <=0 && item.CategoryDescriptor.MaxEquipedPerLocation <=0))
+            if (!(drag_item.ComponentRef.Def is ICategory item) || !item.CategoryDescriptor.AutoReplace ||
+                (item.CategoryDescriptor.MaxEquiped <= 0 && item.CategoryDescriptor.MaxEquipedPerLocation <= 0))
             {
                 Control.Logger.LogDebug("Item not need autoreplace, exit");
                 return true;
@@ -209,7 +250,7 @@ namespace CustomComponents
             if (error == CategoryError.AllowMix || error == CategoryError.None)
                 return true;
 
-            var n = ___localInventory.FindIndex(i => (i.ComponentRef.Def as ICategory)?.Category == item.Category);
+            var n = ___localInventory.FindIndex(i => (i.ComponentRef.Def as ICategory)?.CategoryID == item.CategoryID);
 
             Control.Logger.Log("index = " + n.ToString());
 

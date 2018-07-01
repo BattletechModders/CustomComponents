@@ -7,7 +7,24 @@
 	"DependsOn": [],
 	"DLL": "CustomComponents.dll",
 	"DLLEntryPoint": "CustomComponents.Control.Init",
-	
+	"Settings" : {
+		"LoadDefaultValidators": true,
+		"LogLevel": "Debug",
+		"Categories": [
+			{
+			  "AutoReplace": true,
+			  "MaxEquiped":  1,
+			  "Name": "Unique",
+			  "displayName": "Unique Item"
+			},
+			{
+			  "Name": "HeatSink",
+			  "displayName": "Heat Sink",
+			  "AllowMixTags" : false	  
+			}
+		]
+	},	
+		
 	"Manifest": [
 		{
 			"Type": "UpgradeDef",
@@ -18,7 +35,7 @@
 			"Type": "HeatSinkDef",
 			"Path": "data/heatsink/",
 			"ShouldMergeJSON": false
-		},		
+		},	
 		{
 			"Type": "UpgradeDef",
 			"Path": "data/upgrades/",

@@ -1,7 +1,7 @@
 {
 	"CustomType" : "CategoryHeatSink",
-	"Category" : "HeatSink",
-	"MixCategory" : "C-Double",
+	"CategoryID" : "HeatSink",
+	"Tag" : "C-Double",
     "DissipationCapacity" : 8,
     "Description" : {
         "Cost" : 930000,
