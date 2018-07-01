@@ -27,18 +27,8 @@
 		
 	"Manifest": [
 		{
-			"Type": "UpgradeDef",
-			"Path": "data/test/",
-			"ShouldMergeJSON": false
-		},		
-		{
 			"Type": "HeatSinkDef",
 			"Path": "data/heatsink/",
-			"ShouldMergeJSON": false
-		},	
-		{
-			"Type": "UpgradeDef",
-			"Path": "data/upgrades/",
 			"ShouldMergeJSON": false
 		}
 	]
