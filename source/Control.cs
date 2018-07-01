@@ -47,12 +47,7 @@ namespace CustomComponents
                 // or also under yourmod/log.txt
                 mod.Logger.Log("Loaded " + mod.Name);
 
-                AddCategory(new CategoryDescriptor("Unique") { MaxEquiped = 1 });
-                AddCategory(new CategoryDescriptor("Unique2") { MaxEquiped = 2 });
-                AddCategory(new CategoryDescriptor("Unique2Location") { MaxEquiped = 2, MaxEquipedPerLocation = 1 });
-                AddCategory(new CategoryDescriptor("Location") { MaxEquipedPerLocation = 1 });
-                AddCategory(new CategoryDescriptor("UniqueRequred") { MaxEquiped = 1, MinEquiped = 1 });
-                AddCategory(new CategoryDescriptor("NoMixed") { AllowMix = false, MaxEquiped = 3});
+                AddCategory(new CategoryDescriptor("Unique") { MaxEquiped = 1, AutoReplace = true });
             }
             catch (Exception e)
             {

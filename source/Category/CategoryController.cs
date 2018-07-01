@@ -75,37 +75,6 @@ namespace CustomComponents
                                     pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName, pair.Key.MaxEquipedPerLocation));
                 }
             }
-
-
-
-
-            //var items_by_category = (
-            //    from itemRef in mechDef.Inventory
-            //    let info = itemRef.GetUniqueItem()
-            //    where info != null
-            //    group info by info.ReplaceTag
-            //    into g
-            //    select new { tag = g.Key, count = g.Count() }
-            //).ToDictionary(i => i.tag, i => i.count);
-
-            //foreach (var category in Control.settings.UniqueCategories)
-            //{
-            //    int n = 0;
-            //    if (items_by_category.TryGetValue(category.Tag, out n))
-            //    {
-            //        if (n > 1)
-            //        {
-            //            errorMessages[MechValidationType.InvalidInventorySlots]
-            //                .Add(string.Format(category.ErrorToMany, category.Tag.ToUpper(), category.Tag));
-            //        }
-            //    }
-            //    else
-            //    {
-            //        if (category.Required)
-            //            errorMessages[MechValidationType.InvalidInventorySlots]
-            //                .Add(string.Format(category.ErrorMissing, category.Tag.ToUpper(), category.Tag));
-            //    }
-            //}
         }
 
         internal static CategoryError ValidateAdd(ICategory component, MechLabLocationWidget widget,
@@ -196,87 +165,97 @@ namespace CustomComponents
         }
     }
 
-    //[HarmonyPatch(typeof(MechLabLocationWidget), "OnMechLabDrop")]
-    //public static class MechLabLocationWidget_OnDrop_Patch_Unique
-    //{
-    //    public static bool Prefix(MechLabLocationWidget __instance, ref string ___dropErrorMessage,
-    //        List<MechLabItemSlotElement> ___localInventory,
-    //        int ___usedSlots,
-    //        int ___maxSlots,
-    //        TextMeshProUGUI ___locationName,
-    //        MechLabPanel ___mechLab)
-    //    {
-    //        if (!___mechLab.Initialized)
-    //        {
-    //            return false;
-    //        }
-    //        if (___mechLab.DragItem == null)
-    //        {
-    //            return false;
-    //        }
+    [HarmonyPatch(typeof(MechLabLocationWidget), "OnMechLabDrop")]
+    public static class MechLabLocationWidget_OnDrop_Patch_Unique
+    {
+        public static bool Prefix(MechLabLocationWidget __instance, ref string ___dropErrorMessage,
+            List<MechLabItemSlotElement> ___localInventory,
+            int ___usedSlots,
+            int ___maxSlots,
+            TextMeshProUGUI ___locationName,
+            MechLabPanel ___mechLab)
+        {
+            if (!Control.settings.LoadDefaultValidators)
+                return true;
 
-    //        var drag_item = ___mechLab.DragItem;
+            if (!___mechLab.Initialized)
+            {
+                return false;
+            }
+            if (___mechLab.DragItem == null)
+            {
+                return false;
+            }
+
+            var drag_item = ___mechLab.DragItem;
+
+            if (drag_item.ComponentRef == null)
+            {
+                return false;
+            }
+
+            bool flag = __instance.ValidateAdd(drag_item.ComponentRef);
+            if (flag) return true;
+
+            Control.mod.Logger.LogDebug("Dropped item: " + drag_item.ComponentRef.ComponentDefID);
+
+            var item = drag_item.ComponentRef.Def as ICategory;
+
+            if (item == null || !item.CategoryDescriptor.AutoReplace || (item.CategoryDescriptor.MaxEquiped <=0 && item.CategoryDescriptor.MaxEquipedPerLocation <=0))
+            {
+                Control.mod.Logger.LogDebug("Item not need autoreplace, exit");
+                return true;
+            } 
 
 
-    //        if (drag_item.ComponentRef == null)
-    //        {
-    //            return false;
-    //        }
+            int count;
+            string name;
 
-    //        Control.mod.Logger.LogDebug("Dropped item: " + drag_item.ComponentRef.ComponentDefID);
+            var error = CategoryController.ValidateAdd(item, __instance, ___mechLab, out count, out name);
+            Control.mod.Logger.LogDebug(string.Format("Error: {0} - {1}", error, ___dropErrorMessage));
 
-    //        var item = drag_item.ComponentRef.Def as ICategory;
 
-    //        if (item == null || !item.CategoryDescriptor.AutoReplace)
-    //        {
-    //            Control.mod.Logger.LogDebug("Item not need autoreplace, exit");
-    //            return true;
-    //        }
+            if (error == CategoryError.AllowMix || error == CategoryError.None)
+                return true;
 
-    //        bool flag = __instance.ValidateAdd(drag_item.ComponentRef);
-    //        int count;
-    //        string name;
-    //        var error = CategoryController.ValidateAdd(item, __instance, ___mechLab, out count, out name);
+            //if (!flag && !___dropErrorMessage.EndsWith("Not enough free slots."))
+            //{
+            //    Control.mod.Logger.LogDebug("return by Not Enough slots?");
+            //    return true;
+            //}
 
-    //        if (error == CategoryError.AllowMix || error == CategoryError.None)
-    //            return true;
+            var n = ___localInventory.FindIndex(i => (i.ComponentRef.Def is ICategory) && (i.ComponentRef.Def as ICategory).Category == item.Category);
 
-    //        if (!flag && !___dropErrorMessage.EndsWith("Not enough free slots."))
-    //            return true;
-            
-                           
-    //        var n = ___localInventory.FindUniqueItem(new_item_info);
+            Control.mod.Logger.Log("index = " + n.ToString());
 
-    //        Control.mod.Logger.Log("index = " + n.ToString());
+            //if no - continue normal flow(add new or show "not enough slots" message
+            if (n < 0)
+                return true;
 
-    //        //if no - continue normal flow(add new or show "not enough slots" message
-    //        if (n < 0)
-    //            return true;
+            if (___usedSlots - ___localInventory[n].ComponentRef.Def.InventorySize + drag_item.ComponentRef.Def.InventorySize >
+                ___maxSlots)
+            {
+                return true;
+            }
 
-    //        if (___usedSlots - ___localInventory[n].ComponentRef.Def.InventorySize + drag_item.ComponentRef.Def.InventorySize >
-    //            ___maxSlots)
-    //        {
-    //            return true;
-    //        }
+            var old_item = ___localInventory[n];
+            __instance.OnRemoveItem(old_item, true);
+            ___mechLab.ForceItemDrop(old_item);
+            var clear = __instance.OnAddItem(drag_item, true);
+            if (__instance.Sim != null)
+            {
+                WorkOrderEntry_InstallComponent subEntry = __instance.Sim.CreateComponentInstallWorkOrder(
+                    ___mechLab.baseWorkOrder.MechID,
+                    drag_item.ComponentRef, __instance.loadout.Location, drag_item.MountedLocation);
+                ___mechLab.baseWorkOrder.AddSubEntry(subEntry);
+            }
 
-    //        var old_item = ___localInventory[n];
-    //        __instance.OnRemoveItem(old_item, true);
-    //        ___mechLab.ForceItemDrop(old_item);
-    //        var clear = __instance.OnAddItem(drag_item, true);
-    //        if (__instance.Sim != null)
-    //        {
-    //            WorkOrderEntry_InstallComponent subEntry = __instance.Sim.CreateComponentInstallWorkOrder(
-    //                ___mechLab.baseWorkOrder.MechID,
-    //                drag_item.ComponentRef, __instance.loadout.Location, drag_item.MountedLocation);
-    //            ___mechLab.baseWorkOrder.AddSubEntry(subEntry);
-    //        }
+            drag_item.MountedLocation = __instance.loadout.Location;
+            ___mechLab.ClearDragItem(clear);
+            __instance.RefreshHardpointData();
+            ___mechLab.ValidateLoadout(false);
+            return false;
+        }
 
-    //        drag_item.MountedLocation = __instance.loadout.Location;
-    //        ___mechLab.ClearDragItem(clear);
-    //        __instance.RefreshHardpointData();
-    //        ___mechLab.ValidateLoadout(false);
-    //        return false;
-    //    }
-
-    //}
+    }
 }
