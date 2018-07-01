@@ -3,11 +3,12 @@ using System;
 using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
+using System.IO;
 using BattleTech.Data;
 using System.Text.RegularExpressions;
 using BattleTech;
-using BattleTech.UI;
-using DynModLib;
+using HBS.Logging;
+using Newtonsoft.Json;
 
 
 namespace CustomComponents
@@ -17,21 +18,35 @@ namespace CustomComponents
         private static Dictionary<string, CustomComponentDescriptor> descriptors = new Dictionary<string, CustomComponentDescriptor>();
         private static Dictionary<string, CategoryDescriptor> categories = new Dictionary<string, CategoryDescriptor>();
 
-        public static Mod mod;
         public static CustomComponentSettings settings = new CustomComponentSettings();
+
+
+        internal static ILog Logger;
+        private static FileLogAppender logAppender;
 
 
         public static void Init(string directory, string settingsJSON)
         {
-            mod = new Mod(directory);
+
+            Logger = HBS.Logging.Logger.GetLogger("CustomComponents", LogLevel.Debug);
+            SetupLogging(directory);
 
             try
             {
                 //   mod.LoadSettings(settings);
-                mod.LoadSettings(settings);
+                try
+                {
+                    settings = JsonConvert.DeserializeObject<CustomComponentSettings>(settingsJSON);
+                }
+                catch (Exception)
+                {
+                    settings = new CustomComponentSettings();
+                }
 
                 var harmony = HarmonyInstance.Create("io.github.denadan.CustomComponents");
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
+
+
                 RegisterCustomTypes(Assembly.GetExecutingAssembly());
 
                 if (settings.LoadDefaultValidators)
@@ -45,13 +60,14 @@ namespace CustomComponents
 
                 // logging output can be found under BATTLETECH\BattleTech_Data\output_log.txt
                 // or also under yourmod/log.txt
-                mod.Logger.Log("Loaded " + mod.Name);
+                Logger.Log("Loaded CustomComponents");
 
                 AddCategory(new CategoryDescriptor("Unique") { MaxEquiped = 1, AutoReplace = true });
+                AddCategory(new CategoryDescriptor("HeatSink") { AllowMix = false });
             }
             catch (Exception e)
             {
-                mod.Logger.LogError(e);
+                Logger.LogError(e);
             }
         }
 
@@ -102,12 +118,13 @@ namespace CustomComponents
 
             string custom_type = custom.Result("$1");
 
-            Control.mod.Logger.LogDebug("Loading custom: " + custom_type);
+            Logger.LogDebug("Loading custom: " + custom_type);
+
 
             var custom_obj = Control.CreateNew(custom_type) as ICustomComponent;
             if (custom_obj == null || !(custom_obj is T))
             {
-                Control.mod.Logger.LogError("Error: Create new return null");
+                Logger.LogError("Error: Create new return null");
                 throw new ArgumentNullException("json");
             }
 
@@ -125,7 +142,7 @@ namespace CustomComponents
             resource = custom_obj as T;
             Traverse.Create(loader).Method("TryLoadDependencies", resource).GetValue();
             if (custom_obj is MechComponentDef)
-                Control.mod.Logger.LogDebug("Loaded: " + (custom_obj as MechComponentDef).Description.Id);
+                Logger.LogDebug("Loaded: " + (custom_obj as MechComponentDef).Description.Id);
 
             return false;
         }
@@ -160,8 +177,7 @@ namespace CustomComponents
 
         public static CategoryDescriptor GetCategory(string name)
         {
-            CategoryDescriptor c = null;
-            if (categories.TryGetValue(name, out c))
+            if (categories.TryGetValue(name, out var c))
                 return c;
             c = new CategoryDescriptor(name);
             categories.Add(name, c);
@@ -172,5 +188,58 @@ namespace CustomComponents
         {
             return categories.Values;
         }
+
+        #region LOGGING
+
+        internal static void SetupLogging(string Directory)
+        {
+            var logFilePath = Path.Combine(Directory, "log.txt");
+            try
+            {
+                ShutdownLogging();
+                AddLogFileForLogger(logFilePath);
+            }
+            catch (Exception e)
+            {
+                Logger.Log("CustomComponents: can't create log file", e);
+            }
+        }
+
+        internal static void ShutdownLogging()
+        {
+            if (logAppender == null)
+            {
+                return;
+            }
+
+            try
+            {
+                HBS.Logging.Logger.ClearAppender("CustomComponents");
+                logAppender.Flush();
+                logAppender.Close();
+            }
+            catch
+            {
+            }
+
+            logAppender = null;
+        }
+
+        private static void AddLogFileForLogger(string logFilePath)
+        {
+            try
+            {
+                logAppender = new FileLogAppender(logFilePath, FileLogAppender.WriteMode.INSTANT);
+
+                HBS.Logging.Logger.AddAppender("CustomComponents", logAppender);
+
+            }
+            catch (Exception e)
+            {
+                Logger.Log("CustomComponents: can't create log file", e);
+            }
+        }
+
+        #endregion
     }
 }

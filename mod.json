@@ -4,7 +4,7 @@
 	"Website": "https://github.com/Denadan/CustomComponets",
 
 	"Enabled": true,
-	"DependsOn": ["DynModLib"],
+	"DependsOn": [],
 	"DLL": "CustomComponents.dll",
 	"DLLEntryPoint": "CustomComponents.Control.Init",
 	
@@ -17,11 +17,6 @@
 		{
 			"Type": "HeatSinkDef",
 			"Path": "data/heatsink/",
-			"ShouldMergeJSON": false
-		},		
-		{
-			"Type": "ShopDef",
-			"Path": "data/shops/",
 			"ShouldMergeJSON": false
 		},		
 		{

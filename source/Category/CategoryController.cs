@@ -29,7 +29,8 @@ namespace CustomComponents
                                      {
                                          category = def.CategoryDescriptor,
                                          itemdef = item.Def,
-                                         itemref = item
+                                         itemref = item,
+                                         mix = def.GetMixCategory()
                                      }).GroupBy(i => i.category).ToDictionary(i => i.Key, i => i.ToList());
 
             foreach (var category in Control.GetCategories().Where(i => i.Requred))
@@ -53,8 +54,9 @@ namespace CustomComponents
 
                 if (!pair.Key.AllowMix)
                 {
-                    string def = pair.Value[0].itemdef.Description.Id;
-                    bool flag = pair.Value.Select(i => i.itemdef.Description.Id).Any(d => def != d);
+                    string def = pair.Value[0].mix;
+
+                    bool flag = pair.Value.Any(i => i.mix != def);
                     if (flag)
                     {
                         errors[MechValidationType.InvalidInventorySlots].Add(string.Format(pair.Key.ValidateMixed,
@@ -83,7 +85,7 @@ namespace CustomComponents
             var category = component.CategoryDescriptor;
 
             var items = mechlab.activeMechDef.Inventory
-                .Where(i => (i.Def is ICategory) && (i.Def as ICategory).CategoryDescriptor == category).ToList();
+                .Where(i => (i.Def as ICategory)?.CategoryDescriptor == category).ToList();
 
             count = 0;
             location = "";
@@ -116,7 +118,7 @@ namespace CustomComponents
 
             if (!category.AllowMix)
             {
-                if (items.Any(i => i.Def.Description.Id != (component as MechComponentDef).Description.Id))
+                if (items.Any(i => (i.Def as ICategory).GetMixCategory() != component.GetMixCategory()))
                     return CategoryError.AllowMix;
             }
 
@@ -130,17 +132,14 @@ namespace CustomComponents
                 return false;
 
             if (!(component is ICategory))
-                return current_result;
+                return true;
 
-            int count;
-            string location_name;
-
-            var error = ValidateAdd(component as ICategory, widget, mechlab, out count, out location_name);
+            var error = ValidateAdd(component as ICategory, widget, mechlab, out var count, out var location_name);
 
             if (error == CategoryError.None)
                 return true;
 
-            var category = (component as ICategory).CategoryDescriptor;
+            var category = ((ICategory) component).CategoryDescriptor;
 
             switch (error)
             {
@@ -182,51 +181,37 @@ namespace CustomComponents
             {
                 return false;
             }
-            if (___mechLab.DragItem == null)
-            {
-                return false;
-            }
 
             var drag_item = ___mechLab.DragItem;
 
-            if (drag_item.ComponentRef == null)
+            if (drag_item?.ComponentRef == null)
             {
                 return false;
             }
 
-            bool flag = __instance.ValidateAdd(drag_item.ComponentRef);
+            var flag = __instance.ValidateAdd(drag_item.ComponentRef);
             if (flag) return true;
 
-            Control.mod.Logger.LogDebug("Dropped item: " + drag_item.ComponentRef.ComponentDefID);
+            Control.Logger.LogDebug("Dropped item: " + drag_item.ComponentRef.ComponentDefID);
 
-            var item = drag_item.ComponentRef.Def as ICategory;
-
-            if (item == null || !item.CategoryDescriptor.AutoReplace || (item.CategoryDescriptor.MaxEquiped <=0 && item.CategoryDescriptor.MaxEquipedPerLocation <=0))
+            if (!(drag_item.ComponentRef.Def is ICategory item) || !item.CategoryDescriptor.AutoReplace || 
+                (item.CategoryDescriptor.MaxEquiped <=0 && item.CategoryDescriptor.MaxEquipedPerLocation <=0))
             {
-                Control.mod.Logger.LogDebug("Item not need autoreplace, exit");
+                Control.Logger.LogDebug("Item not need autoreplace, exit");
                 return true;
-            } 
+            }
 
 
-            int count;
-            string name;
-
-            var error = CategoryController.ValidateAdd(item, __instance, ___mechLab, out count, out name);
-            Control.mod.Logger.LogDebug(string.Format("Error: {0} - {1}", error, ___dropErrorMessage));
+            var error = CategoryController.ValidateAdd(item, __instance, ___mechLab, out _, out _);
+            Control.Logger.LogDebug($"Error: {error} - {___dropErrorMessage}");
 
 
             if (error == CategoryError.AllowMix || error == CategoryError.None)
                 return true;
 
-            //if (!flag && !___dropErrorMessage.EndsWith("Not enough free slots."))
-            //{
-            //    Control.mod.Logger.LogDebug("return by Not Enough slots?");
-            //    return true;
-            //}
+            var n = ___localInventory.FindIndex(i => (i.ComponentRef.Def as ICategory)?.Category == item.Category);
 
-            var n = ___localInventory.FindIndex(i => (i.ComponentRef.Def is ICategory) && (i.ComponentRef.Def as ICategory).Category == item.Category);
-
-            Control.mod.Logger.Log("index = " + n.ToString());
+            Control.Logger.Log("index = " + n.ToString());
 
             //if no - continue normal flow(add new or show "not enough slots" message
             if (n < 0)

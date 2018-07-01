@@ -21,8 +21,7 @@ namespace CustomComponents
             this.info.parameter = parameters;
             this.info.methodName = method;
 
-            Control.mod.Logger.LogDebug(string.Format("Type: {0}\tMethod: {1}",
-                this.info.originalType, this.info.methodName));
+            Control.Logger.LogDebug($"Type: {this.info.originalType}\tMethod: {this.info.methodName}");
         }
     }
 }

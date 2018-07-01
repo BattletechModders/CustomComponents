@@ -1,9 +1,8 @@
-﻿using DynModLib;
-
-namespace CustomComponents
+﻿namespace CustomComponents
 {
-    public class CustomComponentSettings : ModSettings
+    public class CustomComponentSettings 
     {
         public bool LoadDefaultValidators = true;
+        public string LogLevel = "Debug";
     }
 }

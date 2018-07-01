@@ -1,8 +1,7 @@
 {
-	"CustomType" : "WeightHeatSink",
-	"Color" : "Red",
-	"MinTonnage" : 20,
-	"MaxTonnage" : 35,
+	"CustomType" : "CategoryHeatSink",
+	"Category" : "HeatSink",
+	"MixCategory" : "IS-Single",
     "DissipationCapacity" : 3,
     "Description" : {
         "Cost" : 30000,
@@ -10,9 +9,9 @@
         "Purchasable" : true,
         "Manufacturer" : "Generic",
         "Model" : "Standard",
-        "UIName" : "Heat Sink L",
-        "Id" : "Gear_HeatSink_Weight_light",
-        "Name" : "Light Standard Heat Sink",
+        "UIName" : "Heat Sink",
+        "Id" : "Gear_HeatSink_Generic_Standard",
+        "Name" : "Standard Heat Sink",
         "Details" : "Heat Sinks actively expel thermal energy generated from firing weaponry or other sources, preventing damage from excessive heat buildup. Their effectiveness can be impacted by the surrounding environment, positively or negatively.",
         "Icon" : "uixSvgIcon_equipment_Heatsink"
     },
