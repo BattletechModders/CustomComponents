@@ -54,8 +54,8 @@ namespace CustomComponents
                     Validator.RegisterMechValidator(WeighLimitedController.ValidateMech, WeighLimitedController.ValidateMechCanBeFielded);
                     Validator.RegisterMechValidator(CategoryController.ValidateMech, CategoryController.ValidateMechCanBeFielded);
 
-                    Validator.RegisterAddValidator(typeof(IWeightLimited), WeighLimitedController.ValidateAdd);
-                    Validator.RegisterAddValidator(typeof(ICategory), CategoryController.ValidateAdd);
+                    Validator.RegisterAddValidator(WeighLimitedController.ValidateAdd);
+                    Validator.RegisterAddValidator(CategoryController.ValidateAdd);
                 }
 
                 Logger.Log("Loaded CustomComponents");

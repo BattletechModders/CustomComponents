@@ -13,13 +13,13 @@
 		"Categories": [
 			{
 			  "AutoReplace": true,
-			  "MaxEquiped":  3,
+			  "MaxEquiped":  2,
 			  "MaxEquipedPerLocation" : 1,
 			  "MinEquiped":  2,
 			  "Name": "LegActuator",
 			  "displayName": "Leg Actuators",
 			  "AllowRemove" : false,
-			  "DefaultReplace" : ""
+			  "DefaultReplace" : "Gear_Actuator_Default"
 			},
 			{
 			  "Name": "HeatSink",

@@ -7,7 +7,7 @@ using TMPro;
 
 namespace CustomComponents
 {
-    internal enum CategoryError
+    public enum CategoryError
     {
         None,
         AreadyEquiped,
@@ -78,7 +78,7 @@ namespace CustomComponents
             }
         }
 
-        internal static CategoryError ValidateAdd(ICategory component, MechLabLocationWidget widget,
+        public static CategoryError ValidateAdd(ICategory component, MechLabLocationWidget widget,
             MechLabPanel mechlab, out int count, out string location)
         {
             var category = component.CategoryDescriptor;
@@ -124,7 +124,7 @@ namespace CustomComponents
             return CategoryError.None;
         }
 
-        public static bool ValidateAdd(MechComponentDef component, MechLabLocationWidget widget,
+        internal static bool ValidateAdd(MechComponentDef component, MechLabLocationWidget widget,
             bool current_result, ref string errorMessage, MechLabPanel mechlab)
         {
             if (!current_result)

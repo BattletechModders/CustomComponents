@@ -12,7 +12,7 @@ namespace CustomComponents
     /// </summary>
     public static class Validator
     {
-        static Dictionary<Type, ValidateAddDelegate> add_validators = new Dictionary<Type, ValidateAddDelegate>();
+        static List<ValidateAddDelegate> add_validators = new List<ValidateAddDelegate>();
         static List<ValidateMechDelegate> mech_validators = new  List<ValidateMechDelegate>();
 
         private static List<ValidateMechCanBeFieldedDelegate> field_validators =
@@ -23,9 +23,9 @@ namespace CustomComponents
         /// </summary>
         /// <param name="type"></param>
         /// <param name="validator"></param>
-        public static void RegisterAddValidator(Type type, ValidateAddDelegate validator)
+        public static void RegisterAddValidator(ValidateAddDelegate validator)
         {
-            add_validators.Add(type, validator);
+            add_validators.Add(validator);
         }
 
         /// <summary>
@@ -43,10 +43,7 @@ namespace CustomComponents
         {
             foreach (var validator in add_validators)
             {
-                if (validator.Key.IsInstanceOfType(component))
-                {
-                    result = validator.Value(component, widget, result, ref errorMessage, mechlab);
-                }
+                result = validator(component, widget, result, ref errorMessage, mechlab);
             }
 
             return result;
