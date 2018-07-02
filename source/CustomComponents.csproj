@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CustomComponents</RootNamespace>
     <AssemblyName>CustomComponents</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -45,7 +45,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
-      <HintPath>$(BattleTechDir)\BattleTech_Data\Managed\System.Core.dll</HintPath>
+      <HintPath>..\..\..\BattleTech_Data\Managed\System.Core.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Serialization">
@@ -74,6 +75,8 @@
     <Compile Include="Category\CategoryController.cs" />
     <Compile Include="Category\CategoryDescriptor.cs" />
     <Compile Include="Category\ICategory.cs" />
+    <Compile Include="Category\IDefault.cs" />
+    <Compile Include="Category\RemoveController.cs" />
     <Compile Include="ColorChanger\IColorComponent.cs" />
     <Compile Include="ColorChanger\MechComponentRef_GetUIColor_Patch.cs" />
     <Compile Include="Control.cs" />
@@ -83,6 +86,7 @@
     <Compile Include="CustomTypes\CustomJumpJetDef.cs" />
     <Compile Include="CustomTypes\CustomWeaponDef.cs" />
     <Compile Include="CustomTypes\CustomHeatSinkDef.cs" />
+    <Compile Include="CustomTypes\Test.cs" />
     <Compile Include="Tooltips.cs" />
     <Compile Include="Validators\LocationHelper.cs" />
     <Compile Include="Validators\MechLabHelper.cs" />

@@ -37,12 +37,9 @@ namespace CustomComponents
                 try
                 {
                     settings = JsonConvert.DeserializeObject<CustomComponentSettings>(settingsJSON);
-                    Logger.LogError("TEST: Loaded");
-                    Logger.LogError(settingsJSON);
                 }
                 catch (Exception e)
                 {
-                    Logger.LogError("TEST: Erorr", e);
                     settings = new CustomComponentSettings();
                 }
 
@@ -66,9 +63,11 @@ namespace CustomComponents
                 foreach (var categoryDescriptor in settings.Categories)
                 {
                     AddCategory(categoryDescriptor);
-                    Logger.LogDebug(categoryDescriptor.Name + " " + categoryDescriptor.DisplayName);
+                    Logger.LogDebug(categoryDescriptor.Name + " - " + categoryDescriptor.DisplayName);
                 }
                 Logger.LogDebug("done");
+
+                
             }
             catch (Exception e)
             {

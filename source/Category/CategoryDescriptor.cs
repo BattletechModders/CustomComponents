@@ -30,6 +30,17 @@ namespace CustomComponents
         [DefaultValue(0), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public int MinEquiped = 0;
 
+        [DefaultValue(true), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public bool AllowRemove = true;
+
+        [DefaultValue(""), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public string DefaultReplace = "";
+
+        [DefaultValue(false), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public bool AutoRepairOnReplace = false;
+
+        [DefaultValue(""), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public string DefaultRepair = "";
 
 
         [DefaultValue("{0} already installed on mech"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
