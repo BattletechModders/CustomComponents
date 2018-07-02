@@ -26,6 +26,8 @@ namespace CustomComponents
         {
             return JSONSerializationUtility.ToJSON<T>(this as T);
         }
+
+        public Type TooltipType => TooltipHelper.GetTooltipType(new JumpJetDef());
     }
 
     [Custom("CategoryJumpJet")]

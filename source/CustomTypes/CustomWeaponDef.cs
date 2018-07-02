@@ -1,5 +1,7 @@
-﻿using BattleTech;
+﻿using System;
+using BattleTech;
 using BattleTech.UI;
+using BattleTech.UI.Tooltips;
 using HBS.Util;
 
 namespace CustomComponents
@@ -23,6 +25,8 @@ namespace CustomComponents
         {
             return JSONSerializationUtility.ToJSON<T>(this as T);
         }
+
+        public Type TooltipType => TooltipHelper.GetTooltipType(new WeaponDef());
     }
 
     [Custom("CategoryWeapon")]

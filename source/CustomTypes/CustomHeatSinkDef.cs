@@ -1,4 +1,5 @@
-﻿using BattleTech;
+﻿using System;
+using BattleTech;
 using BattleTech.UI;
 using HBS.Util;
 
@@ -23,6 +24,8 @@ namespace CustomComponents
         {
             return JSONSerializationUtility.ToJSON<T>(this as T);
         }
+
+        public Type TooltipType => TooltipHelper.GetTooltipType(new HeatSinkDef());
     }
 
     [Custom("CategoryHeatSink")]
