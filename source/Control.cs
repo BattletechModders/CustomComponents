@@ -108,6 +108,7 @@ namespace CustomComponents
             }
         }
 
+        private static readonly Regex CustomTypeRegex = new Regex(@"""CustomType""\s*:\s*""([^""]+)""", RegexOptions.Compiled);
 
         public static bool LoaderPatch<T>(DataManager.ResourceLoadRequest<T> loader,
             string json, ref T resource)
@@ -117,11 +118,11 @@ namespace CustomComponents
 
             //Control.mod.Logger.Log("loading " + (id.Success ? id.Result("$1") : "not found"));
 
-            var custom = Regex.Match(json, "\"CustomType\" : \"(.+?)\"");
+            var custom = CustomTypeRegex.Match(json);
             if (!custom.Success)
                 return true;
 
-            string custom_type = custom.Result("$1");
+            string custom_type = custom.Groups[1].Value;
 
             Logger.LogDebug("Loading custom: " + custom_type);
 

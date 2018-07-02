@@ -11,6 +11,8 @@ namespace CustomComponents
         string CustomType { get; }
         void FromJson(string json);
         string ToJson();
+
+        Type TooltipType { get; }
     }
 
     /// <summary>
@@ -47,4 +49,3 @@ namespace CustomComponents
         }
     }
 }
-
