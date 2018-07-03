@@ -2,8 +2,6 @@
 using System.Linq;
 using BattleTech;
 using BattleTech.UI;
-using Harmony;
-using TMPro;
 
 namespace CustomComponents
 {
@@ -17,9 +15,9 @@ namespace CustomComponents
         AllowMix
     }
 
-    public static class CategoryController
+    internal static class CategoryController
     {
-        public static void ValidateMech(Dictionary<MechValidationType, List<string>> errors,
+        internal static void ValidateMech(Dictionary<MechValidationType, List<string>> errors,
             MechValidationLevel validationLevel, MechDef mechDef)
         {
             var items_by_category = (from item in mechDef.Inventory
@@ -78,7 +76,7 @@ namespace CustomComponents
             }
         }
 
-        public static CategoryError ValidateAdd(ICategory component, MechLabLocationWidget widget,
+        internal static CategoryError ValidateAdd(ICategory component, MechLabLocationWidget widget,
             MechLabPanel mechlab, out int count, out string location)
         {
             var category = component.CategoryDescriptor;
@@ -127,18 +125,42 @@ namespace CustomComponents
         internal static bool ValidateAdd(MechComponentDef component, MechLabLocationWidget widget,
             bool current_result, ref string errorMessage, MechLabPanel mechlab)
         {
-            if (!current_result)
+            if (!current_result && !errorMessage.EndsWith("Not enough free slots."))
+            {
                 return false;
+            }
 
             if (!(component is ICategory))
-                return true;
+                return current_result;
 
             var error = ValidateAdd(component as ICategory, widget, mechlab, out var count, out var location_name);
 
             if (error == CategoryError.None)
-                return true;
+                return current_result;
 
             var category = ((ICategory)component).CategoryDescriptor;
+            var state = new CategoryValidatorState
+            {
+                Error = error,
+                NotEnoughSlots = current_result,
+                descriptor = category
+            };
+
+            Validator.AddState(state);
+
+            if (category.AutoReplace &&
+                (error == CategoryError.MaximumReached || error == CategoryError.MaximumReachedLocation))
+            {
+                var helper = new LocationHelper(widget);
+                state.ReplacementIndex =
+                    helper.LocalInventory.FindIndex(i => (i.Def is ICategory cat) && cat.CategoryID == category.Name);
+                if (state.ReplacementIndex >= 0)
+                {
+                    state.Replacement = helper.LocalInventory[state.ReplacementIndex].Def;
+                    // if not enough slot to replace - it also not enough slot to fit, so Not Enough Slots message will pop up
+                    return helper.UsedSlots - state.Replacement.InventorySize + component.InventorySize <= helper.MaxSlots;
+                }
+            }
 
             switch (error)
             {
@@ -203,85 +225,5 @@ namespace CustomComponents
 
             return true;
         }
-    }
-
-    [HarmonyPatch(typeof(MechLabLocationWidget), "OnMechLabDrop")]
-    public static class MechLabLocationWidget_OnDrop_Patch_Unique
-    {
-        public static bool Prefix(MechLabLocationWidget __instance, ref string ___dropErrorMessage,
-            List<MechLabItemSlotElement> ___localInventory,
-            int ___usedSlots,
-            int ___maxSlots,
-            TextMeshProUGUI ___locationName,
-            MechLabPanel ___mechLab)
-        {
-            if (!Control.settings.LoadDefaultValidators)
-                return true;
-
-            if (!___mechLab.Initialized)
-            {
-                return false;
-            }
-
-            var drag_item = ___mechLab.DragItem;
-
-            if (drag_item?.ComponentRef == null)
-            {
-                return false;
-            }
-
-            var flag = __instance.ValidateAdd(drag_item.ComponentRef);
-            if (flag) return true;
-
-            Control.Logger.LogDebug("Dropped item: " + drag_item.ComponentRef.ComponentDefID);
-
-            if (!(drag_item.ComponentRef.Def is ICategory item) || !item.CategoryDescriptor.AutoReplace ||
-                (item.CategoryDescriptor.MaxEquiped <= 0 && item.CategoryDescriptor.MaxEquipedPerLocation <= 0))
-            {
-                Control.Logger.LogDebug("Item not need autoreplace, exit");
-                return true;
-            }
-
-
-            var error = CategoryController.ValidateAdd(item, __instance, ___mechLab, out _, out _);
-            Control.Logger.LogDebug($"Error: {error} - {___dropErrorMessage}");
-
-
-            if (error == CategoryError.AllowMix || error == CategoryError.None)
-                return true;
-
-            var n = ___localInventory.FindIndex(i => (i.ComponentRef.Def as ICategory)?.CategoryID == item.CategoryID);
-
-            Control.Logger.Log("index = " + n.ToString());
-
-            //if no - continue normal flow(add new or show "not enough slots" message
-            if (n < 0)
-                return true;
-
-            if (___usedSlots - ___localInventory[n].ComponentRef.Def.InventorySize + drag_item.ComponentRef.Def.InventorySize >
-                ___maxSlots)
-            {
-                return true;
-            }
-
-            var old_item = ___localInventory[n];
-            __instance.OnRemoveItem(old_item, true);
-            ___mechLab.ForceItemDrop(old_item);
-            var clear = __instance.OnAddItem(drag_item, true);
-            if (__instance.Sim != null)
-            {
-                WorkOrderEntry_InstallComponent subEntry = __instance.Sim.CreateComponentInstallWorkOrder(
-                    ___mechLab.baseWorkOrder.MechID,
-                    drag_item.ComponentRef, __instance.loadout.Location, drag_item.MountedLocation);
-                ___mechLab.baseWorkOrder.AddSubEntry(subEntry);
-            }
-
-            drag_item.MountedLocation = __instance.loadout.Location;
-            ___mechLab.ClearDragItem(clear);
-            __instance.RefreshHardpointData();
-            ___mechLab.ValidateLoadout(false);
-            return false;
-        }
-
     }
 }

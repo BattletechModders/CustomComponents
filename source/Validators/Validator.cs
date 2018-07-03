@@ -13,10 +13,12 @@ namespace CustomComponents
     public static class Validator
     {
         static List<ValidateAddDelegate> add_validators = new List<ValidateAddDelegate>();
-        static List<ValidateMechDelegate> mech_validators = new  List<ValidateMechDelegate>();
+        static List<ValidateMechDelegate> mech_validators = new List<ValidateMechDelegate>();
 
         private static List<ValidateMechCanBeFieldedDelegate> field_validators =
             new List<ValidateMechCanBeFieldedDelegate>();
+
+        private static List<Object> validator_state = new List<object>();
 
         /// <summary>
         /// register new AddValidator
@@ -32,14 +34,15 @@ namespace CustomComponents
         /// register new mech validator
         /// </summary>
         /// <param name="validator"></param>
-        public static void RegisterMechValidator(ValidateMechDelegate mechvalidator, ValidateMechCanBeFieldedDelegate fieldvalidator)
+        public static void RegisterMechValidator(ValidateMechDelegate mechvalidator,
+            ValidateMechCanBeFieldedDelegate fieldvalidator)
         {
-            if(mechvalidator != null) mech_validators.Add(mechvalidator);
+            if (mechvalidator != null) mech_validators.Add(mechvalidator);
             if (fieldvalidator != null) field_validators.Add(fieldvalidator);
         }
 
-
-        internal static bool ValidateAdd(MechComponentDef component, MechLabLocationWidget widget, bool result, ref string errorMessage, MechLabPanel mechlab)
+        internal static bool ValidateAdd(MechComponentDef component, MechLabLocationWidget widget, bool result,
+            ref string errorMessage, MechLabPanel mechlab)
         {
             foreach (var validator in add_validators)
             {
@@ -65,24 +68,23 @@ namespace CustomComponents
                 if (!validateMechCanBeFieldedDelegate(mechDef))
                     return false;
             }
+
             return true;
         }
-    }
 
-    [HarmonyPatch(typeof(MechLabLocationWidget), "ValidateAdd", new Type[] { typeof(MechComponentDef) })]
-    internal static class MechLabLocationWidget_ValidateAdd_Patch
-    {
-        internal static void Postfix(MechComponentDef newComponentDef,
-            MechLabLocationWidget __instance, ref bool __result, ref string ___dropErrorMessage,
-            MechLabPanel ___mechLab
-        )
+        internal static void ClearValidatorState()
         {
-            __result = Validator.ValidateAdd(newComponentDef, __instance, __result, ref ___dropErrorMessage, ___mechLab);
-            if (newComponentDef is IValidateAdd)
-            {
-                __result = (newComponentDef as IValidateAdd).ValidateAdd(__instance, __result, ref ___dropErrorMessage,
-                    ___mechLab);
-            }
+            validator_state.Clear();
+        }
+
+        public static void AddState(CategoryValidatorState state)
+        {
+            validator_state.Add(state);
+        }
+
+        public static T GetState<T>()
+        {
+            return validator_state.OfType<T>().FirstOrDefault();
         }
     }
 
@@ -100,38 +102,6 @@ namespace CustomComponents
                 .OfType<IMechValidate>())
             {
                 component.ValidateMech(__result, validationLevel, mechDef);
-            }
-        }
-    }
-
-    [HarmonyPatch(typeof(MechValidationRules), "ValidateMechCanBeFielded")]
-    public static class MechValidationRules_ValidateMechCanBeFielded_Patch
-    {
-        public static void Postfix(MechDef mechDef, ref bool __result)
-        {
-            try
-            {
-                if (!__result)
-                {
-                    return;
-                }
-
-                if (!Validator.ValidateMechCanBeFielded(mechDef))
-                {
-                    __result = false;
-                    return;
-                }
-
-                foreach (var component in mechDef.Inventory.Where(i => i.Def != null).Select(i => i.Def).OfType<IMechValidate>())
-                {
-                    __result = component.ValidateMechCanBeFielded(mechDef);
-                    if (__result)
-                        return;
-                }
-            }
-            catch (Exception e)
-            {
-                Control.Logger.LogError(e);
             }
         }
     }

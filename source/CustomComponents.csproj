@@ -74,10 +74,15 @@
   <ItemGroup>
     <Compile Include="Category\CategoryController.cs" />
     <Compile Include="Category\CategoryDescriptor.cs" />
+    <Compile Include="Category\CategoryValidatorState.cs" />
     <Compile Include="Category\ICategory.cs" />
     <Compile Include="Category\IDefault.cs" />
+    <Compile Include="Category\MechLabLocationWidget_OnDrop_Patch_Category.cs" />
+    <Compile Include="Category\MechLabLocationWidget_OnItemGrab_Patch.cs" />
     <Compile Include="Category\RemoveController.cs" />
     <Compile Include="ColorChanger\IColorComponent.cs" />
+    <Compile Include="ColorChanger\ListElementController_SalvageGear_NotListView_RefreshItemColor_Patch.cs" />
+    <Compile Include="ColorChanger\ListElementController_SalvageGear_RefreshItemColor_Patch.cs" />
     <Compile Include="ColorChanger\MechComponentRef_GetUIColor_Patch.cs" />
     <Compile Include="Control.cs" />
     <Compile Include="CustomComponentSettings.cs" />
@@ -90,6 +95,9 @@
     <Compile Include="Tooltips.cs" />
     <Compile Include="Validators\LocationHelper.cs" />
     <Compile Include="Validators\MechLabHelper.cs" />
+    <Compile Include="Validators\MechLabLocationWidget_OnDrop_Patch.cs" />
+    <Compile Include="Validators\MechLabLocationWidget_ValidateAdd_Patch.cs" />
+    <Compile Include="Validators\MechValidationRules_ValidateMechCanBeFielded_Patch.cs" />
     <Compile Include="Validators\ValidatorInterfaces.cs" />
     <Compile Include="Validators\Validator.cs" />
     <Compile Include="HarmonyNested\HarmonyNestedAttribute.cs" />

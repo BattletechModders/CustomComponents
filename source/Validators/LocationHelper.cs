@@ -10,19 +10,24 @@ namespace CustomComponents
     {
         private Traverse main = null;
 
-        private Traverse inventory = null;
         private Traverse maxSlots = null, usedSlots = null;
         private Traverse location_name;
 
         public MechLabLocationWidget Location { get; private set; }
+        private List<MechComponentRef> inventory;
 
-        public IEnumerable<MechComponentRef> LocalInventory
+
+        public List<MechComponentRef> LocalInventory
         {
             get
             {
                 if (inventory == null)
-                    inventory = main.Field("localInventory");
-                return inventory.GetValue<List<MechLabItemSlotElement>>().Select(i => i.ComponentRef);
+                {
+                    var inv = main.Field("localInventory");
+                    inventory = inv.GetValue<List<MechLabItemSlotElement>>().Select(i => i.ComponentRef).ToList();
+                }
+
+                return inventory;
             }
         }
 
