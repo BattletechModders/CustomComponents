@@ -125,20 +125,36 @@ namespace CustomComponents
         internal static bool ValidateAdd(MechComponentDef component, MechLabLocationWidget widget,
             bool current_result, ref string errorMessage, MechLabPanel mechlab)
         {
-            if (!current_result && !errorMessage.EndsWith("Not enough free slots."))
+            Control.Logger.LogDebug($"ICategory validation start for {widget.loadout?.Location.ToString() ?? "???"}");
+
+            if (!current_result)
             {
-                return false;
+                var old_state = Validator.GetState<BTValidateState>();
+                if (old_state == null || old_state.Error != BTValidateState.ErrorType.Size)
+                {
+                    Control.Logger.LogDebug($"Category: old error: {(old_state == null ? "none" : old_state.Error.ToString())}");
+                    return false;
+                }
+
             }
 
-            if (!(component is ICategory))
+            if (!(component is ICategory cat_component))
+            {
+                Control.Logger.LogDebug("Not a category");
                 return current_result;
+            }
 
-            var error = ValidateAdd(component as ICategory, widget, mechlab, out var count, out var location_name);
+            var error = ValidateAdd(cat_component, widget, mechlab, out var count, out var location_name);
+
+
+            Control.Logger.LogDebug($"Category: {cat_component.CategoryID}, Error: {error}");
+
 
             if (error == CategoryError.None)
                 return current_result;
 
-            var category = ((ICategory)component).CategoryDescriptor;
+            var category = cat_component.CategoryDescriptor;
+
             var state = new CategoryValidatorState
             {
                 Error = error,
@@ -146,21 +162,34 @@ namespace CustomComponents
                 descriptor = category
             };
 
+            Control.Logger.LogDebug($"Category: Validator state create");
+
+
             Validator.AddState(state);
 
             if (category.AutoReplace &&
-                (error == CategoryError.MaximumReached || error == CategoryError.MaximumReachedLocation))
+                (error != CategoryError.AllowMix))
             {
+                Control.Logger.LogDebug($"Category: Search for repacement");
+
                 var helper = new LocationHelper(widget);
+
                 state.ReplacementIndex =
                     helper.LocalInventory.FindIndex(i => (i.Def is ICategory cat) && cat.CategoryID == category.Name);
+
+                Control.Logger.LogDebug($"Category: index {state.ReplacementIndex}");
+
                 if (state.ReplacementIndex >= 0)
                 {
                     state.Replacement = helper.LocalInventory[state.ReplacementIndex].Def;
+
+                    Control.Logger.LogDebug($"Category: replace: {helper.UsedSlots} - {state.Replacement.InventorySize} + {component.InventorySize} <= {helper.MaxSlots}");
                     // if not enough slot to replace - it also not enough slot to fit, so Not Enough Slots message will pop up
                     return helper.UsedSlots - state.Replacement.InventorySize + component.InventorySize <= helper.MaxSlots;
                 }
             }
+
+            Control.Logger.LogDebug($"Category: return error message");
 
             switch (error)
             {

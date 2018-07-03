@@ -93,10 +93,11 @@
     <Compile Include="CustomTypes\CustomHeatSinkDef.cs" />
     <Compile Include="CustomTypes\Test.cs" />
     <Compile Include="Tooltips.cs" />
+    <Compile Include="Validators\BTValidarorState.cs" />
     <Compile Include="Validators\LocationHelper.cs" />
     <Compile Include="Validators\MechLabHelper.cs" />
     <Compile Include="Validators\MechLabLocationWidget_OnDrop_Patch.cs" />
-    <Compile Include="Validators\MechLabLocationWidget_ValidateAdd_Patch.cs" />
+    <Compile Include="Validators\MechValidationRulesValidate_ValidateMech_Patch.cs" />
     <Compile Include="Validators\MechValidationRules_ValidateMechCanBeFielded_Patch.cs" />
     <Compile Include="Validators\ValidatorInterfaces.cs" />
     <Compile Include="Validators\Validator.cs" />

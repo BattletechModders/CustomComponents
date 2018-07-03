@@ -10,7 +10,7 @@ namespace CustomComponents
     [HarmonyPatch(typeof(MechLabLocationWidget), "OnMechLabDrop")]
     internal static class MechLabLocationWidget_OnDrop_Patch_Category
     {
-        public static bool Prefix(MechLabLocationWidget __instance, ref string ___dropErrorMessage,
+        public static bool Prefix(MechLabLocationWidget __instance, 
             List<MechLabItemSlotElement> ___localInventory,
             int ___usedSlots,
             int ___maxSlots,
@@ -18,7 +18,7 @@ namespace CustomComponents
             MechLabPanel ___mechLab,
             PointerEventData eventData)
         {
-            var error_message = ___dropErrorMessage;
+            var error_message = "";
             var drag_item = ___mechLab.DragItem;
 
             void cancel_drop()
@@ -44,9 +44,13 @@ namespace CustomComponents
                 ___mechLab.ValidateLoadout(false);
             }
 
+            Control.Logger.LogDebug($"========= Addding Item ===========");
 
             if (!Control.settings.LoadDefaultValidators)
+            {
+                Control.Logger.LogDebug($"Addding Item: default validators not enabled");
                 return true;
+            }
 
             if (!___mechLab.Initialized)
             {
@@ -59,15 +63,22 @@ namespace CustomComponents
                 return false;
             }
 
-            var flag = __instance.ValidateAdd(drag_item.ComponentRef);
+            //___dropErrorMessage = "";
+
+            var flag = Validator.ValidateAdd(drag_item.ComponentRef.Def, __instance, ___mechLab, ref error_message);
+
+            Control.Logger.LogDebug($"========= Validate done ===========");
+
             if (!flag)
             {
+                Control.Logger.LogDebug($"Addding Item: validate add - false, cancel drop");
                 cancel_drop();
                 return false;
             }
 
             if (!(drag_item.ComponentRef.Def is ICategory item))
             {
+                Control.Logger.LogDebug($"Addding Item: item not category");
                 complete_drop();
                 return false;
             }
@@ -75,6 +86,8 @@ namespace CustomComponents
             var state = Validator.GetState<CategoryValidatorState>();
             if (state == null || state.descriptor.Name != item.CategoryID || state.ReplacementIndex < 0)
             {
+                Control.Logger.LogDebug($"Addding Item: item not category");
+
                 complete_drop();
                 return false;
             }

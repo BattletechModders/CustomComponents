@@ -166,20 +166,30 @@ namespace CustomComponents
 
         internal static void AddNewCategory(string category)
         {
-            CategoryDescriptor c = null;
-            if (categories.TryGetValue(category, out c))
+            Logger.LogDebug($"Create new category: {category}");
+            if (categories.TryGetValue(category, out _))
+            {
+                Logger.LogDebug("Already exist");
                 return;
-            c = new CategoryDescriptor { Name = category };
+            }
+
+            var c = new CategoryDescriptor { Name = category };
             categories.Add(category, c);
         }
 
         public static void AddCategory(CategoryDescriptor category)
         {
-            CategoryDescriptor c = null;
-            if (categories.TryGetValue(category.Name, out c))
+            Logger.LogDebug($"Add Category: {category.Name}");
+            if (categories.TryGetValue(category.Name, out var c))
+            {
+                Logger.LogDebug($"Already have, apply: {category.Name}");
                 c.Apply(category);
+            }
             else
+            {
+                Logger.LogDebug($"Adding new: {category.Name}");
                 categories.Add(category.Name, category);
+            }
         }
 
         public static CategoryDescriptor GetCategory(string name)

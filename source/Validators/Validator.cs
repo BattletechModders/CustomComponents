@@ -1,6 +1,5 @@
 ﻿using BattleTech;
 using BattleTech.UI;
-using Harmony;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,13 +40,101 @@ namespace CustomComponents
             if (fieldvalidator != null) field_validators.Add(fieldvalidator);
         }
 
-        internal static bool ValidateAdd(MechComponentDef component, MechLabLocationWidget widget, bool result,
-            ref string errorMessage, MechLabPanel mechlab)
+
+        private static bool BTValidateAdd(MechComponentDef component, MechLabLocationWidget widget,
+            MechLabPanel mechlab, ref string errorMessage)
         {
+            var helper = new LocationHelper(widget);
+            if (widget.loadout.CurrentInternalStructure <= 0f)
+            {
+                errorMessage =
+                    $"Cannot add {component.Description.Name} to {helper.LocationName}: The location is Destroyed.";
+                AddState(new BTValidateState { Error = BTValidateState.ErrorType.LocationDestroyed});
+                return false;
+            }
+
+            if (helper.UsedSlots + component.InventorySize > helper.MaxSlots)
+            {
+                errorMessage =
+                    $"Cannot add {component.Description.Name} to {helper.LocationName}: Not enough free slots.";
+                AddState(new BTValidateState { Error = BTValidateState.ErrorType.Size });
+                return false;
+            }
+
+            if ((component.AllowedLocations & widget.loadout.Location) <= ChassisLocations.None)
+            {
+                errorMessage =
+                    $"Cannot add {component.Description.Name} to {helper.LocationName}: Component is not permitted in this location.";
+                AddState(new BTValidateState { Error = BTValidateState.ErrorType.WrongLocation });
+                return false;
+            }
+
+            if (component.ComponentType == ComponentType.Weapon)
+            {
+                int num = 0;
+                int num2 = 0;
+                WeaponDef weaponDef = component as WeaponDef;
+                switch (weaponDef.Category)
+                {
+                    case WeaponCategory.Ballistic:
+                        num = helper.currentBallisticCount;
+                        num2 = helper.totalBallisticHardpoints;
+                        break;
+                    case WeaponCategory.Energy:
+                        num = helper.currentEnergyCount;
+                        num2 = helper.totalEnergyHardpoints;
+                        break;
+                    case WeaponCategory.Missile:
+                        num = helper.currentMissileCount;
+                        num2 = helper.totalMissileHardpoints;
+                        break;
+                    case WeaponCategory.AntiPersonnel:
+                        num = helper.currentSmallCount;
+                        num2 = helper.totalSmallHardpoints;
+                        break;
+                }
+
+                if (num + 1 > num2)
+                {
+                    errorMessage =
+                        $"Cannot add {component.Description.Name} to {helper.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.";
+                    AddState(new BTValidateState { Error = BTValidateState.ErrorType.Hardpoints });
+                    return false;
+                }
+            }
+
+            if (component.ComponentType == ComponentType.JumpJet)
+            {
+                int num3 = mechlab.headWidget.currentJumpjetCount + mechlab.centerTorsoWidget.currentJumpjetCount +
+                           mechlab.leftTorsoWidget.currentJumpjetCount + mechlab.rightTorsoWidget.currentJumpjetCount +
+                           mechlab.leftArmWidget.currentJumpjetCount + mechlab.rightArmWidget.currentJumpjetCount +
+                           mechlab.leftLegWidget.currentJumpjetCount + mechlab.rightLegWidget.currentJumpjetCount;
+                if (num3 + 1 > mechlab.activeMechDef.Chassis.MaxJumpjets)
+                {
+                    errorMessage =
+                        $"Cannot add {component.Description.Name} to {helper.LocationName}: Max number of jumpjets for 'Mech reached.";
+                    return false;
+                }
+            }
+            return true;
+        }
+        
+        internal static bool ValidateAdd(MechComponentDef component, MechLabLocationWidget widget, MechLabPanel mechlab, ref string errorMessage)
+        {
+            ClearValidatorState();
+
+            // var result = widget.ValidateAdd(component);
+
+            var result = BTValidateAdd(component, widget, mechlab, ref errorMessage);
+
             foreach (var validator in add_validators)
             {
                 result = validator(component, widget, result, ref errorMessage, mechlab);
             }
+
+            if (component is IValidateAdd add)
+                result = add.ValidateAdd(widget, result, ref errorMessage, mechlab);
+
 
             return result;
         }
@@ -77,7 +164,7 @@ namespace CustomComponents
             validator_state.Clear();
         }
 
-        public static void AddState(CategoryValidatorState state)
+        public static void AddState(Object state)
         {
             validator_state.Add(state);
         }
@@ -85,27 +172,6 @@ namespace CustomComponents
         public static T GetState<T>()
         {
             return validator_state.OfType<T>().FirstOrDefault();
-        }
-    }
-
-    [HarmonyPatch(typeof(MechValidationRules), "ValidateMechDef")]
-    internal static class MechValidationRulesValidate_ValidateMech_Patch
-    {
-        public static void Postfix(Dictionary<MechValidationType, List<string>> __result,
-            MechValidationLevel validationLevel, MechDef mechDef)
-        {
-            Control.Logger.Log($"{UnityEngine.Time.realtimeSinceStartup} CC.Validator start");
-
-            Validator.ValidateMech(__result, validationLevel, mechDef);
-            foreach (var component in mechDef.Inventory.Where(i => i.Def != null)
-                .Select(i => i.Def)
-                .GroupBy(i => i.Description.Id)
-                .Select(i => i.First())
-                .OfType<IMechValidate>())
-            {
-                component.ValidateMech(__result, validationLevel, mechDef);
-            }
-            Control.Logger.Log($"{UnityEngine.Time.realtimeSinceStartup} CC.Validator end");
         }
     }
 }
