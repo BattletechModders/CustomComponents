@@ -77,7 +77,7 @@
     <Compile Include="Category\CategoryValidatorState.cs" />
     <Compile Include="Category\ICategory.cs" />
     <Compile Include="Category\IDefault.cs" />
-    <Compile Include="Category\MechLabLocationWidget_OnDrop_Patch_Category.cs" />
+    <Compile Include="Validators\MechLabLocationWidget_OnMechLabDrop_Patch.cs" />
     <Compile Include="Category\MechLabLocationWidget_OnItemGrab_Patch.cs" />
     <Compile Include="Category\RemoveController.cs" />
     <Compile Include="ColorChanger\IColorComponent.cs" />
@@ -93,10 +93,8 @@
     <Compile Include="CustomTypes\CustomHeatSinkDef.cs" />
     <Compile Include="CustomTypes\Test.cs" />
     <Compile Include="Tooltips.cs" />
-    <Compile Include="Validators\BTValidarorState.cs" />
     <Compile Include="Validators\LocationHelper.cs" />
     <Compile Include="Validators\MechLabHelper.cs" />
-    <Compile Include="Validators\MechLabLocationWidget_OnDrop_Patch.cs" />
     <Compile Include="Validators\MechValidationRulesValidate_ValidateMech_Patch.cs" />
     <Compile Include="Validators\MechValidationRules_ValidateMechCanBeFielded_Patch.cs" />
     <Compile Include="Validators\ValidatorInterfaces.cs" />
