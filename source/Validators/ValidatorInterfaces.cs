@@ -20,6 +20,21 @@ namespace CustomComponents
         bool ValidateAdd(MechLabLocationWidget widget, bool current_result, ref string errorMessage,
             MechLabPanel mechlab);
     }
+    
+    /// <summary>
+    /// component check if it can be dropped to this location
+    /// </summary>
+    public interface IValidateDrop
+    {
+        /// <summary>
+        /// validation drop check
+        /// </summary>
+        /// <param name="widget">location, where check</param>
+        /// <param name="element">element being dragged</param>
+        /// <returns></returns>
+        IValidateDropResult ValidateDrop(MechLabItemSlotElement element, MechLabLocationWidget widget);
+    }
+
     /// <summary>
     /// component need to validate mech state
     /// </summary>
@@ -48,6 +63,14 @@ namespace CustomComponents
     /// <returns></returns>
     public delegate bool ValidateAddDelegate(MechComponentDef component, MechLabLocationWidget widget,
         bool current_result, ref string errorMessage, MechLabPanel mechlab);
+
+    /// <summary>
+    /// delegate for "component can be droppped" validation
+    /// </summary>
+    /// <param name="widget">location, where check</param>
+    /// <param name="element">element being dragged</param>
+    /// <returns></returns>
+    public delegate IValidateDropResult ValidateDropDelegate(MechLabItemSlotElement element, MechLabLocationWidget widget);
 
     /// <summary>
     /// delegate for mech valudation

@@ -122,27 +122,19 @@ namespace CustomComponents
             return CategoryError.None;
         }
 
-        internal static bool ValidateAdd(MechComponentDef component, MechLabLocationWidget widget,
-            bool current_result, ref string errorMessage, MechLabPanel mechlab)
+        internal static IValidateDropResult ValidateDrop(MechLabItemSlotElement element, MechLabLocationWidget widget)
         {
             Control.Logger.LogDebug($"ICategory validation start for {widget.loadout?.Location.ToString() ?? "???"}");
 
-            if (!current_result)
-            {
-                var old_state = Validator.GetState<BTValidateState>();
-                if (old_state == null || old_state.Error != BTValidateState.ErrorType.Size)
-                {
-                    Control.Logger.LogDebug($"Category: old error: {(old_state == null ? "none" : old_state.Error.ToString())}");
-                    return false;
-                }
-
-            }
+            var component = element.ComponentRef.Def;
 
             if (!(component is ICategory cat_component))
             {
                 Control.Logger.LogDebug("Not a category");
-                return current_result;
+                return null;
             }
+
+            var mechlab = widget.GetMechLab();
 
             var error = ValidateAdd(cat_component, widget, mechlab, out var count, out var location_name);
 
@@ -151,42 +143,19 @@ namespace CustomComponents
 
 
             if (error == CategoryError.None)
-                return current_result;
+                return null;
 
             var category = cat_component.CategoryDescriptor;
 
-            var state = new CategoryValidatorState
-            {
-                Error = error,
-                NotEnoughSlots = current_result,
-                descriptor = category
-            };
-
             Control.Logger.LogDebug($"Category: Validator state create");
 
-
-            Validator.AddState(state);
-
-            if (category.AutoReplace &&
-                (error != CategoryError.AllowMix))
+            if (category.AutoReplace && error != CategoryError.AllowMix)
             {
                 Control.Logger.LogDebug($"Category: Search for repacement");
 
-                var helper = new LocationHelper(widget);
+                var replacement = widget.GetInventory().FirstOrDefault(e => e?.ComponentRef?.Def is ICategory cat && cat.CategoryID == category.Name);
 
-                state.ReplacementIndex =
-                    helper.LocalInventory.FindIndex(i => (i.Def is ICategory cat) && cat.CategoryID == category.Name);
-
-                Control.Logger.LogDebug($"Category: index {state.ReplacementIndex}");
-
-                if (state.ReplacementIndex >= 0)
-                {
-                    state.Replacement = helper.LocalInventory[state.ReplacementIndex].Def;
-
-                    Control.Logger.LogDebug($"Category: replace: {helper.UsedSlots} - {state.Replacement.InventorySize} + {component.InventorySize} <= {helper.MaxSlots}");
-                    // if not enough slot to replace - it also not enough slot to fit, so Not Enough Slots message will pop up
-                    return helper.UsedSlots - state.Replacement.InventorySize + component.InventorySize <= helper.MaxSlots;
-                }
+                return new ValidateDropReplaceItem(replacement);
             }
 
             Control.Logger.LogDebug($"Category: return error message");
@@ -194,23 +163,18 @@ namespace CustomComponents
             switch (error)
             {
                 case CategoryError.AreadyEquiped:
-                    errorMessage = string.Format(category.AddAlreadyEquiped, category.DisplayName);
-                    return false;
+                    return new ValidateDropError(string.Format(category.AddAlreadyEquiped, category.DisplayName));
                 case CategoryError.MaximumReached:
-                    errorMessage = string.Format(category.AddMaximumReached, category.DisplayName, count);
-                    return false;
+                    return new ValidateDropError(string.Format(category.AddMaximumReached, category.DisplayName, count));
                 case CategoryError.AlreadyEquipedLocation:
-                    errorMessage = string.Format(category.AddAlreadyEquipedLocation, category.DisplayName, location_name);
-                    return false;
+                    return new ValidateDropError(string.Format(category.AddAlreadyEquipedLocation, category.DisplayName, location_name));
                 case CategoryError.MaximumReachedLocation:
-                    errorMessage = string.Format(category.AddMaximumLocationReached, category.DisplayName, location_name, location_name);
-                    return false;
+                    return new ValidateDropError(string.Format(category.AddMaximumLocationReached, category.DisplayName, location_name, location_name));
                 case CategoryError.AllowMix:
-                    errorMessage = string.Format(category.AddMixed, category.DisplayName);
-                    return false;
-                default:
-                    return true;
+                    return new ValidateDropError(string.Format(category.AddMixed, category.DisplayName));
             }
+
+            return null;
         }
 
 

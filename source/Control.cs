@@ -55,7 +55,7 @@ namespace CustomComponents
                     Validator.RegisterMechValidator(CategoryController.ValidateMech, CategoryController.ValidateMechCanBeFielded);
 
                     Validator.RegisterAddValidator(WeighLimitedController.ValidateAdd);
-                    Validator.RegisterAddValidator(CategoryController.ValidateAdd);
+                    Validator.RegisterDropValidator(CategoryController.ValidateDrop);
                 }
 
                 Logger.Log("Loaded CustomComponents");
@@ -77,12 +77,7 @@ namespace CustomComponents
 
         internal static ICustomComponent CreateNew(string custom_type)
         {
-            CustomComponentDescriptor descriptor = null;
-            if (descriptors.TryGetValue(custom_type, out descriptor))
-            {
-                return descriptor.CreateNew();
-            }
-            return null;
+            return descriptors.TryGetValue(custom_type, out var descriptor) ? descriptor.CreateNew() : null;
         }
 
         /// <summary>

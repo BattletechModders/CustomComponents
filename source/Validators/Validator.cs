@@ -3,6 +3,7 @@ using BattleTech.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Harmony;
 
 namespace CustomComponents
 {
@@ -11,13 +12,13 @@ namespace CustomComponents
     /// </summary>
     public static class Validator
     {
-        static List<ValidateAddDelegate> add_validators = new List<ValidateAddDelegate>();
-        static List<ValidateMechDelegate> mech_validators = new List<ValidateMechDelegate>();
+        // need to be public, so order can be changed if need be
+        public static List<ValidateAddDelegate> add_validators = new List<ValidateAddDelegate>();
+        public static List<ValidateDropDelegate> drop_validators = new List<ValidateDropDelegate>();
+        public static List<ValidateMechDelegate> mech_validators = new List<ValidateMechDelegate>();
 
         private static List<ValidateMechCanBeFieldedDelegate> field_validators =
             new List<ValidateMechCanBeFieldedDelegate>();
-
-        private static List<Object> validator_state = new List<object>();
 
         /// <summary>
         /// register new AddValidator
@@ -30,6 +31,16 @@ namespace CustomComponents
         }
 
         /// <summary>
+        /// register new AddValidator
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="validator"></param>
+        public static void RegisterDropValidator(ValidateDropDelegate validator)
+        {
+            drop_validators.Add(validator);
+        }
+
+        /// <summary>
         /// register new mech validator
         /// </summary>
         /// <param name="validator"></param>
@@ -39,104 +50,56 @@ namespace CustomComponents
             if (mechvalidator != null) mech_validators.Add(mechvalidator);
             if (fieldvalidator != null) field_validators.Add(fieldvalidator);
         }
-
-
-        private static bool BTValidateAdd(MechComponentDef component, MechLabLocationWidget widget,
-            MechLabPanel mechlab, ref string errorMessage)
-        {
-            var helper = new LocationHelper(widget);
-            if (widget.loadout.CurrentInternalStructure <= 0f)
-            {
-                errorMessage =
-                    $"Cannot add {component.Description.Name} to {helper.LocationName}: The location is Destroyed.";
-                AddState(new BTValidateState { Error = BTValidateState.ErrorType.LocationDestroyed});
-                return false;
-            }
-
-            if (helper.UsedSlots + component.InventorySize > helper.MaxSlots)
-            {
-                errorMessage =
-                    $"Cannot add {component.Description.Name} to {helper.LocationName}: Not enough free slots.";
-                AddState(new BTValidateState { Error = BTValidateState.ErrorType.Size });
-                return false;
-            }
-
-            if ((component.AllowedLocations & widget.loadout.Location) <= ChassisLocations.None)
-            {
-                errorMessage =
-                    $"Cannot add {component.Description.Name} to {helper.LocationName}: Component is not permitted in this location.";
-                AddState(new BTValidateState { Error = BTValidateState.ErrorType.WrongLocation });
-                return false;
-            }
-
-            if (component.ComponentType == ComponentType.Weapon)
-            {
-                int num = 0;
-                int num2 = 0;
-                WeaponDef weaponDef = component as WeaponDef;
-                switch (weaponDef.Category)
-                {
-                    case WeaponCategory.Ballistic:
-                        num = helper.currentBallisticCount;
-                        num2 = helper.totalBallisticHardpoints;
-                        break;
-                    case WeaponCategory.Energy:
-                        num = helper.currentEnergyCount;
-                        num2 = helper.totalEnergyHardpoints;
-                        break;
-                    case WeaponCategory.Missile:
-                        num = helper.currentMissileCount;
-                        num2 = helper.totalMissileHardpoints;
-                        break;
-                    case WeaponCategory.AntiPersonnel:
-                        num = helper.currentSmallCount;
-                        num2 = helper.totalSmallHardpoints;
-                        break;
-                }
-
-                if (num + 1 > num2)
-                {
-                    errorMessage =
-                        $"Cannot add {component.Description.Name} to {helper.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.";
-                    AddState(new BTValidateState { Error = BTValidateState.ErrorType.Hardpoints });
-                    return false;
-                }
-            }
-
-            if (component.ComponentType == ComponentType.JumpJet)
-            {
-                int num3 = mechlab.headWidget.currentJumpjetCount + mechlab.centerTorsoWidget.currentJumpjetCount +
-                           mechlab.leftTorsoWidget.currentJumpjetCount + mechlab.rightTorsoWidget.currentJumpjetCount +
-                           mechlab.leftArmWidget.currentJumpjetCount + mechlab.rightArmWidget.currentJumpjetCount +
-                           mechlab.leftLegWidget.currentJumpjetCount + mechlab.rightLegWidget.currentJumpjetCount;
-                if (num3 + 1 > mechlab.activeMechDef.Chassis.MaxJumpjets)
-                {
-                    errorMessage =
-                        $"Cannot add {component.Description.Name} to {helper.LocationName}: Max number of jumpjets for 'Mech reached.";
-                    return false;
-                }
-            }
-            return true;
-        }
         
-        internal static bool ValidateAdd(MechComponentDef component, MechLabLocationWidget widget, MechLabPanel mechlab, ref string errorMessage)
+
+        public static IEnumerable<ValidateDropDelegate> GetValidateDropDelegates(MechComponentDef componentValidator)
         {
-            ClearValidatorState();
-
-            // var result = widget.ValidateAdd(component);
-
-            var result = BTValidateAdd(component, widget, mechlab, ref errorMessage);
-
-            foreach (var validator in add_validators)
+            foreach (var validator in drop_validators)
             {
-                result = validator(component, widget, result, ref errorMessage, mechlab);
+                yield return validator;
             }
 
-            if (component is IValidateAdd add)
-                result = add.ValidateAdd(widget, result, ref errorMessage, mechlab);
+            if (componentValidator is IValidateDrop validateDrop)
+            {
+                yield return validateDrop.ValidateDrop;
+            }
 
+            { // legacy IValidateAdd support, I'd vote to just remove it
 
-            return result;
+                foreach (var validator in add_validators)
+                {
+                    IValidateDropResult ValidateDrop(MechLabItemSlotElement element, MechLabLocationWidget widget)
+                    {
+                        string errorMessage = null;
+                        var mechlab = widget.GetMechLab();
+                        if (!validator(element.ComponentRef.Def, widget, true, ref errorMessage, mechlab))
+                        {
+                            return new ValidateDropError(errorMessage);
+                        }
+
+                        return null;
+                    }
+
+                    yield return ValidateDrop;
+                }
+
+                if (componentValidator is IValidateAdd add)
+                {
+                    IValidateDropResult ValidateDrop(MechLabItemSlotElement element, MechLabLocationWidget widget)
+                    {
+                        string errorMessage = null;
+                        var mechlab = widget.GetMechLab();
+                        if (!add.ValidateAdd(widget, true, ref errorMessage, mechlab))
+                        {
+                            return new ValidateDropError(errorMessage);
+                        }
+
+                        return null;
+                    }
+
+                    yield return ValidateDrop;
+                }
+            }
         }
 
         internal static void ValidateMech(Dictionary<MechValidationType, List<string>> errors,
@@ -158,20 +121,59 @@ namespace CustomComponents
 
             return true;
         }
+    }
 
-        internal static void ClearValidatorState()
+    public enum ValidateDropStatus
+    {
+        Continue, Handled
+    }
+
+    public interface IValidateDropResult
+    {
+        ValidateDropStatus Status { get; } // not really necessary, but nice for semantics
+    }
+
+    public class ValidateDropReplaceItem : IValidateDropResult
+    {
+        public ValidateDropStatus Status => ValidateDropStatus.Continue;
+
+        public MechLabItemSlotElement ToReplaceElement { get; }
+
+        public ValidateDropReplaceItem(MechLabItemSlotElement toReplaceElement)
         {
-            validator_state.Clear();
+            ToReplaceElement = toReplaceElement;
+        }
+    }
+    
+    public class ValidateDropHandled : IValidateDropResult
+    {
+        public ValidateDropStatus Status => ValidateDropStatus.Handled;
+    }
+
+    public class ValidateDropRemoveDragItem : ValidateDropHandled
+    {
+    }
+
+    public class ValidateDropError : ValidateDropHandled
+    {
+        public string ErrorMessage { get; }
+
+        public ValidateDropError(string errorMessage)
+        {
+            ErrorMessage = errorMessage;
+        }
+    }
+
+    public static class MechLabLocationWidgetExtensions
+    {
+        public static MechLabPanel GetMechLab(this MechLabLocationWidget @this)
+        {
+            return @this.parentDropTarget as MechLabPanel;
         }
 
-        public static void AddState(Object state)
+        public static List<MechLabItemSlotElement> GetInventory(this MechLabLocationWidget @this)
         {
-            validator_state.Add(state);
-        }
-
-        public static T GetState<T>()
-        {
-            return validator_state.OfType<T>().FirstOrDefault();
+            return Traverse.Create(@this).Field("localInventory").GetValue<List<MechLabItemSlotElement>>();
         }
     }
 }
