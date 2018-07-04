@@ -16,47 +16,55 @@ namespace CustomComponents.Category
 
             __state = null;
 
-            if (!(item.ComponentRef.Def is ICategory cat_item) || cat_item.CategoryDescriptor.AllowRemove ||
-                cat_item.CategoryDescriptor.MinEquiped <= 0) return true;
-
-
-            Control.Logger.LogDebug($"Custom found: Category: {cat_item.CategoryID}, checking if can remove");
-
-            var count = ___mechLab.activeMechDef.Inventory
-                .Select(i => i.Def)
-                .OfType<ICategory>().Count(i => i.CategoryID == cat_item.CategoryID);
-
-            Control.Logger.LogDebug($"Found {count} / {cat_item.CategoryDescriptor.MinEquiped}");
-
-            if (count <= cat_item.CategoryDescriptor.MinEquiped)
+            if (item.ComponentRef.Def is IDefault)
             {
-                if (string.IsNullOrEmpty(cat_item.CategoryDescriptor.DefaultReplace) || cat_item.CategoryDescriptor.DefaultReplace == item.ComponentRef.ComponentDefID)
-                {
-                    Control.Logger.LogDebug("No DefaultReplace, cancel");
-                    __result = false;
-                    return false;
-                }
-
-                var component_ref = new MechComponentRef(cat_item.CategoryDescriptor.DefaultReplace, String.Empty, item.ComponentRef.ComponentDefType, ChassisLocations.None, -1, ComponentDamageLevel.Installing);
-                component_ref.DataManager = ___mechLab.dataManager;
-                component_ref.RefreshComponentDef();
-                if (component_ref.Def == null)
-                {
-                    Control.Logger.LogDebug("Default replace not found, cancel");
-                    __result = false;
-                    return false;
-                }
-                Control.Logger.LogDebug("Default replace found");
-                __state = component_ref;
+                ___mechLab.ShowDropErrorMessage("Cannot remove vital component");
+                __result = false;
+                return false;
             }
 
-            Control.Logger.LogDebug("Continue!");
+            if (!(item.ComponentRef.Def is ICategory cat_item))
+            {
+                return true;
+            }
+
+            if (!cat_item.CategoryDescriptor.AllowRemove)
+            {
+                ___mechLab.ShowDropErrorMessage("Cannot remove vital component");
+                __result = false;
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(cat_item.CategoryDescriptor.DefaultReplace))
+                return true;
+
+            if (cat_item.CategoryDescriptor.DefaultReplace == item.ComponentRef.ComponentDefID)
+            {
+                ___mechLab.ShowDropErrorMessage("Cannot remove vital component");
+                __result = false;
+                return false;
+            }
+
+
+            var component_ref = new MechComponentRef(cat_item.CategoryDescriptor.DefaultReplace, String.Empty, item.ComponentRef.ComponentDefType, ChassisLocations.None, -1, ComponentDamageLevel.Installing);
+            component_ref.DataManager = ___mechLab.dataManager;
+            component_ref.RefreshComponentDef();
+            if (component_ref.Def == null)
+            {
+                Control.Logger.LogDebug("Default replace not found, cancel");
+                __result = false;
+                ___mechLab.ShowDropErrorMessage("Cannot remove vital component");
+
+                return false;
+            }
+            Control.Logger.LogDebug("Default replace found");
+            __state = component_ref;
+
             return true;
         }
 
         public static void Postfix(ref bool __result, MechComponentRef __state, MechLabPanel ___mechLab, MechLabLocationWidget __instance)
         {
-
             Control.Logger.LogDebug($"OnItemGrab.Postfix CanRemove: {__result}");
             if (__state != null)
             {
@@ -68,6 +76,14 @@ namespace CustomComponents.Category
                         ___mechLab);
                     __instance.OnAddItem(slot, false);
                     ___mechLab.ValidateLoadout(false);
+
+                    if (__instance.Sim != null)
+                    {
+                        WorkOrderEntry_InstallComponent subEntry = __instance.Sim.CreateComponentInstallWorkOrder(
+                            ___mechLab.baseWorkOrder.MechID,
+                            slot.ComponentRef, __instance.loadout.Location, slot.MountedLocation);
+                        ___mechLab.baseWorkOrder.AddSubEntry(subEntry);
+                    }
                 }
                 catch (Exception e)
                 {

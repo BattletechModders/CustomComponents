@@ -4,23 +4,7 @@ using BattleTech.UI;
 
 namespace CustomComponents
 {
-    /// <summary>
-    /// component check if it can be added to this location
-    /// </summary>
-    public interface IValidateAdd
-    {
-        /// <summary>
-        /// validation check
-        /// </summary>
-        /// <param name="widget">location, where check</param>
-        /// <param name="current_result">result of previous checks</param>
-        /// <param name="errorMessage">message, that show as warning if cannot add item</param>
-        /// <param name="mechlab"></param>
-        /// <returns></returns>
-        bool ValidateAdd(MechLabLocationWidget widget, bool current_result, ref string errorMessage,
-            MechLabPanel mechlab);
-    }
-    
+  
     /// <summary>
     /// component check if it can be dropped to this location
     /// </summary>
@@ -32,7 +16,7 @@ namespace CustomComponents
         /// <param name="widget">location, where check</param>
         /// <param name="element">element being dragged</param>
         /// <returns></returns>
-        IValidateDropResult ValidateDrop(MechLabItemSlotElement element, MechLabLocationWidget widget);
+        IValidateDropResult ValidateDrop(MechLabItemSlotElement element, LocationHelper location, IValidateDropResult last_result);
     }
 
     /// <summary>
@@ -52,25 +36,8 @@ namespace CustomComponents
         bool ValidateMechCanBeFielded(MechDef mechDef);
     }
 
-    /// <summary>
-    /// delegate for "component can be added" validation
-    /// </summary>
-    /// <param name="component">component to validate</param>
-    /// <param name="widget">location to add</param>
-    /// <param name="current_result">resulr of previous сруслы</param>
-    /// <param name="errorMessage">error message</param>
-    /// <param name="mechlab"></param>
-    /// <returns></returns>
-    public delegate bool ValidateAddDelegate(MechComponentDef component, MechLabLocationWidget widget,
-        bool current_result, ref string errorMessage, MechLabPanel mechlab);
 
-    /// <summary>
-    /// delegate for "component can be droppped" validation
-    /// </summary>
-    /// <param name="widget">location, where check</param>
-    /// <param name="element">element being dragged</param>
-    /// <returns></returns>
-    public delegate IValidateDropResult ValidateDropDelegate(MechLabItemSlotElement element, MechLabLocationWidget widget);
+    public delegate IValidateDropResult ValidateDropDelegate(MechLabItemSlotElement element, LocationHelper location, IValidateDropResult last_result);
 
     /// <summary>
     /// delegate for mech valudation

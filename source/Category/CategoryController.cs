@@ -76,16 +76,14 @@ namespace CustomComponents
             }
         }
 
-        internal static CategoryError ValidateAdd(ICategory component, MechLabLocationWidget widget,
-            MechLabPanel mechlab, out int count, out string location)
+        internal static CategoryError ValidateAdd(ICategory component, LocationHelper location, out int count)
         {
             var category = component.CategoryDescriptor;
 
-            var items = mechlab.activeMechDef.Inventory
+            var items = location.mechLab.activeMechDef.Inventory
                 .Where(i => (i.Def as ICategory)?.CategoryDescriptor == category).ToList();
 
             count = 0;
-            location = "";
 
             if (category.MaxEquiped > 0)
             {
@@ -100,11 +98,9 @@ namespace CustomComponents
 
             if (category.MaxEquipedPerLocation > 0)
             {
-                int count_per_location = items.Count(i => i.MountedLocation == widget.loadout.Location);
+                int count_per_location = items.Count(i => i.MountedLocation == location.widget.loadout.Location);
                 if (count_per_location >= category.MaxEquipedPerLocation)
                 {
-                    var helper = new LocationHelper(widget);
-                    location = helper.LocationName;
                     if (category.UniqueForLocation)
                         return CategoryError.AlreadyEquipedLocation;
 
@@ -122,28 +118,27 @@ namespace CustomComponents
             return CategoryError.None;
         }
 
-        internal static IValidateDropResult ValidateDrop(MechLabItemSlotElement element, MechLabLocationWidget widget)
+        internal static IValidateDropResult ValidateDrop(MechLabItemSlotElement element, LocationHelper location, IValidateDropResult last_result)
         {
-            Control.Logger.LogDebug($"ICategory validation start for {widget.loadout?.Location.ToString() ?? "???"}");
+            Control.Logger.LogDebug($"ICategory validation start for {location.widget.loadout?.Location.ToString() ?? "???"}");
 
             var component = element.ComponentRef.Def;
 
             if (!(component is ICategory cat_component))
             {
                 Control.Logger.LogDebug("Not a category");
-                return null;
+                return last_result;
             }
 
-            var mechlab = widget.GetMechLab();
 
-            var error = ValidateAdd(cat_component, widget, mechlab, out var count, out var location_name);
+            var error = ValidateAdd(cat_component, location, out var count);
 
 
             Control.Logger.LogDebug($"Category: {cat_component.CategoryID}, Error: {error}");
 
 
             if (error == CategoryError.None)
-                return null;
+                return last_result;
 
             var category = cat_component.CategoryDescriptor;
 
@@ -153,9 +148,10 @@ namespace CustomComponents
             {
                 Control.Logger.LogDebug($"Category: Search for repacement");
 
-                var replacement = widget.GetInventory().FirstOrDefault(e => e?.ComponentRef?.Def is ICategory cat && cat.CategoryID == category.Name);
+                var replacement = location.LocalInventory.FirstOrDefault(e => e?.ComponentRef?.Def is ICategory cat && cat.CategoryID == category.Name);
 
-                return new ValidateDropReplaceItem(replacement);
+                if (replacement != null)
+                    return new ValidateDropReplaceItem(replacement);
             }
 
             Control.Logger.LogDebug($"Category: return error message");
@@ -167,14 +163,14 @@ namespace CustomComponents
                 case CategoryError.MaximumReached:
                     return new ValidateDropError(string.Format(category.AddMaximumReached, category.DisplayName, count));
                 case CategoryError.AlreadyEquipedLocation:
-                    return new ValidateDropError(string.Format(category.AddAlreadyEquipedLocation, category.DisplayName, location_name));
+                    return new ValidateDropError(string.Format(category.AddAlreadyEquipedLocation, category.DisplayName, location.LocationName));
                 case CategoryError.MaximumReachedLocation:
-                    return new ValidateDropError(string.Format(category.AddMaximumLocationReached, category.DisplayName, location_name, location_name));
+                    return new ValidateDropError(string.Format(category.AddMaximumLocationReached, category.DisplayName, count, location.LocationName));
                 case CategoryError.AllowMix:
                     return new ValidateDropError(string.Format(category.AddMixed, category.DisplayName));
             }
 
-            return null;
+            return last_result;
         }
 
 

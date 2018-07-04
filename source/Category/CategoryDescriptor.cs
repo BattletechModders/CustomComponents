@@ -30,6 +30,7 @@ namespace CustomComponents
         [DefaultValue(0), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public int MinEquiped = 0;
 
+
         [DefaultValue(true), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public bool AllowRemove = true;
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 using BattleTech.UI;
@@ -51,6 +52,29 @@ namespace CustomComponents
                             item.Description.Name.ToUpper(), component.MinTonnage, component.MaxTonnage));
                 }
             }
+        }
+
+        internal static IValidateDropResult ValidateDrop(MechLabItemSlotElement element, LocationHelper location, IValidateDropResult last_result)
+        {
+            var component = element.ComponentRef.Def;
+
+            if (component is IWeightLimited)
+            {
+                var limit = component as IWeightLimited;
+                var tonnage = location.mechLab.activeMechDef.Chassis.Tonnage;
+
+                if (tonnage < limit.MinTonnage ||
+                    tonnage > limit.MaxTonnage)
+                {
+                    if (limit.MinTonnage == limit.MaxTonnage)
+                        return new ValidateDropError($"{component.Description.Name} designed for {limit.MinTonnage}t mech");
+                    else
+                        return new ValidateDropError(errorMessage: string.Format("{0} designed for {1}t-{2}t mech", component.Description.Name,
+                            limit.MinTonnage, limit.MaxTonnage));
+                }
+            }
+
+            return last_result;
         }
 
         internal static bool ValidateMechCanBeFielded(MechDef mechDef)

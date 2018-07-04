@@ -97,6 +97,7 @@
     <Compile Include="Validators\MechLabHelper.cs" />
     <Compile Include="Validators\MechValidationRulesValidate_ValidateMech_Patch.cs" />
     <Compile Include="Validators\MechValidationRules_ValidateMechCanBeFielded_Patch.cs" />
+    <Compile Include="Validators\ValidateDropResult.cs" />
     <Compile Include="Validators\ValidatorInterfaces.cs" />
     <Compile Include="Validators\Validator.cs" />
     <Compile Include="HarmonyNested\HarmonyNestedAttribute.cs" />

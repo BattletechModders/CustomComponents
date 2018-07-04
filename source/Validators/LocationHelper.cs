@@ -13,12 +13,17 @@ namespace CustomComponents
         private Traverse maxSlots = null, usedSlots = null;
         private Traverse location_name;
 
-        public MechLabLocationWidget Location { get; private set; }
+        public MechLabLocationWidget widget { get; private set; }
+        public MechLabPanel mechLab { get
+            {
+                return widget.parentDropTarget as MechLabPanel;
+            }
+        }
         public Traverse cb_slots, ce_slots, cm_slots, cs_slots;
 
         public int mb_slots = -1, me_slots = -1, mm_slots = -1, ms_slots = -1;
 
-        private List<MechComponentRef> inventory;
+        private List<MechLabItemSlotElement> inventory;
 
 
         public int currentBallisticCount
@@ -105,14 +110,14 @@ namespace CustomComponents
 
         }
 
-        public List<MechComponentRef> LocalInventory
+        public List<MechLabItemSlotElement> LocalInventory
         {
             get
             {
                 if (inventory == null)
                 {
                     var inv = main.Field("localInventory");
-                    inventory = inv.GetValue<List<MechLabItemSlotElement>>().Select(i => i.ComponentRef).ToList();
+                    inventory = inv.GetValue<List<MechLabItemSlotElement>>();
                 }
 
                 return inventory;
@@ -149,10 +154,10 @@ namespace CustomComponents
             }
         }
 
-        public LocationHelper(MechLabLocationWidget location)
+        public LocationHelper(MechLabLocationWidget widget)
         {
-            this.Location = location;
-            main = Traverse.Create(location);
+            this.widget = widget;
+            main = Traverse.Create(widget);
 
         }
 

@@ -38,7 +38,7 @@ namespace CustomComponents
                 {
                     settings = JsonConvert.DeserializeObject<CustomComponentSettings>(settingsJSON);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     settings = new CustomComponentSettings();
                 }
@@ -54,8 +54,10 @@ namespace CustomComponents
                     Validator.RegisterMechValidator(WeighLimitedController.ValidateMech, WeighLimitedController.ValidateMechCanBeFielded);
                     Validator.RegisterMechValidator(CategoryController.ValidateMech, CategoryController.ValidateMechCanBeFielded);
 
-                    Validator.RegisterAddValidator(WeighLimitedController.ValidateAdd);
+
                     Validator.RegisterDropValidator(CategoryController.ValidateDrop);
+                    Validator.RegisterDropValidator(WeighLimitedController.ValidateDrop);
+
                 }
 
                 Logger.Log("Loaded CustomComponents");
