@@ -61,21 +61,81 @@ namespace CustomComponents
             yield return ValidateSize;
         }
 
+
+
         private static IValidateDropResult ValidateSize(MechLabItemSlotElement element, LocationHelper location, IValidateDropResult last_result)
         {
-            int need = location.UsedSlots + element.ComponentRef.Def.InventorySize;
-
-
-            if (last_result is ValidateDropReplaceItem replace && replace.ToReplaceElement != null)
+            LocationHelper get_helper(MechLabPanel mechlab, ChassisLocations l)
             {
-                need -= replace.ToReplaceElement.ComponentRef.Def.InventorySize;
+                if (l == location.widget.loadout.Location)
+                    return location;
+
+                switch (l)
+                {
+                    case ChassisLocations.Head:
+                        return new LocationHelper(mechlab.headWidget);
+                    case ChassisLocations.LeftArm:
+                        return new LocationHelper(mechlab.leftArmWidget);
+                    case ChassisLocations.LeftTorso:
+                        return new LocationHelper(mechlab.leftTorsoWidget);
+                    case ChassisLocations.CenterTorso:
+                        return new LocationHelper(mechlab.centerTorsoWidget);
+                    case ChassisLocations.RightTorso:
+                        return new LocationHelper(mechlab.rightTorsoWidget);
+                    case ChassisLocations.RightArm:
+                        return new LocationHelper(mechlab.rightArmWidget);
+                    case ChassisLocations.LeftLeg:
+                        return new LocationHelper(mechlab.leftLegWidget);
+                    case ChassisLocations.RightLeg:
+                        return new LocationHelper(mechlab.rightLegWidget);
+                }
+
+                return null;
             }
 
+            bool done = false;
+
+
+            if (last_result is ValidateDropChange change_result)
+            {
+                var changes = from change in change_result.Changes.OfType<SlotChange>()
+                    group change by change.location
+                    into g
+                    select new
+                    {
+                        location = get_helper(location.mechLab, g.Key),
+                        change = g.Sum(i =>
+                             i is AddChange
+                                ? i.item.ComponentRef.Def.InventorySize
+                                : -i.item.ComponentRef.Def.InventorySize)
+                    };
+
+                foreach (var change in changes)
+                {
+                    int used = change.location.UsedSlots + change.change;
+                    if (change.location.widget.loadout.Location == location.widget.loadout.Location)
+                    {
+                        used += element.ComponentRef.Def.InventorySize;
+                        done = true;
+                    }
+
+                    if(used > change.location.MaxSlots)
+                        return new ValidateDropError(
+                            $"Cannot add {element.ComponentRef.Def.Description.Name} to {location.LocationName}: Not enought free slots.");
+                }
+            }
+
+            if (done)
+                return last_result;
+            
+            
+            int need = location.UsedSlots + element.ComponentRef.Def.InventorySize;
             if (need > location.MaxSlots)
-                return new ValidateDropError($"Cannot add {element.ComponentRef.Def.Description.Name} to {location.LocationName}: Component is not permitted in this location.");
+                return new ValidateDropError(
+                    $"Cannot add {element.ComponentRef.Def.Description.Name} to {location.LocationName}: Not enought free slots.");
 
 
-            return last_result;        
+            return last_result;
         }
 
         private static IValidateDropResult ValidateHardpoint(MechLabItemSlotElement element, LocationHelper location, IValidateDropResult last_result)
@@ -104,14 +164,19 @@ namespace CustomComponents
                         num2 = location.totalSmallHardpoints;
                         break;
                 }
+
                 if (num + 1 > num2)
                 {
-                    var replace = location.LocalInventory.FirstOrDefault(i => (i?.ComponentRef?.Def is WeaponDef def) && def.Category == weaponDef.Category);
+                    var replace = location.LocalInventory.FirstOrDefault(i =>
+                        (i?.ComponentRef?.Def is WeaponDef def) && def.Category == weaponDef.Category);
                     if (replace == null)
                         return new ValidateDropError(
                             $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.");
                     else
-                        return new ValidateDropReplaceItem(replace);
+                    {
+                        return ValidateDropChange.AddOrCreate(last_result,
+                            new RemoveChange(location.widget.loadout.Location, replace));
+                    }
                 }
 
             }

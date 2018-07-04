@@ -148,10 +148,14 @@ namespace CustomComponents
             {
                 Control.Logger.LogDebug($"Category: Search for repacement");
 
-                var replacement = location.LocalInventory.FirstOrDefault(e => e?.ComponentRef?.Def is ICategory cat && cat.CategoryID == category.Name);
+                var replacement = location.LocalInventory.FirstOrDefault(e =>
+                    e?.ComponentRef?.Def is ICategory cat && cat.CategoryID == category.Name);
 
                 if (replacement != null)
-                    return new ValidateDropReplaceItem(replacement);
+                {
+                    return ValidateDropChange.AddOrCreate(last_result,
+                        new RemoveChange(location.widget.loadout.Location, replacement));
+                }
             }
 
             Control.Logger.LogDebug($"Category: return error message");

@@ -5,6 +5,7 @@ using BattleTech;
 using BattleTech.UI;
 using Harmony;
 using TMPro;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace CustomComponents
@@ -89,16 +90,14 @@ namespace CustomComponents
                 }
                 Control.Logger.LogDebug($"========= Validation finished ===========");
 
+                var mech_lab_helper = new MechLabHelper(___mechLab);
 
-                if (result is ValidateDropReplaceItem replace)
+
+                if (result is ValidateDropChange change_result)
                 {
-                    Control.Logger.LogDebug($"========= ValidateDropReplaceItem ===========");
-
-                    var element = replace.ToReplaceElement;
-                    __instance.OnRemoveItem(element, true);
-                    ___mechLab.ForceItemDrop(element); // side effect issue: MechLabPanel.dragItem = element
+                    foreach (var change in change_result.Changes)
+                        change.DoChange(mech_lab_helper, helper);
                 }
-
 
                 var clear = __instance.OnAddItem(dragItem, true);
                 if (__instance.Sim != null)

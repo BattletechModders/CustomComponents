@@ -18,7 +18,6 @@
 			  "MinEquiped":  2,
 			  "Name": "LegActuator",
 			  "displayName": "Leg Actuators",
-			  "AllowRemove" : false,
 			  "DefaultReplace" : "Gear_Actuator_Default"
 			},
 			{
