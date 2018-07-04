@@ -1,0 +1,34 @@
+{
+	"CustomType" : "TestEngineSDefault",
+    "DissipationCapacity" : 0,
+    "Description" : {
+        "Cost" : 30000,
+        "Rarity" : 0,
+        "Purchasable" : true,
+        "Manufacturer" : "Clanner",
+        "Model" : "XL",
+        "UIName" : "C-XL-Engine",
+        "Id" : "Gear_Engine_Shield_C_XL_Left",
+        "Name" : "Clan XL Engine shielding",
+        "Details" : "",
+        "Icon" : "uixSvgIcon_equipment_Heatsink"
+    },
+    "BonusValueA" : "",
+    "BonusValueB" : "",
+    "ComponentType" : "HeatSink",
+    "ComponentSubType" : "Heatsink",
+    "PrefabIdentifier" : "",
+    "BattleValue" : 0,
+    "InventorySize" : 2,
+    "Tonnage" : 1,
+    "AllowedLocations" : "LeftTorso",
+    "DisallowedLocations" : "All",
+    "CriticalComponent" : false,
+    "statusEffects" : null,
+    "ComponentTags" : {
+        "items" : [
+            "component_type_stock"
+        ],
+        "tagSetSourceFile" : ""
+    }
+}

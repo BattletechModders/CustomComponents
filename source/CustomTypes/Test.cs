@@ -41,4 +41,19 @@ namespace CustomComponents
             return JSONSerializationUtility.ToJSON(this);
         }
     }
+
+    [Custom("TestEngineS")]
+    public class TestEngineShieldingDef : CustomHeatSinkDef<TestEngineShieldingDef>, IAutoLinked, ICategory
+    {
+        public Link[] Links { get; set; }
+        public string CategoryID { get; set; }
+        public string Tag { get; set;  }
+        public CategoryDescriptor CategoryDescriptor { get; set; }
+    }
+
+    [Custom("TestEngineSDefault")]
+    public class TestEngineShieldingSide : CustomHeatSinkDef<TestEngineShieldingSide>, IDefault
+    {
+
+    }
 }

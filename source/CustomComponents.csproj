@@ -77,6 +77,9 @@
     <Compile Include="Category\CategoryValidatorState.cs" />
     <Compile Include="Category\ICategory.cs" />
     <Compile Include="Category\IDefault.cs" />
+    <Compile Include="Helpers\CreateHelper.cs" />
+    <Compile Include="ILinked\IAutoLinked.cs" />
+    <Compile Include="ILinked\LinkedController.cs" />
     <Compile Include="Validators\MechLabLocationWidget_OnMechLabDrop_Patch.cs" />
     <Compile Include="Category\MechLabLocationWidget_OnItemGrab_Patch.cs" />
     <Compile Include="Category\RemoveController.cs" />
@@ -100,7 +103,7 @@
     <Compile Include="Validators\ValidateDropResult.cs" />
     <Compile Include="Validators\ValidatorInterfaces.cs" />
     <Compile Include="Validators\Validator.cs" />
-    <Compile Include="HarmonyNested\HarmonyNestedAttribute.cs" />
+    <Compile Include="Helpers\HarmonyNestedAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CustomTypes\CustomUpgrade.cs" />
     <Compile Include="TypePatch\AmmoBoxPatch.cs" />

@@ -45,10 +45,9 @@ namespace CustomComponents.Category
                 return false;
             }
 
+            MechComponentRef component_ref = CreateHelper.Ref(cat_item.CategoryDescriptor.DefaultReplace,
+                item.ComponentRef.ComponentDefType, ___mechLab.dataManager);
 
-            var component_ref = new MechComponentRef(cat_item.CategoryDescriptor.DefaultReplace, String.Empty, item.ComponentRef.ComponentDefType, ChassisLocations.None, -1, ComponentDamageLevel.Installing);
-            component_ref.DataManager = ___mechLab.dataManager;
-            component_ref.RefreshComponentDef();
             if (component_ref.Def == null)
             {
                 Control.Logger.LogDebug("Default replace not found, cancel");
@@ -72,8 +71,8 @@ namespace CustomComponents.Category
 
                 try
                 {
-                    var slot = ___mechLab.CreateMechComponentItem(__state, false, __instance.loadout.Location,
-                        ___mechLab);
+                    var slot = CreateHelper.Slot(___mechLab, __state, __instance.loadout.Location);
+                        
                     __instance.OnAddItem(slot, false);
                     ___mechLab.ValidateLoadout(false);
 

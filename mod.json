@@ -24,6 +24,12 @@
 			  "Name": "HeatSink",
 			  "displayName": "Heat Sink",
 			  "AllowMixTags" : false	  
+			},
+			{
+				"Name" : "TestEngineShield",
+				"displayName": "Shielding",
+				"MaxEquiped" : 1,
+				"AutoReplace" : true
 			}
 		]
 	},	
@@ -37,6 +43,11 @@
 		{
 			"Type": "UpgradeDef",
 			"Path": "data/upgrade/",
+			"ShouldMergeJSON": false
+		},
+		{
+			"Type": "HeatSinkDef",
+			"Path": "data/engine/",
 			"ShouldMergeJSON": false
 		}
 	]

@@ -168,7 +168,7 @@ namespace CustomComponents
                 if (num + 1 > num2)
                 {
                     var replace = location.LocalInventory.FirstOrDefault(i =>
-                        (i?.ComponentRef?.Def is WeaponDef def) && def.Category == weaponDef.Category);
+                        (i?.ComponentRef?.Def is WeaponDef def) && def.Category == weaponDef.Category && def.Description.Id != element.ComponentRef.ComponentDefID);
                     if (replace == null)
                         return new ValidateDropError(
                             $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.");
