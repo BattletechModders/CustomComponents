@@ -76,10 +76,12 @@
     <Compile Include="Category\CategoryDescriptor.cs" />
     <Compile Include="Category\CategoryValidatorState.cs" />
     <Compile Include="Category\ICategory.cs" />
-    <Compile Include="Category\IDefault.cs" />
+    <Compile Include="IDefault\IDefault.cs" />
     <Compile Include="Helpers\CreateHelper.cs" />
-    <Compile Include="ILinked\IAutoLinked.cs" />
-    <Compile Include="ILinked\LinkedController.cs" />
+    <Compile Include="IDefault\MechLabLocationWidget_OnItemGrab_Patch_Default.cs" />
+    <Compile Include="IAutoLinked\IAutoLinked.cs" />
+    <Compile Include="IAutoLinked\LinkedController.cs" />
+    <Compile Include="IAutoLinked\MechLabLocationWidget_OnItemGrab_Patch_ILinked.cs" />
     <Compile Include="Validators\MechLabLocationWidget_OnMechLabDrop_Patch.cs" />
     <Compile Include="Category\MechLabLocationWidget_OnItemGrab_Patch.cs" />
     <Compile Include="Category\RemoveController.cs" />

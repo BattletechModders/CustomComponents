@@ -1,5 +1,6 @@
 ﻿using BattleTech;
 using BattleTech.UI;
+using Harmony;
 
 namespace CustomComponents
 {
@@ -7,6 +8,9 @@ namespace CustomComponents
     {
         public MechLabPanel MechLab { get; private set; }
 
+
+        private Traverse main;
+        private Traverse drag_item;
 
         public MechLabLocationWidget GetLocationWidget(ChassisLocations location)
         {
@@ -36,6 +40,15 @@ namespace CustomComponents
         public MechLabHelper(MechLabPanel mechLab)
         {
             MechLab = mechLab;
+            main = Traverse.Create(mechLab);
+        }
+
+        public void SetDragItem(MechLabItemSlotElement item)
+        {
+            if (drag_item == null)
+                drag_item = main.Field("dragItem");
+
+            drag_item.SetValue(item);
         }
     }
 }

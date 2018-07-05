@@ -26,7 +26,7 @@
         "Details" : "",
         "Icon" : "uixSvgIcon_equipment_Heatsink"
     },
-    "BonusValueA" : "",
+    "BonusValueA" : "-2 side slots",
     "BonusValueB" : "",
     "ComponentType" : "HeatSink",
     "ComponentSubType" : "Heatsink",

@@ -46,37 +46,49 @@ namespace CustomComponents
             {
                 var list = new List<IChange>();
                 var helper = new MechLabHelper(location.mechLab);
-                foreach (SlotChange change in changes.Changes)
+                foreach (var change in changes.Changes.OfType<SlotChange>())
                 {
                     if (change.item.ComponentRef.Def is IAutoLinked l && l.Links != null && l.Links.Length > 0)
                     {
                         if (change is AddChange)
                         {
+                            Control.Logger.LogDebug($"Need to add for {change.item.ComponentRef.ComponentDefID}");
+
                             foreach (var a_link in l.Links)
                             {
+                                Control.Logger.LogDebug($"{a_link.ApendixID} to {a_link.Location}");
                                 var cref = CreateHelper.Ref(a_link.ApendixID, a_link.BaseType,
                                     location.mechLab.dataManager);
                                 if (cref != null)
                                 {
+                                    Control.Logger.LogDebug($"added");
                                     var slot = CreateHelper.Slot(location.mechLab, cref, a_link.Location);
                                     list.Add( new AddChange(a_link.Location, slot));
                                 }
+                                else
+                                    Control.Logger.LogDebug($"not found");
+
                             }
                         }
 
                         else if (change is RemoveChange)
                         {
+                            Control.Logger.LogDebug($"Need to remove for {change.item.ComponentRef.ComponentDefID}");
                             foreach (var r_link in l.Links)
                             {
                                 var widget = helper.GetLocationWidget(r_link.Location);
                                 if (widget != null)
                                 {
-                                    var remove = location.LocalInventory.FirstOrDefault(e =>
+                                    Control.Logger.LogDebug($"{r_link.ApendixID} from {r_link.Location}");
+                                    var remove = new LocationHelper(widget).LocalInventory.FirstOrDefault(e =>
                                         e?.ComponentRef?.ComponentDefID == r_link.ApendixID);
                                     if (remove != null)
                                     {
+                                        Control.Logger.LogDebug($"removed");
                                         list.Add(new RemoveChange(r_link.Location, remove));
                                     }
+                                    else
+                                        Control.Logger.LogDebug($"not found");
                                 }
                             }
                         }

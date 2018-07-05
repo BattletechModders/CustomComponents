@@ -7,7 +7,7 @@ using Harmony;
 namespace CustomComponents.Category
 {
     [HarmonyPatch(typeof(MechLabLocationWidget), "OnItemGrab")]
-    internal static class MechLabLocationWidget_OnItemGrab_Patch
+    internal static class MechLabLocationWidget_OnItemGrab_Patch_Category
     {
 
         public static bool Prefix(IMechLabDraggableItem item, ref bool __result, MechLabPanel ___mechLab, ref MechComponentRef __state)
@@ -15,13 +15,6 @@ namespace CustomComponents.Category
             Control.Logger.LogDebug($"OnItemGrab.Prefix {item.ComponentRef.ComponentDefID}");
 
             __state = null;
-
-            if (item.ComponentRef.Def is IDefault)
-            {
-                ___mechLab.ShowDropErrorMessage("Cannot remove vital component");
-                __result = false;
-                return false;
-            }
 
             if (!(item.ComponentRef.Def is ICategory cat_item))
             {
