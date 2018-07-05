@@ -37,20 +37,30 @@ namespace CustomComponents
         internal static void ValidateMech(Dictionary<MechValidationType, List<string>> errors,
             MechValidationLevel validationLevel, MechDef mechDef)
         {
-            foreach (var component in mechDef.Inventory.Where(i => i.Def != null).Select(i => i.Def)
-                .OfType<IWeightLimited>())
+            foreach (var component in mechDef.Inventory
+                .Where(i => i.Def != null)
+                .Select(i => i.Def)
+                .OfType<IWeightLimited>()
+                .Where(i => i.MinTonnage < mechDef.Chassis.Tonnage || i.MaxTonnage > mechDef.Chassis.Tonnage))
             {
-                if (component.MinTonnage < mechDef.Chassis.Tonnage || component.MaxTonnage > mechDef.Chassis.Tonnage)
-                {
-                    var item = component as MechComponentDef;
-                    if (component.MinTonnage == component.MaxTonnage)
-                        errors[MechValidationType.InvalidInventorySlots].Add(string.Format("{0} designed for {1}t mech",
-                            item.Description.Name, component.MinTonnage));
-                    else
-                        errors[MechValidationType.InvalidInventorySlots].Add(string.Format(
-                            "{0} designed for {1}t-{2}t mech",
-                            item.Description.Name.ToUpper(), component.MinTonnage, component.MaxTonnage));
-                }
+                var item = component as MechComponentDef;
+                if (component.MinTonnage == component.MaxTonnage)
+                    errors[MechValidationType.InvalidInventorySlots].Add(
+                        $"{item.Description.Name} designed for {component.MinTonnage}t mech");
+                else
+                    errors[MechValidationType.InvalidInventorySlots].Add(
+                        $"{item.Description.Name.ToUpper()} designed for {component.MinTonnage}t-{component.MaxTonnage}t mech");
+            }
+
+            foreach (var component in mechDef.Inventory
+                .Where(i => i.Def != null)
+                .Select(i => i.Def)
+                .OfType<IWeightAllowed>()
+                .Where(i => i.AllowedTonnage != mechDef.Chassis.Tonnage))
+            {
+                var item = component as MechComponentDef;
+                errors[MechValidationType.InvalidInventorySlots].Add(
+                    $"{item.Description.Name} designed for {component.AllowedTonnage}t mech");
             }
         }
 
@@ -58,19 +68,25 @@ namespace CustomComponents
         {
             var component = element.ComponentRef.Def;
 
-            if (component is IWeightLimited)
+            if (component is IWeightLimited wlimit)
             {
-                var limit = component as IWeightLimited;
                 var tonnage = location.mechLab.activeMechDef.Chassis.Tonnage;
 
-                if (tonnage < limit.MinTonnage ||
-                    tonnage > limit.MaxTonnage)
+                if (tonnage < wlimit.MinTonnage ||
+                    tonnage > wlimit.MaxTonnage)
                 {
-                    if (limit.MinTonnage == limit.MaxTonnage)
-                        return new ValidateDropError($"{component.Description.Name} designed for {limit.MinTonnage}t mech");
+                    if (wlimit.MinTonnage == wlimit.MaxTonnage)
+                        return new ValidateDropError($"{component.Description.Name} designed for {wlimit.MinTonnage}t mech");
                     else
-                        return new ValidateDropError(errorMessage: string.Format("{0} designed for {1}t-{2}t mech", component.Description.Name,
-                            limit.MinTonnage, limit.MaxTonnage));
+                        return new ValidateDropError($"{component.Description.Name} designed for {wlimit.MinTonnage}t-{wlimit.MaxTonnage}t mech");
+                }
+            }
+
+            if (component is IWeightAllowed alimit)
+            {
+                if (location.mechLab.activeMechDef.Chassis.Tonnage != alimit.AllowedTonnage)
+                {
+                    return new ValidateDropError($"{component.Description.Name} designed for {alimit.AllowedTonnage}t mech");
                 }
             }
 
@@ -79,12 +95,35 @@ namespace CustomComponents
 
         internal static bool ValidateMechCanBeFielded(MechDef mechDef)
         {
-            foreach (var component in mechDef.Inventory.Where(i => i.Def != null).Select(i => i.Def)
-                .OfType<IWeightLimited>())
+            if (mechDef.Inventory.Where(i => i.Def != null).Select(i => i.Def)
+                .OfType<IWeightLimited>().Any(component => component.MinTonnage < mechDef.Chassis.Tonnage || component.MaxTonnage > mechDef.Chassis.Tonnage))
             {
-                if (component.MinTonnage < mechDef.Chassis.Tonnage || component.MaxTonnage > mechDef.Chassis.Tonnage)
-                    return false;
+                return false;
             }
+
+            return mechDef.Inventory.Where(i => i.Def != null)
+                .Select(i => i.Def)
+                .OfType<IWeightAllowed>()
+                .All(component => component.AllowedTonnage == mechDef.Chassis.Tonnage);
+        }
+
+        internal static bool Filter(MechLabHelper mechlab, MechComponentDef component)
+        {
+            if (mechlab.MechLab.activeMechDef == null)
+                return true;
+
+            var tonnage = mechlab.MechLab.activeMechDef.Chassis.Tonnage;
+
+            if (component is IWeightAllowed wa)
+            {
+                return wa.AllowedTonnage == tonnage;
+            }
+
+            if (component is IWeightLimited wl)
+            {
+                return wl.MinTonnage >= tonnage && wl.MaxTonnage <= tonnage;
+            }
+
             return true;
         }
     }

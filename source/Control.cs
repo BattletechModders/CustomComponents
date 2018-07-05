@@ -59,6 +59,7 @@ namespace CustomComponents
                     Validator.RegisterDropValidator(WeighLimitedController.ValidateDrop);
                     Validator.RegisterDropValidator(LinkedController.ValidateDrop);
 
+                    MechLabFilter.AddFilter(WeighLimitedController.Filter);
                 }
 
                 Logger.Log("Loaded CustomComponents");

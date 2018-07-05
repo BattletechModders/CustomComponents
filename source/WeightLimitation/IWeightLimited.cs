@@ -14,4 +14,9 @@
         /// </summary>
         int MaxTonnage { get; }
     }
+
+    public interface IWeightAllowed
+    {
+        int AllowedTonnage { get; }
+    }
 }

@@ -11,7 +11,7 @@ namespace CustomComponents
         {
             //Control.Logger.LogDebug($"OnItemGrab.Prefix {item.ComponentRef.ComponentDefID}");
 
-            if (item.ComponentRef.Def is IDefault)
+            if (item.ComponentRef.Def is ICannotRemove)
             {
                 ___mechLab.ShowDropErrorMessage("Cannot remove vital component");
                 __result = false;

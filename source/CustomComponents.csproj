@@ -76,12 +76,15 @@
     <Compile Include="Category\CategoryDescriptor.cs" />
     <Compile Include="Category\CategoryValidatorState.cs" />
     <Compile Include="Category\ICategory.cs" />
+    <Compile Include="Filter\MechLabFilter.cs" />
+    <Compile Include="IDefault\Contract_AddToFilnaSalvagePatch.cs" />
     <Compile Include="IDefault\IDefault.cs" />
     <Compile Include="Helpers\CreateHelper.cs" />
     <Compile Include="IDefault\MechLabLocationWidget_OnItemGrab_Patch_Default.cs" />
     <Compile Include="IAutoLinked\IAutoLinked.cs" />
     <Compile Include="IAutoLinked\LinkedController.cs" />
     <Compile Include="IAutoLinked\MechLabLocationWidget_OnItemGrab_Patch_ILinked.cs" />
+    <Compile Include="TEST\AutoFix.cs" />
     <Compile Include="Validators\MechLabLocationWidget_OnMechLabDrop_Patch.cs" />
     <Compile Include="Category\MechLabLocationWidget_OnItemGrab_Patch.cs" />
     <Compile Include="Category\RemoveController.cs" />
@@ -96,7 +99,7 @@
     <Compile Include="CustomTypes\CustomJumpJetDef.cs" />
     <Compile Include="CustomTypes\CustomWeaponDef.cs" />
     <Compile Include="CustomTypes\CustomHeatSinkDef.cs" />
-    <Compile Include="CustomTypes\Test.cs" />
+    <Compile Include="TEST\TestTypes.cs" />
     <Compile Include="Tooltips.cs" />
     <Compile Include="Validators\LocationHelper.cs" />
     <Compile Include="Validators\MechLabHelper.cs" />
@@ -114,7 +117,7 @@
     <Compile Include="TypePatch\HeatSinkPatch.cs" />
     <Compile Include="TypePatch\UpgradePatch.cs" />
     <Compile Include="WeightLimitation\IWeightLimited.cs" />
-    <Compile Include="WeightLimitation\MechLabInventoryWidget_ApplyFiltering_Patch.cs" />
+    <Compile Include="Filter\MechLabInventoryWidget_ApplyFiltering_Patch.cs" />
     <Compile Include="WeightLimitation\WeighLimitedController.cs" />
   </ItemGroup>
   <ItemGroup />
