@@ -4,13 +4,25 @@ using Newtonsoft.Json;
 
 namespace CustomComponents
 {
+    /// <summary>
+    /// Category settings
+    /// </summary>
     public class CategoryDescriptor
     {
+        /// <summary>
+        /// Name to display in error messages
+        /// </summary>
         [DefaultValue(""), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string displayName = "";
 
+        /// <summary>
+        /// name of category (same as ICategory.CategoryID)
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// Name to display in error messages
+        /// </summary>
         [JsonIgnore]
         public string DisplayName
         {
@@ -18,26 +30,33 @@ namespace CustomComponents
             set => displayName = value;
         }
 
+        /// <summary>
+        /// if allow mixing items of same category with different
+        /// </summary>
         [DefaultValue(true), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public bool AllowMixTags = true;
+        /// <summary>
+        /// auto replace item if maximum reached
+        /// </summary>
         [DefaultValue(false), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public bool AutoReplace = false;
 
+        /// <summary>
+        /// max of items per mech
+        /// </summary>
         [DefaultValue(-1), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public int MaxEquiped = -1;
+        /// <summary>
+        /// max of items per location
+        /// </summary>
         [DefaultValue(-1), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public int MaxEquipedPerLocation = -1;
+        /// <summary>
+        /// Minimum item per mech(required items)
+        /// </summary>
         [DefaultValue(0), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public int MinEquiped = 0;
 
-
-        [DefaultValue(true), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public bool AllowRemove = true;
-        [DefaultValue(false), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public bool AutoRepair = true;
-
-        [DefaultValue(""), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public string Default = "";
 
         [DefaultValue("{0} already installed on mech"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string AddAlreadyEquiped = "{0} already installed on mech";
@@ -104,6 +123,7 @@ namespace CustomComponents
         public CategoryDescriptor()
         {
         }
+
 
         public void Apply(CategoryDescriptor category)
         {

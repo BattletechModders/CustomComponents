@@ -74,7 +74,6 @@
   <ItemGroup>
     <Compile Include="Category\CategoryController.cs" />
     <Compile Include="Category\CategoryDescriptor.cs" />
-    <Compile Include="Category\CategoryValidatorState.cs" />
     <Compile Include="Category\ICategory.cs" />
     <Compile Include="Filter\MechLabFilter.cs" />
     <Compile Include="IDefault\Contract_AddToFilnaSalvagePatch.cs" />
@@ -87,6 +86,7 @@
     <Compile Include="IAutoLinked\MechLabLocationWidget_OnItemGrab_Patch_ILinked.cs" />
     <Compile Include="IDefault\MechLabLocationWidget_StripEquipment.cs" />
     <Compile Include="IDefault\RemoveHelper.cs" />
+    <Compile Include="IDefault\SimGameState_StripMech_Patch.cs" />
     <Compile Include="TEST\AutoFix.cs" />
     <Compile Include="Validators\MechLabLocationWidget_OnMechLabDrop_Patch.cs" />
     <Compile Include="Category\MechLabLocationWidget_OnItemGrab_Patch.cs" />

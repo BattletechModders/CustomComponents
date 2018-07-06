@@ -15,4 +15,9 @@ namespace CustomComponents
 
     public interface IDefault : INotSalvagable, ICannotRemove, IHideFromInventory, IAutoRepair
     { }
+
+    public interface IDefaultRepace
+    {
+        string DefaultID { get; }
+    }
 }

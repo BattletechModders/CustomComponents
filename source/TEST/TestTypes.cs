@@ -5,8 +5,10 @@ using HBS.Util;
 namespace CustomComponents
 {
     [Custom("LegActuator")]
-    public class LegActuator : CategoryCustomUpgradeDef
+    public class LegActuator : CategoryCustomUpgradeDef, IDefaultRepace
     {
+        public string DefaultID { get; set; }
+
         public override void FromJson(string json)
         {
             JSONSerializationUtility.FromJSON(this, json, null);
@@ -23,10 +25,8 @@ namespace CustomComponents
     }
 
     [Custom("LegActuatorDefault")]
-    public class LefActuatorDefault : LegActuator, IDefault, IColorComponent
+    public class LefActuatorDefault : LegActuator, IDefault
     {
-        public UIColor Color { get; set; }
-
         public override void FromJson(string json)
         {
             JSONSerializationUtility.FromJSON(this, json, null);

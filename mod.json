@@ -17,8 +17,7 @@
 			  "MaxEquipedPerLocation" : 1,
 			  "MinEquiped":  2,
 			  "Name": "LegActuator",
-			  "displayName": "Leg Actuators",
-			  "DefaultReplace" : "Gear_Actuator_Default"
+			  "displayName": "Leg Actuators"
 			},
 			{
 			  "Name": "HeatSink",

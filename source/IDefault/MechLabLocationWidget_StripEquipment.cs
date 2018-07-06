@@ -4,7 +4,8 @@ using Harmony;
 
 namespace CustomComponents
 {
-    internal static class MechLabLocationWidget_StripEquipment
+    [HarmonyPatch(typeof(MechLabLocationWidget), "StripEquipment")]
+    internal static class MechLabLocationWidget_StripEquipment_Patch
     {
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {

@@ -7,7 +7,7 @@ using Harmony;
 namespace CustomComponents.Category
 {
     [HarmonyPatch(typeof(MechLabLocationWidget), "OnItemGrab")]
-    internal static class MechLabLocationWidget_OnItemGrab_Patch_Category
+    internal static class MechLabLocationWidget_OnItemGrab_Patch_IDefaultReplace
     {
 
         public static bool Prefix(IMechLabDraggableItem item, ref bool __result, MechLabPanel ___mechLab, ref MechComponentRef __state)
@@ -16,39 +16,28 @@ namespace CustomComponents.Category
 
             __state = null;
 
-            if (!(item.ComponentRef.Def is ICategory cat_item))
+
+            if(!(item.ComponentRef.Def is IDefaultRepace repace))
             {
                 return true;
             }
 
-            if (!cat_item.CategoryDescriptor.AllowRemove)
+            if (repace.DefaultID == item.ComponentRef.ComponentDefID)
             {
                 ___mechLab.ShowDropErrorMessage("Cannot remove vital component");
                 __result = false;
                 return false;
             }
 
-            if (string.IsNullOrEmpty(cat_item.CategoryDescriptor.Default))
-                return true;
-
-            if (cat_item.CategoryDescriptor.Default == item.ComponentRef.ComponentDefID)
-            {
-                ___mechLab.ShowDropErrorMessage("Cannot remove vital component");
-                __result = false;
-                return false;
-            }
-
-            MechComponentRef component_ref = CreateHelper.Ref(cat_item.CategoryDescriptor.Default,
+            MechComponentRef component_ref = CreateHelper.Ref(repace.DefaultID,
                 item.ComponentRef.ComponentDefType, ___mechLab.dataManager);
 
             if (component_ref.Def == null)
             {
-                Control.Logger.LogDebug("Default replace not found, cancel");
-                __result = false;
-                ___mechLab.ShowDropErrorMessage("Cannot remove vital component");
-
-                return false;
+                Control.Logger.LogError($"Default replace {repace.DefaultID} for { item.ComponentRef.ComponentDefID} not found");
+                return true;
             }
+
             Control.Logger.LogDebug("Default replace found");
             __state = component_ref;
 

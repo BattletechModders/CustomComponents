@@ -5,7 +5,10 @@ using BattleTech.UI;
 
 namespace CustomComponents
 {
-    public enum CategoryError
+    /// <summary>
+    /// error for category check
+    /// </summary>
+    internal enum CategoryError
     {
         None,
         AreadyEquiped,
@@ -15,11 +18,21 @@ namespace CustomComponents
         AllowMix
     }
 
+    /// <summary>
+    /// class to handle category interaction
+    /// </summary>
     internal static class CategoryController
     {
+        /// <summary>
+        /// validate mech and fill errors
+        /// </summary>
+        /// <param name="errors">errors by category</param>
+        /// <param name="validationLevel"></param>
+        /// <param name="mechDef">mech to validate</param>
         internal static void ValidateMech(Dictionary<MechValidationType, List<string>> errors,
             MechValidationLevel validationLevel, MechDef mechDef)
         {
+            
             var items_by_category = (from item in mechDef.Inventory
                                      where item.Def is ICategory
                                      let def = item.Def as ICategory
@@ -31,6 +44,7 @@ namespace CustomComponents
                                          mix = def.GetCategoryTag()
                                      }).GroupBy(i => i.category).ToDictionary(i => i.Key, i => i.ToList());
 
+            //check each "required" category
             foreach (var category in Control.GetCategories().Where(i => i.Required))
             {
                 if (!items_by_category.ContainsKey(category) || items_by_category[category].Count < category.MinEquiped)
@@ -42,6 +56,7 @@ namespace CustomComponents
 
             foreach (var pair in items_by_category)
             {
+                //check if too mant items of same category
                 if (pair.Key.MaxEquiped > 0 && pair.Value.Count > pair.Key.MaxEquiped)
                     if (pair.Key.MaxEquiped == 1)
                         errors[MechValidationType.InvalidInventorySlots].Add(string.Format(pair.Key.ValidateUnique,
@@ -50,6 +65,7 @@ namespace CustomComponents
                         errors[MechValidationType.InvalidInventorySlots].Add(string.Format(pair.Key.ValidateMaximum,
                             pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName, pair.Key.MaxEquiped));
 
+                //check if cateory mix tags
                 if (!pair.Key.AllowMixTags)
                 {
                     string def = pair.Value[0].mix;
@@ -62,6 +78,7 @@ namespace CustomComponents
                     }
                 }
 
+                // check count items per location
                 if (pair.Key.MaxEquipedPerLocation > 0)
                 {
                     var max = pair.Value.GroupBy(i => i.itemref.MountedLocation).Max(i => i.Count());
@@ -76,6 +93,7 @@ namespace CustomComponents
             }
         }
 
+        // return first error for validate drop
         internal static CategoryError ValidateAdd(ICategory component, LocationHelper location, out int count)
         {
             var category = component.CategoryDescriptor;
@@ -85,6 +103,7 @@ namespace CustomComponents
 
             count = 0;
 
+            //too many
             if (category.MaxEquiped > 0)
             {
                 if (items.Count >= category.MaxEquiped)
@@ -96,6 +115,7 @@ namespace CustomComponents
                 }
             }
 
+            // to many per location
             if (category.MaxEquipedPerLocation > 0)
             {
                 int count_per_location = items.Count(i => i.MountedLocation == location.widget.loadout.Location);
@@ -109,6 +129,7 @@ namespace CustomComponents
                 }
             }
 
+            //mixed tags
             if (!category.AllowMixTags)
             {
                 if (items.Any(i => (i.Def as ICategory).GetCategoryTag() != component.GetCategoryTag()))
@@ -118,25 +139,33 @@ namespace CustomComponents
             return CategoryError.None;
         }
 
+        /// <summary>
+        /// validate drop
+        /// </summary>
+        /// <param name="element">item to drop</param>
+        /// <param name="location">where to drop</param>
+        /// <param name="last_result"></param>
+        /// <returns></returns>
         internal static IValidateDropResult ValidateDrop(MechLabItemSlotElement element, LocationHelper location, IValidateDropResult last_result)
         {
+
             Control.Logger.LogDebug($"ICategory validation start for {location.widget.loadout?.Location.ToString() ?? "???"}");
 
             var component = element.ComponentRef.Def;
 
+            //if not a category - skip category check
             if (!(component is ICategory cat_component))
             {
                 Control.Logger.LogDebug("Not a category");
                 return last_result;
             }
-
-
+            
+            //get error
             var error = ValidateAdd(cat_component, location, out var count);
-
-
+            
             Control.Logger.LogDebug($"Category: {cat_component.CategoryID}, Error: {error}");
 
-
+            //if no errors = all ok, return
             if (error == CategoryError.None)
                 return last_result;
 
@@ -144,6 +173,7 @@ namespace CustomComponents
 
             Control.Logger.LogDebug($"Category: Validator state create");
 
+            //check if can replace item to override "to many"
             if (category.AutoReplace && error != CategoryError.AllowMix)
             {
                 Control.Logger.LogDebug($"Category: Search for repacement");
@@ -160,6 +190,7 @@ namespace CustomComponents
 
             Control.Logger.LogDebug($"Category: return error message");
 
+            //return error message
             switch (error)
             {
                 case CategoryError.AreadyEquiped:
@@ -177,7 +208,11 @@ namespace CustomComponents
             return last_result;
         }
 
-
+        /// <summary>
+        /// check if mech can be fielded
+        /// </summary>
+        /// <param name="mechDef"></param>
+        /// <returns></returns>
         internal static bool ValidateMechCanBeFielded(MechDef mechDef)
         {
             var items_by_category = (from item in mechDef.Inventory
@@ -191,15 +226,18 @@ namespace CustomComponents
                                          mix = def.GetCategoryTag()
                                      }).GroupBy(i => i.category).ToDictionary(i => i.Key, i => i.ToList());
 
+            // if all required category present
             foreach (var category in Control.GetCategories().Where(i => i.Required))
                 if (!items_by_category.ContainsKey(category) || items_by_category[category].Count < category.MinEquiped)
                     return false;
 
             foreach (var pair in items_by_category)
             {
+                // if too many equiped
                 if (pair.Key.MaxEquiped > 0 && pair.Value.Count > pair.Key.MaxEquiped)
                     return false;
 
+                //if mixed
                 if (!pair.Key.AllowMixTags)
                 {
                     string def = pair.Value[0].mix;
@@ -208,6 +246,7 @@ namespace CustomComponents
                     if (flag) return false;
                 }
 
+                // if too many per location
                 if (pair.Key.MaxEquipedPerLocation > 0)
                 {
                     var max = pair.Value.GroupBy(i => i.itemref.MountedLocation).Max(i => i.Count());

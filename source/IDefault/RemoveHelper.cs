@@ -23,27 +23,15 @@ namespace CustomComponents
 
             var mechlab = widget.parentDropTarget as MechLabPanel;
 
-            if (component is ICategory cat)
-                if (cat.CategoryDescriptor.AutoRepair)
+            if (component is IDefaultRepace replace && !string.IsNullOrEmpty(replace.DefaultID)  && replace.DefaultID != item.ComponentRef.ComponentDefID)
+            {
+                var new_ref = CreateHelper.Ref(replace.DefaultID, item.ComponentRef.ComponentDefType, mechlab.dataManager);
+                if (new_ref != null)
                 {
-                    do_Repair();
-                    return true;
+                    var new_item = CreateHelper.Slot(mechlab, new_ref, widget.loadout.Location);
+                    widget.OnAddItem(new_item, false);
                 }
-                else if (!string.IsNullOrEmpty(cat.CategoryDescriptor.Default))
-                {
-                    if (cat.CategoryDescriptor.Default == item.ComponentRef.ComponentDefID)
-                    {
-                        do_Repair();
-                        return true;
-                    }
-
-                    var new_ref = CreateHelper.Ref(cat.CategoryDescriptor.Default, item.ComponentRef.ComponentDefType, mechlab.dataManager);
-                    if (new_ref != null)
-                    {
-                        var new_item = CreateHelper.Slot(mechlab, new_ref, widget.loadout.Location);
-                        widget.OnAddItem(new_item, false);
-                    }
-                }
+            }
 
             if (component is IAutoLinked linked)
             {
@@ -67,31 +55,35 @@ namespace CustomComponents
             bool validate)
         {
             var component = item.ComponentRef.Def;
+
+            Control.Logger.LogDebug($"==== removing {component.Description.Id} ");
+            
             var mechlab = widget.parentDropTarget as MechLabPanel;
 
             if (component is ICannotRemove)
-                return true;
-
-            if (component is ICategory cat)
             {
-                if (!cat.CategoryDescriptor.AllowRemove)
-                    return true;
-                else if (!string.IsNullOrEmpty(cat.CategoryDescriptor.Default))
-                {
-                    if (cat.CategoryDescriptor.Default == item.ComponentRef.ComponentDefID)
-                        return true;
+                Control.Logger.LogDebug($"ICannotRemove - cancel");
+                return true;
+            }
 
-                    var new_ref = CreateHelper.Ref(cat.CategoryDescriptor.Default, item.ComponentRef.ComponentDefType, mechlab.dataManager);
-                    if (new_ref != null)
-                    {
-                        var new_item = CreateHelper.Slot(mechlab, new_ref, widget.loadout.Location);
-                        widget.OnAddItem(new_item, false);
-                    }
+            if (component is IDefaultRepace replace && !string.IsNullOrEmpty(replace.DefaultID) && replace.DefaultID != item.ComponentRef.ComponentDefID)
+            {
+                Control.Logger.LogDebug($"IDefaultRepace - search for replace");
+                var new_ref = CreateHelper.Ref(replace.DefaultID, item.ComponentRef.ComponentDefType, mechlab.dataManager);
+                if (new_ref != null)
+                {
+                    Control.Logger.LogDebug($"IDefaultRepace - adding");
+                    var new_item = CreateHelper.Slot(mechlab, new_ref, widget.loadout.Location);
+                    widget.OnAddItem(new_item, false);
                 }
+                else
+                    Control.Logger.LogDebug($"IDefaultRepace - not found");
+
             }
 
             if (component is IAutoLinked linked)
             {
+                Control.Logger.LogDebug($"IAutoLinked - remove linked");
                 LinkedController.RemoveLinked(mechlab, item, linked);
             }
 
@@ -104,16 +96,7 @@ namespace CustomComponents
             if (component is ICannotRemove)
                 return;
 
-            if (component is ICategory cat)
-            {
-                if (!cat.CategoryDescriptor.AllowRemove)
-                    return;
-                else if (!string.IsNullOrEmpty(cat.CategoryDescriptor.Default))
-                {
-                    if (cat.CategoryDescriptor.Default == component.Description.Id)
-                        return;
-                }
-            }
+
             mechlab.ForceItemDrop(item);
         }
 
