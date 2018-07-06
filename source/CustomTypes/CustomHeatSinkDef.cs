@@ -5,7 +5,6 @@ using HBS.Util;
 
 namespace CustomComponents
 {
-
     public class CustomHeatSinkDef<T> : BattleTech.HeatSinkDef, ICustomComponent
         where T : CustomHeatSinkDef<T>
     {
@@ -51,5 +50,29 @@ namespace CustomComponents
     {
         public UIColor Color { get; set; }
     }
+
+    [Custom("DefaultHeatSink")]
+    public class DefaultCustomHeatSinkDef : CustomHeatSinkDef<DefaultCustomHeatSinkDef>, IDefault
+    {
+
+    }
+
+    [Custom("DefaultCategoryHeatSink")]
+    public class DefaultCategoryCustomHeatSinkDef : CustomHeatSinkDef<DefaultCategoryCustomHeatSinkDef>, ICategory, IDefault
+    {
+        public string CategoryID { get; set; }
+        public string Tag { get; set; }
+        public CategoryDescriptor CategoryDescriptor { get; set; }
+    }
+
+    [Custom("ReplaceCategoryHeatSink")]
+    public class ReplaceCategoryCustomHeatSinkDef : CustomHeatSinkDef<CategoryCustomHeatSinkDef>, ICategory, IDefaultRepace
+    {
+        public string CategoryID { get; set; }
+        public string Tag { get; set; }
+        public CategoryDescriptor CategoryDescriptor { get; set; }
+        public string DefaultID { get; set; }
+    }
+
 
 }

@@ -27,25 +27,4 @@ namespace CustomComponents
             __result = color.Color;
         }
     }
-
-
-    //[HarmonyPatch(typeof(ListElementController_ShopGear), "RefreshItemColor")]
-    //public static class ListElementController_ShopGear_RefreshItemColor_Patch
-    //{
-    //    public static bool Prefix(InventoryItemElement theWidget, ListElementController_ShopGear __instance)
-    //    {
-    //        if (__instance.shopDefItem. is IColorComponent)
-    //        {
-    //            var uicolor = (__instance.salvageDef as IColorComponent).Color;
-    //            foreach (UIColorRefTracker uicolorRefTracker in theWidget.iconBGColors)
-    //            {
-    //                uicolorRefTracker.SetUIColor(uicolor);
-    //            }
-
-    //            return false;
-    //        }
-    //        return true;
-    //    }
-    //}
-
 }

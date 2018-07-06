@@ -53,4 +53,28 @@ namespace CustomComponents
         public UIColor Color { get; set; }
     }
 
+    [Custom("DefaultWeapon")]
+    public class DefaultCustomWeaponDef : CustomWeaponDef<CategoryCustomWeaponDef>, IDefault
+    {
+
+    }
+
+    [Custom("DefaultCategoryWeapon")]
+    public class DefaultCategoryCustomWeaponDef : CustomWeaponDef<DefaultCategoryCustomWeaponDef>, ICategory, IDefault
+    {
+        public string CategoryID { get; set; }
+        public string Tag { get; set; }
+        public CategoryDescriptor CategoryDescriptor { get; set; }
+    }
+
+    [Custom("ReplaceCategoryWeapon")]
+    public class ReplaceCategoryCustomWeaponDef : CustomWeaponDef<ReplaceCategoryCustomWeaponDef>, ICategory, IDefaultRepace
+    {
+        public string CategoryID { get; set; }
+        public string Tag { get; set; }
+        public CategoryDescriptor CategoryDescriptor { get; set; }
+
+        public string DefaultID { get; set; }
+    }
+
 }

@@ -47,12 +47,30 @@ namespace CustomComponents
         public CategoryDescriptor CategoryDescriptor { get; set; }
         public UIColor Color { get; set; }
     }
-
-
     [Custom("ColorAmmunitionBox")]
     public class ColorCustomAmmunitionBoxDef : CustomAmmunitionBoxDef<ColorCustomAmmunitionBoxDef>, IColorComponent
     {
         public UIColor Color { get; set; }
     }
 
+    [Custom("DefautAmmunitionBox")]
+    public class DefautCustomAmmunitionBoxDef : CustomAmmunitionBoxDef<DefautCustomAmmunitionBoxDef>, IDefault
+    { }
+
+    [Custom("ReplaceCategoryAmmunitionBox")]
+    public class DefaultReplaceCategoryCustomAmmunitionBoxDef : CustomAmmunitionBoxDef<DefaultReplaceCategoryCustomAmmunitionBoxDef>, ICategory, IDefaultRepace
+    {
+        public string CategoryID { get; set; }
+        public string Tag { get; set; }
+        public CategoryDescriptor CategoryDescriptor { get; set; }
+        public string DefaultID { get; set; }
+    }
+
+    [Custom("DefaultCategoryAmmunitionBox")]
+    public class DefaultCategoryCustomAmmunitionBoxDef : CustomAmmunitionBoxDef<DefaultCategoryCustomAmmunitionBoxDef>, ICategory, IDefault
+    {
+        public string CategoryID { get; set; }
+        public string Tag { get; set; }
+        public CategoryDescriptor CategoryDescriptor { get; set; }
+    }
 }

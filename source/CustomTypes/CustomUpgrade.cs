@@ -52,5 +52,25 @@ namespace CustomComponents
         public UIColor Color { get; set; }
     }
 
+    [Custom("DefaultUpgrade")]
+    public class DefaultCustomUpgradeDef : CustomUpgradeDef<DefaultCustomUpgradeDef>, IDefault
+    {
+    }
 
+    [Custom("DefaultCategoryUpgrade")]
+    public class DefaultCategoryCustomUpgradeDef : CustomUpgradeDef<DefaultCategoryCustomUpgradeDef>, ICategory, IDefault
+    {
+        public string CategoryID { get; set; }
+        public string Tag { get; set; }
+        public CategoryDescriptor CategoryDescriptor { get; set; }
+    }
+
+    [Custom("ReplaceCategoryUpgrade")]
+    public class ReplaceCategoryCustomUpgradeDef : CustomUpgradeDef<ReplaceCategoryCustomUpgradeDef>, ICategory, IDefaultRepace
+    {
+        public string CategoryID { get; set; }
+        public string Tag { get; set; }
+        public CategoryDescriptor CategoryDescriptor { get; set; }
+        public string DefaultID { get; set; }
+    }
 }

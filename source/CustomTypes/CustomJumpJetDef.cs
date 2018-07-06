@@ -53,4 +53,25 @@ namespace CustomComponents
         public UIColor Color { get; set; }
     }
 
+    [Custom("DefaultJumpJet")]
+    public class DefaultCustomJumpJetDef : CustomJumpJetDef<DefaultCustomJumpJetDef>, IDefault
+    {
+    }
+
+    [Custom("DefaultCategoryJumpJet")]
+    public class DefaultCategoryCustomJumpJetDef : CustomJumpJetDef<DefaultCategoryCustomJumpJetDef>, ICategory, IDefault
+    {
+        public string CategoryID { get; set; }
+        public string Tag { get; set; }
+        public CategoryDescriptor CategoryDescriptor { get; set; }
+    }
+
+    [Custom("ReplaceCategoryJumpJet")]
+    public class ReplaceCategoryCustomJumpJetDef : CustomJumpJetDef<ReplaceCategoryCustomJumpJetDef>, ICategory, IDefaultRepace
+    {
+        public string CategoryID { get; set; }
+        public string Tag { get; set; }
+        public CategoryDescriptor CategoryDescriptor { get; set; }
+        public string DefaultID { get; set; }
+    }
 }

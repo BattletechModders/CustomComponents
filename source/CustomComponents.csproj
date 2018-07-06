@@ -89,7 +89,7 @@
     <Compile Include="IDefault\SimGameState_StripMech_Patch.cs" />
     <Compile Include="TEST\AutoFix.cs" />
     <Compile Include="Validators\MechLabLocationWidget_OnMechLabDrop_Patch.cs" />
-    <Compile Include="Category\MechLabLocationWidget_OnItemGrab_Patch.cs" />
+    <Compile Include="IDefault\MechLabLocationWidget_OnItemGrab_Patch_IDefaultReplace.cs" />
     <Compile Include="ColorChanger\IColorComponent.cs" />
     <Compile Include="ColorChanger\ListElementController_SalvageGear_NotListView_RefreshItemColor_Patch.cs" />
     <Compile Include="ColorChanger\ListElementController_SalvageGear_RefreshItemColor_Patch.cs" />

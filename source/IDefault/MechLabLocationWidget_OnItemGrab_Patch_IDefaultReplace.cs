@@ -1,15 +1,16 @@
 ﻿using System;
-using System.Linq;
 using BattleTech;
 using BattleTech.UI;
 using Harmony;
 
 namespace CustomComponents.Category
 {
+    /// <summary>
+    /// ItemGrab path for IDefaultReplace
+    /// </summary>
     [HarmonyPatch(typeof(MechLabLocationWidget), "OnItemGrab")]
     internal static class MechLabLocationWidget_OnItemGrab_Patch_IDefaultReplace
     {
-
         public static bool Prefix(IMechLabDraggableItem item, ref bool __result, MechLabPanel ___mechLab, ref MechComponentRef __state)
         {
             Control.Logger.LogDebug($"OnItemGrab.Prefix {item.ComponentRef.ComponentDefID}");
