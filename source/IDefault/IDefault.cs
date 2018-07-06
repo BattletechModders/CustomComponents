@@ -10,7 +10,9 @@ namespace CustomComponents
     public interface IHideFromInventory
     { }
 
-    public interface IDefault : INotSalvagable, ICannotRemove, IHideFromInventory
-    {
-    }
+    public interface IAutoRepair
+    { }
+
+    public interface IDefault : INotSalvagable, ICannotRemove, IHideFromInventory, IAutoRepair
+    { }
 }

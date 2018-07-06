@@ -28,17 +28,17 @@ namespace CustomComponents.Category
                 return false;
             }
 
-            if (string.IsNullOrEmpty(cat_item.CategoryDescriptor.DefaultReplace))
+            if (string.IsNullOrEmpty(cat_item.CategoryDescriptor.Default))
                 return true;
 
-            if (cat_item.CategoryDescriptor.DefaultReplace == item.ComponentRef.ComponentDefID)
+            if (cat_item.CategoryDescriptor.Default == item.ComponentRef.ComponentDefID)
             {
                 ___mechLab.ShowDropErrorMessage("Cannot remove vital component");
                 __result = false;
                 return false;
             }
 
-            MechComponentRef component_ref = CreateHelper.Ref(cat_item.CategoryDescriptor.DefaultReplace,
+            MechComponentRef component_ref = CreateHelper.Ref(cat_item.CategoryDescriptor.Default,
                 item.ComponentRef.ComponentDefType, ___mechLab.dataManager);
 
             if (component_ref.Def == null)
@@ -81,6 +81,8 @@ namespace CustomComponents.Category
                 {
                     Control.Logger.LogDebug("OnItemGrab.Postfix Error:", e);
                 }
+
+
             }
         }
     }

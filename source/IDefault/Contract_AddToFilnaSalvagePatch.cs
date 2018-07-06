@@ -5,7 +5,7 @@ using HBS.Logging;
 namespace CustomComponents
 {
     [HarmonyPatch(typeof(Contract), "AddToFinalSalvage")]
-    public static class Contract_AddToFilnaSalvagePatch
+    internal static class Contract_AddToFilnaSalvagePatch
     {
         public static bool Prefix(SalvageDef def)
         {
@@ -13,7 +13,7 @@ namespace CustomComponents
         }
     }
     [HarmonyPatch(typeof(Contract), "AddMechComponentToSalvage")]
-    public static class Contract_AddMechComponentToSalvage
+    internal static class Contract_AddMechComponentToSalvage
     {
         public static bool Prefix(MechComponentDef def)
         {

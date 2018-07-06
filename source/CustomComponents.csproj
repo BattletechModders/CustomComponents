@@ -80,14 +80,16 @@
     <Compile Include="IDefault\Contract_AddToFilnaSalvagePatch.cs" />
     <Compile Include="IDefault\IDefault.cs" />
     <Compile Include="Helpers\CreateHelper.cs" />
+    <Compile Include="IDefault\MechLabLocationWidget_Repair_Patches.cs" />
     <Compile Include="IDefault\MechLabLocationWidget_OnItemGrab_Patch_Default.cs" />
     <Compile Include="IAutoLinked\IAutoLinked.cs" />
     <Compile Include="IAutoLinked\LinkedController.cs" />
     <Compile Include="IAutoLinked\MechLabLocationWidget_OnItemGrab_Patch_ILinked.cs" />
+    <Compile Include="IDefault\MechLabLocationWidget_StripEquipment.cs" />
+    <Compile Include="IDefault\RemoveHelper.cs" />
     <Compile Include="TEST\AutoFix.cs" />
     <Compile Include="Validators\MechLabLocationWidget_OnMechLabDrop_Patch.cs" />
     <Compile Include="Category\MechLabLocationWidget_OnItemGrab_Patch.cs" />
-    <Compile Include="Category\RemoveController.cs" />
     <Compile Include="ColorChanger\IColorComponent.cs" />
     <Compile Include="ColorChanger\ListElementController_SalvageGear_NotListView_RefreshItemColor_Patch.cs" />
     <Compile Include="ColorChanger\ListElementController_SalvageGear_RefreshItemColor_Patch.cs" />

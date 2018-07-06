@@ -33,16 +33,11 @@ namespace CustomComponents
 
         [DefaultValue(true), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public bool AllowRemove = true;
-
-        [DefaultValue(""), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public string DefaultReplace = "";
-
         [DefaultValue(false), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public bool AutoRepairOnReplace = false;
+        public bool AutoRepair = true;
 
         [DefaultValue(""), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public string DefaultRepair = "";
-
+        public string Default = "";
 
         [DefaultValue("{0} already installed on mech"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string AddAlreadyEquiped = "{0} already installed on mech";

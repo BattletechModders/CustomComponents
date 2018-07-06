@@ -3,6 +3,7 @@ using System.Linq;
 using BattleTech;
 using BattleTech.UI;
 using CustomComponents;
+using UnityEngine;
 
 namespace CustomComponents
 {
@@ -117,6 +118,39 @@ namespace CustomComponents
             }
 
             return last_result;
+        }
+
+        public static void RemoveLinked(MechLabPanel mechlab, IMechLabDraggableItem item, IAutoLinked linked)
+        {
+            var helper = new MechLabHelper(mechlab);
+            foreach (var r_link in linked.Links)
+            {
+                var widget = helper.GetLocationWidget(r_link.Location);
+                if (widget != null)
+                {
+                    Control.Logger.LogDebug($"{r_link.ApendixID} from {r_link.Location}");
+                    var location = new LocationHelper(widget);
+                    var remove = location.LocalInventory.FirstOrDefault(e =>
+                        e?.ComponentRef?.ComponentDefID == r_link.ApendixID);
+
+                    if (remove != null)
+                    {
+                        Control.Logger.LogDebug($"removed");
+                        widget.OnRemoveItem(remove, true);
+
+                        if (item.ComponentRef.Def is IDefault)
+                            GameObject.Destroy(remove.gameObject);
+                        else
+                        {
+                            var temp = mechlab.DragItem as MechLabItemSlotElement;
+                            mechlab.ForceItemDrop(remove);
+                            helper.SetDragItem(temp);
+                        }
+                    }
+                    else
+                        Control.Logger.LogDebug($"not found");
+                }
+            }
         }
     }
 }
