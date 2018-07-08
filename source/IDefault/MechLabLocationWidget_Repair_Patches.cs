@@ -14,10 +14,10 @@ namespace CustomComponents
             return instructions
            .MethodReplacer(
                 AccessTools.Method(typeof(MechLabLocationWidget), "OnRemoveItem"),
-                AccessTools.Method(typeof(RemoveHelper), "OnRemoveItem")
+                AccessTools.Method(typeof(DefaultHelper), "OnRemoveItem")
             ).MethodReplacer(
                 AccessTools.Method(typeof(MechLabPanel), "ForceItemDrop"),
-                AccessTools.Method(typeof(RemoveHelper), "ForceItemDropRepair")
+                AccessTools.Method(typeof(DefaultHelper), "ForceItemDropRepair")
             );
         }
     }
@@ -29,10 +29,10 @@ namespace CustomComponents
         {
             return instructions.MethodReplacer(
                 AccessTools.Method(typeof(MechLabLocationWidget), "OnRemoveItem"),
-                AccessTools.Method(typeof(RemoveHelper), "OnRemoveItem")
+                AccessTools.Method(typeof(DefaultHelper), "OnRemoveItem")
             ).MethodReplacer(
                 AccessTools.Method(typeof(MechLabPanel), "ForceItemDrop"),
-                AccessTools.Method(typeof(RemoveHelper), "ForceItemDropRepair")
+                AccessTools.Method(typeof(DefaultHelper), "ForceItemDropRepair")
             );
         }
     }

@@ -11,10 +11,10 @@ namespace CustomComponents
         {
             return instructions.MethodReplacer(
                 AccessTools.Method(typeof(MechLabLocationWidget), "OnRemoveItem"),
-                AccessTools.Method(typeof(RemoveHelper), "OnRemoveItemStrip")
+                AccessTools.Method(typeof(DefaultHelper), "OnRemoveItemStrip")
             ).MethodReplacer(
                 AccessTools.Method(typeof(MechLabPanel), "ForceItemDrop"),
-                AccessTools.Method(typeof(RemoveHelper), "ForceItemDropStrip")
+                AccessTools.Method(typeof(DefaultHelper), "ForceItemDropStrip")
             );
         }
     }

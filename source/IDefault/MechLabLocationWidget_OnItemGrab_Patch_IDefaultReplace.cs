@@ -3,8 +3,8 @@ using BattleTech;
 using BattleTech.UI;
 using Harmony;
 
-namespace CustomComponents.Category
-{
+namespace CustomComponents
+{ 
     /// <summary>
     /// ItemGrab path for IDefaultReplace
     /// </summary>
@@ -45,7 +45,7 @@ namespace CustomComponents.Category
             return true;
         }
 
-        public static void Postfix(ref bool __result, MechComponentRef __state, MechLabPanel ___mechLab, MechLabLocationWidget __instance)
+        public static void Postfix(IMechLabDraggableItem item, ref bool __result, MechComponentRef __state, MechLabPanel ___mechLab, MechLabLocationWidget __instance)
         {
             Control.Logger.LogDebug($"OnItemGrab.Postfix CanRemove: {__result}");
             if (__state != null)
@@ -61,18 +61,13 @@ namespace CustomComponents.Category
 
                     if (__instance.Sim != null)
                     {
-                        WorkOrderEntry_InstallComponent subEntry = __instance.Sim.CreateComponentInstallWorkOrder(
-                            ___mechLab.baseWorkOrder.MechID,
-                            slot.ComponentRef, __instance.loadout.Location, slot.MountedLocation);
-                        ___mechLab.baseWorkOrder.AddSubEntry(subEntry);
+                        DefaultHelper.DefaultReplaceBase(item.ComponentRef, __state.ComponentDefID, __instance.loadout.Location);
                     }
                 }
                 catch (Exception e)
                 {
                     Control.Logger.LogDebug("OnItemGrab.Postfix Error:", e);
                 }
-
-
             }
         }
     }

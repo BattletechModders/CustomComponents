@@ -48,6 +48,11 @@
 			"Type": "HeatSinkDef",
 			"Path": "data/engine/",
 			"ShouldMergeJSON": false
+		},
+		{
+			"Type": "ShopDef",
+			"Path": "data/shops/",
+			"ShouldMergeJSON": false
 		}
 	]
 }

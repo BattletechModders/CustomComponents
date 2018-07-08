@@ -64,7 +64,9 @@ namespace CustomComponents
                                 {
                                     Control.Logger.LogDebug($"added");
                                     var slot = CreateHelper.Slot(location.mechLab, cref, a_link.Location);
-                                    list.Add( new AddChange(a_link.Location, slot));
+                                    list.Add(new AddChange(a_link.Location, slot));
+                                    if (location.widget.IsSimGame)
+                                        list.Add(new DefautAddWith { DefaultID = a_link.ApendixID, Location = a_link.Location, Main = change.item.ComponentRef });
                                 }
                                 else
                                     Control.Logger.LogDebug($"not found");
@@ -87,6 +89,9 @@ namespace CustomComponents
                                     {
                                         Control.Logger.LogDebug($"removed");
                                         list.Add(new RemoveChange(r_link.Location, remove));
+                                        if (location.widget.IsSimGame)
+                                            list.Add(new DefautRemoveWith { DefaultID = r_link.ApendixID, Location = r_link.Location, Main = change.item.ComponentRef });
+
                                     }
                                     else
                                         Control.Logger.LogDebug($"not found");
@@ -96,7 +101,7 @@ namespace CustomComponents
 
                     }
                 }
-                if(list.Count > 0)
+                if (list.Count > 0)
                     changes.Changes.AddRange(list);
             }
 
@@ -112,8 +117,16 @@ namespace CustomComponents
                     {
                         return new ValidateDropError($"Cannot Add {element.ComponentRef.Def.Description.Name} - Linked element not exist");
                     }
-                        var slot = CreateHelper.Slot(location.mechLab, cref, a_link.Location);
+                    var slot = CreateHelper.Slot(location.mechLab, cref, a_link.Location);
                     last_result = ValidateDropChange.AddOrCreate(last_result, new AddChange(a_link.Location, slot));
+                    if (location.widget.IsSimGame)
+                        last_result = ValidateDropChange.AddOrCreate(last_result,
+                            new DefautAddWith
+                            {
+                                DefaultID = a_link.ApendixID,
+                                Location = a_link.Location,
+                                Main = element.ComponentRef
+                            });
                 }
             }
 
@@ -137,15 +150,8 @@ namespace CustomComponents
                     {
                         Control.Logger.LogDebug($"removed");
                         widget.OnRemoveItem(remove, true);
-
-                        if (item.ComponentRef.Def is IDefault)
-                            GameObject.Destroy(remove.gameObject);
-                        else
-                        {
-                            var temp = mechlab.DragItem as MechLabItemSlotElement;
-                            mechlab.ForceItemDrop(remove);
-                            helper.SetDragItem(temp);
-                        }
+                        //DefaultHelper.DefaultRemoveWith(item.ComponentRef, r_link.ApendixID, r_link.Location);
+                        mechlab.dataManager.PoolGameObject(MechLabPanel.MECHCOMPONENT_ITEM_PREFAB, item.GameObject);
                     }
                     else
                         Control.Logger.LogDebug($"not found");

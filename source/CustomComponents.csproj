@@ -75,6 +75,14 @@
     <Compile Include="Category\CategoryController.cs" />
     <Compile Include="Category\CategoryDescriptor.cs" />
     <Compile Include="Category\ICategory.cs" />
+    <Compile Include="DropResults\AddChange.cs" />
+    <Compile Include="DropResults\DefaultChange.cs" />
+    <Compile Include="DropResults\RemoveChange.cs" />
+    <Compile Include="DropResults\SlotChange.cs" />
+    <Compile Include="DropResults\ValidateDropChange.cs" />
+    <Compile Include="DropResults\ValidateDropError.cs" />
+    <Compile Include="DropResults\ValidateDropHandled.cs" />
+    <Compile Include="DropResults\ValidateDropRemoveDragItem.cs" />
     <Compile Include="Filter\MechLabFilter.cs" />
     <Compile Include="IDefault\Contract_AddToFilnaSalvagePatch.cs" />
     <Compile Include="IDefault\IDefault.cs" />
@@ -85,7 +93,13 @@
     <Compile Include="IAutoLinked\LinkedController.cs" />
     <Compile Include="IAutoLinked\MechLabLocationWidget_OnItemGrab_Patch_ILinked.cs" />
     <Compile Include="IDefault\MechLabLocationWidget_StripEquipment.cs" />
-    <Compile Include="IDefault\RemoveHelper.cs" />
+    <Compile Include="IDefault\DefaultHelper.cs" />
+    <Compile Include="IDefault\MechLabPanel_ConfirmRevertMech_Patch.cs" />
+    <Compile Include="IDefault\MechLabPanel_LoadExit_Patches.cs" />
+    <Compile Include="IDefault\SimGameState_AddItemStat_Patch.cs" />
+    <Compile Include="IDefault\SimGameState_AddMechPart_Patch.cs" />
+    <Compile Include="IDefault\SimGameState_PruneWorkOrder_Patch.cs" />
+    <Compile Include="IDefault\SimGameState_ReadyMech_Patch.cs" />
     <Compile Include="IDefault\SimGameState_StripMech_Patch.cs" />
     <Compile Include="TEST\AutoFix.cs" />
     <Compile Include="Validators\MechLabLocationWidget_OnMechLabDrop_Patch.cs" />
@@ -103,11 +117,11 @@
     <Compile Include="CustomTypes\CustomHeatSinkDef.cs" />
     <Compile Include="TEST\TestTypes.cs" />
     <Compile Include="Tooltips.cs" />
-    <Compile Include="Validators\LocationHelper.cs" />
-    <Compile Include="Validators\MechLabHelper.cs" />
+    <Compile Include="Helpers\LocationHelper.cs" />
+    <Compile Include="Helpers\MechLabHelper.cs" />
     <Compile Include="Validators\MechValidationRulesValidate_ValidateMech_Patch.cs" />
     <Compile Include="Validators\MechValidationRules_ValidateMechCanBeFielded_Patch.cs" />
-    <Compile Include="Validators\ValidateDropResult.cs" />
+    <Compile Include="DropResults\ValidateDropResult.cs" />
     <Compile Include="Validators\ValidatorInterfaces.cs" />
     <Compile Include="Validators\Validator.cs" />
     <Compile Include="Helpers\HarmonyNestedAttribute.cs" />
@@ -122,6 +136,5 @@
     <Compile Include="Filter\MechLabInventoryWidget_ApplyFiltering_Patch.cs" />
     <Compile Include="WeightLimitation\WeighLimitedController.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
