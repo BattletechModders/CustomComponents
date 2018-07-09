@@ -16,13 +16,20 @@ namespace CustomComponents
             {
 
                 var inventory = ___resource.Inventory.ToList();
+                var ref1 = new MechComponentRef("Gear_Actuator_Default", null, ComponentType.Upgrade,
+                    ChassisLocations.LeftLeg);
+                ref1.DataManager = ___resource.DataManager;
+                ref1.RefreshComponentDef();
+                var ref2 = new MechComponentRef("Gear_Actuator_Default", null, ComponentType.Upgrade,
+                    ChassisLocations.RightLeg);
+                ref2.DataManager = ___resource.DataManager;
+                ref2.RefreshComponentDef();
 
-                inventory.Add(new MechComponentRef("Gear_Actuator_Default", null, ComponentType.Upgrade,
-                    ChassisLocations.LeftLeg));
-                inventory.Add(new MechComponentRef("Gear_Actuator_Default", null, ComponentType.Upgrade,
-                    ChassisLocations.RightLeg));
-
+                inventory.Add(ref1);
+                inventory.Add(ref2);
+               
                 ___resource.SetInventory(inventory.ToArray());
+                Traverse.Create(__instance).Method("TryLoadDependencies").GetValue(___resource);
             }
         }
     }

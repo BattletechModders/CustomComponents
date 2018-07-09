@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using BattleTech;
@@ -126,13 +127,31 @@ namespace CustomComponents
 
         public static MechComponentRef[] ClearInventory(MechDef source, SimGameState state)
         {
+            Control.Logger.LogDebug("Clearing Inventory");
+
             var list = source.Inventory.ToList();
+
+            //TODO: Remove in light
+            foreach (var item in list)
+                if (item.Def == null)
+                    item.RefreshComponentDef();
+
             var result_list = list.Where(i => i.Def is IDefault).ToList();
 
             for (int i = list.Count - 1; i >= 0; i--)
             {
+                Control.Logger.LogDebug($"- {list[i].ComponentDefID} - {(list[i].Def == null ? "NULL" : list[i].SimGameUID)}");
+                if (list[i].Def == null)
+                {
+                    list[i].RefreshComponentDef();
+                    list[i].SetSimGameUID(state.GenerateSimGameUID());
+                }
+
                 if (list[i].Def is IDefault)
+                {
+                    Control.Logger.LogDebug("-- Default - skipping");
                     continue;
+                }
 
                 if (list[i].Def is IDefaultRepace replace)
                 {
@@ -140,7 +159,9 @@ namespace CustomComponents
                     ref_item.SetData(list[i].MountedLocation, list[i].HardpointSlot, list[i].DamageLevel);
                     ref_item.SetSimGameUID(state.GenerateSimGameUID());
                     result_list.Add(ref_item);
+                    Control.Logger.LogDebug($"-- Replace with {ref_item.ComponentDefID} - {ref_item.SimGameUID}");
                 }
+
 
                 if (list[i].Def is IAutoLinked link && link.Links != null)
                 {
@@ -149,6 +170,12 @@ namespace CustomComponents
                         result_list.RemoveAll(item => item.ComponentDefID == l.ApendixID && item.MountedLocation == l.Location);
                     }
                 }
+            }
+
+            foreach (var item in result_list)
+            {
+                item.SetSimGameUID(state.GenerateSimGameUID());
+                Control.Logger.LogDebug($"- {item.ComponentDefID} - {item.SimGameUID}");
             }
 
             return result_list.ToArray();
@@ -201,13 +228,13 @@ namespace CustomComponents
                 var traverse = Traverse.Create(entry).Field("CBillCost");
                 traverse.SetValue(action.type == atype.replacebase ? componentRef.Def.Description.Cost : 0);
 
-                baseWorkOrder.SubEntries.Insert(after + 1, entry);
+                baseWorkOrder.SubEntries.Insert(after, entry);
             }
 
             void remove_install(int after, defaction action)
             {
                 MechComponentRef componentRef = null;
-                for (int i = after -1; i >= 0; i--)
+                for (int i = after - 1; i >= 0; i--)
                 {
                     var entry = baseWorkOrder.SubEntries[i] as WorkOrderEntry_InstallComponent;
                     if (entry != null && entry.MechComponentRef.ComponentDefID == action.defid &&
@@ -227,7 +254,7 @@ namespace CustomComponents
 
                 if (componentRef == null)
                 {
-                    Control.Logger.LogError($"Cannot find {action.defid} to remove" );
+                    Control.Logger.LogError($"Cannot find {action.defid} to remove");
                     return;
                 }
 
@@ -238,7 +265,7 @@ namespace CustomComponents
                 var traverse = Traverse.Create(new_entry).Field("CBillCost");
                 traverse.SetValue(action.type == atype.replacedef ? -componentRef.Def.Description.Cost / 2 : 0);
 
-                baseWorkOrder.SubEntries.Insert(after + 1, new_entry);
+                baseWorkOrder.SubEntries.Insert(after, new_entry);
             }
 
             if (_mechLab == null)
@@ -293,14 +320,36 @@ namespace CustomComponents
                 }
             }
 
-            Control.Logger.Log("Prune: postfix defaults" );
-            foreach (WorkOrderEntry_MechLab entry in baseWorkOrder.SubEntries)
-            {
-                Control.Logger.Log($"  {entry.Type} - {entry.ID} - {entry.MechID} - {(entry is WorkOrderEntry_InstallComponent install ? install.MechComponentRef.ComponentDefID : "")}");
-            }
-
+            ShowWorkOrder(baseWorkOrder, "Prune Prefix End");
 
             actions.RemoveAll(a => a.need_remove);
+        }
+
+        private static void ShowWorkOrder(WorkOrderEntry_MechLab baseWorkOrder, string message)
+        {
+            Control.Logger.Log($"{message} {baseWorkOrder.SubEntries.Count}");
+            try
+            {
+                foreach (WorkOrderEntry_MechLab entry in baseWorkOrder.SubEntries)
+                {
+                    if (entry is WorkOrderEntry_InstallComponent install)
+                    {
+                        Control.Logger.Log($"--{entry.Type} - {install.MechComponentRef.ComponentDefID} - {install.MechComponentRef.SimGameUID}");
+                    }
+                    else if (entry is WorkOrderEntry_RepairComponent repair)
+                    {
+                        Control.Logger.Log($"--{entry.Type} - {repair.MechComponentID}");
+                    }
+                    else
+                    {
+                        Control.Logger.Log($"--{entry.Type} - {entry.Description}");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Control.Logger.Log(e);
+            }
         }
 
         public static void DefaultAddWith(MechComponentRef main, string defaultId, ChassisLocations location)

@@ -101,6 +101,7 @@
     <Compile Include="IDefault\SimGameState_PruneWorkOrder_Patch.cs" />
     <Compile Include="IDefault\SimGameState_ReadyMech_Patch.cs" />
     <Compile Include="IDefault\SimGameState_StripMech_Patch.cs" />
+    <Compile Include="IDefault\Test.cs" />
     <Compile Include="TEST\AutoFix.cs" />
     <Compile Include="Validators\MechLabLocationWidget_OnMechLabDrop_Patch.cs" />
     <Compile Include="IDefault\MechLabLocationWidget_OnItemGrab_Patch_IDefaultReplace.cs" />
