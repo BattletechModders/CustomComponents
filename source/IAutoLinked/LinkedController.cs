@@ -65,8 +65,6 @@ namespace CustomComponents
                                     Control.Logger.LogDebug($"added");
                                     var slot = CreateHelper.Slot(location.mechLab, cref, a_link.Location);
                                     list.Add(new AddChange(a_link.Location, slot));
-                                    if (location.widget.IsSimGame)
-                                        list.Add(new DefautAddWith { DefaultID = a_link.ApendixID, Location = a_link.Location, Main = change.item.ComponentRef });
                                 }
                                 else
                                     Control.Logger.LogDebug($"not found");
@@ -89,8 +87,6 @@ namespace CustomComponents
                                     {
                                         Control.Logger.LogDebug($"removed");
                                         list.Add(new RemoveChange(r_link.Location, remove));
-                                        if (location.widget.IsSimGame)
-                                            list.Add(new DefautRemoveWith { DefaultID = r_link.ApendixID, Location = r_link.Location, Main = change.item.ComponentRef });
 
                                     }
                                     else
@@ -119,14 +115,7 @@ namespace CustomComponents
                     }
                     var slot = CreateHelper.Slot(location.mechLab, cref, a_link.Location);
                     last_result = ValidateDropChange.AddOrCreate(last_result, new AddChange(a_link.Location, slot));
-                    if (location.widget.IsSimGame)
-                        last_result = ValidateDropChange.AddOrCreate(last_result,
-                            new DefautAddWith
-                            {
-                                DefaultID = a_link.ApendixID,
-                                Location = a_link.Location,
-                                Main = element.ComponentRef
-                            });
+
                 }
             }
 

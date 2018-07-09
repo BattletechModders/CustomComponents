@@ -186,17 +186,6 @@ namespace CustomComponents
                     last_result = ValidateDropChange.AddOrCreate(last_result,
                         new RemoveChange(location.widget.loadout.Location, replacement));
 
-                    if (location.widget.IsSimGame)
-                    {
-                        if (replacement.ComponentRef.Def is IDefault)
-                            last_result = ValidateDropChange.AddOrCreate(last_result,
-                                new DefautReplaceDefault
-                                {
-                                    DefaultID = replacement.ComponentRef.ComponentDefID,
-                                    Location = replacement.MountedLocation,
-                                    Main = element.ComponentRef
-                                });
-                    }
 
                     return last_result;
 

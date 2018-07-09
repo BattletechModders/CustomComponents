@@ -10,26 +10,6 @@ namespace CustomComponents
 {
     internal static class DefaultHelper
     {
-        private enum atype { addwith, removewith, replacebase, replacedef }
-
-        private class defaction
-        {
-            public atype type;
-            public ChassisLocations location;
-            public MechComponentRef main;
-            public string defid;
-            public bool need_remove;
-        }
-
-        private static MechLabPanel _mechLab = null;
-        private static List<defaction> actions = new List<defaction>();
-
-        public static void SetMechLab(MechLabPanel mechLab)
-        {
-            actions.Clear();
-            _mechLab = mechLab;
-        }
-
         public static bool OnRemoveItem(this MechLabLocationWidget widget, IMechLabDraggableItem item, bool validate)
         {
             void do_Repair()
@@ -66,6 +46,29 @@ namespace CustomComponents
 
             return widget.OnRemoveItem(item, validate);
             //mechlab.ValidateLoadout(false);
+        }
+
+        internal static void RemoveDefault(string defaultID, MechDef mech, ChassisLocations location, ComponentType type)
+        {
+            var item = mech.Inventory.Where(i => i.MountedLocation == location && i.ComponentDefID == defaultID).FirstOrDefault();
+            if(item != null)
+            {
+                var inv = mech.Inventory.ToList();
+                inv.Remove(item);
+                mech.SetInventory(inv.ToArray());
+            }
+        }
+
+        internal static void AddDefault(string defaultID, MechDef mech, ChassisLocations location, ComponentType type)
+        {
+            var r = CreateHelper.Ref(defaultID, type, mech.DataManager);
+            if(r != null)
+            {
+                r.SetData(location, -1, ComponentDamageLevel.Functional);
+                var inv = mech.Inventory.ToList();
+                inv.Add(r);
+                mech.SetInventory(inv.ToArray());
+            }
         }
 
         public static void ForceItemDropRepair(this MechLabPanel mechlab, MechLabItemSlotElement item)
@@ -132,9 +135,9 @@ namespace CustomComponents
             var list = source.Inventory.ToList();
 
             //TODO: Remove in light
-            foreach (var item in list)
-                if (item.Def == null)
-                    item.RefreshComponentDef();
+            //foreach (var item in list)
+                //if (item.Def == null)
+                //    item.RefreshComponentDef();
 
             var result_list = list.Where(i => i.Def is IDefault).ToList();
 
@@ -181,220 +184,6 @@ namespace CustomComponents
             return result_list.ToArray();
         }
 
-        public static void PrefixPrune(WorkOrderEntry_MechLab baseWorkOrder)
-        {
-
-            if (_mechLab == null)
-                return;
-
-            Control.Logger.Log("-------- Prune: Prefix ----------");
-            foreach (WorkOrderEntry_MechLab entry in baseWorkOrder.SubEntries)
-            {
-                Control.Logger.Log($"  {entry.Type} - {entry.ID} - {entry.MechID} - {(entry is WorkOrderEntry_InstallComponent install ? install.MechComponentRef.ComponentDefID : "")}");
-            }
-
-
-            baseWorkOrder.SubEntries.RemoveAll(i =>
-                i is WorkOrderEntry_InstallComponent install && install.MechComponentRef.Def is IDefault);
-
-
-            Control.Logger.Log("Prune: Prefix clean");
-            foreach (WorkOrderEntry_MechLab entry in baseWorkOrder.SubEntries)
-            {
-                Control.Logger.Log($"  {entry.Type} - {entry.ID} - {entry.MechID} - {(entry is WorkOrderEntry_InstallComponent install ? install.MechComponentRef.ComponentDefID : "")}");
-            }
-        }
-
-        public static void PostfixPrune(WorkOrderEntry_MechLab baseWorkOrder)
-        {
-            void add_install(int after, defaction action)
-            {
-                var componentRef = new MechComponentRef(action.defid, "", action.main.ComponentDefType, action.location = ChassisLocations.None);
-                componentRef.DataManager = _mechLab.dataManager;
-                componentRef.RefreshComponentDef();
-                if (componentRef.Def == null)
-                {
-                    Control.Logger.LogError($"Cannot load {action.defid} to add");
-                    return;
-                }
-
-                componentRef.SetSimGameUID(_mechLab.sim.GenerateSimGameUID());
-                _mechLab.sim.WorkOrderComponents.Add(componentRef);
-
-                var entry = _mechLab.sim.CreateComponentInstallWorkOrder(baseWorkOrder.MechID,
-                    componentRef, action.location, ChassisLocations.None);
-                entry.SetCost(0);
-
-                var traverse = Traverse.Create(entry).Field("CBillCost");
-                traverse.SetValue(action.type == atype.replacebase ? componentRef.Def.Description.Cost : 0);
-
-                baseWorkOrder.SubEntries.Insert(after, entry);
-            }
-
-            void remove_install(int after, defaction action)
-            {
-                MechComponentRef componentRef = null;
-                for (int i = after - 1; i >= 0; i--)
-                {
-                    var entry = baseWorkOrder.SubEntries[i] as WorkOrderEntry_InstallComponent;
-                    if (entry != null && entry.MechComponentRef.ComponentDefID == action.defid &&
-                        entry.DesiredLocation == ChassisLocations.None && entry.PreviousLocation == action.location)
-                    {
-                        componentRef = entry.MechComponentRef;
-                        break;
-                    }
-                }
-
-                if (componentRef == null)
-                {
-                    componentRef = _mechLab.originalMechDef.Inventory
-                        .Where(i => i.MountedLocation == action.location)
-                        .FirstOrDefault(i => i.ComponentDefID == action.defid);
-                }
-
-                if (componentRef == null)
-                {
-                    Control.Logger.LogError($"Cannot find {action.defid} to remove");
-                    return;
-                }
-
-                var new_entry = _mechLab.sim.CreateComponentInstallWorkOrder(baseWorkOrder.MechID, componentRef,
-                    ChassisLocations.None, action.location);
-                new_entry.SetCost(0);
-
-                var traverse = Traverse.Create(new_entry).Field("CBillCost");
-                traverse.SetValue(action.type == atype.replacedef ? -componentRef.Def.Description.Cost / 2 : 0);
-
-                baseWorkOrder.SubEntries.Insert(after, new_entry);
-            }
-
-            if (_mechLab == null)
-                return;
-
-            Control.Logger.Log("Prune: postfix");
-            foreach (WorkOrderEntry_MechLab entry in baseWorkOrder.SubEntries)
-            {
-                Control.Logger.Log($"  {entry.Type} - {entry.ID} - {entry.MechID} - {(entry is WorkOrderEntry_InstallComponent install ? install.MechComponentRef.ComponentDefID : "")}");
-            }
-
-
-            foreach (var action in actions)
-            {
-                action.need_remove = false;
-                int index = baseWorkOrder.SubEntries.FindIndex(i =>
-                    i is WorkOrderEntry_InstallComponent inst && inst.MechComponentRef == action.main);
-
-                if (index < 0)
-                {
-                    action.need_remove = true;
-                    continue;
-                }
-
-                var install = baseWorkOrder.SubEntries[index] as WorkOrderEntry_InstallComponent;
-                switch (action.type)
-                {
-                    case atype.addwith:
-                        if (install.DesiredLocation == ChassisLocations.None)
-                            action.need_remove = true;
-                        else
-                            add_install(index, action);
-                        break;
-                    case atype.removewith:
-                        if (install.PreviousLocation != ChassisLocations.None)
-                            action.need_remove = true;
-                        else
-                            remove_install(index, action);
-                        break;
-                    case atype.replacebase:
-                        if (install.PreviousLocation == action.location)
-                            add_install(index, action);
-                        else
-                            action.need_remove = true;
-                        break;
-                    case atype.replacedef:
-                        if (install.DesiredLocation == action.location)
-                            remove_install(index, action);
-                        else
-                            action.need_remove = true;
-                        break;
-                }
-            }
-
-            ShowWorkOrder(baseWorkOrder, "Prune Prefix End");
-
-            actions.RemoveAll(a => a.need_remove);
-        }
-
-        private static void ShowWorkOrder(WorkOrderEntry_MechLab baseWorkOrder, string message)
-        {
-            Control.Logger.Log($"{message} {baseWorkOrder.SubEntries.Count}");
-            try
-            {
-                foreach (WorkOrderEntry_MechLab entry in baseWorkOrder.SubEntries)
-                {
-                    if (entry is WorkOrderEntry_InstallComponent install)
-                    {
-                        Control.Logger.Log($"--{entry.Type} - {install.MechComponentRef.ComponentDefID} - {install.MechComponentRef.SimGameUID}");
-                    }
-                    else if (entry is WorkOrderEntry_RepairComponent repair)
-                    {
-                        Control.Logger.Log($"--{entry.Type} - {repair.MechComponentID}");
-                    }
-                    else
-                    {
-                        Control.Logger.Log($"--{entry.Type} - {entry.Description}");
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Control.Logger.Log(e);
-            }
-        }
-
-        public static void DefaultAddWith(MechComponentRef main, string defaultId, ChassisLocations location)
-        {
-            actions.Add(new defaction
-            {
-                type = atype.addwith,
-                main = main,
-                location = location,
-                defid = defaultId
-            });
-        }
-
-        public static void DefaultRemoveWith(MechComponentRef main, string defaultId, ChassisLocations location)
-        {
-            actions.Add(new defaction
-            {
-                type = atype.removewith,
-                main = main,
-                location = location,
-                defid = defaultId
-            });
-
-        }
-
-        public static void DefaultReplaceBase(MechComponentRef main, string defaultId, ChassisLocations location)
-        {
-            actions.Add(new defaction
-            {
-                type = atype.replacebase,
-                main = main,
-                location = location,
-                defid = defaultId
-            });
-        }
-
-        public static void DefautReplaceDefault(MechComponentRef main, string defaultId, ChassisLocations location)
-        {
-            actions.Add(new defaction
-            {
-                type = atype.replacedef,
-                main = main,
-                location = location,
-                defid = defaultId
-            });
-        }
+         
     }
 }

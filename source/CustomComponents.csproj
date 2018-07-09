@@ -75,8 +75,8 @@
     <Compile Include="Category\CategoryController.cs" />
     <Compile Include="Category\CategoryDescriptor.cs" />
     <Compile Include="Category\ICategory.cs" />
+    <Compile Include="Category\SimGameState_ML_InstallComponent_Patch_Category.cs" />
     <Compile Include="DropResults\AddChange.cs" />
-    <Compile Include="DropResults\DefaultChange.cs" />
     <Compile Include="DropResults\RemoveChange.cs" />
     <Compile Include="DropResults\SlotChange.cs" />
     <Compile Include="DropResults\ValidateDropChange.cs" />
@@ -84,6 +84,7 @@
     <Compile Include="DropResults\ValidateDropHandled.cs" />
     <Compile Include="DropResults\ValidateDropRemoveDragItem.cs" />
     <Compile Include="Filter\MechLabFilter.cs" />
+    <Compile Include="IAutoLinked\SimGameState_ML_InstallComponent_Patch_IAutoLinked.cs" />
     <Compile Include="IDefault\Contract_AddToFilnaSalvagePatch.cs" />
     <Compile Include="IDefault\IDefault.cs" />
     <Compile Include="Helpers\CreateHelper.cs" />
@@ -94,14 +95,11 @@
     <Compile Include="IAutoLinked\MechLabLocationWidget_OnItemGrab_Patch_ILinked.cs" />
     <Compile Include="IDefault\MechLabLocationWidget_StripEquipment.cs" />
     <Compile Include="IDefault\DefaultHelper.cs" />
-    <Compile Include="IDefault\MechLabPanel_ConfirmRevertMech_Patch.cs" />
-    <Compile Include="IDefault\MechLabPanel_LoadExit_Patches.cs" />
     <Compile Include="IDefault\SimGameState_AddItemStat_Patch.cs" />
     <Compile Include="IDefault\SimGameState_AddMechPart_Patch.cs" />
-    <Compile Include="IDefault\SimGameState_PruneWorkOrder_Patch.cs" />
+    <Compile Include="IDefault\SimGameState_ML_InstallComponent_Patch_Default.cs" />
     <Compile Include="IDefault\SimGameState_ReadyMech_Patch.cs" />
     <Compile Include="IDefault\SimGameState_StripMech_Patch.cs" />
-    <Compile Include="IDefault\Test.cs" />
     <Compile Include="TEST\AutoFix.cs" />
     <Compile Include="Validators\MechLabLocationWidget_OnMechLabDrop_Patch.cs" />
     <Compile Include="IDefault\MechLabLocationWidget_OnItemGrab_Patch_IDefaultReplace.cs" />

@@ -59,10 +59,6 @@ namespace CustomComponents
                     __instance.OnAddItem(slot, false);
                     ___mechLab.ValidateLoadout(false);
 
-                    if (__instance.Sim != null)
-                    {
-                        DefaultHelper.DefaultReplaceBase(item.ComponentRef, __state.ComponentDefID, __instance.loadout.Location);
-                    }
                 }
                 catch (Exception e)
                 {
