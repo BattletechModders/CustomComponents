@@ -22,6 +22,24 @@
          "DiscountModifier" : 1.0,
          "Count" : 0
       },
+	  {
+         "ID" : "Gear_Engine_Shield_C_XL_Center",
+         "Type" : "HeatSink",
+         "DiscountModifier" : 0.1,
+         "Count" : 0
+      },
+	  {
+         "ID" : "Gear_Engine_Shield_IS_XL_Center",
+         "Type" : "HeatSink",
+         "DiscountModifier" : 0.1,
+         "Count" : 0
+      },
+	  {
+         "ID" : "Gear_Engine_Shield_std_center",
+         "Type" : "HeatSink",
+         "DiscountModifier" : 0.1,
+         "Count" : 0
+      },
    ],
    "Specials" : []
 }

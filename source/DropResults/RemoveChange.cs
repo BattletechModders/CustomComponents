@@ -14,7 +14,10 @@ namespace CustomComponents
 
             widget.OnRemoveItem(item, true);
             if (item.ComponentRef.Def is IDefault)
+            {
+                item.thisCanvasGroup.blocksRaycasts = true;
                 mechLab.MechLab.dataManager.PoolGameObject(MechLabPanel.MECHCOMPONENT_ITEM_PREFAB, item.gameObject);
+            }
             else
                 mechLab.MechLab.ForceItemDrop(item);
         }

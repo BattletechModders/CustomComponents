@@ -50,7 +50,7 @@ namespace CustomComponents
 
         internal static void RemoveDefault(string defaultID, MechDef mech, ChassisLocations location, ComponentType type)
         {
-            var item = mech.Inventory.Where(i => i.MountedLocation == location && i.ComponentDefID == defaultID).FirstOrDefault();
+            var item = mech.Inventory.FirstOrDefault(i => i.MountedLocation == location && i.ComponentDefID == defaultID);
             if(item != null)
             {
                 var inv = mech.Inventory.ToList();

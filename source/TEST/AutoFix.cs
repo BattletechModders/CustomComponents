@@ -40,8 +40,13 @@ namespace CustomComponents
     [HarmonyPatch(typeof(MechDef), "FromJSON")]
     public static class MechDef_FromJSON
     {
-        public static void PostFix(MechDef __instance)
+        public static void Postfix(MechDef __instance)
         {
+            Control.Logger.LogDebug($"Adding Leg Acuators to {__instance.Description.Id}");
+
+            if (__instance.Inventory.Any(i => i.ComponentDefID == "Gear_Actuator_Default"))
+                return;
+
             var inventory = __instance.Inventory.ToList();
             var ref1 = new MechComponentRef("Gear_Actuator_Default", null, ComponentType.Upgrade,
                 ChassisLocations.LeftLeg);
@@ -54,6 +59,8 @@ namespace CustomComponents
 
             inventory.Add(ref1);
             inventory.Add(ref2);
+
+            __instance.SetInventory(inventory.ToArray());
 
         }
     }
