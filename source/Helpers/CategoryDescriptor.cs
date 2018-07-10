@@ -67,7 +67,7 @@ namespace CustomComponents
         [DefaultValue("Mech already have {1} of {0} installed"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string AddMaximumReached = "Mech already have {1} of {0} installed";
 
-        [DefaultValue("Mech already have {1} of {0} installed at {2}"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [DefaultValue("Mech can have obly {1} of {0} installed at {2}"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string AddMaximumLocationReached = "Mech already have {1} of {0} installed at {2}";
 
         [DefaultValue("Mech can have only one type of {0}"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]

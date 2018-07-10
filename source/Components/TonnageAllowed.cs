@@ -5,7 +5,7 @@ using BattleTech.UI;
 namespace CustomComponents
 {
     [CustomComponent("TonnageAllowed")]
-    public class TonnageAllowed : SimpleCustomComponent, IMechLabFilter, IValidateDrop, IMechValidate
+    public class TonnageAllowed : SimpleCustomComponent, IMechLabFilter, IPostValidateDrop, IMechValidate
     {
         public int Tonnage { get; set; }
 
@@ -15,7 +15,7 @@ namespace CustomComponents
             return Tonnage == tonnage;
         }
 
-        public IValidateDropResult ValidateDrop(MechLabItemSlotElement element, LocationHelper location, IValidateDropResult last_result)
+        public IValidateDropResult PostValidateDrop(MechLabItemSlotElement element, LocationHelper location, IValidateDropResult last_result)
         {
             var tonnage = location.mechLab.activeMechDef.Chassis.Tonnage;
             if (tonnage != Tonnage)

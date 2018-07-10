@@ -47,11 +47,7 @@ namespace CustomComponents
 
 
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
-
                 Validator.RegisterMechValidator(CategoryController.ValidateMech, CategoryController.ValidateMechCanBeFielded);
-
-                Validator.RegisterDropValidator(CategoryController.ValidateDrop);
-                Validator.RegisterDropValidator(LinkedController.ValidateDrop);
 
                 Logger.Log("Loaded CustomComponents");
                 Logger.LogDebug("Loading Categories");

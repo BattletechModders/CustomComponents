@@ -23,12 +23,10 @@ namespace CustomComponents
                     return;
                 }
 
-                foreach (var component in mechDef.Inventory.Where(i => i.Def != null).Select(i => i.Def)
-                    .OfType<IMechValidate>())
+                if (mechDef.Inventory.Any(component => component.GetComponents<IMechValidate>().Any(validator => validator.ValidateMechCanBeFielded(mechDef))))
                 {
-                    __result = component.ValidateMechCanBeFielded(mechDef);
-                    if (__result)
-                        return;
+                    __result = false;
+                    return;
                 }
             }
             catch (Exception e)

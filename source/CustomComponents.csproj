@@ -72,8 +72,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Category\CategoryController.cs" />
-    <Compile Include="Category\CategoryDescriptor.cs" />
+    <Compile Include="Helpers\CategoryController.cs" />
+    <Compile Include="Helpers\CategoryDescriptor.cs" />
     <Compile Include="Components\Category.cs" />
     <Compile Include="CCLight\CustomComponentAttribute.cs" />
     <Compile Include="CCLight\Database.cs" />
@@ -100,7 +100,6 @@
     <Compile Include="Helpers\CreateHelper.cs" />
     <Compile Include="IDefault\MechLabLocationWidget_Repair_Patches.cs" />
     <Compile Include="Components\AutoLinked.cs" />
-    <Compile Include="IAutoLinked\LinkedController.cs" />
     <Compile Include="IDefault\MechLabLocationWidget_StripEquipment.cs" />
     <Compile Include="IDefault\DefaultHelper.cs" />
     <Compile Include="IDefault\SimGameState_AddItemStat_Patch.cs" />
@@ -111,9 +110,11 @@
     <Compile Include="Interfaces\IOnInstalled.cs" />
     <Compile Include="Interfaces\IOnItemGrab.cs" />
     <Compile Include="Interfaces\IOnItemGrabbed.cs" />
+    <Compile Include="Interfaces\IDefaultValidateDrop.cs" />
+    <Compile Include="Interfaces\IReplaceValidateDrop.cs" />
     <Compile Include="Patches\SimGameState_ML_InstallComponent_Patch.cs" />
     <Compile Include="TEST\AutoFix.cs" />
-    <Compile Include="Interfaces\IValidateDrop.cs" />
+    <Compile Include="Interfaces\IPostValidateDrop.cs" />
     <Compile Include="Validators\MechLabLocationWidget_OnMechLabDrop_Patch.cs" />
     <Compile Include="Patches\MechLabLocationWidget_OnItemGrab_Patch.cs" />
     <Compile Include="Components\ColorComponent.cs" />
@@ -133,7 +134,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Components\TonnageAllowed.cs" />
     <Compile Include="Components\TonnageLimited.cs" />
-    <Compile Include="Filter\MechLabInventoryWidget_ApplyFiltering_Patch.cs" />
+    <Compile Include="Patches\MechLabInventoryWidget_ApplyFiltering_Patch.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

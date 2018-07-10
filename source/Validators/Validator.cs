@@ -13,7 +13,9 @@ namespace CustomComponents
     public static class Validator
     {
         // need to be public, so order can be changed if need be
-        public static List<ValidateDropDelegate> drop_validators = new List<ValidateDropDelegate>();
+        public static List<ValidateDropDelegate> pre_drop_validators = new List<ValidateDropDelegate>();
+        public static List<ValidateDropDelegate> mid_drop_validators = new List<ValidateDropDelegate>();
+        public static List<ValidateDropDelegate> post_drop_validators = new List<ValidateDropDelegate>();
         public static List<ValidateMechDelegate> mech_validators = new List<ValidateMechDelegate>();
         private static List<ValidateMechCanBeFieldedDelegate> field_validators =
             new List<ValidateMechCanBeFieldedDelegate>();
@@ -21,11 +23,17 @@ namespace CustomComponents
         /// <summary>
         /// register new AddValidator
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="validator"></param>
-        public static void RegisterDropValidator(ValidateDropDelegate validator)
+        public static void RegisterDropValidator(ValidateDropDelegate replace = null, ValidateDropDelegate @default = null, ValidateDropDelegate post = null)
         {
-            drop_validators.Add(validator);
+            if (replace != null)
+                pre_drop_validators.Add(replace);
+
+            if (@default != null)
+                mid_drop_validators.Add(replace);
+
+            if (post != null)
+                post_drop_validators.Add(post);
+
         }
 
         public static ValidateDropDelegate HardpointValidator { get; set; } = null;
@@ -33,7 +41,6 @@ namespace CustomComponents
         /// <summary>
         /// register new mech validator
         /// </summary>
-        /// <param name="validator"></param>
         public static void RegisterMechValidator(ValidateMechDelegate mechvalidator,
             ValidateMechCanBeFieldedDelegate fieldvalidator)
         {
@@ -42,26 +49,52 @@ namespace CustomComponents
         }
 
 
-        internal static IEnumerable<ValidateDropDelegate> GetValidateDropDelegates(MechComponentDef componentValidator)
+        internal static IEnumerable<ValidateDropDelegate> GetValidateDropDelegates(MechComponentDef component)
         {
             yield return ValidateBase;
 
+            #region First part - replace
             yield return HardpointValidator ?? ValidateHardpoint;
+            foreach (var validator in pre_drop_validators)
+            {
+                yield return validator;
+            }
+            foreach (var validator in component.GetComponents<IReplaceValidateDrop>())
+            {
+                yield return validator.ReplaceValidateDrop;
+            }
+            #endregion
 
-            foreach (var validator in drop_validators)
+            #region defaults
+            foreach (var validator in mid_drop_validators)
+            {
+                yield return validator;
+            }
+            foreach (var validator in component.GetComponents<IDefaultValidateDrop>())
+            {
+                yield return validator.DefaultValidateDrop;
+            }
+            #endregion
+
+            #region size checks
+
+            foreach (var validator in post_drop_validators)
             {
                 yield return validator;
             }
 
-            if (componentValidator is IValidateDrop validateDrop)
+            foreach (var validator in component.GetComponents<IPostValidateDrop>())
             {
-                yield return validateDrop.ValidateDrop;
+                yield return validator.PostValidateDrop;
             }
 
             yield return ValidateSize;
+
+            #endregion
+
+
+
         }
-
-
 
         private static IValidateDropResult ValidateSize(MechLabItemSlotElement element, LocationHelper location, IValidateDropResult last_result)
         {
@@ -99,16 +132,16 @@ namespace CustomComponents
             if (last_result is ValidateDropChange change_result)
             {
                 var changes = from change in change_result.Changes.OfType<SlotChange>()
-                    group change by change.location
+                              group change by change.location
                     into g
-                    select new
-                    {
-                        location = get_helper(location.mechLab, g.Key),
-                        change = g.Sum(i =>
-                             i is AddChange
-                                ? i.item.ComponentRef.Def.InventorySize
-                                : -i.item.ComponentRef.Def.InventorySize)
-                    };
+                              select new
+                              {
+                                  location = get_helper(location.mechLab, g.Key),
+                                  change = g.Sum(i =>
+                                       i is AddChange
+                                          ? i.item.ComponentRef.Def.InventorySize
+                                          : -i.item.ComponentRef.Def.InventorySize)
+                              };
 
                 foreach (var change in changes)
                 {
@@ -119,7 +152,7 @@ namespace CustomComponents
                         done = true;
                     }
 
-                    if(used > change.location.MaxSlots)
+                    if (used > change.location.MaxSlots)
                         return new ValidateDropError(
                             $"Cannot add {element.ComponentRef.Def.Description.Name} to {location.LocationName}: Not enought free slots.");
                 }
@@ -127,8 +160,8 @@ namespace CustomComponents
 
             if (done)
                 return last_result;
-            
-            
+
+
             int need = location.UsedSlots + element.ComponentRef.Def.InventorySize;
             if (need > location.MaxSlots)
                 return new ValidateDropError(

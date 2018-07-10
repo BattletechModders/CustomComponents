@@ -8,7 +8,7 @@ namespace CustomComponents
     /// component limited to mech tonnage
     /// </summary>
     [CustomComponent("TonnageLimit")]
-    public class TonnageLimited : SimpleCustomComponent, IMechLabFilter, IValidateDrop, IMechValidate
+    public class TonnageLimited : SimpleCustomComponent, IMechLabFilter, IPostValidateDrop, IMechValidate
     {
         /// <summary>
         /// minimum allowed tonnage
@@ -25,7 +25,7 @@ namespace CustomComponents
             return Min >= tonnage && Max <= tonnage;
         }
 
-        public IValidateDropResult ValidateDrop(MechLabItemSlotElement element, LocationHelper location, IValidateDropResult last_result)
+        public IValidateDropResult PostValidateDrop(MechLabItemSlotElement element, LocationHelper location, IValidateDropResult last_result)
         {
             var tonnage = location.mechLab.activeMechDef.Chassis.Tonnage;
 

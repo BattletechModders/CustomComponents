@@ -86,7 +86,6 @@ namespace CustomComponents
 
                 var mech_lab_helper = new MechLabHelper(___mechLab);
 
-
                 if (result is ValidateDropChange change_result)
                 {
                     foreach (var change in change_result.Changes)

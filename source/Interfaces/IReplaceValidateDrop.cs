@@ -5,7 +5,7 @@ namespace CustomComponents
     /// <summary>
     /// component check if it can be dropped to this location
     /// </summary>
-    public interface IValidateDrop
+    public interface IReplaceValidateDrop
     {
         /// <summary>
         /// validation drop check
@@ -13,6 +13,6 @@ namespace CustomComponents
         /// <param name="widget">location, where check</param>
         /// <param name="element">element being dragged</param>
         /// <returns></returns>
-        IValidateDropResult ValidateDrop(MechLabItemSlotElement element, LocationHelper location, IValidateDropResult last_result);
+        IValidateDropResult ReplaceValidateDrop(MechLabItemSlotElement element, LocationHelper location, IValidateDropResult last_result);
     }
 }
