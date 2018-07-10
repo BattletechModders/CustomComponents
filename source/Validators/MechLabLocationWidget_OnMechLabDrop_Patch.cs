@@ -28,12 +28,6 @@ namespace CustomComponents
 
                 Control.Logger.LogDebug($"========= Addding Item ===========");
 
-                if (!Control.settings.LoadDefaultValidators)
-                {
-                    Control.Logger.LogDebug($"Addding Item: default validators not enabled");
-                    return true;
-                }
-
                 if (!___mechLab.Initialized)
                 {
                     return false;

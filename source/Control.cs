@@ -48,14 +48,10 @@ namespace CustomComponents
 
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
 
-                if (settings.LoadDefaultValidators)
-                {
-                    Validator.RegisterMechValidator(CategoryController.ValidateMech, CategoryController.ValidateMechCanBeFielded);
-                    Validator.RegisterMechValidator(LinkedController.ValidateMech, LinkedController.ValidateMechCanBeFielded);
+                Validator.RegisterMechValidator(CategoryController.ValidateMech, CategoryController.ValidateMechCanBeFielded);
 
-                    Validator.RegisterDropValidator(CategoryController.ValidateDrop);
-                    Validator.RegisterDropValidator(LinkedController.ValidateDrop);
-                }
+                Validator.RegisterDropValidator(CategoryController.ValidateDrop);
+                Validator.RegisterDropValidator(LinkedController.ValidateDrop);
 
                 Logger.Log("Loaded CustomComponents");
                 Logger.LogDebug("Loading Categories");
@@ -66,7 +62,7 @@ namespace CustomComponents
                 }
                 Logger.LogDebug("done");
 
-                
+
             }
             catch (Exception e)
             {

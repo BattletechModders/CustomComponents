@@ -75,7 +75,6 @@
     <Compile Include="Category\CategoryController.cs" />
     <Compile Include="Category\CategoryDescriptor.cs" />
     <Compile Include="Components\Category.cs" />
-    <Compile Include="Category\SimGameState_ML_InstallComponent_Patch_Category.cs" />
     <Compile Include="CCLight\CustomComponentAttribute.cs" />
     <Compile Include="CCLight\Database.cs" />
     <Compile Include="CCLight\Extensions.cs" />
@@ -95,7 +94,6 @@
     <Compile Include="DropResults\ValidateDropHandled.cs" />
     <Compile Include="DropResults\ValidateDropRemoveDragItem.cs" />
     <Compile Include="Interfaces\IMechLabFilter.cs" />
-    <Compile Include="IAutoLinked\SimGameState_ML_InstallComponent_Patch_IAutoLinked.cs" />
     <Compile Include="IDefault\Contract_AddToFilnaSalvagePatch.cs" />
     <Compile Include="Components\AutoReplace.cs" />
     <Compile Include="Components\Flags.cs" />
@@ -107,12 +105,13 @@
     <Compile Include="IDefault\DefaultHelper.cs" />
     <Compile Include="IDefault\SimGameState_AddItemStat_Patch.cs" />
     <Compile Include="IDefault\SimGameState_AddMechPart_Patch.cs" />
-    <Compile Include="IDefault\SimGameState_ML_InstallComponent_Patch_Default.cs" />
     <Compile Include="IDefault\SimGameState_ReadyMech_Patch.cs" />
     <Compile Include="IDefault\SimGameState_StripMech_Patch.cs" />
     <Compile Include="Interfaces\IMechValidate.cs" />
+    <Compile Include="Interfaces\IOnInstalled.cs" />
     <Compile Include="Interfaces\IOnItemGrab.cs" />
     <Compile Include="Interfaces\IOnItemGrabbed.cs" />
+    <Compile Include="Patches\SimGameState_ML_InstallComponent_Patch.cs" />
     <Compile Include="TEST\AutoFix.cs" />
     <Compile Include="Interfaces\IValidateDrop.cs" />
     <Compile Include="Validators\MechLabLocationWidget_OnMechLabDrop_Patch.cs" />

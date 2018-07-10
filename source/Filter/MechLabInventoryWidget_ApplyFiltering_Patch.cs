@@ -15,10 +15,6 @@ namespace CustomComponents
         internal static void Postfix(MechLabInventoryWidget __instance, float ___mechTonnage,
             List<InventoryItemElement_NotListView> ___localInventory)
         {
-            //if cc prebuilded validators not enabled - left all as is
-            if (!Control.settings.LoadDefaultValidators)
-                return;
-
             foreach (var item in ___localInventory)
             {
                 //if item already hidden - skip
