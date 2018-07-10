@@ -32,16 +32,16 @@ namespace CustomComponents
         internal static void ValidateMech(Dictionary<MechValidationType, List<string>> errors,
             MechValidationLevel validationLevel, MechDef mechDef)
         {
-            
+
             var items_by_category = (from item in mechDef.Inventory
-                                     where item.Def is ICategory
-                                     let def = item.Def as ICategory
+                                     let def = item.Def.GetComponent<Category>()
+                                     where def != null
                                      select new
                                      {
                                          category = def.CategoryDescriptor,
                                          itemdef = item.Def,
                                          itemref = item,
-                                         mix = def.GetCategoryTag()
+                                         mix = def.GetTag()
                                      }).GroupBy(i => i.category).ToDictionary(i => i.Key, i => i.ToList());
 
             //check each "required" category
@@ -94,12 +94,12 @@ namespace CustomComponents
         }
 
         // return first error for validate drop
-        internal static CategoryError ValidateAdd(ICategory component, LocationHelper location, out int count)
+        internal static CategoryError ValidateAdd(Category component, LocationHelper location, out int count)
         {
             var category = component.CategoryDescriptor;
 
             var items = location.mechLab.activeMechDef.Inventory
-                .Where(i => (i.Def as ICategory)?.CategoryDescriptor == category).ToList();
+                .Where(i => i.Is<Category>(out var c) && c.CategoryID == category.Name).ToList();
 
             count = 0;
 
@@ -132,7 +132,7 @@ namespace CustomComponents
             //mixed tags
             if (!category.AllowMixTags)
             {
-                if (items.Any(i => (i.Def as ICategory).GetCategoryTag() != component.GetCategoryTag()))
+                if (items.Any(i => i.Is<Category>(out var c) && c.GetTag() != component.GetTag()))
                     return CategoryError.AllowMix;
             }
 
@@ -154,7 +154,7 @@ namespace CustomComponents
             var component = element.ComponentRef.Def;
 
             //if not a category - skip category check
-            if (!(component is ICategory cat_component))
+            if (!component.Is<Category>(out var cat_component))
             {
                 Control.Logger.LogDebug("Not a category");
                 return last_result;
@@ -179,7 +179,7 @@ namespace CustomComponents
                 Control.Logger.LogDebug($"Category: Search for repacement");
 
                 var replacement = location.LocalInventory.FirstOrDefault(e =>
-                    e?.ComponentRef?.Def is ICategory cat && cat.CategoryID == category.Name);
+                    e.ComponentRef.Is<Category>(out var cat) && cat.CategoryID == category.Name);
 
                 if (replacement != null)
                 {
@@ -220,14 +220,14 @@ namespace CustomComponents
         internal static bool ValidateMechCanBeFielded(MechDef mechDef)
         {
             var items_by_category = (from item in mechDef.Inventory
-                                     where item.Def is ICategory
-                                     let def = item.Def as ICategory
+                                     let def = item.Def.GetComponent<Category>()
+                                     where def != null
                                      select new
                                      {
                                          category = def.CategoryDescriptor,
                                          itemdef = item.Def,
                                          itemref = item,
-                                         mix = def.GetCategoryTag()
+                                         mix = def.GetTag()
                                      }).GroupBy(i => i.category).ToDictionary(i => i.Key, i => i.ToList());
 
             // if all required category present

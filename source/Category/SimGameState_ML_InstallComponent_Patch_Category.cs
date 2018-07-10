@@ -16,14 +16,14 @@ namespace CustomComponents
                 return;
 
 
-            if (!(order.MechComponentRef.Def is ICategory category) || !category.CategoryDescriptor.AutoReplace
+            if (!order.MechComponentRef.Is<Category>(out var category) || !category.CategoryDescriptor.AutoReplace
                                                                 || (category.CategoryDescriptor.MaxEquiped < 0 &&
                                                                     category.CategoryDescriptor.MaxEquipedPerLocation <
                                                                     0))
             {
-                if (order.MechComponentRef.Def is ICategory c)
+                if (category != null)
                 {
-                    var c1 = c.CategoryDescriptor;
+                    var c1 = category.CategoryDescriptor;
                     Control.Logger.LogDebug($"- {c1.DisplayName} r:{c1.AutoReplace}  max:{c1.MaxEquiped} mpr:{c1.MaxEquipedPerLocation} = not requre replace");
                 }
                 else
@@ -41,13 +41,13 @@ namespace CustomComponents
             var mech = __instance.GetMechByID(order.MechID);
             
 
-            int n1 = mech.Inventory.Count(i => i.Def is ICategory cat && category.CategoryID == cat.CategoryID);
-            int n2 = mech.Inventory.Count(i => i.MountedLocation == order.DesiredLocation && i.Def is ICategory cat
+            int n1 = mech.Inventory.Count(i => i.Is<Category>(out var cat) && category.CategoryID == cat.CategoryID);
+            int n2 = mech.Inventory.Count(i => i.MountedLocation == order.DesiredLocation && i.Is<Category>(out var cat)
                    && category.CategoryID == cat.CategoryID);
 
             Control.Logger.LogDebug($"- total {n1}/{category.CategoryDescriptor.MaxEquiped}  location: {n2}/{category.CategoryDescriptor.MaxEquipedPerLocation}");
 
-            var replace = mech.Inventory.FirstOrDefault(i => i.MountedLocation == order.DesiredLocation && i.Def is ICategory cat
+            var replace = mech.Inventory.FirstOrDefault(i => i.MountedLocation == order.DesiredLocation && i.Is<Category>(out var cat)
                    && category.CategoryID == cat.CategoryID && i.Def is IDefault);
 
             Control.Logger.LogDebug($"- possible replace: {(replace == null? "not found" : replace.ComponentDefID)}");

@@ -15,7 +15,6 @@ namespace CustomComponents
 {
     public static class Control
     {
-        private static Dictionary<string, CustomComponentDescriptor> descriptors = new Dictionary<string, CustomComponentDescriptor>();
         private static Dictionary<string, CategoryDescriptor> categories = new Dictionary<string, CategoryDescriptor>();
 
         public static CustomComponentSettings settings = new CustomComponentSettings();
@@ -47,7 +46,7 @@ namespace CustomComponents
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
 
 
-                RegisterCustomTypes(Assembly.GetExecutingAssembly());
+                Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
 
                 if (settings.LoadDefaultValidators)
                 {
@@ -78,90 +77,6 @@ namespace CustomComponents
                 Logger.LogError(e);
             }
         }
-
-        internal static ICustomComponent CreateNew(string custom_type)
-        {
-            return descriptors.TryGetValue(custom_type, out var descriptor) ? descriptor.CreateNew() : null;
-        }
-
-        /// <summary>
-        /// register custom types for your assamble
-        /// </summary>
-        /// <param name="assembly"></param>
-        public static void RegisterCustomTypes(Assembly assembly)
-        {
-            var desc_list = from type in assembly.GetTypes()
-                            let attributes = type.GetCustomAttributes(typeof(CustomAttribute), true)
-                            where attributes != null && attributes.Length > 0
-                            let attribute = attributes[0] as CustomAttribute
-                            select new CustomComponentDescriptor(attribute.CustomType, type);
-
-            foreach (var item in desc_list)
-            {
-                CustomComponentDescriptor temp_desc;
-                if (descriptors.TryGetValue(item.CustomName, out temp_desc))
-                    descriptors[item.CustomName] = item;
-                else
-                    descriptors.Add(item.CustomName, item);
-            }
-        }
-
-        private static readonly Regex CustomTypeRegex = new Regex(@"""CustomType""\s*:\s*""([^""]+)""", RegexOptions.Compiled);
-
-        public static bool LoaderPatch<T>(DataManager.ResourceLoadRequest<T> loader,
-            string json, ref T resource)
-            where T : class
-        {
-            var id = Regex.Match(json, "\"UIName\" : \"(.+?)\"");
-
-            //Control.mod.Logger.Log("loading " + (id.Success ? id.Result("$1") : "not found"));
-
-            var custom = CustomTypeRegex.Match(json);
-            if (!custom.Success)
-                return true;
-
-            string custom_type = custom.Groups[1].Value;
-
-            Logger.LogDebug("Loading custom: " + custom_type);
-
-
-            var custom_obj = Control.CreateNew(custom_type) as ICustomComponent_old;
-            if (custom_obj == null || !(custom_obj is T))
-            {
-                Logger.LogError("Error: Create new return null");
-                throw new ArgumentNullException("json");
-            }
-
-            custom_obj.FromJson(json);
-
-            if (custom_obj is ICategory)
-            {
-                var cat = custom_obj as ICategory;
-                cat.CategoryDescriptor = GetCategory(cat.CategoryID);
-            }
-
-            //string new_json = custom_obj.ToJson();
-            //Control.mod.Logger.Log(new_json);
-
-            resource = custom_obj as T;
-            Traverse.Create(loader).Method("TryLoadDependencies", resource).GetValue();
-            if (custom_obj is MechComponentDef)
-                Logger.LogDebug("Loaded: " + (custom_obj as MechComponentDef).Description.Id);
-
-            return false;
-        }
-
-        public static bool JsonPatch<T>(T value, ref string result)
-        {
-            if (!(value is ICustomComponent_old))
-                return true;
-
-            var custom = value as ICustomComponent_old;
-            result = custom.ToJson();
-            return false;
-        }
-
-
 
         internal static void AddNewCategory(string category)
         {

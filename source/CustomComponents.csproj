@@ -74,7 +74,7 @@
   <ItemGroup>
     <Compile Include="Category\CategoryController.cs" />
     <Compile Include="Category\CategoryDescriptor.cs" />
-    <Compile Include="Category\ICategory.cs" />
+    <Compile Include="Category\Category.cs" />
     <Compile Include="Category\SimGameState_ML_InstallComponent_Patch_Category.cs" />
     <Compile Include="CCLight\CustomComponentAttribute.cs" />
     <Compile Include="CCLight\Database.cs" />
@@ -119,7 +119,6 @@
     <Compile Include="ColorChanger\MechComponentRef_GetUIColor_Patch.cs" />
     <Compile Include="Control.cs" />
     <Compile Include="CustomComponentSettings.cs" />
-    <Compile Include="CustomComponent.cs" />
     <Compile Include="Tooltips.cs" />
     <Compile Include="Helpers\LocationHelper.cs" />
     <Compile Include="Helpers\MechLabHelper.cs" />
