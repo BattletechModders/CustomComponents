@@ -120,40 +120,40 @@ namespace CustomComponents
             return last_result;
         }
 
-        public static void RemoveLinked(MechLabPanel mechlab, IMechLabDraggableItem item, AutoLinked linked)
-        {
-            var helper = new MechLabHelper(mechlab);
-            foreach (var r_link in linked.Links)
-            {
+        //public static void RemoveLinked(MechLabPanel mechlab, IMechLabDraggableItem item, AutoLinked linked)
+        //{
+        //    var helper = new MechLabHelper(mechlab);
+        //    foreach (var r_link in linked.Links)
+        //    {
                
 
-                var widget = helper.GetLocationWidget(r_link.Location);
-                if (widget != null)
-                {
-                    Control.Logger.LogDebug($"{r_link.ApendixID} from {r_link.Location}");
-                    var location = new LocationHelper(widget);
-                    var remove = location.LocalInventory.FirstOrDefault(e =>
-                        e?.ComponentRef?.ComponentDefID == r_link.ApendixID);
+        //        var widget = helper.GetLocationWidget(r_link.Location);
+        //        if (widget != null)
+        //        {
+        //            Control.Logger.LogDebug($"{r_link.ApendixID} from {r_link.Location}");
+        //            var location = new LocationHelper(widget);
+        //            var remove = location.LocalInventory.FirstOrDefault(e =>
+        //                e?.ComponentRef?.ComponentDefID == r_link.ApendixID);
 
-                    if (remove != null)
-                    {
-                        widget.OnRemoveItem(remove, true);
-                        if (remove.ComponentRef.Is<Flags>(out var f) && f.Default)
-                        {
-                            remove.thisCanvasGroup.blocksRaycasts = true;
-                            mechlab.dataManager.PoolGameObject(MechLabPanel.MECHCOMPONENT_ITEM_PREFAB, item.GameObject);
-                        }
-                        else
-                        {
-                            Control.Logger.LogDebug($"removed");
-                            mechlab.ForceItemDrop(remove);
-                            helper.SetDragItem(item as MechLabItemSlotElement);
-                        }
-                    }
-                    else
-                        Control.Logger.LogDebug($"not found");
-                }
-            }
-        }
+        //            if (remove != null)
+        //            {
+        //                widget.OnRemoveItem(remove, true);
+        //                if (remove.ComponentRef.Is<Flags>(out var f) && f.Default)
+        //                {
+        //                    remove.thisCanvasGroup.blocksRaycasts = true;
+        //                    mechlab.dataManager.PoolGameObject(MechLabPanel.MECHCOMPONENT_ITEM_PREFAB, item.GameObject);
+        //                }
+        //                else
+        //                {
+        //                    Control.Logger.LogDebug($"removed");
+        //                    mechlab.ForceItemDrop(remove);
+        //                    helper.SetDragItem(item as MechLabItemSlotElement);
+        //                }
+        //            }
+        //            else
+        //                Control.Logger.LogDebug($"not found");
+        //        }
+        //    }
+        //}
     }
 }

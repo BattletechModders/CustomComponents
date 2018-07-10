@@ -53,9 +53,9 @@ namespace CustomComponents
 
             var mechlab = widget.parentDropTarget as MechLabPanel;
 
-            if (component.Is<DefaultReplace>(out var replace) && !string.IsNullOrEmpty(replace.DefaultID) && replace.DefaultID != item.ComponentRef.ComponentDefID)
+            if (component.Is<AutoReplace>(out var replace) && !string.IsNullOrEmpty(replace.ReplaceID) && replace.ReplaceID != item.ComponentRef.ComponentDefID)
             {
-                var new_ref = CreateHelper.Ref(replace.DefaultID, item.ComponentRef.ComponentDefType, mechlab.dataManager, mechlab.sim);
+                var new_ref = CreateHelper.Ref(replace.ReplaceID, item.ComponentRef.ComponentDefType, mechlab.dataManager, mechlab.sim);
                 if (new_ref != null)
                 {
                     var new_item = CreateHelper.Slot(mechlab, new_ref, widget.loadout.Location);
@@ -65,7 +65,7 @@ namespace CustomComponents
 
             if (component.Is<AutoLinked>(out var linked))
             {
-                LinkedController.RemoveLinked(mechlab, item, linked);
+                linked.RemoveLinked(item, mechlab);
             }
 
             return widget.OnRemoveItem(item, validate);
@@ -99,10 +99,10 @@ namespace CustomComponents
                 return true;
             }
 
-            if (component.Is<DefaultReplace>(out var replace) && !string.IsNullOrEmpty(replace.DefaultID) && replace.DefaultID != item.ComponentRef.ComponentDefID)
+            if (component.Is<AutoReplace>(out var replace) && !string.IsNullOrEmpty(replace.ReplaceID) && replace.ReplaceID != item.ComponentRef.ComponentDefID)
             {
                 Control.Logger.LogDebug($"IDefaultRepace - search for replace");
-                var new_ref = CreateHelper.Ref(replace.DefaultID, item.ComponentRef.ComponentDefType, mechlab.dataManager, mechlab.sim);
+                var new_ref = CreateHelper.Ref(replace.ReplaceID, item.ComponentRef.ComponentDefType, mechlab.dataManager, mechlab.sim);
                 if (new_ref != null)
                 {
                     Control.Logger.LogDebug($"IDefaultRepace - adding");
@@ -117,7 +117,7 @@ namespace CustomComponents
             if (component.Is<AutoLinked>(out var linked))
             {
                 Control.Logger.LogDebug($"IAutoLinked - remove linked");
-                LinkedController.RemoveLinked(mechlab, item, linked);
+                linked.RemoveLinked(item, mechlab);
             }
 
             return widget.OnRemoveItem(item, validate);
@@ -161,9 +161,9 @@ namespace CustomComponents
                     continue;
                 }
 
-                if (list[i].Is<DefaultReplace>(out var replace))
+                if (list[i].Is<AutoReplace>(out var replace))
                 {
-                    var ref_item = CreateHelper.Ref(replace.DefaultID, list[i].ComponentDefType, list[i].DataManager, state);
+                    var ref_item = CreateHelper.Ref(replace.ReplaceID, list[i].ComponentDefType, list[i].DataManager, state);
                     ref_item.SetData(list[i].MountedLocation, list[i].HardpointSlot, list[i].DamageLevel);
                     ref_item.SetSimGameUID(state.GenerateSimGameUID());
                     result_list.Add(ref_item);

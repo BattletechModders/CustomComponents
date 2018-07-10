@@ -97,14 +97,12 @@
     <Compile Include="Interfaces\IMechLabFilter.cs" />
     <Compile Include="IAutoLinked\SimGameState_ML_InstallComponent_Patch_IAutoLinked.cs" />
     <Compile Include="IDefault\Contract_AddToFilnaSalvagePatch.cs" />
-    <Compile Include="IDefault\DefaultReplace.cs" />
+    <Compile Include="Components\AutoReplace.cs" />
     <Compile Include="Components\Flags.cs" />
     <Compile Include="Helpers\CreateHelper.cs" />
     <Compile Include="IDefault\MechLabLocationWidget_Repair_Patches.cs" />
-    <Compile Include="IDefault\MechLabLocationWidget_OnItemGrab_Patch_Default.cs" />
     <Compile Include="Components\AutoLinked.cs" />
     <Compile Include="IAutoLinked\LinkedController.cs" />
-    <Compile Include="IAutoLinked\MechLabLocationWidget_OnItemGrab_Patch_ILinked.cs" />
     <Compile Include="IDefault\MechLabLocationWidget_StripEquipment.cs" />
     <Compile Include="IDefault\DefaultHelper.cs" />
     <Compile Include="IDefault\SimGameState_AddItemStat_Patch.cs" />
@@ -113,14 +111,16 @@
     <Compile Include="IDefault\SimGameState_ReadyMech_Patch.cs" />
     <Compile Include="IDefault\SimGameState_StripMech_Patch.cs" />
     <Compile Include="Interfaces\IMechValidate.cs" />
+    <Compile Include="Interfaces\IOnItemGrab.cs" />
+    <Compile Include="Interfaces\IOnItemGrabbed.cs" />
     <Compile Include="TEST\AutoFix.cs" />
     <Compile Include="Interfaces\IValidateDrop.cs" />
     <Compile Include="Validators\MechLabLocationWidget_OnMechLabDrop_Patch.cs" />
-    <Compile Include="IDefault\MechLabLocationWidget_OnItemGrab_Patch_IDefaultReplace.cs" />
+    <Compile Include="Patches\MechLabLocationWidget_OnItemGrab_Patch.cs" />
     <Compile Include="Components\ColorComponent.cs" />
-    <Compile Include="ColorChanger\ListElementController_SalvageGear_NotListView_RefreshItemColor_Patch.cs" />
-    <Compile Include="ColorChanger\ListElementController_SalvageGear_RefreshItemColor_Patch.cs" />
-    <Compile Include="ColorChanger\MechComponentRef_GetUIColor_Patch.cs" />
+    <Compile Include="Patches\ListElementController_SalvageGear_NotListView_RefreshItemColor_Patch.cs" />
+    <Compile Include="Patches\ListElementController_SalvageGear_RefreshItemColor_Patch.cs" />
+    <Compile Include="Patches\MechComponentRef_GetUIColor_Patch.cs" />
     <Compile Include="Control.cs" />
     <Compile Include="CustomComponentSettings.cs" />
     <Compile Include="Helpers\LocationHelper.cs" />
@@ -136,8 +136,6 @@
     <Compile Include="Components\TonnageLimited.cs" />
     <Compile Include="Filter\MechLabInventoryWidget_ApplyFiltering_Patch.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Patches\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

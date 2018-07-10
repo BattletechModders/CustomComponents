@@ -16,10 +16,10 @@ namespace CustomComponents
                 return;
 
             Control.Logger.LogDebug($"- search replace for {order.MechComponentRef.ComponentDefID}");
-            if (order.MechComponentRef.Is<DefaultReplace>(out var replace) && order.PreviousLocation != ChassisLocations.None)
+            if (order.MechComponentRef.Is<AutoReplace>(out var replace) && order.PreviousLocation != ChassisLocations.None)
             {
-                Control.Logger.LogDebug($"- found, adding {replace.DefaultID} to {order.PreviousLocation}");
-                DefaultHelper.AddDefault(replace.DefaultID, __instance.GetMechByID(order.MechID), order.PreviousLocation, order.MechComponentRef.ComponentDefType, __instance);
+                Control.Logger.LogDebug($"- found, adding {replace.ReplaceID} to {order.PreviousLocation}");
+                DefaultHelper.AddDefault(replace.ReplaceID, __instance.GetMechByID(order.MechID), order.PreviousLocation, order.MechComponentRef.ComponentDefType, __instance);
             }
         }
 
