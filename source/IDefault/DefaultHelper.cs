@@ -31,7 +31,7 @@ namespace CustomComponents
 
             if (component is IDefaultRepace replace && !string.IsNullOrEmpty(replace.DefaultID) && replace.DefaultID != item.ComponentRef.ComponentDefID)
             {
-                var new_ref = CreateHelper.Ref(replace.DefaultID, item.ComponentRef.ComponentDefType, mechlab.dataManager);
+                var new_ref = CreateHelper.Ref(replace.DefaultID, item.ComponentRef.ComponentDefType, mechlab.dataManager, mechlab.sim);
                 if (new_ref != null)
                 {
                     var new_item = CreateHelper.Slot(mechlab, new_ref, widget.loadout.Location);
@@ -59,9 +59,9 @@ namespace CustomComponents
             }
         }
 
-        internal static void AddDefault(string defaultID, MechDef mech, ChassisLocations location, ComponentType type)
+        internal static void AddDefault(string defaultID, MechDef mech, ChassisLocations location, ComponentType type, SimGameState state)
         {
-            var r = CreateHelper.Ref(defaultID, type, mech.DataManager);
+            var r = CreateHelper.Ref(defaultID, type, mech.DataManager,state);
             if(r != null)
             {
                 r.SetData(location, -1, ComponentDamageLevel.Functional);
@@ -97,7 +97,7 @@ namespace CustomComponents
             if (component is IDefaultRepace replace && !string.IsNullOrEmpty(replace.DefaultID) && replace.DefaultID != item.ComponentRef.ComponentDefID)
             {
                 Control.Logger.LogDebug($"IDefaultRepace - search for replace");
-                var new_ref = CreateHelper.Ref(replace.DefaultID, item.ComponentRef.ComponentDefType, mechlab.dataManager);
+                var new_ref = CreateHelper.Ref(replace.DefaultID, item.ComponentRef.ComponentDefType, mechlab.dataManager,mechlab.sim);
                 if (new_ref != null)
                 {
                     Control.Logger.LogDebug($"IDefaultRepace - adding");
@@ -158,7 +158,7 @@ namespace CustomComponents
 
                 if (list[i].Def is IDefaultRepace replace)
                 {
-                    var ref_item = CreateHelper.Ref(replace.DefaultID, list[i].ComponentDefType, list[i].DataManager);
+                    var ref_item = CreateHelper.Ref(replace.DefaultID, list[i].ComponentDefType, list[i].DataManager, state);
                     ref_item.SetData(list[i].MountedLocation, list[i].HardpointSlot, list[i].DamageLevel);
                     ref_item.SetSimGameUID(state.GenerateSimGameUID());
                     result_list.Add(ref_item);

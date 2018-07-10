@@ -14,11 +14,13 @@ namespace CustomComponents
         /// <param name="type"></param>
         /// <param name="datamanager"></param>
         /// <returns></returns>
-        public static MechComponentRef Ref(string id, ComponentType type, DataManager datamanager)
+        public static MechComponentRef Ref(string id, ComponentType type, DataManager datamanager, SimGameState state)
         {
             var component_ref = new MechComponentRef(id, string.Empty, type, ChassisLocations.None);
             component_ref.DataManager = datamanager;
             component_ref.RefreshComponentDef();
+            if(state != null)
+                component_ref.SetSimGameUID(state.GenerateSimGameUID());
             return component_ref;
         }
 

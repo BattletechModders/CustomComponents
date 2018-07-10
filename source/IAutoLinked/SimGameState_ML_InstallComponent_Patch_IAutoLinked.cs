@@ -34,7 +34,7 @@ namespace CustomComponents
                 foreach (var link in linked.Links)
                 {
                     Control.Logger.LogDebug($"- adding {link.ApendixID} to  {link.Location}");
-                    DefaultHelper.AddDefault(link.ApendixID, mech , link.Location, link.BaseType);
+                    DefaultHelper.AddDefault(link.ApendixID, mech , link.Location, link.BaseType, __instance);
                 }
         }
 

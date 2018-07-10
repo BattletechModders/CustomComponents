@@ -18,7 +18,7 @@ namespace CustomComponents
             if (order.MechComponentRef.Def is IDefaultRepace replace && order.PreviousLocation != ChassisLocations.None)
             {
                 Control.Logger.LogDebug($"- found, adding {replace.DefaultID} to {order.PreviousLocation}");
-                DefaultHelper.AddDefault(replace.DefaultID, __instance.GetMechByID(order.MechID), order.PreviousLocation, order.MechComponentRef.ComponentDefType);
+                DefaultHelper.AddDefault(replace.DefaultID, __instance.GetMechByID(order.MechID), order.PreviousLocation, order.MechComponentRef.ComponentDefType, __instance);
             }
         }
 

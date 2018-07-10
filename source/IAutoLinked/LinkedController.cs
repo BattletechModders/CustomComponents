@@ -59,7 +59,7 @@ namespace CustomComponents
                             {
                                 Control.Logger.LogDebug($"{a_link.ApendixID} to {a_link.Location}");
                                 var cref = CreateHelper.Ref(a_link.ApendixID, a_link.BaseType,
-                                    location.mechLab.dataManager);
+                                    location.mechLab.dataManager, location.mechLab.sim);
                                 if (cref != null)
                                 {
                                     Control.Logger.LogDebug($"added");
@@ -107,7 +107,7 @@ namespace CustomComponents
                 foreach (var a_link in link.Links)
                 {
                     var cref = CreateHelper.Ref(a_link.ApendixID, a_link.BaseType,
-                        location.mechLab.dataManager);
+                        location.mechLab.dataManager, location.mechLab.sim);
 
                     if (cref == null)
                     {

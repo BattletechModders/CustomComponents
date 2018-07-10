@@ -31,7 +31,7 @@ namespace CustomComponents
             }
 
             MechComponentRef component_ref = CreateHelper.Ref(repace.DefaultID,
-                item.ComponentRef.ComponentDefType, ___mechLab.dataManager);
+                item.ComponentRef.ComponentDefType, ___mechLab.dataManager, ___mechLab.sim);
 
             if (component_ref.Def == null)
             {
