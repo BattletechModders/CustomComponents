@@ -18,24 +18,24 @@ namespace CustomComponents
             __state = null;
 
 
-            if(!(item.ComponentRef.Def is IDefaultRepace repace))
+            if(!item.ComponentRef.Is<DefaultReplace>(out var replace))
             {
                 return true;
             }
 
-            if (repace.DefaultID == item.ComponentRef.ComponentDefID)
+            if (replace.DefaultID == item.ComponentRef.ComponentDefID)
             {
                 ___mechLab.ShowDropErrorMessage("Cannot remove vital component");
                 __result = false;
                 return false;
             }
 
-            MechComponentRef component_ref = CreateHelper.Ref(repace.DefaultID,
+            MechComponentRef component_ref = CreateHelper.Ref(replace.DefaultID,
                 item.ComponentRef.ComponentDefType, ___mechLab.dataManager, ___mechLab.sim);
 
             if (component_ref.Def == null)
             {
-                Control.Logger.LogError($"Default replace {repace.DefaultID} for { item.ComponentRef.ComponentDefID} not found");
+                Control.Logger.LogError($"Default replace {replace.DefaultID} for { item.ComponentRef.ComponentDefID} not found");
                 return true;
             }
 

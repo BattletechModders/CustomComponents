@@ -13,7 +13,7 @@ namespace CustomComponents
         public static void Postfix(bool __result, MechLabPanel ___mechLab, MechLabLocationWidget __instance,
             IMechLabDraggableItem item)
         {
-            if (__result && item.ComponentRef.Def is IAutoLinked linked && linked.Links != null)
+            if (__result && item.ComponentRef.Is<AutoLinked>(out var linked) && linked.Links != null)
             {
                 LinkedController.RemoveLinked(___mechLab, item, linked);
             }

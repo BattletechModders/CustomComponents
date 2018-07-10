@@ -16,7 +16,7 @@ namespace CustomComponents
                 return;
 
 
-            if (!(order.MechComponentRef.Def is IAutoLinked linked) || linked.Links == null || linked.Links.Length == 0)
+            if (!(order.MechComponentRef.Is<AutoLinked>(out var linked)) || linked.Links == null || linked.Links.Length == 0)
                 return;
 
             Control.Logger.LogDebug("- is linked, proceed");

@@ -9,7 +9,7 @@ namespace CustomComponents
     {
         public static bool Prefix(SalvageDef def)
         {
-            return !(def.MechComponentDef is INotSalvagable);
+            return !(def.MechComponentDef.Is<Flags>(out var f) && f.NotSalvagable);
         }
     }
     [HarmonyPatch(typeof(Contract), "AddMechComponentToSalvage")]
@@ -18,6 +18,6 @@ namespace CustomComponents
         public static bool Prefix(MechComponentDef def)
         {
             Control.Logger.LogDebug(def.Description.Id);
-            return !(def is INotSalvagable);
+            return !(def.Is<Flags>(out var f) && f.NotSalvagable);
         }
     }}

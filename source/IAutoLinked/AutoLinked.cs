@@ -9,8 +9,9 @@ namespace CustomComponents
         public ComponentType BaseType;
     }
 
-    public interface IAutoLinked
+    [CustomComponent("Linked")]
+    public class AutoLinked : SimpleCustomComponent
     {
-        Link[] Links { get; }
+        public Link[] Links { get; set; }
     }
 }

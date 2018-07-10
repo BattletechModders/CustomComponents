@@ -2,8 +2,6 @@
 using System.Linq;
 using BattleTech;
 using BattleTech.UI;
-using CustomComponents;
-using UnityEngine;
 
 namespace CustomComponents
 {
@@ -11,14 +9,14 @@ namespace CustomComponents
     {
         public static void ValidateMech(Dictionary<MechValidationType, List<string>> errors, MechValidationLevel validationlevel, MechDef mechdef)
         {
-            foreach (var linked_item in mechdef.Inventory.Select(i => i.Def).OfType<IAutoLinked>().Where(i => i.Links != null && i.Links.Length > 0))
+            foreach (var linked_item in mechdef.Inventory.Select(i => i.Def.GetComponent<AutoLinked>()).Where(i => i !=null && i.Links != null && i.Links.Length > 0))
             {
                 foreach (var link in linked_item.Links)
                 {
                     if (!mechdef.Inventory.Any(i =>
                         i.MountedLocation == link.Location && i.ComponentDefID == link.ApendixID))
                     {
-                        errors[MechValidationType.InvalidInventorySlots].Add($"{(linked_item as MechComponentDef).Description.Name} have critical errors, reinstall it to fix");
+                        errors[MechValidationType.InvalidInventorySlots].Add($"{linked_item.Def.Description.Name} have critical errors, reinstall it to fix");
                     }
                 }
             }
@@ -26,7 +24,7 @@ namespace CustomComponents
 
         public static bool ValidateMechCanBeFielded(MechDef mechdef)
         {
-            foreach (var linked_item in mechdef.Inventory.Select(i => i.Def).OfType<IAutoLinked>().Where(i => i.Links != null && i.Links.Length > 0))
+            foreach (var linked_item in mechdef.Inventory.Select(i => i.Def.GetComponent<AutoLinked>()).Where(i => i != null && i.Links != null && i.Links.Length > 0))
             {
                 foreach (var link in linked_item.Links)
                 {
@@ -49,7 +47,7 @@ namespace CustomComponents
                 var helper = new MechLabHelper(location.mechLab);
                 foreach (var change in changes.Changes.OfType<SlotChange>())
                 {
-                    if (change.item.ComponentRef.Def is IAutoLinked l && l.Links != null && l.Links.Length > 0)
+                    if (change.item.ComponentRef.Is<AutoLinked>(out var l) && l.Links != null && l.Links.Length > 0)
                     {
                         if (change is AddChange)
                         {
@@ -102,7 +100,7 @@ namespace CustomComponents
             }
 
 
-            if (element.ComponentRef.Def is IAutoLinked link && link.Links != null)
+            if (element.ComponentRef.Is<AutoLinked>(out var link) && link.Links != null)
             {
                 foreach (var a_link in link.Links)
                 {
@@ -122,11 +120,13 @@ namespace CustomComponents
             return last_result;
         }
 
-        public static void RemoveLinked(MechLabPanel mechlab, IMechLabDraggableItem item, IAutoLinked linked)
+        public static void RemoveLinked(MechLabPanel mechlab, IMechLabDraggableItem item, AutoLinked linked)
         {
             var helper = new MechLabHelper(mechlab);
             foreach (var r_link in linked.Links)
             {
+               
+
                 var widget = helper.GetLocationWidget(r_link.Location);
                 if (widget != null)
                 {
@@ -137,10 +137,18 @@ namespace CustomComponents
 
                     if (remove != null)
                     {
-                        Control.Logger.LogDebug($"removed");
                         widget.OnRemoveItem(remove, true);
-                        //DefaultHelper.DefaultRemoveWith(item.ComponentRef, r_link.ApendixID, r_link.Location);
-                        mechlab.dataManager.PoolGameObject(MechLabPanel.MECHCOMPONENT_ITEM_PREFAB, item.GameObject);
+                        if (remove.ComponentRef.Is<Flags>(out var f) && f.Default)
+                        {
+                            remove.thisCanvasGroup.blocksRaycasts = true;
+                            mechlab.dataManager.PoolGameObject(MechLabPanel.MECHCOMPONENT_ITEM_PREFAB, item.GameObject);
+                        }
+                        else
+                        {
+                            Control.Logger.LogDebug($"removed");
+                            mechlab.ForceItemDrop(remove);
+                            helper.SetDragItem(item as MechLabItemSlotElement);
+                        }
                     }
                     else
                         Control.Logger.LogDebug($"not found");

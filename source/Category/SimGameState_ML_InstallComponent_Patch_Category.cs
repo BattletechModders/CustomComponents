@@ -48,7 +48,7 @@ namespace CustomComponents
             Control.Logger.LogDebug($"- total {n1}/{category.CategoryDescriptor.MaxEquiped}  location: {n2}/{category.CategoryDescriptor.MaxEquipedPerLocation}");
 
             var replace = mech.Inventory.FirstOrDefault(i => i.MountedLocation == order.DesiredLocation && i.Is<Category>(out var cat)
-                   && category.CategoryID == cat.CategoryID && i.Def is IDefault);
+                   && category.CategoryID == cat.CategoryID && i.Is<Flags>(out var f) && f.Default);
 
             Control.Logger.LogDebug($"- possible replace: {(replace == null? "not found" : replace.ComponentDefID)}");
 

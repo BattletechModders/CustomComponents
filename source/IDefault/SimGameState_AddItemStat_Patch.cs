@@ -14,7 +14,9 @@ namespace CustomComponents
                 return true;
 
             var def = GetComponentByType(id, type, __instance.DataManager);
-            if (!(def is IDefault))
+            var f = def.GetComponent<Flags>();
+            
+            if(f == null || !f.Default)
                 return true;
 
             return false;

@@ -10,7 +10,31 @@ namespace CustomComponents
 {
     internal static class DefaultHelper
     {
-        public static bool OnRemoveItem(this MechLabLocationWidget widget, IMechLabDraggableItem item, bool validate)
+        internal static void RemoveDefault(string defaultID, MechDef mech, ChassisLocations location, ComponentType type)
+        {
+            var item = mech.Inventory.FirstOrDefault(i => i.MountedLocation == location && i.ComponentDefID == defaultID);
+            if (item != null)
+            {
+                var inv = mech.Inventory.ToList();
+                inv.Remove(item);
+                mech.SetInventory(inv.ToArray());
+            }
+        }
+
+        internal static void AddDefault(string defaultID, MechDef mech, ChassisLocations location, ComponentType type, SimGameState state)
+        {
+            var r = CreateHelper.Ref(defaultID, type, mech.DataManager, state);
+            if (r != null)
+            {
+                r.SetData(location, -1, ComponentDamageLevel.Functional);
+                var inv = mech.Inventory.ToList();
+                inv.Add(r);
+                mech.SetInventory(inv.ToArray());
+            }
+        }
+
+        #region repair
+        public static bool OnRemoveItemRepair(this MechLabLocationWidget widget, IMechLabDraggableItem item, bool validate)
         {
             void do_Repair()
             {
@@ -21,7 +45,7 @@ namespace CustomComponents
 
             var component = item.ComponentRef.Def;
 
-            if (component is IAutoRepair)
+            if (component.Is<Flags>(out var f) && f.AutoRepair)
             {
                 do_Repair();
                 return true;
@@ -29,7 +53,7 @@ namespace CustomComponents
 
             var mechlab = widget.parentDropTarget as MechLabPanel;
 
-            if (component is IDefaultRepace replace && !string.IsNullOrEmpty(replace.DefaultID) && replace.DefaultID != item.ComponentRef.ComponentDefID)
+            if (component.Is<DefaultReplace>(out var replace) && !string.IsNullOrEmpty(replace.DefaultID) && replace.DefaultID != item.ComponentRef.ComponentDefID)
             {
                 var new_ref = CreateHelper.Ref(replace.DefaultID, item.ComponentRef.ComponentDefType, mechlab.dataManager, mechlab.sim);
                 if (new_ref != null)
@@ -39,7 +63,7 @@ namespace CustomComponents
                 }
             }
 
-            if (component is IAutoLinked linked)
+            if (component.Is<AutoLinked>(out var linked))
             {
                 LinkedController.RemoveLinked(mechlab, item, linked);
             }
@@ -48,28 +72,6 @@ namespace CustomComponents
             //mechlab.ValidateLoadout(false);
         }
 
-        internal static void RemoveDefault(string defaultID, MechDef mech, ChassisLocations location, ComponentType type)
-        {
-            var item = mech.Inventory.FirstOrDefault(i => i.MountedLocation == location && i.ComponentDefID == defaultID);
-            if(item != null)
-            {
-                var inv = mech.Inventory.ToList();
-                inv.Remove(item);
-                mech.SetInventory(inv.ToArray());
-            }
-        }
-
-        internal static void AddDefault(string defaultID, MechDef mech, ChassisLocations location, ComponentType type, SimGameState state)
-        {
-            var r = CreateHelper.Ref(defaultID, type, mech.DataManager,state);
-            if(r != null)
-            {
-                r.SetData(location, -1, ComponentDamageLevel.Functional);
-                var inv = mech.Inventory.ToList();
-                inv.Add(r);
-                mech.SetInventory(inv.ToArray());
-            }
-        }
 
         public static void ForceItemDropRepair(this MechLabPanel mechlab, MechLabItemSlotElement item)
         {
@@ -78,6 +80,9 @@ namespace CustomComponents
 
             mechlab.ForceItemDrop(item);
         }
+        #endregion
+
+        #region strip
 
         public static bool OnRemoveItemStrip(this MechLabLocationWidget widget, IMechLabDraggableItem item,
             bool validate)
@@ -88,16 +93,16 @@ namespace CustomComponents
 
             var mechlab = widget.parentDropTarget as MechLabPanel;
 
-            if (component is ICannotRemove)
+            if (component.Is<Flags>(out var f) && f.CannotRemove)
             {
                 Control.Logger.LogDebug($"ICannotRemove - cancel");
                 return true;
             }
 
-            if (component is IDefaultRepace replace && !string.IsNullOrEmpty(replace.DefaultID) && replace.DefaultID != item.ComponentRef.ComponentDefID)
+            if (component.Is<DefaultReplace>(out var replace) && !string.IsNullOrEmpty(replace.DefaultID) && replace.DefaultID != item.ComponentRef.ComponentDefID)
             {
                 Control.Logger.LogDebug($"IDefaultRepace - search for replace");
-                var new_ref = CreateHelper.Ref(replace.DefaultID, item.ComponentRef.ComponentDefType, mechlab.dataManager,mechlab.sim);
+                var new_ref = CreateHelper.Ref(replace.DefaultID, item.ComponentRef.ComponentDefType, mechlab.dataManager, mechlab.sim);
                 if (new_ref != null)
                 {
                     Control.Logger.LogDebug($"IDefaultRepace - adding");
@@ -109,7 +114,7 @@ namespace CustomComponents
 
             }
 
-            if (component is IAutoLinked linked)
+            if (component.Is<AutoLinked>(out var linked))
             {
                 Control.Logger.LogDebug($"IAutoLinked - remove linked");
                 LinkedController.RemoveLinked(mechlab, item, linked);
@@ -121,7 +126,7 @@ namespace CustomComponents
         public static void ForceItemDropStrip(this MechLabPanel mechlab, MechLabItemSlotElement item)
         {
             var component = item.ComponentRef.Def;
-            if (component is ICannotRemove)
+            if (component.Is<Flags>(out var f) && f.CannotRemove)
                 return;
 
 
@@ -136,10 +141,10 @@ namespace CustomComponents
 
             //TODO: Remove in light
             //foreach (var item in list)
-                //if (item.Def == null)
-                //    item.RefreshComponentDef();
+            //if (item.Def == null)
+            //    item.RefreshComponentDef();
 
-            var result_list = list.Where(i => i.Def is IDefault).ToList();
+            var result_list = list.Where(i => i.Is<Flags>(out var f) && f.CannotRemove).ToList();
 
             for (int i = list.Count - 1; i >= 0; i--)
             {
@@ -150,13 +155,13 @@ namespace CustomComponents
                     list[i].SetSimGameUID(state.GenerateSimGameUID());
                 }
 
-                if (list[i].Def is IDefault)
+                if (list[i].Is<Flags>(out var f) && f.CannotRemove)
                 {
                     Control.Logger.LogDebug("-- Default - skipping");
                     continue;
                 }
 
-                if (list[i].Def is IDefaultRepace replace)
+                if (list[i].Is<DefaultReplace>(out var replace))
                 {
                     var ref_item = CreateHelper.Ref(replace.DefaultID, list[i].ComponentDefType, list[i].DataManager, state);
                     ref_item.SetData(list[i].MountedLocation, list[i].HardpointSlot, list[i].DamageLevel);
@@ -166,7 +171,7 @@ namespace CustomComponents
                 }
 
 
-                if (list[i].Def is IAutoLinked link && link.Links != null)
+                if (list[i].Is<AutoLinked>(out var link) && link.Links != null)
                 {
                     foreach (var l in link.Links)
                     {
@@ -184,6 +189,7 @@ namespace CustomComponents
             return result_list.ToArray();
         }
 
-         
+        #endregion
+
     }
 }

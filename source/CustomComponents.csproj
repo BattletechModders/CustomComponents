@@ -97,11 +97,12 @@
     <Compile Include="Filter\IMechLabFilter.cs" />
     <Compile Include="IAutoLinked\SimGameState_ML_InstallComponent_Patch_IAutoLinked.cs" />
     <Compile Include="IDefault\Contract_AddToFilnaSalvagePatch.cs" />
-    <Compile Include="IDefault\IDefault.cs" />
+    <Compile Include="IDefault\DefaultReplace.cs" />
+    <Compile Include="IDefault\Flags.cs" />
     <Compile Include="Helpers\CreateHelper.cs" />
     <Compile Include="IDefault\MechLabLocationWidget_Repair_Patches.cs" />
     <Compile Include="IDefault\MechLabLocationWidget_OnItemGrab_Patch_Default.cs" />
-    <Compile Include="IAutoLinked\IAutoLinked.cs" />
+    <Compile Include="IAutoLinked\AutoLinked.cs" />
     <Compile Include="IAutoLinked\LinkedController.cs" />
     <Compile Include="IAutoLinked\MechLabLocationWidget_OnItemGrab_Patch_ILinked.cs" />
     <Compile Include="IDefault\MechLabLocationWidget_StripEquipment.cs" />

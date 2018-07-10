@@ -14,17 +14,19 @@ namespace CustomComponents
             ref UIColor __result,
             MechComponentRef componentRef)
         {
-            if (componentRef?.Def is IDefault)
+
+            if (componentRef.Is<ColorComponent>(out var color))
+            {
+                __result = color.Color;
+                return;
+            }
+
+            if (componentRef.Is<Flags>(out var f) && f.Default)
             {
                 __result = UIColor.DarkGray;
                 return;
             }
 
-
-            if (!(componentRef.Is<ColorComponent>(out var color) ) )
-                return;
-
-            __result = color.Color;
         }
     }
 }
