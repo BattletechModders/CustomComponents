@@ -50,12 +50,10 @@ namespace CustomComponents
 
                 if (settings.LoadDefaultValidators)
                 {
-                    Validator.RegisterMechValidator(WeighLimitedController.ValidateMech, WeighLimitedController.ValidateMechCanBeFielded);
                     Validator.RegisterMechValidator(CategoryController.ValidateMech, CategoryController.ValidateMechCanBeFielded);
                     Validator.RegisterMechValidator(LinkedController.ValidateMech, LinkedController.ValidateMechCanBeFielded);
 
                     Validator.RegisterDropValidator(CategoryController.ValidateDrop);
-                    Validator.RegisterDropValidator(WeighLimitedController.ValidateDrop);
                     Validator.RegisterDropValidator(LinkedController.ValidateDrop);
                 }
 

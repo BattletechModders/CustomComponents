@@ -74,7 +74,7 @@
   <ItemGroup>
     <Compile Include="Category\CategoryController.cs" />
     <Compile Include="Category\CategoryDescriptor.cs" />
-    <Compile Include="Category\Category.cs" />
+    <Compile Include="Components\Category.cs" />
     <Compile Include="Category\SimGameState_ML_InstallComponent_Patch_Category.cs" />
     <Compile Include="CCLight\CustomComponentAttribute.cs" />
     <Compile Include="CCLight\Database.cs" />
@@ -84,7 +84,7 @@
     <Compile Include="CCLight\Factories\ICustomComponentFactory.cs" />
     <Compile Include="CCLight\Factories\SimpleCustomComponent.cs" />
     <Compile Include="CCLight\Factories\SimpleCustomComponentFactory.cs" />
-    <Compile Include="CCLight\IAfterLoad.cs" />
+    <Compile Include="Interfaces\IAfterLoad.cs" />
     <Compile Include="CCLight\Patches\JSONSerializationUtility_RehydrateObjectFromDictionary_Patch.cs" />
     <Compile Include="CCLight\Registry.cs" />
     <Compile Include="DropResults\AddChange.cs" />
@@ -94,15 +94,15 @@
     <Compile Include="DropResults\ValidateDropError.cs" />
     <Compile Include="DropResults\ValidateDropHandled.cs" />
     <Compile Include="DropResults\ValidateDropRemoveDragItem.cs" />
-    <Compile Include="Filter\IMechLabFilter.cs" />
+    <Compile Include="Interfaces\IMechLabFilter.cs" />
     <Compile Include="IAutoLinked\SimGameState_ML_InstallComponent_Patch_IAutoLinked.cs" />
     <Compile Include="IDefault\Contract_AddToFilnaSalvagePatch.cs" />
     <Compile Include="IDefault\DefaultReplace.cs" />
-    <Compile Include="IDefault\Flags.cs" />
+    <Compile Include="Components\Flags.cs" />
     <Compile Include="Helpers\CreateHelper.cs" />
     <Compile Include="IDefault\MechLabLocationWidget_Repair_Patches.cs" />
     <Compile Include="IDefault\MechLabLocationWidget_OnItemGrab_Patch_Default.cs" />
-    <Compile Include="IAutoLinked\AutoLinked.cs" />
+    <Compile Include="Components\AutoLinked.cs" />
     <Compile Include="IAutoLinked\LinkedController.cs" />
     <Compile Include="IAutoLinked\MechLabLocationWidget_OnItemGrab_Patch_ILinked.cs" />
     <Compile Include="IDefault\MechLabLocationWidget_StripEquipment.cs" />
@@ -112,10 +112,12 @@
     <Compile Include="IDefault\SimGameState_ML_InstallComponent_Patch_Default.cs" />
     <Compile Include="IDefault\SimGameState_ReadyMech_Patch.cs" />
     <Compile Include="IDefault\SimGameState_StripMech_Patch.cs" />
+    <Compile Include="Interfaces\IMechValidate.cs" />
     <Compile Include="TEST\AutoFix.cs" />
+    <Compile Include="Interfaces\IValidateDrop.cs" />
     <Compile Include="Validators\MechLabLocationWidget_OnMechLabDrop_Patch.cs" />
     <Compile Include="IDefault\MechLabLocationWidget_OnItemGrab_Patch_IDefaultReplace.cs" />
-    <Compile Include="ColorChanger\IColorComponent.cs" />
+    <Compile Include="Components\ColorComponent.cs" />
     <Compile Include="ColorChanger\ListElementController_SalvageGear_NotListView_RefreshItemColor_Patch.cs" />
     <Compile Include="ColorChanger\ListElementController_SalvageGear_RefreshItemColor_Patch.cs" />
     <Compile Include="ColorChanger\MechComponentRef_GetUIColor_Patch.cs" />
@@ -126,13 +128,16 @@
     <Compile Include="Validators\MechValidationRulesValidate_ValidateMech_Patch.cs" />
     <Compile Include="Validators\MechValidationRules_ValidateMechCanBeFielded_Patch.cs" />
     <Compile Include="DropResults\ValidateDropResult.cs" />
-    <Compile Include="Validators\ValidatorInterfaces.cs" />
+    <Compile Include="Validators\ValidatorDelegates.cs" />
     <Compile Include="Validators\Validator.cs" />
     <Compile Include="Helpers\HarmonyNestedAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WeightLimitation\IWeightLimited.cs" />
+    <Compile Include="Components\TonnageAllowed.cs" />
+    <Compile Include="Components\TonnageLimited.cs" />
     <Compile Include="Filter\MechLabInventoryWidget_ApplyFiltering_Patch.cs" />
-    <Compile Include="WeightLimitation\WeighLimitedController.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Patches\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
