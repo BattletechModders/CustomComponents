@@ -5,11 +5,12 @@ namespace CustomComponents
     /// <summary>
     /// component has specific color
     /// </summary>
-    interface IColorComponent
+    [CustomComponent("Color")]
+    public class ColorComponent : SimpleCustomComponent
     {
         /// <summary>
         /// color of component
         /// </summary>
-        UIColor Color { get; }
+        public UIColor Color { get; set; }
     }
 }

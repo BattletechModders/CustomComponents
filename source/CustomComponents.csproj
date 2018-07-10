@@ -84,6 +84,7 @@
     <Compile Include="CCLight\Factories\ICustomComponentFactory.cs" />
     <Compile Include="CCLight\Factories\SimpleCustomComponent.cs" />
     <Compile Include="CCLight\Factories\SimpleCustomComponentFactory.cs" />
+    <Compile Include="CCLight\IAfterLoad.cs" />
     <Compile Include="CCLight\Patches\JSONSerializationUtility_RehydrateObjectFromDictionary_Patch.cs" />
     <Compile Include="CCLight\Registry.cs" />
     <Compile Include="DropResults\AddChange.cs" />
@@ -93,7 +94,7 @@
     <Compile Include="DropResults\ValidateDropError.cs" />
     <Compile Include="DropResults\ValidateDropHandled.cs" />
     <Compile Include="DropResults\ValidateDropRemoveDragItem.cs" />
-    <Compile Include="Filter\MechLabFilter.cs" />
+    <Compile Include="Filter\IMechLabFilter.cs" />
     <Compile Include="IAutoLinked\SimGameState_ML_InstallComponent_Patch_IAutoLinked.cs" />
     <Compile Include="IDefault\Contract_AddToFilnaSalvagePatch.cs" />
     <Compile Include="IDefault\IDefault.cs" />
@@ -119,7 +120,6 @@
     <Compile Include="ColorChanger\MechComponentRef_GetUIColor_Patch.cs" />
     <Compile Include="Control.cs" />
     <Compile Include="CustomComponentSettings.cs" />
-    <Compile Include="Tooltips.cs" />
     <Compile Include="Helpers\LocationHelper.cs" />
     <Compile Include="Helpers\MechLabHelper.cs" />
     <Compile Include="Validators\MechValidationRulesValidate_ValidateMech_Patch.cs" />
@@ -129,11 +129,6 @@
     <Compile Include="Validators\Validator.cs" />
     <Compile Include="Helpers\HarmonyNestedAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TypePatch\AmmoBoxPatch.cs" />
-    <Compile Include="TypePatch\WeaponDefPatch.cs" />
-    <Compile Include="TypePatch\JumpJetPatch.cs" />
-    <Compile Include="TypePatch\HeatSinkPatch.cs" />
-    <Compile Include="TypePatch\UpgradePatch.cs" />
     <Compile Include="WeightLimitation\IWeightLimited.cs" />
     <Compile Include="Filter\MechLabInventoryWidget_ApplyFiltering_Patch.cs" />
     <Compile Include="WeightLimitation\WeighLimitedController.cs" />

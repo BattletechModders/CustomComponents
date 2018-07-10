@@ -21,7 +21,7 @@ namespace CustomComponents
             }
 
 
-            if (!(componentRef?.Def is IColorComponent color) )
+            if (!(componentRef.Is<ColorComponent>(out var color) ) )
                 return;
 
             __result = color.Color;

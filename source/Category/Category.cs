@@ -8,7 +8,7 @@ namespace CustomComponents
     /// component use category logic
     /// </summary>
     [CustomComponent("Category")]
-    public class Category : SimpleCustomComponent
+    public class Category : SimpleCustomComponent, IAfterLoad
     {
         /// <summary>
         /// name of category
@@ -30,7 +30,7 @@ namespace CustomComponents
         [JsonIgnore]
         public CategoryDescriptor CategoryDescriptor { get; set; }
 
-        public override void OnLoaded()
+        public  void OnLoaded()
         {
             CategoryDescriptor = Control.GetCategory(CategoryID);
         }

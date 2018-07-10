@@ -19,18 +19,23 @@ namespace CustomComponents
             if (!Control.settings.LoadDefaultValidators)
                 return;
 
-            var helper = new MechLabHelper(__instance.ParentDropTarget as MechLabPanel);
-
             foreach (var item in ___localInventory)
             {
                 //if item already hidden - skip
                 if (!item.GameObject.activeSelf)
                     continue;
 
-                var filter = MechLabFilter.ApplyFilter(helper, item.ComponentRef.Def);
+                var mechlab = __instance.ParentDropTarget as MechLabPanel;
 
-                if(!filter)
-                    item.gameObject.SetActive(false);
+                foreach (var filter in item.ComponentRef.GetComponents<IMechLabFilter>())
+                {
+                    if(!filter.CheckFilter(mechlab))
+                    {
+                        item.gameObject.SetActive(false);
+                        return;
+                    }
+                }
+
             }
         }
     }

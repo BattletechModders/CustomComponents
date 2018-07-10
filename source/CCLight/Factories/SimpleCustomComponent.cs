@@ -7,7 +7,5 @@ namespace CustomComponents
     {
         [JsonIgnore]
         public MechComponentDef Def { get; internal set; }
-
-        public virtual void OnLoaded() { }
     }
 }

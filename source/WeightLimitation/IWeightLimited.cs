@@ -1,22 +1,38 @@
-﻿namespace CustomComponents
+﻿using BattleTech.UI;
+
+namespace CustomComponents
 {
     /// <summary>
     /// component limited to mech tonnage
     /// </summary>
-    public interface IWeightLimited
+    [CustomComponent("WeightLimit")]
+    public class WeightLimited : SimpleCustomComponent, IMechLabFilter
     {
         /// <summary>
         /// minimum allowed tonnage
         /// </summary>
-        int MinTonnage { get; }
+        public int MinTonnage { get; set; }
         /// <summary>
         /// maximum allowed tonnage
         /// </summary>
-        int MaxTonnage { get; }
+        public int MaxTonnage { get; set; }
+
+        public bool CheckFilter(MechLabPanel panel)
+        {
+            var tonnage = panel.activeMechDef.Chassis.Tonnage;
+            return MinTonnage >= tonnage && MaxTonnage <= tonnage;
+        }
     }
 
-    public interface IWeightAllowed
+    [CustomComponent("WeightAllowed")]
+    public class WeightAllowed : SimpleCustomComponent, IMechLabFilter
     {
-        int AllowedTonnage { get; }
+        public int AllowedTonnage { get; set; }
+
+        public bool CheckFilter(MechLabPanel panel)
+        {
+            var tonnage = panel.activeMechDef.Chassis.Tonnage;
+            return AllowedTonnage == tonnage;
+        }
     }
 }

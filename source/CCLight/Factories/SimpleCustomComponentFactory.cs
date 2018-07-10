@@ -12,7 +12,8 @@ namespace CustomComponents
             if (obj != null)
             {
                 obj.Def = target;
-                obj.OnLoaded();
+                if (obj is IAfterLoad load)
+                    load.OnLoaded();
             }
             return obj;
         }
