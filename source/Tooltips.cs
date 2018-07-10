@@ -20,11 +20,11 @@ namespace CustomComponents
     [HarmonyPatch(typeof(TooltipManager), "SetActiveTooltip")]
     public static class TooltipManagerSetActiveTooltipPatch
     {
-        private static ICustomComponent customComponent;
+        private static ICustomComponent_old customComponent;
 
         public static void Prefix(object data)
         {
-            customComponent = data as ICustomComponent;
+            customComponent = data as ICustomComponent_old;
         }
 
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)

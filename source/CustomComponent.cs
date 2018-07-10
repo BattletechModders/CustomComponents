@@ -6,7 +6,7 @@ namespace CustomComponents
     /// <summary>
     /// basic interface for custom component
     /// </summary>
-    public interface ICustomComponent
+    public interface ICustomComponent_old
     {
         string CustomType { get; }
         void FromJson(string json);

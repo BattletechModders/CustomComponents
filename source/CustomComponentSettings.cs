@@ -8,5 +8,6 @@ namespace CustomComponents
         public bool LoadDefaultValidators = true;
         public string LogLevel = "Debug";
         public List<CategoryDescriptor> Categories = new List<CategoryDescriptor>();
+        public bool TestEnableAllTags = true;
     }
 }

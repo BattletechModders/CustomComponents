@@ -125,7 +125,7 @@ namespace CustomComponents
             Logger.LogDebug("Loading custom: " + custom_type);
 
 
-            var custom_obj = Control.CreateNew(custom_type) as ICustomComponent;
+            var custom_obj = Control.CreateNew(custom_type) as ICustomComponent_old;
             if (custom_obj == null || !(custom_obj is T))
             {
                 Logger.LogError("Error: Create new return null");
@@ -153,10 +153,10 @@ namespace CustomComponents
 
         public static bool JsonPatch<T>(T value, ref string result)
         {
-            if (!(value is ICustomComponent))
+            if (!(value is ICustomComponent_old))
                 return true;
 
-            var custom = value as ICustomComponent;
+            var custom = value as ICustomComponent_old;
             result = custom.ToJson();
             return false;
         }
