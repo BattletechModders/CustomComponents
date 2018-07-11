@@ -6,7 +6,7 @@ namespace CustomComponents
     /// <summary>
     /// component check if it can be dropped to this location
     /// </summary>
-    public interface IAdjuctValidateDrop
+    public interface IAdjustValidateDrop
     {
         /// <summary>
         /// validation drop check
@@ -14,7 +14,7 @@ namespace CustomComponents
         /// <param name="widget">location, where check</param>
         /// <param name="element">element being dragged</param>
         /// <returns></returns>
-        List<IChange> ValidateDropOnAdd(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab);
-        List<IChange> ValidateDropOnRemove(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab);
+        IEnumerable<IChange> ValidateDropOnAdd(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab);
+        IEnumerable<IChange> ValidateDropOnRemove(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab);
     }
 }

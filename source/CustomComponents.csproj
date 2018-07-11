@@ -109,7 +109,7 @@
     <Compile Include="Interfaces\IOnInstalled.cs" />
     <Compile Include="Interfaces\IOnItemGrab.cs" />
     <Compile Include="Interfaces\IOnItemGrabbed.cs" />
-    <Compile Include="Interfaces\IAdjuctValidateDrop.cs" />
+    <Compile Include="Interfaces\IAdjustValidateDrop.cs" />
     <Compile Include="Interfaces\IReplaceValidateDrop.cs" />
     <Compile Include="Patches\SimGameState_ML_InstallComponent_Patch.cs" />
     <Compile Include="TEST\AutoFix.cs" />
@@ -126,7 +126,6 @@
     <Compile Include="Helpers\MechLabHelper.cs" />
     <Compile Include="Validators\MechValidationRulesValidate_ValidateMech_Patch.cs" />
     <Compile Include="Validators\MechValidationRules_ValidateMechCanBeFielded_Patch.cs" />
-    <Compile Include="Validators\ValidatorDelegates.cs" />
     <Compile Include="Validators\Validator.cs" />
     <Compile Include="Helpers\HarmonyNestedAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

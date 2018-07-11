@@ -8,7 +8,7 @@ namespace CustomComponents
     /// component limited to mech tonnage
     /// </summary>
     [CustomComponent("TonnageLimit")]
-    public class TonnageLimited : SimpleCustomComponent, IMechLabFilter, IPostValidateDrop, IMechValidate
+    public class TonnageLimited : SimpleCustomComponent, IMechLabFilter, IMechValidate, IPreValidateDrop
     {
         /// <summary>
         /// minimum allowed tonnage
@@ -25,8 +25,10 @@ namespace CustomComponents
             return Min >= tonnage && Max <= tonnage;
         }
 
-        public IValidateDropResult PostValidateDrop(MechLabItemSlotElement element, LocationHelper location, IValidateDropResult last_result)
+
+        public string PreValidateDrop(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab)
         {
+            Control.Logger.LogDebug("-- TonnageLimit");
             var tonnage = location.mechLab.activeMechDef.Chassis.Tonnage;
 
 
@@ -34,12 +36,12 @@ namespace CustomComponents
                 tonnage > Max)
             {
                 if (Min == Max)
-                    return new ValidateDropError($"{element.ComponentRef.Def.Description.Name} designed for {Min}t 'Mech");
+                    return $"{Def.Description.Name} designed for {Min}t 'Mech";
                 else
-                    return new ValidateDropError($"{element.ComponentRef.Def.Description.Name} designed for {Min}t-{Max}t 'Mech");
+                    return $"{Def.Description.Name} designed for {Min}t-{Max}t 'Mech";
             }
 
-            return last_result;
+            return string.Empty;
         }
 
         public void ValidateMech(Dictionary<MechValidationType, List<string>> errors, MechValidationLevel validationLevel, MechDef mechDef)

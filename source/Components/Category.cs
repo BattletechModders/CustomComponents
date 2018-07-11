@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 using BattleTech.UI;
@@ -10,7 +11,7 @@ namespace CustomComponents
     /// component use category logic
     /// </summary>
     [CustomComponent("Category")]
-    public class Category : SimpleCustomComponent, IAfterLoad, IOnInstalled, IReplaceValidateDrop, IPostValidateDrop
+    public class Category : SimpleCustomComponent, IAfterLoad, IOnInstalled, IReplaceValidateDrop, IPreValidateDrop, IPostValidateDrop
     {
         /// <summary>
         /// name of category
@@ -78,132 +79,103 @@ namespace CustomComponents
                 DefaultHelper.RemoveDefault(replace.ComponentDefID, mech, order.DesiredLocation, replace.ComponentDefType);
 
         }
-
-        public IValidateDropResult ReplaceValidateDrop(MechLabItemSlotElement element, LocationHelper location,
-            IValidateDropResult last_result)
+         
+        public string ReplaceValidateDrop(MechLabItemSlotElement drop_item, LocationHelper location, ref MechLabItemSlotElement current_replace)
         {
-            //if replace already done
-            if (last_result is ValidateDropChange change && change.Changes.Any(i => i is IChange))
-                return last_result;
+            Control.Logger.LogDebug("-- Category");
 
-            //if cannot do replace
-            if (!CategoryDescriptor.AutoReplace ||
-                (CategoryDescriptor.MaxEquiped <= 0 && CategoryDescriptor.MaxEquipedPerLocation <= 0))
-                return last_result;
+            if (!CategoryDescriptor.AutoReplace || CategoryDescriptor.MaxEquiped <= 0 && CategoryDescriptor.MaxEquipedPerLocation <= 0)
+                return String.Empty;
+
+            if (current_replace != null)
+                return string.Empty;
 
             if (CategoryDescriptor.MaxEquiped > 0)
             {
-                var n = location.mechLab.activeMechDef.Inventory
-                    .Select(i => i.Def.GetComponent<Category>())
-                    .Count(i => i != null && i.CategoryID == CategoryID);
+                var n = location.mechLab.activeMechDef.Inventory.Count(i => i.Def.IsSameCategory(CategoryID));
+
 
                 if (n > CategoryDescriptor.MaxEquiped)
-                    return new ValidateDropError(string.Format(CategoryDescriptor.AddMaximumReached, CategoryDescriptor.displayName, n));
-
-                if (n == CategoryDescriptor.MaxEquiped)
                 {
                     var replace = location.LocalInventory
-                        .FirstOrDefault(i => i.ComponentRef.Def.Is<Category>(out var c) && c.CategoryID == CategoryID);
+                        .FirstOrDefault(i => i.ComponentRef.Def.IsSameCategory(CategoryID));
                     if (replace == null)
                         if (CategoryDescriptor.MaxEquiped > 1)
-                            return new ValidateDropError(string.Format(CategoryDescriptor.AddMaximumReached, CategoryDescriptor.displayName, n));
+                            return string.Format(CategoryDescriptor.AddMaximumReached, CategoryDescriptor.displayName, n);
                         else
-                            return new ValidateDropError(string.Format(CategoryDescriptor.AddAlreadyEquiped, CategoryDescriptor.displayName));
+                            return string.Format(CategoryDescriptor.AddAlreadyEquiped, CategoryDescriptor.displayName);
 
-                    return ValidateDropChange.AddOrCreate(last_result,
-                        new AddChange(location.widget.loadout.Location, replace));
+                    current_replace = replace;
+                    return string.Empty;
                 }
             }
 
             if (CategoryDescriptor.MaxEquipedPerLocation > 0)
             {
-                var n = location.LocalInventory
-                    .Select(i => i.ComponentRef.Def.GetComponent<Category>())
-                    .Count(i => i != null && i.CategoryID == CategoryID);
+                var n = location.LocalInventory.Count(i => i.ComponentRef.Def.IsSameCategory(CategoryID));
 
                 if (n > CategoryDescriptor.MaxEquipedPerLocation)
-                    return new ValidateDropError(string.Format(CategoryDescriptor.AddMaximumLocationReached, CategoryDescriptor.displayName, n, location.LocationName));
-
-                if (n == CategoryDescriptor.MaxEquipedPerLocation)
                 {
                     var replace = location.LocalInventory
-                        .FirstOrDefault(i => i.ComponentRef.Def.Is<Category>(out var c) && c.CategoryID == CategoryID);
+                        .FirstOrDefault(i => i.ComponentRef.Def.IsSameCategory(CategoryID));
 
                     if (replace == null)
                         if (CategoryDescriptor.MaxEquipedPerLocation > 1)
-                            return new ValidateDropError(string.Format(CategoryDescriptor.AddMaximumLocationReached, CategoryDescriptor.displayName, n, location.LocationName));
+                            return string.Format(CategoryDescriptor.AddMaximumLocationReached, CategoryDescriptor.displayName, n, location.LocationName);
                         else
-                            return new ValidateDropError(string.Format(CategoryDescriptor.AddAlreadyEquipedLocation, CategoryDescriptor.displayName, location.LocationName));
+                            return string.Format(CategoryDescriptor.AddAlreadyEquipedLocation, CategoryDescriptor.displayName, location.LocationName);
 
-                    return ValidateDropChange.AddOrCreate(last_result,
-                        new AddChange(location.widget.loadout.Location, replace));
+                    current_replace = replace;
                 }
 
             }
+            return string.Empty;
 
-            return last_result;
         }
 
-        public IValidateDropResult PostValidateDrop(MechLabItemSlotElement element, LocationHelper location,
-            IValidateDropResult last_result)
+        public string PreValidateDrop(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab)
         {
-            var c = CategoryDescriptor;
+            Control.Logger.LogDebug("-- Category");
 
-            var changes = last_result as ValidateDropChange;
+            if (!CategoryDescriptor.AllowMixTags || mechlab.MechLab.activeMechDef.Inventory.Any(i => i.Def.Is<Category>(out var c) && c.CategoryID == CategoryID && GetTag() != c.GetTag()))
+                return string.Format(CategoryDescriptor.AddMixed, CategoryDescriptor.DisplayName);
 
-            if (!c.AllowMixTags)
+            return string.Empty;
+        }
+
+        public string PostValidateDrop(MechLabItemSlotElement drop_item, MechDef mech, List<InvItem> new_inventory, List<IChange> changes)
+        {
+            Control.Logger.LogDebug("-- Category");
+
+            if (CategoryDescriptor.MaxEquiped > 0)
             {
-                var tag = GetTag();
-
-                foreach (var mref in location.mechLab.activeMechDef.Inventory.Where(i => i.Def.Is<Category>(out var c1) && c1.CategoryID == CategoryID && c1.GetTag() != GetTag()))
-                {
-                    if (changes != null && changes.Changes.All(i => !(i is RemoveChange change) || change.item.ComponentRef != mref))
-                        return new ValidateDropError(string.Format(c.AddMixed, c.DisplayName));
-                }
-            }
-
-            if (c.MaxEquiped > 0)
-            {
-                var n = location.mechLab.activeMechDef.Inventory
-                    .Select(i => i.Def.GetComponent<Category>())
-                    .Count(i => i != null && i.CategoryID == CategoryID) + 1;
-
-                if (changes != null)
-                    foreach (var change in changes.Changes.OfType<IChange>().Where(i => i.item.ComponentRef.Def.Is<Category>(out var c1) && c1.CategoryID == CategoryID))
-                    {
-                        if (change is AddChange)
-                            n += 1;
-                        else if (change is RemoveChange)
-                            n -= 1;
-                    }
-
-                if (n > c.MaxEquiped)
+                var total = new_inventory.Count(i => i.item.Def.IsSameCategory(CategoryID));
+                    
+                if (total > CategoryDescriptor.MaxEquiped)
                     if (CategoryDescriptor.MaxEquiped > 1)
-                        return new ValidateDropError(string.Format(CategoryDescriptor.AddMaximumReached, CategoryDescriptor.displayName, n));
+                        return string.Format(CategoryDescriptor.AddMaximumReached, CategoryDescriptor.displayName, CategoryDescriptor.MaxEquiped);
                     else
-                        return new ValidateDropError(string.Format(CategoryDescriptor.AddAlreadyEquiped, CategoryDescriptor.displayName));
+                        return string.Format(CategoryDescriptor.AddAlreadyEquiped, CategoryDescriptor.displayName);
             }
 
-            if (c.MaxEquipedPerLocation > 0)
+            if (CategoryDescriptor.MaxEquipedPerLocation > 0)
             {
-                var items_by_location = location.mechLab.activeMechInventory
-                    .Where(i => i.Is<Category>(out var c1) && c1.CategoryID == CategoryID)
-                    .Select(i => new {c = 1, location = i.MountedLocation});
+                var total = new_inventory
+                    .Where(i => i.item.Def.IsSameCategory(CategoryID))
+                    .Select(i => new { l = i.location, c = i.item.Def.GetComponent<Category>() })
+                    .GroupBy(i => i.l)
+                    .FirstOrDefault(i => i.Count() > CategoryDescriptor.MaxEquipedPerLocation);
 
-                if (changes != null)
-                    items_by_location.Union(changes.Changes.OfType<IChange>()
-                        .Where(i => i.item.ComponentRef.Is<Category>(out var c1) && c1.CategoryID == CategoryID)
-                        .Select(i => new { c = (i is AddChange ? 1 : -1), location = i.location }));
-
-                if(items_by_location.GroupBy(i => i.location).Any(i => i.Sum(a => a.c) > c.MaxEquipedPerLocation))
-                    if (c.MaxEquipedPerLocation > 1)
-                        return new ValidateDropError(string.Format(c.AddMaximumLocationReached, c.DisplayName, c.MaxEquipedPerLocation, location.LocationName));
+                if (total != null)
+                    if (CategoryDescriptor.MaxEquipedPerLocation > 1)
+                        return string.Format(CategoryDescriptor.AddMaximumLocationReached, CategoryDescriptor.DisplayName,
+                           CategoryDescriptor.MaxEquipedPerLocation, total.Key);
                     else
-                        return new ValidateDropError(string.Format(c.AddAlreadyEquipedLocation, c.DisplayName, location.LocationName));
-
+                        return string.Format(CategoryDescriptor.AddAlreadyEquipedLocation,
+                            CategoryDescriptor.DisplayName, total.Key);
             }
 
-            return last_result;
+            return string.Empty;
         }
     }
 }

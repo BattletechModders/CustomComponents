@@ -8,11 +8,11 @@ namespace CustomComponents
     public class Link
     {
         public ChassisLocations Location;
-        public string ApendixID;
+        public string ComponentDefId;
     }
 
     [CustomComponent("Linked")]
-    public class AutoLinked : SimpleCustomComponent, IOnItemGrabbed, IMechValidate, IOnInstalled, IDefaultValidateDrop
+    public class AutoLinked : SimpleCustomComponent, IOnItemGrabbed, IMechValidate, IOnInstalled, IAdjustValidateDrop
     {
         
         public Link[] Links { get; set; }
@@ -33,11 +33,11 @@ namespace CustomComponents
                 var target = helper.GetLocationWidget(r_link.Location);
                 if (target != null)
                 {
-                    Control.Logger.LogDebug($"{r_link.ApendixID} from {r_link.Location}");
+                    Control.Logger.LogDebug($"{r_link.ComponentDefId} from {r_link.Location}");
                     var location = new LocationHelper(target);
 
                     var remove = location.LocalInventory.FirstOrDefault(e =>
-                        e?.ComponentRef?.ComponentDefID == r_link.ApendixID);
+                        e?.ComponentRef?.ComponentDefID == r_link.ComponentDefId);
 
                     if (remove != null)
                     {
@@ -63,7 +63,7 @@ namespace CustomComponents
         public void ValidateMech(Dictionary<MechValidationType, List<string>> errors, MechValidationLevel validationLevel, MechDef mechDef)
         {
             if (Links?.Any(link => !mechDef.Inventory.Any(i =>
-                    i.MountedLocation == link.Location && i.ComponentDefID == link.ApendixID)) == true)
+                    i.MountedLocation == link.Location && i.ComponentDefID == link.ComponentDefId)) == true)
             {
                 errors[MechValidationType.InvalidInventorySlots].Add($"{Def.Description.Name} have critical errors, reinstall it to fix");
             }
@@ -71,7 +71,7 @@ namespace CustomComponents
 
         public bool ValidateMechCanBeFielded(MechDef mechDef)
         {
-            return Links == null || Links.All(link => mechDef.Inventory.Any(i => i.MountedLocation == link.Location && i.ComponentDefID == link.ApendixID));
+            return Links == null || Links.All(link => mechDef.Inventory.Any(i => i.MountedLocation == link.Location && i.ComponentDefID == link.ComponentDefId));
         }
 
         public void OnInstalled(WorkOrderEntry_InstallComponent order, SimGameState state, MechDef mech)
@@ -81,99 +81,69 @@ namespace CustomComponents
             if (order.PreviousLocation != ChassisLocations.None)
                 foreach (var link in Links)
                 {
-                    Control.Logger.LogDebug($"-- removing {link.ApendixID} from {link.Location}");
-                    DefaultHelper.RemoveDefault(link.ApendixID, mech, link.Location, Def.ComponentType );
+                    Control.Logger.LogDebug($"-- removing {link.ComponentDefId} from {link.Location}");
+                    DefaultHelper.RemoveDefault(link.ComponentDefId, mech, link.Location, Def.ComponentType );
                 }
 
             if (order.DesiredLocation != ChassisLocations.None)
                 foreach (var link in Links)
                 {
-                    Control.Logger.LogDebug($"-- adding {link.ApendixID} to {link.Location}");
-                    DefaultHelper.AddDefault(link.ApendixID, mech, link.Location, Def.ComponentType, state);
+                    Control.Logger.LogDebug($"-- adding {link.ComponentDefId} to {link.Location}");
+                    DefaultHelper.AddDefault(link.ComponentDefId, mech, link.Location, Def.ComponentType, state);
                 }
 
         }
 
-        public IValidateDropResult DefaultValidateDrop(MechLabItemSlotElement element, LocationHelper location,
-            IValidateDropResult last_result)
+        public IEnumerable<IChange> ValidateDropOnAdd(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab)
         {
-            if (last_result is ValidateDropChange changes)
+            Control.Logger.LogDebug("-- AutoLinked Add");
+
+            if (Links == null || Links.Length == 0)
+                yield break;
+
+            foreach(var link in Links)
             {
-                var list = new List<IChange>();
-                var helper = new MechLabHelper(location.mechLab);
-                foreach (var change in changes.Changes.OfType<IChange>())
+                Control.Logger.LogDebug($"--- {link.ComponentDefId} to {link.Location}");
+                var cref = CreateHelper.Ref(link.ComponentDefId, item.ComponentRef.ComponentDefType,
+                    location.mechLab.dataManager, location.mechLab.sim);
+                if (cref != null)
                 {
-                    if (change.item.ComponentRef.Is<AutoLinked>(out var l) && l.Links != null && l.Links.Length > 0)
-                    {
-                        if (change is AddChange)
-                        {
-                            Control.Logger.LogDebug($"Need to add for {change.item.ComponentRef.ComponentDefID}");
-
-                            foreach (var a_link in l.Links)
-                            {
-                                Control.Logger.LogDebug($"{a_link.ApendixID} to {a_link.Location}");
-                                var cref = CreateHelper.Ref(a_link.ApendixID, change.item.ComponentRef.ComponentDefType,
-                                    location.mechLab.dataManager, location.mechLab.sim);
-                                if (cref != null)
-                                {
-                                    Control.Logger.LogDebug($"added");
-                                    var slot = CreateHelper.Slot(location.mechLab, cref, a_link.Location);
-                                    list.Add(new AddChange(a_link.Location, slot));
-                                }
-                                else
-                                    Control.Logger.LogDebug($"not found");
-
-                            }
-                        }
-
-                        else if (change is RemoveChange)
-                        {
-                            Control.Logger.LogDebug($"Need to remove for {change.item.ComponentRef.ComponentDefID}");
-                            foreach (var r_link in l.Links)
-                            {
-                                var widget = helper.GetLocationWidget(r_link.Location);
-                                if (widget != null)
-                                {
-                                    Control.Logger.LogDebug($"{r_link.ApendixID} from {r_link.Location}");
-                                    var remove = new LocationHelper(widget).LocalInventory.FirstOrDefault(e =>
-                                        e?.ComponentRef?.ComponentDefID == r_link.ApendixID);
-                                    if (remove != null)
-                                    {
-                                        Control.Logger.LogDebug($"removed");
-                                        list.Add(new RemoveChange(r_link.Location, remove));
-
-                                    }
-                                    else
-                                        Control.Logger.LogDebug($"not found");
-                                }
-                            }
-                        }
-
-                    }
+                    Control.Logger.LogDebug($"---- added");
+                    var slot = CreateHelper.Slot(location.mechLab, cref, link.Location);
+                    yield return new AddChange(link.Location, slot);
                 }
-                if (list.Count > 0)
-                    changes.Changes.AddRange(list);
+                else
+                    Control.Logger.LogDebug($"---- not found");
             }
 
+        }
 
-            if (Links != null)
+        public IEnumerable<IChange> ValidateDropOnRemove(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab)
+        {
+
+            Control.Logger.LogDebug("-- AutoLinked Remove");
+
+            if (Links == null || Links.Length == 0)
+                yield break;
+
+            foreach (var link in Links)
             {
-                foreach (var a_link in Links)
+                var widget = mechlab.GetLocationWidget(link.Location);
+                if (widget != null)
                 {
-                    var cref = CreateHelper.Ref(a_link.ApendixID, Def.ComponentType,
-                        location.mechLab.dataManager, location.mechLab.sim);
-
-                    if (cref == null)
+                    Control.Logger.LogDebug($"--- {link.ComponentDefId} from {link.Location}");
+                    var remove = new LocationHelper(widget).LocalInventory.FirstOrDefault(e =>
+                        e?.ComponentRef?.ComponentDefID == link.ComponentDefId);
+                    if (remove != null)
                     {
-                        return new ValidateDropError($"Cannot Add {element.ComponentRef.Def.Description.Name} - Linked element not exist");
-                    }
-                    var slot = CreateHelper.Slot(location.mechLab, cref, a_link.Location);
-                    last_result = ValidateDropChange.AddOrCreate(last_result, new AddChange(a_link.Location, slot));
+                        Control.Logger.LogDebug($"---- removed");
+                        yield return new RemoveChange(link.Location, remove);
 
+                    }
+                    else
+                        Control.Logger.LogDebug($"---- not found");
                 }
             }
-
-            return last_result;
         }
     }
 }

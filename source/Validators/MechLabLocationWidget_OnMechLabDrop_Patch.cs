@@ -74,13 +74,18 @@ namespace CustomComponents
                     changes.Add(new RemoveChange(__instance.loadout.Location, dragItem));
 
 
-                foreach (var adj_validator in newComponentDef.GetComponents<IAdjuctValidateDrop>())
+
+                Control.Logger.LogDebug($"- adjust for drop item ");
+
+                foreach (var adj_validator in newComponentDef.GetComponents<IAdjustValidateDrop>())
                     changes.AddRange(adj_validator.ValidateDropOnAdd(dragItem, location_helper, mechlab_helper));
 
                 if (replaceItem != null)
-                    foreach (var adj_validator in replaceItem.ComponentRef.Def.GetComponents<IAdjuctValidateDrop>())
+                {
+                    Control.Logger.LogDebug($"- adjust for replaced item ");
+                    foreach (var adj_validator in replaceItem.ComponentRef.Def.GetComponents<IAdjustValidateDrop>())
                         changes.AddRange(adj_validator.ValidateDropOnRemove(replaceItem, location_helper, mechlab_helper));
-
+                }
 
                 List<InvItem> new_inventory = ___mechLab.activeMechInventory
                     .Select(i => new InvItem { item = i, location = i.MountedLocation }).ToList();

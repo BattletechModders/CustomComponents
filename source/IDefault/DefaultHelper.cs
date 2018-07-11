@@ -53,9 +53,9 @@ namespace CustomComponents
 
             var mechlab = widget.parentDropTarget as MechLabPanel;
 
-            if (component.Is<AutoReplace>(out var replace) && !string.IsNullOrEmpty(replace.ReplaceID) && replace.ReplaceID != item.ComponentRef.ComponentDefID)
+            if (component.Is<AutoReplace>(out var replace) && !string.IsNullOrEmpty(replace.ComponentDefId) && replace.ComponentDefId != item.ComponentRef.ComponentDefID)
             {
-                var new_ref = CreateHelper.Ref(replace.ReplaceID, item.ComponentRef.ComponentDefType, mechlab.dataManager, mechlab.sim);
+                var new_ref = CreateHelper.Ref(replace.ComponentDefId, item.ComponentRef.ComponentDefType, mechlab.dataManager, mechlab.sim);
                 if (new_ref != null)
                 {
                     var new_item = CreateHelper.Slot(mechlab, new_ref, widget.loadout.Location);
@@ -99,10 +99,10 @@ namespace CustomComponents
                 return true;
             }
 
-            if (component.Is<AutoReplace>(out var replace) && !string.IsNullOrEmpty(replace.ReplaceID) && replace.ReplaceID != item.ComponentRef.ComponentDefID)
+            if (component.Is<AutoReplace>(out var replace) && !string.IsNullOrEmpty(replace.ComponentDefId) && replace.ComponentDefId != item.ComponentRef.ComponentDefID)
             {
                 Control.Logger.LogDebug($"IDefaultRepace - search for replace");
-                var new_ref = CreateHelper.Ref(replace.ReplaceID, item.ComponentRef.ComponentDefType, mechlab.dataManager, mechlab.sim);
+                var new_ref = CreateHelper.Ref(replace.ComponentDefId, item.ComponentRef.ComponentDefType, mechlab.dataManager, mechlab.sim);
                 if (new_ref != null)
                 {
                     Control.Logger.LogDebug($"IDefaultRepace - adding");
@@ -163,7 +163,7 @@ namespace CustomComponents
 
                 if (list[i].Is<AutoReplace>(out var replace))
                 {
-                    var ref_item = CreateHelper.Ref(replace.ReplaceID, list[i].ComponentDefType, list[i].DataManager, state);
+                    var ref_item = CreateHelper.Ref(replace.ComponentDefId, list[i].ComponentDefType, list[i].DataManager, state);
                     ref_item.SetData(list[i].MountedLocation, list[i].HardpointSlot, list[i].DamageLevel);
                     ref_item.SetSimGameUID(state.GenerateSimGameUID());
                     result_list.Add(ref_item);
@@ -175,7 +175,7 @@ namespace CustomComponents
                 {
                     foreach (var l in link.Links)
                     {
-                        result_list.RemoveAll(item => item.ComponentDefID == l.ApendixID && item.MountedLocation == l.Location);
+                        result_list.RemoveAll(item => item.ComponentDefID == l.ComponentDefId && item.MountedLocation == l.Location);
                     }
                 }
             }

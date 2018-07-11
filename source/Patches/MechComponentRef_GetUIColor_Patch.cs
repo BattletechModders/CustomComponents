@@ -17,7 +17,7 @@ namespace CustomComponents
 
             if (componentRef.Is<ColorComponent>(out var color))
             {
-                __result = color.Color;
+                __result = color.UIColor;
                 return;
             }
 

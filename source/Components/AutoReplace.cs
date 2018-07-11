@@ -9,22 +9,22 @@ namespace CustomComponents
     [CustomComponent("Replace")]
     public class AutoReplace : SimpleCustomComponent, IOnItemGrabbed, IOnInstalled
     {
-        public string ReplaceID { get; set; }
+        public string ComponentDefId { get; set; }
 
         public void OnItemGrabbed(IMechLabDraggableItem item, MechLabPanel mechLab, MechLabLocationWidget widget)
         {
-            if (string.IsNullOrEmpty(ReplaceID))
+            if (string.IsNullOrEmpty(ComponentDefId))
                 return;
 
-            var new_ref = CreateHelper.Ref(ReplaceID, item.ComponentRef.ComponentDefType, mechLab.dataManager, mechLab.sim);
+            var new_ref = CreateHelper.Ref(ComponentDefId, item.ComponentRef.ComponentDefType, mechLab.dataManager, mechLab.sim);
             if (new_ref == null || new_ref.Def == null)
             {
-                Control.Logger.LogError($"Replacement {ReplaceID} for {Def.Description.Id} not found, skipping");
+                Control.Logger.LogError($"Replacement {ComponentDefId} for {Def.Description.Id} not found, skipping");
                 return;
             }
             if(!new_ref.Def.Is<Flags>(out var f) || !f.Default)
             {
-                Control.Logger.LogError($"Replacement {ReplaceID} for {Def.Description.Id} is not default, not implemented");
+                Control.Logger.LogError($"Replacement {ComponentDefId} for {Def.Description.Id} is not default, not implemented");
                 return;
             }
 
@@ -40,8 +40,8 @@ namespace CustomComponents
             Control.Logger.LogDebug($"-- search replace for {order.MechComponentRef.ComponentDefID}");
             if (order.PreviousLocation != ChassisLocations.None)
             {
-                Control.Logger.LogDebug($"-- found, adding {ReplaceID} to {order.PreviousLocation}");
-                DefaultHelper.AddDefault(ReplaceID, mech, order.PreviousLocation, order.MechComponentRef.ComponentDefType, state);
+                Control.Logger.LogDebug($"-- found, adding {ComponentDefId} to {order.PreviousLocation}");
+                DefaultHelper.AddDefault(ComponentDefId, mech, order.PreviousLocation, order.MechComponentRef.ComponentDefType, state);
             }
             else
             {

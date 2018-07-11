@@ -11,6 +11,6 @@ namespace CustomComponents
         /// <summary>
         /// color of component
         /// </summary>
-        public UIColor Color { get; set; }
+        public UIColor UIColor { get; set; }
     }
 }

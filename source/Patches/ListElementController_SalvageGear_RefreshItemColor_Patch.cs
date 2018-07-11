@@ -10,7 +10,7 @@ namespace CustomComponents
         {
             if (__instance.salvageDef.MechComponentDef.Is<ColorComponent>(out var color))
             {
-                var uicolor = color.Color;
+                var uicolor = color.UIColor;
                 foreach (UIColorRefTracker uicolorRefTracker in theWidget.iconBGColors)
                 {
                     uicolorRefTracker.SetUIColor(uicolor);
