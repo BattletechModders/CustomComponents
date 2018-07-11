@@ -72,6 +72,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DropResults\IChange.cs" />
+    <Compile Include="DropResults\InvItem.cs" />
+    <Compile Include="Interfaces\IPreValidateDrop.cs" />
     <Compile Include="Helpers\CategoryController.cs" />
     <Compile Include="Helpers\CategoryDescriptor.cs" />
     <Compile Include="Components\Category.cs" />
@@ -89,10 +92,6 @@
     <Compile Include="DropResults\AddChange.cs" />
     <Compile Include="DropResults\RemoveChange.cs" />
     <Compile Include="DropResults\SlotChange.cs" />
-    <Compile Include="DropResults\ValidateDropChange.cs" />
-    <Compile Include="DropResults\ValidateDropError.cs" />
-    <Compile Include="DropResults\ValidateDropHandled.cs" />
-    <Compile Include="DropResults\ValidateDropRemoveDragItem.cs" />
     <Compile Include="Interfaces\IMechLabFilter.cs" />
     <Compile Include="IDefault\Contract_AddToFilnaSalvagePatch.cs" />
     <Compile Include="Components\AutoReplace.cs" />
@@ -110,7 +109,7 @@
     <Compile Include="Interfaces\IOnInstalled.cs" />
     <Compile Include="Interfaces\IOnItemGrab.cs" />
     <Compile Include="Interfaces\IOnItemGrabbed.cs" />
-    <Compile Include="Interfaces\IDefaultValidateDrop.cs" />
+    <Compile Include="Interfaces\IAdjuctValidateDrop.cs" />
     <Compile Include="Interfaces\IReplaceValidateDrop.cs" />
     <Compile Include="Patches\SimGameState_ML_InstallComponent_Patch.cs" />
     <Compile Include="TEST\AutoFix.cs" />
@@ -127,7 +126,6 @@
     <Compile Include="Helpers\MechLabHelper.cs" />
     <Compile Include="Validators\MechValidationRulesValidate_ValidateMech_Patch.cs" />
     <Compile Include="Validators\MechValidationRules_ValidateMechCanBeFielded_Patch.cs" />
-    <Compile Include="DropResults\ValidateDropResult.cs" />
     <Compile Include="Validators\ValidatorDelegates.cs" />
     <Compile Include="Validators\Validator.cs" />
     <Compile Include="Helpers\HarmonyNestedAttribute.cs" />

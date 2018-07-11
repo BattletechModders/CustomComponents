@@ -13,6 +13,8 @@ namespace CustomComponents
         /// <param name="widget">location, where check</param>
         /// <param name="element">element being dragged</param>
         /// <returns></returns>
-        IValidateDropResult ReplaceValidateDrop(MechLabItemSlotElement element, LocationHelper location, IValidateDropResult last_result);
+        string ReplaceValidateDrop(MechLabItemSlotElement drop_item, LocationHelper location, ref MechLabItemSlotElement current_item);
     }
+
+    public delegate string ReplaceValidateDropDelegate(MechLabItemSlotElement drop_item, LocationHelper location, ref MechLabItemSlotElement current_replace);
 }

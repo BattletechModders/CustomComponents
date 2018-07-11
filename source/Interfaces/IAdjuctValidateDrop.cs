@@ -1,11 +1,12 @@
 ﻿using BattleTech.UI;
+using System.Collections.Generic;
 
 namespace CustomComponents
 {
     /// <summary>
     /// component check if it can be dropped to this location
     /// </summary>
-    public interface IDefaultValidateDrop
+    public interface IAdjuctValidateDrop
     {
         /// <summary>
         /// validation drop check
@@ -13,6 +14,7 @@ namespace CustomComponents
         /// <param name="widget">location, where check</param>
         /// <param name="element">element being dragged</param>
         /// <returns></returns>
-        IValidateDropResult DefaultValidateDrop(MechLabItemSlotElement element, LocationHelper location, IValidateDropResult last_result);
+        List<IChange> ValidateDropOnAdd(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab);
+        List<IChange> ValidateDropOnRemove(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab);
     }
 }

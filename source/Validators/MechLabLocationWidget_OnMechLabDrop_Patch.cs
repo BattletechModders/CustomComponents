@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using BattleTech;
 using BattleTech.UI;
 using Harmony;
-using TMPro;
-using UnityEngine;
+
 using UnityEngine.EventSystems;
 
 namespace CustomComponents
@@ -14,19 +13,25 @@ namespace CustomComponents
     internal static class MechLabLocationWidget_OnMechLabDrop_Patch
     {
         public static bool Prefix(MechLabLocationWidget __instance,
-            List<MechLabItemSlotElement> ___localInventory,
-            int ___usedSlots,
-            int ___maxSlots,
-            TextMeshProUGUI ___locationName,
-            ref string ___dropErrorMessage,
             MechLabPanel ___mechLab,
             PointerEventData eventData)
         {
             try
             {
+                bool do_cancel(string error)
+                {
+                    if (string.IsNullOrEmpty(error))
+                        return false;
+
+                    Control.Logger.LogDebug($"- Canceled: {error}");
+
+                    ___mechLab.ShowDropErrorMessage(error);
+                    ___mechLab.OnDrop(eventData);
+                    return true;
+                }
+
                 var dragItem = ___mechLab.DragItem as MechLabItemSlotElement;
 
-                Control.Logger.LogDebug($"========= Addding Item ===========");
 
                 if (!___mechLab.Initialized)
                 {
@@ -39,70 +44,71 @@ namespace CustomComponents
                     return false;
                 }
 
-                var validators = Validator.GetValidateDropDelegates(newComponentDef);
+                Control.Logger.LogDebug($"OnMechLabDrop: Adding {newComponentDef.Description.Id}");
 
-                var helper = new LocationHelper(__instance);
+                var location_helper = new LocationHelper(__instance);
+                var mechlab_helper = new MechLabHelper(___mechLab);
 
-                IValidateDropResult result = null;
+                Control.Logger.LogDebug($"- pre validation");
 
-                Control.Logger.LogDebug($"========= begin validate ===========");
-                foreach (var validator in validators)
-                {
-                    result = validator(dragItem, helper, result);
-
-
-                    if (result == null || result.Status == ValidateDropStatus.Continue)
-                    {
-                        continue;
-                    }
-
-                    if (result is ValidateDropRemoveDragItem drop)
-                    {
-                        Control.Logger.LogDebug($"========= Interrupt: drop item ===========");
-
-                        // remove item and delete it
-                        dragItem.thisCanvasGroup.blocksRaycasts = true;
-                        dragItem.MountedLocation = ChassisLocations.None;
-                        ___mechLab.dataManager.PoolGameObject(MechLabPanel.MECHCOMPONENT_ITEM_PREFAB, dragItem.gameObject);
-                        ___mechLab.ClearDragItem(true);
-                        if (drop.ShowMessage)
-                            ___mechLab.ShowDropErrorMessage(drop.Message);
-
+                foreach (var pre_validator in Validator.GetPre(newComponentDef))
+                    if (do_cancel(pre_validator(dragItem, location_helper, mechlab_helper)))
                         return false;
-                    }
 
-                    if (result is ValidateDropError error)
-                    {
-                        Control.Logger.LogDebug($"========= Interrupt: error ===========");
-                        Control.Logger.LogDebug($"{error.ErrorMessage}");
+                Control.Logger.LogDebug($"- replace validation");
 
-                        ___dropErrorMessage = error.ErrorMessage;
-                        ___mechLab.ShowDropErrorMessage(___dropErrorMessage);
-                        ___mechLab.OnDrop(eventData);
+                MechLabItemSlotElement replaceItem = null;
+                foreach (var rep_validator in Validator.GetReplace(newComponentDef))
+                    if (do_cancel(rep_validator(dragItem, location_helper, ref replaceItem)))
                         return false;
-                    }
-                }
-                Control.Logger.LogDebug($"========= Validation finished ===========");
 
-                var mech_lab_helper = new MechLabHelper(___mechLab);
+                if(replaceItem == null)
+                    Control.Logger.LogDebug($"-- no replace");
+                else
+                    Control.Logger.LogDebug($"-- replace {replaceItem.ComponentRef.ComponentDefID}");
 
-                if (result is ValidateDropChange change_result)
+
+                List<IChange> changes = new List<IChange>();
+                changes.Add(new AddChange(__instance.loadout.Location, dragItem));
+                if (replaceItem != null)
+                    changes.Add(new RemoveChange(__instance.loadout.Location, dragItem));
+
+
+                foreach (var adj_validator in newComponentDef.GetComponents<IAdjuctValidateDrop>())
+                    changes.AddRange(adj_validator.ValidateDropOnAdd(dragItem, location_helper, mechlab_helper));
+
+                if (replaceItem != null)
+                    foreach (var adj_validator in replaceItem.ComponentRef.Def.GetComponents<IAdjuctValidateDrop>())
+                        changes.AddRange(adj_validator.ValidateDropOnRemove(replaceItem, location_helper, mechlab_helper));
+
+
+                List<InvItem> new_inventory = ___mechLab.activeMechInventory
+                    .Select(i => new InvItem { item = i, location = i.MountedLocation }).ToList();
+
+                new_inventory.AddRange(changes.OfType<AddChange>()
+                    .Select(i => new InvItem { item = i.item.ComponentRef, location = i.location }));
+
+                foreach(var remove in changes.OfType<RemoveChange>())
                 {
-                    foreach (var change in change_result.Changes)
-                        change.DoChange(mech_lab_helper, helper);
+                    new_inventory.RemoveAll(i => i.item == remove.item.ComponentRef);
                 }
 
-                var clear = __instance.OnAddItem(dragItem, true);
-                if (__instance.Sim != null)
+                Control.Logger.LogDebug($"- post validation");
+
+                foreach (var pst_validator in Validator.GetPost(newComponentDef))
+                    if(do_cancel(pst_validator(dragItem, ___mechLab.activeMechDef, new_inventory, changes)))
+                        return false;
+
+
+
+                Control.Logger.LogDebug($"- apply changes");
+
+                foreach (var change in changes)
                 {
-                    WorkOrderEntry_InstallComponent subEntry = __instance.Sim.CreateComponentInstallWorkOrder(
-                        ___mechLab.baseWorkOrder.MechID,
-                        dragItem.ComponentRef, __instance.loadout.Location, dragItem.MountedLocation);
-                    ___mechLab.baseWorkOrder.AddSubEntry(subEntry);
+                    change.DoChange(mechlab_helper, location_helper);
                 }
 
-                dragItem.MountedLocation = __instance.loadout.Location;
-                ___mechLab.ClearDragItem(clear);
+                ___mechLab.ClearDragItem(true);
                 __instance.RefreshHardpointData();
                 ___mechLab.ValidateLoadout(false);
 

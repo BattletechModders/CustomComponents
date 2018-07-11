@@ -4,6 +4,6 @@ namespace CustomComponents
 {
     public interface IOnItemGrab
     {
-        bool OnItemGrab(IMechLabDraggableItem item, MechLabPanel ___mechLab, out string error);
+        bool OnItemGrab(IMechLabDraggableItem item, MechLabPanel mechLab, out string error);
     }
 }

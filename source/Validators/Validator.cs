@@ -12,10 +12,9 @@ namespace CustomComponents
     /// </summary>
     public static class Validator
     {
-        // need to be public, so order can be changed if need be
-        public static List<ValidateDropDelegate> pre_drop_validators = new List<ValidateDropDelegate>();
-        public static List<ValidateDropDelegate> mid_drop_validators = new List<ValidateDropDelegate>();
-        public static List<ValidateDropDelegate> post_drop_validators = new List<ValidateDropDelegate>();
+        public static List<PreValidateDropDelegate> pre_drop_validators = new List<PreValidateDropDelegate>();
+        public static List<ReplaceValidateDropDelegate> rep_drop_validators = new List<ReplaceValidateDropDelegate>();
+        public static List<PostValidateDropDelegate> chk_drop_validators = new List<PostValidateDropDelegate>();
         public static List<ValidateMechDelegate> mech_validators = new List<ValidateMechDelegate>();
         private static List<ValidateMechCanBeFieldedDelegate> field_validators =
             new List<ValidateMechCanBeFieldedDelegate>();
@@ -23,20 +22,21 @@ namespace CustomComponents
         /// <summary>
         /// register new AddValidator
         /// </summary>
-        public static void RegisterDropValidator(ValidateDropDelegate replace = null, ValidateDropDelegate @default = null, ValidateDropDelegate post = null)
+        public static void RegisterDropValidator(PreValidateDropDelegate pre = null, ReplaceValidateDropDelegate replace = null,
+             PostValidateDropDelegate check = null)
         {
+            if (pre != null)
+                pre_drop_validators.Add(pre);
+
             if (replace != null)
-                pre_drop_validators.Add(replace);
+                rep_drop_validators.Add(replace);
 
-            if (@default != null)
-                mid_drop_validators.Add(replace);
-
-            if (post != null)
-                post_drop_validators.Add(post);
+            if (check != null)
+                chk_drop_validators.Add(check);
 
         }
 
-        public static ValidateDropDelegate HardpointValidator { get; set; } = null;
+        public static ReplaceValidateDropDelegate HardpointValidator { get; set; } = null;
 
         /// <summary>
         /// register new mech validator
@@ -48,201 +48,144 @@ namespace CustomComponents
             if (fieldvalidator != null) field_validators.Add(fieldvalidator);
         }
 
-
-        internal static IEnumerable<ValidateDropDelegate> GetValidateDropDelegates(MechComponentDef component)
+        internal static IEnumerable<PreValidateDropDelegate> GetPre(MechComponentDef component)
         {
             yield return ValidateBase;
 
-            #region First part - replace
-            yield return HardpointValidator ?? ValidateHardpoint;
+            foreach (var validator in component.GetComponents<IPreValidateDrop>())
+                yield return validator.PreValidateDrop;
+
             foreach (var validator in pre_drop_validators)
-            {
                 yield return validator;
-            }
-            foreach (var validator in component.GetComponents<IReplaceValidateDrop>())
-            {
-                yield return validator.ReplaceValidateDrop;
-            }
-            #endregion
+        }
 
-            #region defaults
-            foreach (var validator in mid_drop_validators)
-            {
+
+        internal static IEnumerable<ReplaceValidateDropDelegate> GetReplace(MechComponentDef component)
+        {
+            if (HardpointValidator != null)
+                yield return HardpointValidator;
+            else
+                yield return ValidateHardpoint;
+
+            foreach (var validator in rep_drop_validators)
                 yield return validator;
-            }
-            foreach (var validator in component.GetComponents<IDefaultValidateDrop>())
-            {
-                yield return validator.DefaultValidateDrop;
-            }
-            #endregion
 
-            #region size checks
+            foreach (var item in component.GetComponents<IReplaceValidateDrop>())
+                yield return item.ReplaceValidateDrop;
+        }
 
-            foreach (var validator in post_drop_validators)
-            {
-                yield return validator;
-            }
+        internal static IEnumerable<PostValidateDropDelegate> GetPost(MechComponentDef component)
+        {
+            yield return ValidateSize;
+            yield return ValidateJumpJets;
 
             foreach (var validator in component.GetComponents<IPostValidateDrop>())
-            {
                 yield return validator.PostValidateDrop;
-            }
 
-            yield return ValidateSize;
-
-            #endregion
-
-
-
+            foreach (var validator in chk_drop_validators)
+                yield return validator;
         }
 
-        private static IValidateDropResult ValidateSize(MechLabItemSlotElement element, LocationHelper location, IValidateDropResult last_result)
+        private static string ValidateBase(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab)
         {
-            LocationHelper get_helper(MechLabPanel mechlab, ChassisLocations l)
-            {
-                if (l == location.widget.loadout.Location)
-                    return location;
-
-                switch (l)
-                {
-                    case ChassisLocations.Head:
-                        return new LocationHelper(mechlab.headWidget);
-                    case ChassisLocations.LeftArm:
-                        return new LocationHelper(mechlab.leftArmWidget);
-                    case ChassisLocations.LeftTorso:
-                        return new LocationHelper(mechlab.leftTorsoWidget);
-                    case ChassisLocations.CenterTorso:
-                        return new LocationHelper(mechlab.centerTorsoWidget);
-                    case ChassisLocations.RightTorso:
-                        return new LocationHelper(mechlab.rightTorsoWidget);
-                    case ChassisLocations.RightArm:
-                        return new LocationHelper(mechlab.rightArmWidget);
-                    case ChassisLocations.LeftLeg:
-                        return new LocationHelper(mechlab.leftLegWidget);
-                    case ChassisLocations.RightLeg:
-                        return new LocationHelper(mechlab.rightLegWidget);
-                }
-
-                return null;
-            }
-
-            bool done = false;
-
-
-            if (last_result is ValidateDropChange change_result)
-            {
-                var changes = from change in change_result.Changes.OfType<SlotChange>()
-                              group change by change.location
-                    into g
-                              select new
-                              {
-                                  location = get_helper(location.mechLab, g.Key),
-                                  change = g.Sum(i =>
-                                       i is AddChange
-                                          ? i.item.ComponentRef.Def.InventorySize
-                                          : -i.item.ComponentRef.Def.InventorySize)
-                              };
-
-                foreach (var change in changes)
-                {
-                    int used = change.location.UsedSlots + change.change;
-                    if (change.location.widget.loadout.Location == location.widget.loadout.Location)
-                    {
-                        used += element.ComponentRef.Def.InventorySize;
-                        done = true;
-                    }
-
-                    if (used > change.location.MaxSlots)
-                        return new ValidateDropError(
-                            $"Cannot add {element.ComponentRef.Def.Description.Name} to {location.LocationName}: Not enought free slots.");
-                }
-            }
-
-            if (done)
-                return last_result;
-
-
-            int need = location.UsedSlots + element.ComponentRef.Def.InventorySize;
-            if (need > location.MaxSlots)
-                return new ValidateDropError(
-                    $"Cannot add {element.ComponentRef.Def.Description.Name} to {location.LocationName}: Not enought free slots.");
-
-
-            return last_result;
-        }
-
-        private static IValidateDropResult ValidateHardpoint(MechLabItemSlotElement element, LocationHelper location, IValidateDropResult last_result)
-        {
-            if (element.ComponentRef.Def.ComponentType == ComponentType.Weapon)
-            {
-                int num = 0;
-                int num2 = 0;
-                WeaponDef weaponDef = element.ComponentRef.Def as WeaponDef;
-                switch (weaponDef.Category)
-                {
-                    case WeaponCategory.Ballistic:
-                        num = location.currentBallisticCount;
-                        num2 = location.totalBallisticHardpoints;
-                        break;
-                    case WeaponCategory.Energy:
-                        num = location.currentEnergyCount;
-                        num2 = location.totalEnergyHardpoints;
-                        break;
-                    case WeaponCategory.Missile:
-                        num = location.currentMissileCount;
-                        num2 = location.totalMissileHardpoints;
-                        break;
-                    case WeaponCategory.AntiPersonnel:
-                        num = location.currentSmallCount;
-                        num2 = location.totalSmallHardpoints;
-                        break;
-                }
-
-                if (num + 1 > num2)
-                {
-                    var replace = location.LocalInventory.FirstOrDefault(i =>
-                        (i?.ComponentRef?.Def is WeaponDef def) && def.Category == weaponDef.Category && def.Description.Id != element.ComponentRef.ComponentDefID);
-                    if (replace == null)
-                        return new ValidateDropError(
-                            $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.");
-                    else
-                    {
-                        return ValidateDropChange.AddOrCreate(last_result,
-                            new RemoveChange(location.widget.loadout.Location, replace));
-                    }
-                }
-
-            }
-            return last_result;
-        }
-
-        private static IValidateDropResult ValidateBase(MechLabItemSlotElement element, LocationHelper location, IValidateDropResult last_result)
-        {
-            var component = element.ComponentRef.Def;
+            var component = item.ComponentRef.Def;
 
             if (location.widget.loadout.CurrentInternalStructure <= 0f)
             {
-                return new ValidateDropError(
-                    $"Cannot add {component.Description.Name} to {location.LocationName}: The location is Destroyed.");
+                return $"Cannot add {component.Description.Name} to {location.LocationName}: The location is Destroyed.";
             }
             if ((component.AllowedLocations & location.widget.loadout.Location) <= ChassisLocations.None)
             {
-                return new ValidateDropError(
-                    $"Cannot add {component.Description.Name} to {location.LocationName}: Component is not permitted in this location.");
+                return $"Cannot add {component.Description.Name} to {location.LocationName}: Component is not permitted in this location.";
+            }
+            return string.Empty;
+        }
+
+        private static string ValidateSize(MechLabItemSlotElement drop_item, MechDef mech, List<InvItem> new_inventory, List<IChange> changes)
+        {
+            var change_by_location = changes
+                .OfType<SlotChange>()
+                .Select(slot => new { location = slot.location, val = slot.item.ComponentRef.Def.InventorySize * (slot is AddChange ? 1 : -1) })
+                .GroupBy(s => s.location)
+                .Select(s => new { location = s.Key, val = s.Sum(i => i.val) });
+
+            foreach(var location in change_by_location)
+            {
+                int used = mech.Inventory.Where(i => i.MountedLocation == location.location).Sum(i => i.Def.InventorySize);
+                int max = mech.GetChassisLocationDef(location.location).InventorySlots;
+
+                if (used + location.val > max)
+                    return $"Cannot add {drop_item.ComponentRef.Def.Description.Name}: Not enought free slots.";
+            }
+            return string.Empty;
+        }
+
+        private static string ValidateJumpJets(MechLabItemSlotElement drop_item, MechDef mech, List<InvItem> new_inventory, List<IChange> changes)
+        {
+            var total = new_inventory.Count(i => i.item.ComponentDefType == ComponentType.JumpJet);
+            var max = mech.Chassis.MaxJumpjets;
+            if (total > max)
+                return $"Cannot add {drop_item.ComponentRef.Def.Description.Name}: Max number of jumpjets for 'Mech reached";
+            return string.Empty;
+        }
+
+
+        private static string ValidateHardpoint(MechLabItemSlotElement drop_item, LocationHelper location, ref MechLabItemSlotElement current_replace)
+        {
+
+            // if dropped item not weapon - skip check
+            if (drop_item.ComponentRef.Def.ComponentType != ComponentType.Weapon)
+                return string.Empty;
+
+            // if dropped item and replacement both same type weapon - allow replace
+            if (current_replace != null
+                && current_replace.ComponentRef.Def.ComponentType == ComponentType.Weapon
+                && current_replace.weaponDef.Category == drop_item.weaponDef.Category)
+                return string.Empty;
+
+
+            //calculate hardpoint
+            int num = 0;
+            int num2 = 0;
+            WeaponDef weaponDef = drop_item.ComponentRef.Def as WeaponDef;
+            switch (weaponDef.Category)
+            {
+                case WeaponCategory.Ballistic:
+                    num = location.currentBallisticCount;
+                    num2 = location.totalBallisticHardpoints;
+                    break;
+                case WeaponCategory.Energy:
+                    num = location.currentEnergyCount;
+                    num2 = location.totalEnergyHardpoints;
+                    break;
+                case WeaponCategory.Missile:
+                    num = location.currentMissileCount;
+                    num2 = location.totalMissileHardpoints;
+                    break;
+                case WeaponCategory.AntiPersonnel:
+                    num = location.currentSmallCount;
+                    num2 = location.totalSmallHardpoints;
+                    break;
             }
 
-            if (component.ComponentType == ComponentType.JumpJet)
+            if (current_replace != null)
             {
-                var mechlab = location.mechLab;
-                int num3 = mechlab.headWidget.currentJumpjetCount + mechlab.centerTorsoWidget.currentJumpjetCount +
-                           mechlab.leftTorsoWidget.currentJumpjetCount + mechlab.rightTorsoWidget.currentJumpjetCount +
-                           mechlab.leftArmWidget.currentJumpjetCount + mechlab.rightArmWidget.currentJumpjetCount +
-                           mechlab.leftLegWidget.currentJumpjetCount + mechlab.rightLegWidget.currentJumpjetCount;
-                if (num3 + 1 > mechlab.activeMechDef.Chassis.MaxJumpjets)
-                    return new ValidateDropError(
-                            $"Cannot add {component.Description.Name} to {location.LocationName}: Max number of jumpjets for 'Mech reached.");
+                if (num >= num2)
+                    return $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.";
             }
-            return null;
+            else if (num == num2)
+            {
+                var replace = location.LocalInventory.FirstOrDefault(i =>
+                    (i?.ComponentRef?.Def is WeaponDef def) && def.Category == weaponDef.Category && def.Description.Id != drop_item.ComponentRef.ComponentDefID);
+                if (replace == null)
+                    return $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.";
+                else
+                    current_replace = replace;
+            }
+            else if (num > num2)
+                return $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.";
+
+            return string.Empty; 
         }
 
         internal static void ValidateMech(Dictionary<MechValidationType, List<string>> errors,

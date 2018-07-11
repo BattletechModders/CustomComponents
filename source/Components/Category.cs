@@ -83,7 +83,7 @@ namespace CustomComponents
             IValidateDropResult last_result)
         {
             //if replace already done
-            if (last_result is ValidateDropChange change && change.Changes.Any(i => i is SlotChange))
+            if (last_result is ValidateDropChange change && change.Changes.Any(i => i is IChange))
                 return last_result;
 
             //if cannot do replace
@@ -169,7 +169,7 @@ namespace CustomComponents
                     .Count(i => i != null && i.CategoryID == CategoryID) + 1;
 
                 if (changes != null)
-                    foreach (var change in changes.Changes.OfType<SlotChange>().Where(i => i.item.ComponentRef.Def.Is<Category>(out var c1) && c1.CategoryID == CategoryID))
+                    foreach (var change in changes.Changes.OfType<IChange>().Where(i => i.item.ComponentRef.Def.Is<Category>(out var c1) && c1.CategoryID == CategoryID))
                     {
                         if (change is AddChange)
                             n += 1;
@@ -191,7 +191,7 @@ namespace CustomComponents
                     .Select(i => new {c = 1, location = i.MountedLocation});
 
                 if (changes != null)
-                    items_by_location.Union(changes.Changes.OfType<SlotChange>()
+                    items_by_location.Union(changes.Changes.OfType<IChange>()
                         .Where(i => i.item.ComponentRef.Is<Category>(out var c1) && c1.CategoryID == CategoryID)
                         .Select(i => new { c = (i is AddChange ? 1 : -1), location = i.location }));
 

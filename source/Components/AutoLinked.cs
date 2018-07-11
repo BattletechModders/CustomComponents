@@ -9,12 +9,12 @@ namespace CustomComponents
     {
         public ChassisLocations Location;
         public string ApendixID;
-        public ComponentType BaseType;
     }
 
     [CustomComponent("Linked")]
     public class AutoLinked : SimpleCustomComponent, IOnItemGrabbed, IMechValidate, IOnInstalled, IDefaultValidateDrop
     {
+        
         public Link[] Links { get; set; }
 
         public void OnItemGrabbed(IMechLabDraggableItem item, MechLabPanel mechLab, MechLabLocationWidget w)
@@ -82,14 +82,14 @@ namespace CustomComponents
                 foreach (var link in Links)
                 {
                     Control.Logger.LogDebug($"-- removing {link.ApendixID} from {link.Location}");
-                    DefaultHelper.RemoveDefault(link.ApendixID, mech, link.Location, link.BaseType);
+                    DefaultHelper.RemoveDefault(link.ApendixID, mech, link.Location, Def.ComponentType );
                 }
 
             if (order.DesiredLocation != ChassisLocations.None)
                 foreach (var link in Links)
                 {
                     Control.Logger.LogDebug($"-- adding {link.ApendixID} to {link.Location}");
-                    DefaultHelper.AddDefault(link.ApendixID, mech, link.Location, link.BaseType, state);
+                    DefaultHelper.AddDefault(link.ApendixID, mech, link.Location, Def.ComponentType, state);
                 }
 
         }
@@ -101,7 +101,7 @@ namespace CustomComponents
             {
                 var list = new List<IChange>();
                 var helper = new MechLabHelper(location.mechLab);
-                foreach (var change in changes.Changes.OfType<SlotChange>())
+                foreach (var change in changes.Changes.OfType<IChange>())
                 {
                     if (change.item.ComponentRef.Is<AutoLinked>(out var l) && l.Links != null && l.Links.Length > 0)
                     {
@@ -112,7 +112,7 @@ namespace CustomComponents
                             foreach (var a_link in l.Links)
                             {
                                 Control.Logger.LogDebug($"{a_link.ApendixID} to {a_link.Location}");
-                                var cref = CreateHelper.Ref(a_link.ApendixID, a_link.BaseType,
+                                var cref = CreateHelper.Ref(a_link.ApendixID, change.item.ComponentRef.ComponentDefType,
                                     location.mechLab.dataManager, location.mechLab.sim);
                                 if (cref != null)
                                 {
@@ -160,7 +160,7 @@ namespace CustomComponents
             {
                 foreach (var a_link in Links)
                 {
-                    var cref = CreateHelper.Ref(a_link.ApendixID, a_link.BaseType,
+                    var cref = CreateHelper.Ref(a_link.ApendixID, Def.ComponentType,
                         location.mechLab.dataManager, location.mechLab.sim);
 
                     if (cref == null)
