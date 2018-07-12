@@ -85,7 +85,7 @@ namespace CustomComponents
             }
 
             var slot = CreateSlot(id, type, mechLab.MechLab);
-
+            target.OnAddItem(slot, false);
         }
 
         public static void RemoveMechLab(string id, ComponentType type, MechLabHelper mechLab, ChassisLocations location)
@@ -117,84 +117,78 @@ namespace CustomComponents
         }
 
         #region repair
+
+        private static bool repair_state;
+        private static MechLabLocationWidget repair_widget;
+
         public static bool OnRemoveItemRepair(this MechLabLocationWidget widget, IMechLabDraggableItem item, bool validate)
         {
-            void do_Repair()
-            {
-                item.ComponentRef.DamageLevel = ComponentDamageLevel.Penalized;
-                var t = Traverse.Create(item).Method("RefreshDamageOverlays").GetValue();
-                item.RepairComponent(true);
-            }
-
             var component = item.ComponentRef.Def;
 
             if (component.Is<Flags>(out var f) && f.AutoRepair)
             {
-                do_Repair();
+                Control.Logger.LogDebug($"AutoRepair: {component.Description.Id} ");
+                item.ComponentRef.DamageLevel = ComponentDamageLevel.Penalized;
+                var t = Traverse.Create(item).Method("RefreshDamageOverlays").GetValue();
+                item.RepairComponent(true);
+                repair_state = false;
                 return true;
             }
 
+            repair_widget = widget;
+
+
             var mechlab = widget.parentDropTarget as MechLabPanel;
-
-            if (component.Is<AutoReplace>(out var replace) && !string.IsNullOrEmpty(replace.ComponentDefId) && replace.ComponentDefId != item.ComponentRef.ComponentDefID)
+            repair_state = true;
+            foreach (var validator in component.GetComponents<IOnItemGrab>())
             {
-                var new_item = CreateSlot(replace.ComponentDefId, item.ComponentRef.ComponentDefType, mechlab);
-                if (new_item != null)
-                {
-                    widget.OnAddItem(new_item, false);
-                }
+                repair_state = validator.OnItemGrab(item, mechlab, out _);
+                if (!repair_state)
+                    return true;
             }
-
-            if (component.Is<AutoLinked>(out var linked))
-            {
-                linked.RemoveLinked(item, mechlab);
-            }
-
             return widget.OnRemoveItem(item, validate);
-            //mechlab.ValidateLoadout(false);
         }
 
 
         public static void ForceItemDropRepair(this MechLabPanel mechlab, MechLabItemSlotElement item)
         {
-            if (item.ComponentRef.DamageLevel != ComponentDamageLevel.Destroyed)
-                return;
-
-            mechlab.ForceItemDrop(item);
+            if (!repair_state)
+            {
+                foreach (var validator in item.ComponentRef.Def.GetComponents<IOnItemGrabbed>())
+                {
+                    validator.OnItemGrabbed(item, mechlab, strip_widget);
+                }
+                mechlab.ForceItemDrop(item);
+            }
         }
         #endregion
 
         #region strip
 
+        private static bool strip_state;
+        private static MechLabLocationWidget strip_widget;
+
         public static bool OnRemoveItemStrip(this MechLabLocationWidget widget, IMechLabDraggableItem item,
             bool validate)
         {
             var component = item.ComponentRef.Def;
+            strip_widget = widget;
 
-            Control.Logger.LogDebug($"==== removing {component.Description.Id} ");
+            Control.Logger.LogDebug($"Removing {component.Description.Id} ");
 
             var mechlab = widget.parentDropTarget as MechLabPanel;
 
-            if (component.Is<Flags>(out var f) && f.CannotRemove)
-            {
-                Control.Logger.LogDebug($"ICannotRemove - cancel");
-                return true;
-            }
+            strip_state = true;
 
-            if (component.Is<AutoReplace>(out var replace) && !string.IsNullOrEmpty(replace.ComponentDefId) && replace.ComponentDefId != item.ComponentRef.ComponentDefID)
+            foreach (var validator in component.GetComponents<IOnItemGrab>())
             {
-                Control.Logger.LogDebug($"IDefaultRepace - search for replace");
-                var new_item = CreateSlot(replace.ComponentDefId, item.ComponentRef.ComponentDefType, mechlab);
-                if (new_item != null)
+                Control.Logger.LogDebug($"- {validator.GetType()}");
+                strip_state = validator.OnItemGrab(item, mechlab, out _);
+                if (!strip_state)
                 {
-                    widget.OnAddItem(new_item, false);
+                    Control.Logger.LogDebug($"-- Canceled");
+                    return true;
                 }
-            }
-
-            if (component.Is<AutoLinked>(out var linked))
-            {
-                Control.Logger.LogDebug($"IAutoLinked - remove linked");
-                linked.RemoveLinked(item, mechlab);
             }
 
             return widget.OnRemoveItem(item, validate);
@@ -202,12 +196,15 @@ namespace CustomComponents
 
         public static void ForceItemDropStrip(this MechLabPanel mechlab, MechLabItemSlotElement item)
         {
-            var component = item.ComponentRef.Def;
-            if (component.Is<Flags>(out var f) && f.CannotRemove)
-                return;
-
-
-            mechlab.ForceItemDrop(item);
+            Control.Logger.LogDebug($"Dropping {item.ComponentRef.Def.Description.Id} ");
+            if (strip_state)
+            {
+                foreach (var validator in item.ComponentRef.Def.GetComponents<IOnItemGrabbed>())
+                {
+                    validator.OnItemGrabbed(item, mechlab, strip_widget);
+                }
+                mechlab.ForceItemDrop(item);
+            }
         }
 
         public static MechComponentRef[] ClearInventory(MechDef source, SimGameState state)
@@ -215,11 +212,6 @@ namespace CustomComponents
             Control.Logger.LogDebug("Clearing Inventory");
 
             var list = source.Inventory.ToList();
-
-            //TODO: Remove in light
-            //foreach (var item in list)
-            //if (item.Def == null)
-            //    item.RefreshComponentDef();
 
             var result_list = list.Where(i => i.Is<Flags>(out var f) && f.CannotRemove).ToList();
 
