@@ -1,7 +1,7 @@
 {
 	"Name": "CustomComponents",
 	"Author": "Denadan",
-	"Website": "https://github.com/Denadan/CustomComponets",
+	"Website": "https://github.com/Denadan/CustomComponents",
 
 	"Enabled": true,
 	"DependsOn": [],
@@ -25,9 +25,10 @@
 			  "AllowMixTags" : false	  
 			},
 			{
-				"Name" : "TestEngineShield",
-				"displayName": "Shielding",
+				"Name" : "TestEngine",
+				"displayName": "Engine",
 				"MaxEquiped" : 1,
+				"MinEquiped" : 1,
 				"AutoReplace" : true
 			}
 		]

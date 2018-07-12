@@ -1,7 +1,8 @@
 {
-	"CustomType" : "LegActuatorDefault",
-	"CategoryID" : "LegActuator",
-	"Color" : "DarkGray",
+	"Custom" : {
+		"Category" : { "CategoryID" : "LegActuator" }
+		"Flags" : { "flags" : ["default"] }
+	},
 	"StatName" : null,
     "RelativeModifier" : 0,
     "AbsoluteModifier" : 0,

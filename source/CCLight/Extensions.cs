@@ -28,13 +28,13 @@ namespace CustomComponents
         public static bool Is<T>(this MechComponentDef def, out T res)
         {
             res = Database.GetCustomComponent<T>(def);
-            return res == null;
+            return res != null;
         }
 
         public static bool Is<T>(this MechComponentRef @ref, out T res)
         {
             res = Database.GetCustomComponent<T>(@ref);
-            return res == null;
+            return res != null;
         }
     }
 }

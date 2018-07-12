@@ -96,11 +96,10 @@
     <Compile Include="IDefault\Contract_AddToFilnaSalvagePatch.cs" />
     <Compile Include="Components\AutoReplace.cs" />
     <Compile Include="Components\Flags.cs" />
-    <Compile Include="Helpers\CreateHelper.cs" />
     <Compile Include="IDefault\MechLabLocationWidget_Repair_Patches.cs" />
     <Compile Include="Components\AutoLinked.cs" />
     <Compile Include="IDefault\MechLabLocationWidget_StripEquipment.cs" />
-    <Compile Include="IDefault\DefaultHelper.cs" />
+    <Compile Include="Helpers\DefaultHelper.cs" />
     <Compile Include="IDefault\SimGameState_AddItemStat_Patch.cs" />
     <Compile Include="IDefault\SimGameState_AddMechPart_Patch.cs" />
     <Compile Include="IDefault\SimGameState_ReadyMech_Patch.cs" />

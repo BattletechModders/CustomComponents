@@ -1,6 +1,7 @@
 {
-	"CustomType" : "TestEngineS",
-	"CategoryID" : "TestEngineShield",
+	"Custom" : {
+		"Category" : { "CategoryID" : "TestEngine"}
+	},
     "DissipationCapacity" : 0,
     "Description" : {
         "Cost" : 30000,

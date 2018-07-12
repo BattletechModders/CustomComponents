@@ -14,7 +14,7 @@ namespace CustomComponents
     [CustomComponent("Linked")]
     public class AutoLinked : SimpleCustomComponent, IOnItemGrabbed, IMechValidate, IOnInstalled, IAdjustValidateDrop
     {
-        
+
         public Link[] Links { get; set; }
 
         public void OnItemGrabbed(IMechLabDraggableItem item, MechLabPanel mechLab, MechLabLocationWidget w)
@@ -30,33 +30,8 @@ namespace CustomComponents
             var helper = new MechLabHelper(mechLab);
             foreach (var r_link in Links)
             {
-                var target = helper.GetLocationWidget(r_link.Location);
-                if (target != null)
-                {
-                    Control.Logger.LogDebug($"{r_link.ComponentDefId} from {r_link.Location}");
-                    var location = new LocationHelper(target);
-
-                    var remove = location.LocalInventory.FirstOrDefault(e =>
-                        e?.ComponentRef?.ComponentDefID == r_link.ComponentDefId);
-
-                    if (remove != null)
-                    {
-                        target.OnRemoveItem(remove, true);
-                        if (remove.ComponentRef.Is<Flags>(out var f) && f.Default)
-                        {
-                            remove.thisCanvasGroup.blocksRaycasts = true;
-                            mechLab.dataManager.PoolGameObject(MechLabPanel.MECHCOMPONENT_ITEM_PREFAB, item.GameObject);
-                        }
-                        else
-                        {
-                            Control.Logger.LogDebug($"removed");
-                            mechLab.ForceItemDrop(remove);
-                            helper.SetDragItem(item as MechLabItemSlotElement);
-                        }
-                    }
-                    else
-                        Control.Logger.LogDebug($"not found");
-                }
+                Control.Logger.LogDebug($"{r_link.ComponentDefId} from {r_link.Location}");
+                DefaultHelper.RemoveMechLab(r_link.ComponentDefId, Def.ComponentType, helper, r_link.Location);
             }
         }
 
@@ -82,14 +57,14 @@ namespace CustomComponents
                 foreach (var link in Links)
                 {
                     Control.Logger.LogDebug($"-- removing {link.ComponentDefId} from {link.Location}");
-                    DefaultHelper.RemoveDefault(link.ComponentDefId, mech, link.Location, Def.ComponentType );
+                    DefaultHelper.RemoveInventory(link.ComponentDefId, mech, link.Location, Def.ComponentType);
                 }
 
             if (order.DesiredLocation != ChassisLocations.None)
                 foreach (var link in Links)
                 {
                     Control.Logger.LogDebug($"-- adding {link.ComponentDefId} to {link.Location}");
-                    DefaultHelper.AddDefault(link.ComponentDefId, mech, link.Location, Def.ComponentType, state);
+                    DefaultHelper.AddInventory(link.ComponentDefId, mech, link.Location, Def.ComponentType, state);
                 }
 
         }
@@ -101,15 +76,14 @@ namespace CustomComponents
             if (Links == null || Links.Length == 0)
                 yield break;
 
-            foreach(var link in Links)
+            foreach (var link in Links)
             {
                 Control.Logger.LogDebug($"--- {link.ComponentDefId} to {link.Location}");
-                var cref = CreateHelper.Ref(link.ComponentDefId, item.ComponentRef.ComponentDefType,
-                    location.mechLab.dataManager, location.mechLab.sim);
-                if (cref != null)
+                var slot = DefaultHelper.CreateSlot(link.ComponentDefId, Def.ComponentType, mechlab.MechLab);
+
+                if (slot != null)
                 {
                     Control.Logger.LogDebug($"---- added");
-                    var slot = CreateHelper.Slot(location.mechLab, cref, link.Location);
                     yield return new AddChange(link.Location, slot);
                 }
                 else

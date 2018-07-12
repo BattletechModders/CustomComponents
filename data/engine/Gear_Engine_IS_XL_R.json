@@ -1,5 +1,7 @@
 {
-	"CustomType" : "TestEngineSDefault",
+	"Custom" : {
+		"Flags" : { "flags" : ["default"] }
+	},
     "DissipationCapacity" : 0,
     "Description" : {
         "Cost" : 30000,

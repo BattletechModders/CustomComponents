@@ -16,21 +16,8 @@ namespace CustomComponents
             if (string.IsNullOrEmpty(ComponentDefId))
                 return;
 
-            var new_ref = CreateHelper.Ref(ComponentDefId, item.ComponentRef.ComponentDefType, mechLab.dataManager, mechLab.sim);
-            if (new_ref == null || new_ref.Def == null)
-            {
-                Control.Logger.LogError($"Replacement {ComponentDefId} for {Def.Description.Id} not found, skipping");
-                return;
-            }
-            if(!new_ref.Def.Is<Flags>(out var f) || !f.Default)
-            {
-                Control.Logger.LogError($"Replacement {ComponentDefId} for {Def.Description.Id} is not default, not implemented");
-                return;
-            }
+            DefaultHelper.AddMechLab(ComponentDefId, Def.ComponentType, new MechLabHelper(mechLab), widget.loadout.Location);
 
-            var slot = CreateHelper.Slot(mechLab, new_ref, widget.loadout.Location);
-
-            widget.OnAddItem(slot, false);
             mechLab.ValidateLoadout(false);
         }
 
@@ -41,7 +28,7 @@ namespace CustomComponents
             if (order.PreviousLocation != ChassisLocations.None)
             {
                 Control.Logger.LogDebug($"-- found, adding {ComponentDefId} to {order.PreviousLocation}");
-                DefaultHelper.AddDefault(ComponentDefId, mech, order.PreviousLocation, order.MechComponentRef.ComponentDefType, state);
+                DefaultHelper.AddInventory(ComponentDefId, mech, order.PreviousLocation, order.MechComponentRef.ComponentDefType, state);
             }
             else
             {

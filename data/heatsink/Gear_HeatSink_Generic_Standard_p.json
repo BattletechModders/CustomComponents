@@ -1,7 +1,7 @@
 {
-	"CustomType" : "CategoryHeatSink",
-	"CategoryID" : "HeatSink",
-	"Tag" : "IS-Single",
+	"Custom" : {
+		"Category" : { "CategoryID" : "HeatSink", "Tag" : "IS-Single" }
+	},
     "DissipationCapacity" : 4,
     "Description" : {
         "Cost" : 30000,

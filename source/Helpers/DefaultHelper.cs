@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using BattleTech;
+using BattleTech.Data;
 using BattleTech.UI;
 using Harmony;
 
@@ -10,7 +11,31 @@ namespace CustomComponents
 {
     internal static class DefaultHelper
     {
-        internal static void RemoveDefault(string defaultID, MechDef mech, ChassisLocations location, ComponentType type)
+        #region EXTENSIONS
+
+        public static bool IsDefault(this MechComponentDef cdef)
+        {
+            return cdef.Is<Flags>(out var f) && f.Default;
+        }
+        public static bool IsDefault(this MechComponentRef cref)
+        {
+            return cref.Is<Flags>(out var f) && f.Default;
+        }
+
+        #endregion
+
+
+        private static MechComponentRef CreateRef(string id, ComponentType type, DataManager datamanager, SimGameState state)
+        {
+            var component_ref = new MechComponentRef(id, string.Empty, type, ChassisLocations.None);
+            component_ref.DataManager = datamanager;
+            component_ref.RefreshComponentDef();
+            if (state != null)
+                component_ref.SetSimGameUID(state.GenerateSimGameUID());
+            return component_ref;
+        }
+
+        public static void RemoveInventory(string defaultID, MechDef mech, ChassisLocations location, ComponentType type)
         {
             var item = mech.Inventory.FirstOrDefault(i => i.MountedLocation == location && i.ComponentDefID == defaultID);
             if (item != null)
@@ -21,15 +46,73 @@ namespace CustomComponents
             }
         }
 
-        internal static void AddDefault(string defaultID, MechDef mech, ChassisLocations location, ComponentType type, SimGameState state)
+        public static void AddInventory(string defaultID, MechDef mech, ChassisLocations location, ComponentType type, SimGameState state)
         {
-            var r = CreateHelper.Ref(defaultID, type, mech.DataManager, state);
+            var r = CreateRef(defaultID, type, mech.DataManager, state);
             if (r != null)
             {
                 r.SetData(location, -1, ComponentDamageLevel.Functional);
                 var inv = mech.Inventory.ToList();
                 inv.Add(r);
                 mech.SetInventory(inv.ToArray());
+            }
+        }
+
+        public static MechLabItemSlotElement CreateSlot(string id, ComponentType type, MechLabPanel mechLab)
+        {
+            var component_ref = new MechComponentRef(id, string.Empty, type, ChassisLocations.None);
+            component_ref.DataManager = mechLab.dataManager;
+
+            if (!component_ref.IsDefault())
+            {
+                Control.Logger.LogError($"CreateDefault: {id} not default or not exist");
+            }
+
+            if (mechLab.IsSimGame)
+                component_ref.SetSimGameUID(mechLab.Sim.GenerateSimGameUID());
+
+            return mechLab.CreateMechComponentItem(component_ref, false, ChassisLocations.None, mechLab);
+        }
+
+        public static void AddMechLab(string id, ComponentType type, MechLabHelper mechLab, ChassisLocations location)
+        {
+
+            var target = mechLab.GetLocationWidget(location);
+            if (target == null)
+            {
+                Control.Logger.LogError($"DefaultHelper: Cannot add {id} to {location} - wrong location ");
+                return;
+            }
+
+            var slot = CreateSlot(id, type, mechLab.MechLab);
+
+        }
+
+        public static void RemoveMechLab(string id, ComponentType type, MechLabHelper mechLab, ChassisLocations location)
+        {
+            var widget = mechLab.GetLocationWidget(location);
+            if (widget == null)
+            {
+                Control.Logger.LogError($"DefaultHelper: Cannot remove {id} from {location} - wrong location ");
+                return;
+            }
+            var helper = new LocationHelper(widget);
+
+            var remove = helper.LocalInventory.FirstOrDefault(e => e.ComponentRef.ComponentDefID == id);
+            if (remove == null)
+            {
+                Control.Logger.LogDebug($"- not found");
+            }
+            else if (!remove.ComponentRef.IsDefault())
+            {
+                Control.Logger.LogDebug($"- not default");
+            }
+            else
+            {
+                widget.OnRemoveItem(remove, true);
+                Control.Logger.LogDebug($"- removed");
+                remove.thisCanvasGroup.blocksRaycasts = true;
+                mechLab.MechLab.dataManager.PoolGameObject(MechLabPanel.MECHCOMPONENT_ITEM_PREFAB, remove.GameObject);
             }
         }
 
@@ -55,10 +138,9 @@ namespace CustomComponents
 
             if (component.Is<AutoReplace>(out var replace) && !string.IsNullOrEmpty(replace.ComponentDefId) && replace.ComponentDefId != item.ComponentRef.ComponentDefID)
             {
-                var new_ref = CreateHelper.Ref(replace.ComponentDefId, item.ComponentRef.ComponentDefType, mechlab.dataManager, mechlab.sim);
-                if (new_ref != null)
+                var new_item = CreateSlot(replace.ComponentDefId, item.ComponentRef.ComponentDefType, mechlab);
+                if (new_item != null)
                 {
-                    var new_item = CreateHelper.Slot(mechlab, new_ref, widget.loadout.Location);
                     widget.OnAddItem(new_item, false);
                 }
             }
@@ -102,16 +184,11 @@ namespace CustomComponents
             if (component.Is<AutoReplace>(out var replace) && !string.IsNullOrEmpty(replace.ComponentDefId) && replace.ComponentDefId != item.ComponentRef.ComponentDefID)
             {
                 Control.Logger.LogDebug($"IDefaultRepace - search for replace");
-                var new_ref = CreateHelper.Ref(replace.ComponentDefId, item.ComponentRef.ComponentDefType, mechlab.dataManager, mechlab.sim);
-                if (new_ref != null)
+                var new_item = CreateSlot(replace.ComponentDefId, item.ComponentRef.ComponentDefType, mechlab);
+                if (new_item != null)
                 {
-                    Control.Logger.LogDebug($"IDefaultRepace - adding");
-                    var new_item = CreateHelper.Slot(mechlab, new_ref, widget.loadout.Location);
                     widget.OnAddItem(new_item, false);
                 }
-                else
-                    Control.Logger.LogDebug($"IDefaultRepace - not found");
-
             }
 
             if (component.Is<AutoLinked>(out var linked))
@@ -163,7 +240,7 @@ namespace CustomComponents
 
                 if (list[i].Is<AutoReplace>(out var replace))
                 {
-                    var ref_item = CreateHelper.Ref(replace.ComponentDefId, list[i].ComponentDefType, list[i].DataManager, state);
+                    var ref_item = CreateRef(replace.ComponentDefId, list[i].ComponentDefType, list[i].DataManager, state);
                     ref_item.SetData(list[i].MountedLocation, list[i].HardpointSlot, list[i].DamageLevel);
                     ref_item.SetSimGameUID(state.GenerateSimGameUID());
                     result_list.Add(ref_item);

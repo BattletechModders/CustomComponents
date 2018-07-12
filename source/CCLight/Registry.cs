@@ -47,6 +47,7 @@ namespace CustomComponents
                 {
                     continue;
                 }
+                Control.Logger.LogDebug($"LOAD: {factory.ComponentSectionName} to {componentDef.Description.Id}");
                 Database.SetCustomComponent(componentDef, component);
             }
         }

@@ -1,18 +1,13 @@
 {
-	"CustomType" : "TestEngineS",
-	"CategoryID" : "TestEngineShield",
-	"Links" : [
-		{
-			"Location" : "LeftTorso",
-			"BaseType" : "HeatSink",
-			"ApendixID" : "Gear_Engine_Shield_C_XL_Left"
-		},
-		{
-			"Location" : "RightTorso",
-			"BaseType" : "HeatSink",
-			"ApendixID" : "Gear_Engine_Shield_C_XL_Right"
+	"Custom" : {
+		"Category" : { "CategoryID" : "TestEngine" },
+		"Linked" : { 
+			"Links" : [
+				{ "ComponentDefId" : "Gear_Engine_Shield_C_XL_Left", "Location" : "LeftTorso" },
+				{ "ComponentDefId" : "Gear_Engine_Shield_C_XL_Right", "Location" : "RightTorso" }
+			]
 		}
-	],
+	},
     "DissipationCapacity" : 0,
     "Description" : {
         "Cost" : 30000,

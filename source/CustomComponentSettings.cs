@@ -7,6 +7,6 @@ namespace CustomComponents
     {
         public string LogLevel = "Debug";
         public List<CategoryDescriptor> Categories = new List<CategoryDescriptor>();
-        public bool TestEnableAllTags = true;
+        public bool TestEnableAllTags = false;
     }
 }

@@ -1,7 +1,8 @@
 {
- 	"CustomType" : "LegActuator",
-	"CategoryID" : "LegActuator",
-	"DefaultID" : "Gear_Actuator_Default",
+	"Custom" : {
+		"Category" : { "CategoryID" : "LegActuator" }
+		"Replace" : { "ComponentDefId" : "Gear_Actuator_Default" }
+	},
     "StatName" : null,
     "RelativeModifier" : 0,
     "AbsoluteModifier" : 0,

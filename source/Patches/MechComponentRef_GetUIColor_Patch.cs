@@ -1,7 +1,7 @@
-﻿using System.Security.Permissions;
-using BattleTech;
+﻿using BattleTech;
 using BattleTech.UI;
 using Harmony;
+using System;
 
 namespace CustomComponents
 {
@@ -14,17 +14,23 @@ namespace CustomComponents
             ref UIColor __result,
             MechComponentRef componentRef)
         {
-
-            if (componentRef.Is<ColorComponent>(out var color))
+            try
             {
-                __result = color.UIColor;
-                return;
+                if (componentRef.Is<ColorComponent>(out var color))
+                {
+                    __result = color.UIColor;
+                    return;
+                }
+
+                if (componentRef.Is<Flags>(out var f) && f.Default)
+                {
+                    __result = UIColor.DarkGray;
+                    return;
+                }
             }
-
-            if (componentRef.Is<Flags>(out var f) && f.Default)
+            catch(Exception e)
             {
-                __result = UIColor.DarkGray;
-                return;
+                Control.Logger.LogError(e);
             }
 
         }

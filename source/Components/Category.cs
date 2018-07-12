@@ -76,7 +76,7 @@ namespace CustomComponents
             Control.Logger.LogDebug($"-- need_repalce: {need_replace}");
 
             if (need_replace)
-                DefaultHelper.RemoveDefault(replace.ComponentDefID, mech, order.DesiredLocation, replace.ComponentDefType);
+                DefaultHelper.RemoveInventory(replace.ComponentDefID, mech, order.DesiredLocation, replace.ComponentDefType);
 
         }
          
@@ -95,10 +95,11 @@ namespace CustomComponents
                 var n = location.mechLab.activeMechDef.Inventory.Count(i => i.Def.IsSameCategory(CategoryID));
 
 
-                if (n > CategoryDescriptor.MaxEquiped)
+                if (n >= CategoryDescriptor.MaxEquiped)
                 {
                     var replace = location.LocalInventory
                         .FirstOrDefault(i => i.ComponentRef.Def.IsSameCategory(CategoryID));
+
                     if (replace == null)
                         if (CategoryDescriptor.MaxEquiped > 1)
                             return string.Format(CategoryDescriptor.AddMaximumReached, CategoryDescriptor.displayName, n);
@@ -114,7 +115,7 @@ namespace CustomComponents
             {
                 var n = location.LocalInventory.Count(i => i.ComponentRef.Def.IsSameCategory(CategoryID));
 
-                if (n > CategoryDescriptor.MaxEquipedPerLocation)
+                if (n >= CategoryDescriptor.MaxEquipedPerLocation)
                 {
                     var replace = location.LocalInventory
                         .FirstOrDefault(i => i.ComponentRef.Def.IsSameCategory(CategoryID));
@@ -137,7 +138,7 @@ namespace CustomComponents
         {
             Control.Logger.LogDebug("-- Category");
 
-            if (!CategoryDescriptor.AllowMixTags || mechlab.MechLab.activeMechDef.Inventory.Any(i => i.Def.Is<Category>(out var c) && c.CategoryID == CategoryID && GetTag() != c.GetTag()))
+            if (!CategoryDescriptor.AllowMixTags && mechlab.MechLab.activeMechDef.Inventory.Any(i => i.Def.Is<Category>(out var c) && c.CategoryID == CategoryID && GetTag() != c.GetTag()))
                 return string.Format(CategoryDescriptor.AddMixed, CategoryDescriptor.DisplayName);
 
             return string.Empty;
