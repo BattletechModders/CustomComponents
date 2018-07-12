@@ -6,7 +6,7 @@ namespace CustomComponents
 {
     public class CustomComponentSettings
     {
-        public LogLevel LogLevel = LogLevel.Debug;
+        public LogLevel LogLevel = LogLevel.Error;
         public List<CategoryDescriptor> Categories = new List<CategoryDescriptor>();
         public bool TestEnableAllTags = false;
     }

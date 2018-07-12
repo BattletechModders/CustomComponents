@@ -8,51 +8,9 @@
 	"DLL": "CustomComponents.dll",
 	"DLLEntryPoint": "CustomComponents.Control.Init",
 	"Settings" : {
-		"LoadDefaultValidators": true,
-		"LogLevel": "Debug",
-		"Categories": [
-			{
-			  "AutoReplace": true,
-			  "MaxEquiped":  2,
-			  "MaxEquipedPerLocation" : 1,
-			  "MinEquiped":  2,
-			  "Name": "LegActuator",
-			  "displayName": "Leg Actuators"
-			},
-			{
-			  "Name": "HeatSink",
-			  "displayName": "Heat Sink",
-			  "AllowMixTags" : false	  
-			},
-			{
-				"Name" : "TestEngine",
-				"displayName": "Engine",
-				"MaxEquiped" : 1,
-				"AutoReplace" : true
-			}
-		]
+		"LogLevel": "Error",
+		"Categories": [ ]
 	},	
 		
-	"Manifest": [
-		{
-			"Type": "HeatSinkDef",
-			"Path": "data/heatsink/",
-			"ShouldMergeJSON": false
-		},
-		{
-			"Type": "UpgradeDef",
-			"Path": "data/upgrade/",
-			"ShouldMergeJSON": false
-		},
-		{
-			"Type": "HeatSinkDef",
-			"Path": "data/engine/",
-			"ShouldMergeJSON": false
-		},
-		{
-			"Type": "ShopDef",
-			"Path": "data/shops/",
-			"ShouldMergeJSON": false
-		}
-	]
+	"Manifest": [ ]
 }
