@@ -9,7 +9,7 @@ using Harmony;
 
 namespace CustomComponents
 {
-    internal static class DefaultHelper
+    public static class DefaultHelper
     {
         #region EXTENSIONS
 
@@ -121,7 +121,7 @@ namespace CustomComponents
         private static bool repair_state;
         private static MechLabLocationWidget repair_widget;
 
-        public static bool OnRemoveItemRepair(this MechLabLocationWidget widget, IMechLabDraggableItem item, bool validate)
+        internal static bool OnRemoveItemRepair(this MechLabLocationWidget widget, IMechLabDraggableItem item, bool validate)
         {
             var component = item.ComponentRef.Def;
 
@@ -150,7 +150,7 @@ namespace CustomComponents
         }
 
 
-        public static void ForceItemDropRepair(this MechLabPanel mechlab, MechLabItemSlotElement item)
+        internal static void ForceItemDropRepair(this MechLabPanel mechlab, MechLabItemSlotElement item)
         {
             if (!repair_state)
             {
@@ -168,7 +168,7 @@ namespace CustomComponents
         private static bool strip_state;
         private static MechLabLocationWidget strip_widget;
 
-        public static bool OnRemoveItemStrip(this MechLabLocationWidget widget, IMechLabDraggableItem item,
+        internal static bool OnRemoveItemStrip(this MechLabLocationWidget widget, IMechLabDraggableItem item,
             bool validate)
         {
             var component = item.ComponentRef.Def;
@@ -194,7 +194,7 @@ namespace CustomComponents
             return widget.OnRemoveItem(item, validate);
         }
 
-        public static void ForceItemDropStrip(this MechLabPanel mechlab, MechLabItemSlotElement item)
+        internal static void ForceItemDropStrip(this MechLabPanel mechlab, MechLabItemSlotElement item)
         {
             Control.Logger.LogDebug($"Dropping {item.ComponentRef.Def.Description.Id} ");
             if (strip_state)
@@ -207,7 +207,7 @@ namespace CustomComponents
             }
         }
 
-        public static MechComponentRef[] ClearInventory(MechDef source, SimGameState state)
+        internal static MechComponentRef[] ClearInventory(MechDef source, SimGameState state)
         {
             Control.Logger.LogDebug("Clearing Inventory");
 
