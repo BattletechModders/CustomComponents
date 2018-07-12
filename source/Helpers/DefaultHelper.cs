@@ -125,6 +125,8 @@ namespace CustomComponents
         {
             var component = item.ComponentRef.Def;
 
+            repair_state = true;
+
             if (component.Is<Flags>(out var f) && f.AutoRepair)
             {
                 Control.Logger.LogDebug($"AutoRepair: {component.Description.Id} ");
@@ -146,13 +148,14 @@ namespace CustomComponents
                 if (!repair_state)
                     return true;
             }
+
             return widget.OnRemoveItem(item, validate);
         }
 
 
         internal static void ForceItemDropRepair(this MechLabPanel mechlab, MechLabItemSlotElement item)
         {
-            if (!repair_state)
+            if (repair_state)
             {
                 foreach (var validator in item.ComponentRef.Def.GetComponents<IOnItemGrabbed>())
                 {

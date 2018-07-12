@@ -13,11 +13,15 @@ namespace CustomComponents
 
         public void OnItemGrabbed(IMechLabDraggableItem item, MechLabPanel mechLab, MechLabLocationWidget widget)
         {
+            Control.Logger.LogDebug($"- AutoReplace");
+            Control.Logger.LogDebug($"-- search replace for {item.ComponentRef.ComponentDefID}");
             if (string.IsNullOrEmpty(ComponentDefId))
+            {
+                Control.Logger.LogDebug($"-- no replacement, skipping");
                 return;
+            }
 
             DefaultHelper.AddMechLab(ComponentDefId, Def.ComponentType, new MechLabHelper(mechLab), widget.loadout.Location);
-
             mechLab.ValidateLoadout(false);
         }
 

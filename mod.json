@@ -28,7 +28,6 @@
 				"Name" : "TestEngine",
 				"displayName": "Engine",
 				"MaxEquiped" : 1,
-				"MinEquiped" : 1,
 				"AutoReplace" : true
 			}
 		]

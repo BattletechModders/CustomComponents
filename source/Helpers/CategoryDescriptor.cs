@@ -114,10 +114,7 @@ namespace CustomComponents
         }
 
         [JsonIgnore]
-        public bool Required
-        {
-            get { return MinEquiped > 0; }
-        }
+        public bool Required => MinEquiped > 0;
 
 
         public CategoryDescriptor()

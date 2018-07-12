@@ -100,6 +100,7 @@ namespace CustomComponents
         /// <returns></returns>
         internal static bool ValidateMechCanBeFielded(MechDef mechDef)
         {
+            Control.Logger.LogDebug($"- Category");
             var items_by_category = (from item in mechDef.Inventory
                                      let def = item.Def.GetComponent<Category>()
                                      where def != null
@@ -113,33 +114,53 @@ namespace CustomComponents
 
             // if all required category present
             foreach (var category in Control.GetCategories().Where(i => i.Required))
+            {
+                Control.Logger.LogDebug($"-- MinEquiped for {category.displayName}");
+
                 if (!items_by_category.ContainsKey(category) || items_by_category[category].Count < category.MinEquiped)
+                {
+                    Control.Logger.LogDebug($"--- not passed {items_by_category[category].Count}/{category.MinEquiped}");
                     return false;
+                }
+            }
 
             foreach (var pair in items_by_category)
             {
+                Control.Logger.LogDebug($"-- MaxEquiped for {pair.Key.displayName}");
                 // if too many equiped
                 if (pair.Key.MaxEquiped > 0 && pair.Value.Count > pair.Key.MaxEquiped)
+                {
+                    Control.Logger.LogDebug($"--- not passed {pair.Value.Count}/{pair.Key.MaxEquiped}");
                     return false;
+                }
 
                 //if mixed
                 if (!pair.Key.AllowMixTags)
                 {
+                    Control.Logger.LogDebug($"-- AllowMixTags for {pair.Key.displayName}");
                     string def = pair.Value[0].mix;
 
                     bool flag = pair.Value.Any(i => i.mix != def);
-                    if (flag) return false;
+                    if (flag)
+                    {
+                        Control.Logger.LogDebug($"--- not passed {def}");
+                        return false;
+                    }
                 }
 
                 // if too many per location
                 if (pair.Key.MaxEquipedPerLocation > 0)
                 {
+                    Control.Logger.LogDebug($"-- MaxEquipedPerLocation for {pair.Key.displayName}");
                     var max = pair.Value.GroupBy(i => i.itemref.MountedLocation).Max(i => i.Count());
                     if (max > pair.Key.MaxEquipedPerLocation)
+                    {
+                        Control.Logger.LogDebug($"--- not passed {max}/{pair.Key.MaxEquipedPerLocation}");
                         return false;
+                    }
                 }
             }
-
+            Control.Logger.LogDebug($"--- all passed");
             return true;
         }
 

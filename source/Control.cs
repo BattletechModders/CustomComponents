@@ -27,12 +27,9 @@ namespace CustomComponents
         public static void Init(string directory, string settingsJSON)
         {
 
-            Logger = HBS.Logging.Logger.GetLogger("CustomComponents", LogLevel.Debug);
-            SetupLogging(directory);
 
             try
             {
-                //   mod.LoadSettings(settings);
                 try
                 {
                     settings = JsonConvert.DeserializeObject<CustomComponentSettings>(settingsJSON);
@@ -42,12 +39,17 @@ namespace CustomComponents
                     settings = new CustomComponentSettings();
                 }
 
+
+                Logger = HBS.Logging.Logger.GetLogger("CustomComponents", settings.LogLevel);
+                SetupLogging(directory);
+
                 var harmony = HarmonyInstance.Create("io.github.denadan.CustomComponents");
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
 
 
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
                 Validator.RegisterMechValidator(CategoryController.ValidateMech, CategoryController.ValidateMechCanBeFielded);
+
 
                 Logger.Log("Loaded CustomComponents");
                 Logger.LogDebug("Loading Categories");
