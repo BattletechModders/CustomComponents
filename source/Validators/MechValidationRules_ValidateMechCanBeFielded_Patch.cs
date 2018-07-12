@@ -27,13 +27,18 @@ namespace CustomComponents
                     Control.Logger.LogDebug($"- ended at fixed validation");
                     return;
                 }
-
                 Control.Logger.LogDebug($"- statrted component validation");
-                if (mechDef.Inventory.Any(component => component.GetComponents<IMechValidate>().Any(validator => !validator.ValidateMechCanBeFielded(mechDef))))
+                foreach (var component in mechDef.Inventory)
                 {
-                    __result = false;
-                    Control.Logger.LogDebug($"- ended at component validation");
-                    return;
+                    foreach (var mechValidate in component.GetComponents<IMechValidate>())
+                    {
+                        if (!mechValidate.ValidateMechCanBeFielded(mechDef))
+                        {
+                            __result = false;
+                            Control.Logger.LogDebug($"- ended at component validation");
+                            return;
+                        }
+                    }
                 }
 
                 Control.Logger.LogDebug($"- and done");
