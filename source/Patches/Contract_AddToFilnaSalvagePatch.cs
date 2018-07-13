@@ -1,4 +1,5 @@
-﻿using BattleTech;
+﻿using System;
+using BattleTech;
 using Harmony;
 using HBS.Logging;
 
@@ -9,9 +10,13 @@ namespace CustomComponents
     {
         public static bool Prefix(SalvageDef def)
         {
+            if (def.ComponentType == ComponentType.MechPart)
+                return true;
+
             return !(def.MechComponentDef.Is<Flags>(out var f) && f.NotSalvagable);
         }
     }
+
     [HarmonyPatch(typeof(Contract), "AddMechComponentToSalvage")]
     internal static class Contract_AddMechComponentToSalvage
     {
@@ -20,4 +25,5 @@ namespace CustomComponents
             Control.Logger.LogDebug(def.Description.Id);
             return !(def.Is<Flags>(out var f) && f.NotSalvagable);
         }
-    }}
+    }
+}
