@@ -45,6 +45,12 @@ namespace CustomComponents
             }
         }
 
+        // can be used by post or preprocessors
+        public static void SetCustomComponent(MechComponentDef def, ICustomComponent component)
+        {
+            Database.SetCustomComponent(def, component);
+        }
+
         internal static void ProcessCustomCompontentFactories(object target, Dictionary<string, object> values)
         {
             if (!(target is MechComponentDef componentDef))
@@ -54,10 +60,7 @@ namespace CustomComponents
 
             foreach (var preProcessor in PreProcessors)
             {
-                foreach (var component in preProcessor.PreProcess(componentDef, values) ?? Enumerable.Empty<ICustomComponent>())
-                {
-                    Database.SetCustomComponent(componentDef, component);
-                }
+                preProcessor.PreProcess(componentDef, values);
             }
 
             foreach (var factory in Factories)
@@ -68,15 +71,12 @@ namespace CustomComponents
                     continue;
                 }
                 Control.Logger.LogDebug($"LOAD: {factory.ComponentSectionName} to {componentDef.Description.Id}");
-                Database.SetCustomComponent(componentDef, component);
+                SetCustomComponent(componentDef, component);
             }
 
             foreach (var postProcessor in PostProcessors)
             {
-                foreach (var component in postProcessor.PostProcess(componentDef, values) ?? Enumerable.Empty<ICustomComponent>())
-                {
-                    Database.SetCustomComponent(componentDef, component);
-                }
+                postProcessor.PostProcess(componentDef, values);
             }
         }
     }
