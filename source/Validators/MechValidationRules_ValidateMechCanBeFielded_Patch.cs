@@ -12,6 +12,12 @@ namespace CustomComponents
         {
             try
             {
+                if (mechDef == null)
+                {
+                    Control.Logger.LogDebug($"Mech validation for NULL return");
+                    return;
+                }
+
                 Control.Logger.LogDebug($"Mech validation for {mechDef.Name} starter current resutl {__result}");
 
                 if (!__result)
@@ -32,6 +38,8 @@ namespace CustomComponents
                 {
                     foreach (var mechValidate in component.GetComponents<IMechValidate>())
                     {
+
+                        Control.Logger.LogDebug($"-- {mechValidate.GetType()}");
                         if (!mechValidate.ValidateMechCanBeFielded(mechDef, component))
                         {
                             __result = false;
@@ -43,6 +51,7 @@ namespace CustomComponents
 
                 Control.Logger.LogDebug($"- and done");
             }
+
             catch (Exception e)
             {
                 Control.Logger.LogError(e);

@@ -9,7 +9,6 @@ using UnityEngine.EventSystems;
 
 namespace CustomComponents
 {
-
     [HarmonyPatch(typeof(MechLabLocationWidget), "OnMechLabDrop")]
     internal static class MechLabLocationWidget_OnMechLabDrop_Patch
     {

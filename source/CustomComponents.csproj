@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="CCLight\Factories\IPostProcessor.cs" />
     <Compile Include="CCLight\Factories\IPreProcessor.cs" />
+    <Compile Include="CCLight\Patches\SimGameState_SetBattleTechGame.cs" />
     <Compile Include="Components\Sorter.cs" />
     <Compile Include="DropResults\IChange.cs" />
     <Compile Include="DropResults\InvItem.cs" />

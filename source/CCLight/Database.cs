@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
+using BattleTech.Data;
+using HBS.Logging;
 
 namespace CustomComponents
 {
@@ -9,6 +11,8 @@ namespace CustomComponents
     {
         internal static readonly Dictionary<string, List<ICustomComponent>> CustomComponents
             = new Dictionary<string, List<ICustomComponent>>();
+
+        private static GameInstance game;
 
         internal static T GetCustomComponent<T>(MechComponentDef def)
         {
@@ -34,12 +38,28 @@ namespace CustomComponents
             return ccs.OfType<T>();
         }
 
-        internal static T GetCustomComponent<T>(MechComponentRef @ref)
+        internal static T GetCustomComponent<T>(MechComponentRef cref)
         {
-            if (@ref.Def == null)
-                @ref.RefreshComponentDef();
 
-            var key = Key(@ref);
+            if (cref.Def == null)
+            {
+                if (cref.DataManager == null)
+                {
+                    if (game.DataManager != null)
+                    {
+                        cref.DataManager = game.DataManager;
+                        cref.RefreshComponentDef();
+                    }
+                    else
+                    {
+                        Control.Logger.Log("No datamanager found!");
+                    }
+                }
+                else
+                    cref.RefreshComponentDef();
+            }
+
+            var key = Key(cref);
 
             if (!CustomComponents.TryGetValue(key, out var ccs))
             {
@@ -85,6 +105,11 @@ namespace CustomComponents
         private static string Key(MechComponentRef @ref)
         {
             return @ref.ComponentDefID;
+        }
+
+        internal static void setDataManager(GameInstance value)
+        {
+            game = value;
         }
     }
 }

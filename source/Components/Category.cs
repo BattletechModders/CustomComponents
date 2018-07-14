@@ -55,7 +55,6 @@ namespace CustomComponents
                 return;
             }
 
-
             int n1 = mech.Inventory.Count(i => i.Is<Category>(out var cat) && CategoryID == cat.CategoryID);
             int n2 = mech.Inventory.Count(i => i.MountedLocation == order.DesiredLocation && i.Is<Category>(out var cat)
                    && CategoryID == cat.CategoryID);
