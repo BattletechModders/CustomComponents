@@ -115,7 +115,6 @@ namespace CustomComponents
                 errors[MechValidationType.StructureDestroyed].Add($"{Def.Description.Name} is destroyed, Replace it");
             }
 
-
             if (componentRef.DamageLevel == ComponentDamageLevel.Penalized && NotBroken)
             {
                 errors[MechValidationType.StructureDestroyed].Add($"{Def.Description.Name} is damaged, Repair it");
