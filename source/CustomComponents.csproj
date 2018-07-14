@@ -72,7 +72,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CCLight\Factories\AutoFixDelegate.cs" />
+    <Compile Include="CCLight\Factories\IPostProcessor.cs" />
+    <Compile Include="CCLight\Factories\IPreProcessor.cs" />
     <Compile Include="DropResults\IChange.cs" />
     <Compile Include="DropResults\InvItem.cs" />
     <Compile Include="Interfaces\IPreValidateDrop.cs" />

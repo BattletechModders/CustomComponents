@@ -8,11 +8,23 @@ namespace CustomComponents
 {
     public static class Registry
     {
+        private static readonly List<IPreProcessor> PreProcessors = new List<IPreProcessor>();
         private static readonly List<ICustomComponentFactory> Factories = new List<ICustomComponentFactory>();
+        private static readonly List<IPostProcessor> PostProcessors = new List<IPostProcessor>();
+
+        public static void RegisterPreProcessor(IPreProcessor preProcessor)
+        {
+            PreProcessors.Add(preProcessor);
+        }
 
         public static void RegisterFactory(ICustomComponentFactory factory)
         {
             Factories.Add(factory);
+        }
+
+        public static void RegisterPostProcessor(IPostProcessor postProcessor)
+        {
+            PostProcessors.Add(postProcessor);
         }
 
         public static void RegisterSimpleCustomComponents(Assembly assembly)
@@ -33,11 +45,22 @@ namespace CustomComponents
             }
         }
 
+        // can be used by post or preprocessors
+        public static void SetCustomComponent(MechComponentDef def, ICustomComponent component)
+        {
+            Database.SetCustomComponent(def, component);
+        }
+
         internal static void ProcessCustomCompontentFactories(object target, Dictionary<string, object> values)
         {
             if (!(target is MechComponentDef componentDef))
             {
                 return;
+            }
+
+            foreach (var preProcessor in PreProcessors)
+            {
+                preProcessor.PreProcess(componentDef, values);
             }
 
             foreach (var factory in Factories)
@@ -48,7 +71,12 @@ namespace CustomComponents
                     continue;
                 }
                 Control.Logger.LogDebug($"LOAD: {factory.ComponentSectionName} to {componentDef.Description.Id}");
-                Database.SetCustomComponent(componentDef, component);
+                SetCustomComponent(componentDef, component);
+            }
+
+            foreach (var postProcessor in PostProcessors)
+            {
+                postProcessor.PostProcess(componentDef, values);
             }
         }
     }
