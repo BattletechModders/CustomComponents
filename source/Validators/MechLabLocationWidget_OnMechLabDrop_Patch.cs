@@ -9,9 +9,12 @@ using UnityEngine.EventSystems;
 
 namespace CustomComponents
 {
+
     [HarmonyPatch(typeof(MechLabLocationWidget), "OnMechLabDrop")]
     internal static class MechLabLocationWidget_OnMechLabDrop_Patch
     {
+        [HarmonyPriority(Priority.Low)]
+        [HarmonyPrefix]
         public static bool Prefix(MechLabLocationWidget __instance,
             MechLabPanel ___mechLab,
             PointerEventData eventData)

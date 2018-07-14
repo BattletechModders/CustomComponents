@@ -26,10 +26,10 @@ namespace CustomComponents
 
         public static void Init(string directory, string settingsJSON)
         {
-
-
+            Logger = HBS.Logging.Logger.GetLogger("CustomComponents", LogLevel.Debug);
             try
             {
+
                 try
                 {
                     settings = JsonConvert.DeserializeObject<CustomComponentSettings>(settingsJSON);
@@ -40,7 +40,6 @@ namespace CustomComponents
                 }
 
 
-                Logger = HBS.Logging.Logger.GetLogger("CustomComponents", settings.LogLevel);
                 SetupLogging(directory);
 
                 var harmony = HarmonyInstance.Create("io.github.denadan.CustomComponents");

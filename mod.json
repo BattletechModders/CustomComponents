@@ -8,9 +8,11 @@
 	"DLL": "CustomComponents.dll",
 	"DLLEntryPoint": "CustomComponents.Control.Init",
 	"Settings" : {
-		"LogLevel": "Error",
-		"Categories": [ ]
+		"LogLevel": "Debug",
+		"Categories": [
+		]
 	},	
 		
-	"Manifest": [ ]
+	"Manifest": [ 
+	]
 }

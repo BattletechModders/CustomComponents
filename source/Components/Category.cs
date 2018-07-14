@@ -92,13 +92,13 @@ namespace CustomComponents
 
             if (CategoryDescriptor.MaxEquiped > 0)
             {
-                var n = location.mechLab.activeMechDef.Inventory.Count(i => i.Def.IsSameCategory(CategoryID));
+                var n = location.mechLab.activeMechDef.Inventory.Count(i => i.Def.IsCategory(CategoryID));
 
 
                 if (n >= CategoryDescriptor.MaxEquiped)
                 {
                     var replace = location.LocalInventory
-                        .FirstOrDefault(i => i.ComponentRef.Def.IsSameCategory(CategoryID));
+                        .FirstOrDefault(i => i.ComponentRef.Def.IsCategory(CategoryID));
 
                     if (replace == null)
                         if (CategoryDescriptor.MaxEquiped > 1)
@@ -113,12 +113,12 @@ namespace CustomComponents
 
             if (CategoryDescriptor.MaxEquipedPerLocation > 0)
             {
-                var n = location.LocalInventory.Count(i => i.ComponentRef.Def.IsSameCategory(CategoryID));
+                var n = location.LocalInventory.Count(i => i.ComponentRef.Def.IsCategory(CategoryID));
 
                 if (n >= CategoryDescriptor.MaxEquipedPerLocation)
                 {
                     var replace = location.LocalInventory
-                        .FirstOrDefault(i => i.ComponentRef.Def.IsSameCategory(CategoryID));
+                        .FirstOrDefault(i => i.ComponentRef.Def.IsCategory(CategoryID));
 
                     if (replace == null)
                         if (CategoryDescriptor.MaxEquipedPerLocation > 1)
@@ -150,7 +150,7 @@ namespace CustomComponents
 
             if (CategoryDescriptor.MaxEquiped > 0)
             {
-                var total = new_inventory.Count(i => i.item.Def.IsSameCategory(CategoryID));
+                var total = new_inventory.Count(i => i.item.Def.IsCategory(CategoryID));
                     
                 if (total > CategoryDescriptor.MaxEquiped)
                     if (CategoryDescriptor.MaxEquiped > 1)
@@ -162,7 +162,7 @@ namespace CustomComponents
             if (CategoryDescriptor.MaxEquipedPerLocation > 0)
             {
                 var total = new_inventory
-                    .Where(i => i.item.Def.IsSameCategory(CategoryID))
+                    .Where(i => i.item.Def.IsCategory(CategoryID))
                     .Select(i => new { l = i.location, c = i.item.Def.GetComponent<Category>() })
                     .GroupBy(i => i.l)
                     .FirstOrDefault(i => i.Count() > CategoryDescriptor.MaxEquipedPerLocation);

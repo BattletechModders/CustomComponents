@@ -23,6 +23,9 @@ namespace CustomComponents
     /// </summary>
     public static class CategoryController
     {
+
+
+
         /// <summary>
         /// validate mech and fill errors
         /// </summary>
@@ -164,12 +167,12 @@ namespace CustomComponents
             return true;
         }
 
-        public static bool IsSameCategory(this MechComponentDef cdef, string category)
+        public static bool IsCategory(this MechComponentDef cdef, string category)
         {
             return cdef.Is<Category>(out var c) && c.CategoryID == category;
         }
 
-        public static bool IsSameCategory(this MechComponentRef cref, string category)
+        public static bool IsCategory(this MechComponentRef cref, string category)
         {
             return cref.Is<Category>(out var c) && c.CategoryID == category;
         }

@@ -4,7 +4,7 @@ using Harmony;
 using HBS.Logging;
 
 namespace CustomComponents
-{
+{ 
     [HarmonyPatch(typeof(Contract), "AddToFinalSalvage")]
     internal static class Contract_AddToFilnaSalvagePatch
     {
@@ -12,6 +12,12 @@ namespace CustomComponents
         {
             if (def.ComponentType == ComponentType.MechPart)
                 return true;
+
+            if (def.MechComponentDef == null)
+            {
+                Control.Logger.Log($"AddToFinalSalvage: Def is null {def}");
+                return true;
+            }
 
             return !(def.MechComponentDef.Is<Flags>(out var f) && f.NotSalvagable);
         }
