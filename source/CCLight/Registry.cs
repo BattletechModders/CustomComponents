@@ -10,6 +10,7 @@ namespace CustomComponents
     {
         private static readonly List<IPreProcessor> PreProcessors = new List<IPreProcessor>();
         private static readonly List<ICustomComponentFactory> Factories = new List<ICustomComponentFactory>();
+        private static readonly List<IPostProcessor> PostProcessors = new List<IPostProcessor>();
 
         public static void RegisterPreProcessor(IPreProcessor preProcessor)
         {
@@ -19,6 +20,11 @@ namespace CustomComponents
         public static void RegisterFactory(ICustomComponentFactory factory)
         {
             Factories.Add(factory);
+        }
+
+        public static void RegisterPostProcessor(IPostProcessor postProcessor)
+        {
+            PostProcessors.Add(postProcessor);
         }
 
         public static void RegisterSimpleCustomComponents(Assembly assembly)
@@ -48,7 +54,10 @@ namespace CustomComponents
 
             foreach (var preProcessor in PreProcessors)
             {
-                preProcessor.PreProcess(componentDef, values);
+                foreach (var component in preProcessor.PreProcess(componentDef, values) ?? Enumerable.Empty<ICustomComponent>())
+                {
+                    Database.SetCustomComponent(componentDef, component);
+                }
             }
 
             foreach (var factory in Factories)
@@ -60,6 +69,14 @@ namespace CustomComponents
                 }
                 Control.Logger.LogDebug($"LOAD: {factory.ComponentSectionName} to {componentDef.Description.Id}");
                 Database.SetCustomComponent(componentDef, component);
+            }
+
+            foreach (var postProcessor in PostProcessors)
+            {
+                foreach (var component in postProcessor.PostProcess(componentDef, values) ?? Enumerable.Empty<ICustomComponent>())
+                {
+                    Database.SetCustomComponent(componentDef, component);
+                }
             }
         }
     }

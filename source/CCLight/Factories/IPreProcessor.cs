@@ -5,6 +5,6 @@ namespace CustomComponents
 {
     public interface IPreProcessor
     {
-        void PreProcess(MechComponentDef target, Dictionary<string, object> values);
+        IEnumerable<ICustomComponent> PreProcess(MechComponentDef target, Dictionary<string, object> values);
     }
 }
