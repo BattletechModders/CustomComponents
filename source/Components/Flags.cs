@@ -2,13 +2,14 @@
 using fastJSON;
 using System.Collections.Generic;
 using System.Linq;
+using BattleTech;
 
 namespace CustomComponents
 {
     [CustomComponent("Flags")]
-    public class Flags : SimpleCustomComponent, IAfterLoad, IMechLabFilter, IOnItemGrab
+    public class Flags : SimpleCustomComponent, IAfterLoad, IMechLabFilter, IOnItemGrab, IMechValidate
     {
-        private List<string> flags;
+        public List<string> flags;
 
         [JsonIgnore]
         public bool CannotRemove { get; private set; }
@@ -24,6 +25,11 @@ namespace CustomComponents
 
         [JsonIgnore]
         public bool Default => CannotRemove && AutoRepair && HideFromInventory && NotSalvagable;
+
+        [JsonIgnore]
+        public bool NotBroken { get; private set; }
+        [JsonIgnore]
+        public bool NotDestroyed { get; private set; }
 
         public bool CheckFilter(MechLabPanel panel)
         {
@@ -52,6 +58,8 @@ namespace CustomComponents
             AutoRepair = false;
             HideFromInventory = false;
             NotSalvagable = false;
+            NotBroken = false;
+            NotDestroyed = false;
 
             if (flags == null)
             {
@@ -88,10 +96,43 @@ namespace CustomComponents
                     case "no_salvage":
                         NotSalvagable = true;
                         break;
+                    case "not_broken":
+                        NotBroken = true;
+                        break;
+                    case "not_destroyed":
+                        NotDestroyed = true;
+                        break;
                 }
             }
 
             flags = new_flags.Distinct().ToList();
+        }
+
+        public void ValidateMech(Dictionary<MechValidationType, List<string>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
+        {
+            if (componentRef.DamageLevel == ComponentDamageLevel.Destroyed && (NotDestroyed || NotBroken))
+            {
+                errors[MechValidationType.StructureDestroyed].Add($"{Def.Description.Name} is destroyed, Replace it");
+            }
+
+
+            if (componentRef.DamageLevel == ComponentDamageLevel.Penalized && NotBroken)
+            {
+                errors[MechValidationType.StructureDestroyed].Add($"{Def.Description.Name} is damaged, Repair it");
+            }
+
+        }
+
+        public bool ValidateMechCanBeFielded(MechDef mechDef, MechComponentRef componentRef)
+        {
+            if (NotDestroyed && componentRef.DamageLevel == ComponentDamageLevel.Destroyed)
+                return false;
+
+            if (NotBroken && (componentRef.DamageLevel == ComponentDamageLevel.Destroyed ||
+                              componentRef.DamageLevel == ComponentDamageLevel.Penalized))
+                return false;
+
+            return true;
         }
     }
 }

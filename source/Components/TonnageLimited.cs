@@ -44,7 +44,7 @@ namespace CustomComponents
             return string.Empty;
         }
 
-        public void ValidateMech(Dictionary<MechValidationType, List<string>> errors, MechValidationLevel validationLevel, MechDef mechDef)
+        public void ValidateMech(Dictionary<MechValidationType, List<string>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
         {
             if(mechDef.Chassis.Tonnage < Min && mechDef.Chassis.Tonnage > Max)
 
@@ -56,7 +56,7 @@ namespace CustomComponents
                     $"{Def.Description.Name.ToUpper()} designed for {Min}t-{Max}t 'Mech");
         }
 
-        public bool ValidateMechCanBeFielded(MechDef mechDef)
+        public bool ValidateMechCanBeFielded(MechDef mechDef, MechComponentRef componentRef)
         {
             return mechDef.Chassis.Tonnage >= Min && mechDef.Chassis.Tonnage <= Max;
         }

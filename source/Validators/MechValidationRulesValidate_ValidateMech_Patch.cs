@@ -16,7 +16,7 @@ namespace CustomComponents
             {
                 foreach (var validator in component.GetComponents<IMechValidate>())
                 {
-                    validator.ValidateMech(__result, validationLevel, mechDef);
+                    validator.ValidateMech(__result, validationLevel, mechDef, component);
                 }
             }
         }

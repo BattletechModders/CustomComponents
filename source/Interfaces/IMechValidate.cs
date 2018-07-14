@@ -15,9 +15,9 @@ namespace CustomComponents
         /// <param name="validationLevel">level of validation</param>
         /// <param name="mechDef">mech to check</param>
         void ValidateMech(Dictionary<MechValidationType, List<string>> errors,
-            MechValidationLevel validationLevel, MechDef mechDef);
+            MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef);
 
-        bool ValidateMechCanBeFielded(MechDef mechDef);
+        bool ValidateMechCanBeFielded(MechDef mechDef, MechComponentRef componentRef);
     }
 
     /// <summary>

@@ -32,7 +32,7 @@ namespace CustomComponents
                 {
                     foreach (var mechValidate in component.GetComponents<IMechValidate>())
                     {
-                        if (!mechValidate.ValidateMechCanBeFielded(mechDef))
+                        if (!mechValidate.ValidateMechCanBeFielded(mechDef, component))
                         {
                             __result = false;
                             Control.Logger.LogDebug($"- ended at component validation");

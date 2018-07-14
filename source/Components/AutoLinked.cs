@@ -35,7 +35,7 @@ namespace CustomComponents
             }
         }
 
-        public void ValidateMech(Dictionary<MechValidationType, List<string>> errors, MechValidationLevel validationLevel, MechDef mechDef)
+        public void ValidateMech(Dictionary<MechValidationType, List<string>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
         {
             if (Links?.Any(link => !mechDef.Inventory.Any(i =>
                     i.MountedLocation == link.Location && i.ComponentDefID == link.ComponentDefId)) == true)
@@ -44,7 +44,7 @@ namespace CustomComponents
             }
         }
 
-        public bool ValidateMechCanBeFielded(MechDef mechDef)
+        public bool ValidateMechCanBeFielded(MechDef mechDef, MechComponentRef componentRef)
         {
             return Links == null || Links.All(link => mechDef.Inventory.Any(i => i.MountedLocation == link.Location && i.ComponentDefID == link.ComponentDefId));
         }

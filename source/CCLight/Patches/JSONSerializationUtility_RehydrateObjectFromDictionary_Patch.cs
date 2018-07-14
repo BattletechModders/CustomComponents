@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
-using BattleTech;
-using BattleTech.Data;
 using Harmony;
 using HBS.Util;
 
