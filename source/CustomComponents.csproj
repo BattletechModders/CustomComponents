@@ -102,7 +102,6 @@
     <Compile Include="Components\AutoLinked.cs" />
     <Compile Include="Patches\MechLabLocationWidget_StripEquipment.cs" />
     <Compile Include="Helpers\DefaultHelper.cs" />
-    <Compile Include="Patches\Mech_IsDead_patch.cs" />
     <Compile Include="Patches\SimGameState_AddMechPart_Patch.cs" />
     <Compile Include="Patches\SimGameState_ReadyMech_Patch.cs" />
     <Compile Include="Patches\SimGameState_StripMech_Patch.cs" />
