@@ -8,7 +8,13 @@ namespace CustomComponents
 {
     public static class Registry
     {
+        private static readonly List<IPreProcessor> PreProcessors = new List<IPreProcessor>();
         private static readonly List<ICustomComponentFactory> Factories = new List<ICustomComponentFactory>();
+
+        public static void RegisterPreProcessor(IPreProcessor preProcessor)
+        {
+            PreProcessors.Add(preProcessor);
+        }
 
         public static void RegisterFactory(ICustomComponentFactory factory)
         {
@@ -38,6 +44,11 @@ namespace CustomComponents
             if (!(target is MechComponentDef componentDef))
             {
                 return;
+            }
+
+            foreach (var preProcessor in PreProcessors)
+            {
+                preProcessor.PreProcess(componentDef, values);
             }
 
             foreach (var factory in Factories)
