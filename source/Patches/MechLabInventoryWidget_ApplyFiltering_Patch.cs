@@ -28,7 +28,7 @@ namespace CustomComponents
                     if(!filter.CheckFilter(mechlab))
                     {
                         item.gameObject.SetActive(false);
-                        return;
+                        break;
                     }
                 }
 

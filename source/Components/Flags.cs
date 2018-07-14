@@ -96,7 +96,7 @@ namespace CustomComponents
                     case "no_salvage":
                         NotSalvagable = true;
                         break;
-                    case "not_broken":
+                    case "not_brocken":
                         NotBroken = true;
                         break;
                     case "not_destroyed":
@@ -119,7 +119,6 @@ namespace CustomComponents
             {
                 errors[MechValidationType.StructureDestroyed].Add($"{Def.Description.Name} is damaged, Repair it");
             }
-
         }
 
         public bool ValidateMechCanBeFielded(MechDef mechDef, MechComponentRef componentRef)

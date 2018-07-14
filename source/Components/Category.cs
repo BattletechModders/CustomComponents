@@ -20,7 +20,7 @@ namespace CustomComponents
         /// <summary>
         /// optional tag for AllowMixTags, if not set defid will used
         /// </summary>
-        string Tag;
+        public string Tag { get; set; }
 
         public string GetTag()
         {
