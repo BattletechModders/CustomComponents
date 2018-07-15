@@ -36,5 +36,16 @@ namespace CustomComponents
             res = Database.GetCustomComponent<T>(@ref);
             return res != null;
         }
+
+
+        public static bool Is<T>(this MechComponentDef def)
+        {
+            return Database.GetCustomComponent<T>(def) != null;
+        }
+
+        public static bool Is<T>(this MechComponentRef @ref)
+        {
+            return Database.GetCustomComponent<T>(@ref) != null;
+        }
     }
 }
