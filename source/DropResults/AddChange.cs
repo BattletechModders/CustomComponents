@@ -26,6 +26,7 @@ namespace CustomComponents
                 mechLab.MechLab.baseWorkOrder.AddSubEntry(subEntry);
 
             }
+            item.MountedLocation = location;
         }
 
         public AddChange(ChassisLocations location, MechLabItemSlotElement item)

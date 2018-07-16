@@ -9,7 +9,9 @@ namespace CustomComponents
     {
         public static void Postfix(GameInstance value)
         {
+#if CCDEBUG
             Control.Logger.LogDebug($"SetGameState found!, Datamanager is null: {value.DataManager == null} ");
+#endif
             Database.setDataManager(value);
         }
     }

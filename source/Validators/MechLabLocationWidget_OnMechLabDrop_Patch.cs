@@ -99,17 +99,17 @@ namespace CustomComponents
                 {
                     new_inventory.RemoveAll(i => i.item == remove.item.ComponentRef);
                 }
-
+#if CCDEBUG
                 Control.Logger.LogDebug($"- post validation");
-
+#endif
                 foreach (var pst_validator in Validator.GetPost(newComponentDef))
                     if(do_cancel(pst_validator(dragItem, ___mechLab.activeMechDef, new_inventory, changes)))
                         return false;
 
 
-
+#if CCDEBUG
                 Control.Logger.LogDebug($"- apply changes");
-
+#endif
                 foreach (var change in changes)
                 {
                     change.DoChange(mechlab_helper, location_helper);

@@ -30,7 +30,9 @@ namespace CustomComponents
             var helper = new MechLabHelper(mechLab);
             foreach (var r_link in Links)
             {
+#if  CCDEBUG
                 Control.Logger.LogDebug($"{r_link.ComponentDefId} from {r_link.Location}");
+#endif
                 DefaultHelper.RemoveMechLab(r_link.ComponentDefId, Def.ComponentType, helper, r_link.Location);
             }
         }

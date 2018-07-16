@@ -26,7 +26,7 @@ namespace CustomComponents
 
         public static void Init(string directory, string settingsJSON)
         {
-            Logger = HBS.Logging.Logger.GetLogger("CustomComponents", LogLevel.Debug);
+            Logger = HBS.Logging.Logger.GetLogger("CustomComponents", LogLevel.Error);
             try
             {
 

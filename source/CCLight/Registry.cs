@@ -70,7 +70,9 @@ namespace CustomComponents
                 {
                     continue;
                 }
+#if CCDEBUG
                 Control.Logger.LogDebug($"LOAD: {factory.ComponentSectionName} to {componentDef.Description.Id}");
+#endif
                 SetCustomComponent(componentDef, component);
             }
 
