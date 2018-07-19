@@ -99,7 +99,7 @@ namespace CustomComponents
         public string ValidateMaximumLocation = "EXCESS {0}: This mech can't mount more then {2} of {1} any location";
 
 
-        [DefaultValue("Cannot use {0} and {1} in same time"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [DefaultValue("Cannot use {0} and {1} together"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string ValidateForbidden = "Cannot use {0} and {1} together";
 
 
