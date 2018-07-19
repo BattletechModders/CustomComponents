@@ -100,7 +100,7 @@ namespace CustomComponents
 
 
         [DefaultValue("Cannot use {0} and {1} in same time"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public string ValidateForbidden = "Cannot use {0} and {1} in same time";
+        public string ValidateForbidden = "Cannot use {0} and {1} together";
 
 
         [JsonIgnore]
