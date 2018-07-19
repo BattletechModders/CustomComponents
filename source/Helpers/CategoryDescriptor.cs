@@ -58,6 +58,9 @@ namespace CustomComponents
         public int MinEquiped = 0;
 
 
+        public string[] Forbidden;
+
+
         [DefaultValue("{0} already installed on mech"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string AddAlreadyEquiped = "{0} already installed on mech";
 
@@ -94,6 +97,11 @@ namespace CustomComponents
 
         [DefaultValue("EXCESS {0}: This mech can't mount more then {2} of {1} any location"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string ValidateMaximumLocation = "EXCESS {0}: This mech can't mount more then {2} of {1} any location";
+
+
+        [DefaultValue("Cannot use {0} and {1} in same time"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public string ValidateForbidden = "Cannot use {0} and {1} in same time";
+
 
         [JsonIgnore]
         public bool Unique

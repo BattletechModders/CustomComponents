@@ -23,7 +23,7 @@ namespace CustomComponents
     /// </summary>
     public static class CategoryController
     {
-
+        //private static List<string> fcache = new List<string>();
 
 
         /// <summary>
@@ -46,6 +46,9 @@ namespace CustomComponents
                                          itemref = item,
                                          mix = def.GetTag()
                                      }).GroupBy(i => i.category).ToDictionary(i => i.Key, i => i.ToList());
+
+
+            //fcache.Clear();
 
             //check each "required" category
             foreach (var category in Control.GetCategories().Where(i => i.Required))
@@ -93,6 +96,19 @@ namespace CustomComponents
                             errors[MechValidationType.InvalidInventorySlots].Add(string.Format(pair.Key.ValidateMaximumLocation,
                                 pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName, pair.Key.MaxEquipedPerLocation));
                 }
+
+                //check forbidden
+                if (pair.Key.Forbidden != null && pair.Key.Forbidden.Length > 0)
+                {
+                    foreach (var item in pair.Key.Forbidden)
+                    {
+                        var category2 = Control.GetCategory(item);
+                        if (items_by_category.ContainsKey(category2))
+                        {
+                            errors[MechValidationType.InvalidInventorySlots].Add(string.Format(pair.Key.ValidateForbidden, pair.Key.DisplayName, category2.DisplayName));
+                        }
+                    }
+                }
             }
         }
 
@@ -103,7 +119,9 @@ namespace CustomComponents
         /// <returns></returns>
         internal static bool ValidateMechCanBeFielded(MechDef mechDef)
         {
+#if CCDEBUG
             Control.Logger.LogDebug($"- Category");
+#endif
             var items_by_category = (from item in mechDef.Inventory
                                      let def = item.Def.GetComponent<Category>()
                                      where def != null
@@ -118,35 +136,46 @@ namespace CustomComponents
             // if all required category present
             foreach (var category in Control.GetCategories().Where(i => i.Required))
             {
+#if CCDEBUG
                 Control.Logger.LogDebug($"-- MinEquiped for {category.displayName}");
-
+#endif
                 if (!items_by_category.ContainsKey(category) || items_by_category[category].Count < category.MinEquiped)
                 {
+#if CCDEBUG
                     Control.Logger.LogDebug($"--- not passed {items_by_category[category].Count}/{category.MinEquiped}");
+#endif
                     return false;
                 }
             }
 
             foreach (var pair in items_by_category)
             {
+#if CCDEBUG
                 Control.Logger.LogDebug($"-- MaxEquiped for {pair.Key.displayName}");
+#endif                
                 // if too many equiped
                 if (pair.Key.MaxEquiped > 0 && pair.Value.Count > pair.Key.MaxEquiped)
                 {
+#if CCDEBUG
                     Control.Logger.LogDebug($"--- not passed {pair.Value.Count}/{pair.Key.MaxEquiped}");
+#endif
                     return false;
                 }
 
                 //if mixed
                 if (!pair.Key.AllowMixTags)
                 {
+#if CCDEBUG
                     Control.Logger.LogDebug($"-- AllowMixTags for {pair.Key.displayName}");
+#endif
                     string def = pair.Value[0].mix;
 
                     bool flag = pair.Value.Any(i => i.mix != def);
                     if (flag)
                     {
+#if CCDEBUG
                         Control.Logger.LogDebug($"--- not passed {def}");
+#endif
                         return false;
                     }
                 }
@@ -154,16 +183,40 @@ namespace CustomComponents
                 // if too many per location
                 if (pair.Key.MaxEquipedPerLocation > 0)
                 {
+#if CCDEBUG
                     Control.Logger.LogDebug($"-- MaxEquipedPerLocation for {pair.Key.displayName}");
+#endif
                     var max = pair.Value.GroupBy(i => i.itemref.MountedLocation).Max(i => i.Count());
                     if (max > pair.Key.MaxEquipedPerLocation)
                     {
+#if CCDEBUG
                         Control.Logger.LogDebug($"--- not passed {max}/{pair.Key.MaxEquipedPerLocation}");
+#endif
                         return false;
                     }
                 }
+
+                if (pair.Key.Forbidden != null && pair.Key.Forbidden.Length > 0)
+                {
+#if CCDEBUG
+                    Control.Logger.LogDebug($"-- forbidden {pair.Key.displayName}");
+#endif
+                    foreach (var item in pair.Key.Forbidden)
+                    {
+                        var category2 = Control.GetCategory(item);
+                        if (items_by_category.ContainsKey(category2))
+                        {
+#if CCDEBUG
+                                   Control.Logger.LogDebug($"--- not passed {item}-{category2.Name}");
+#endif
+                            return false;
+                        }
+                    }
+                }
             }
+#if CCDEBUG
             Control.Logger.LogDebug($"--- all passed");
+#endif
             return true;
         }
 

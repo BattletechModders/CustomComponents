@@ -96,7 +96,7 @@ namespace CustomComponents
                     case "no_salvage":
                         NotSalvagable = true;
                         break;
-                    case "not_brocken":
+                    case "not_broken":
                         NotBroken = true;
                         break;
                     case "not_destroyed":
