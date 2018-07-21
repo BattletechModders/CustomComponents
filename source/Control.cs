@@ -90,6 +90,12 @@ namespace CustomComponents
                 Logger.LogDebug($"Adding new: {category.Name}");
                 Categories.Add(category.Name, category);
             }
+
+            Logger.LogError($"Current Categories");
+            foreach (var categoryDescriptor in Categories)
+            {
+                Logger.LogDebug($" - {categoryDescriptor.Value.Name}");
+            }
         }
 
         public static CategoryDescriptor GetCategory(string name)

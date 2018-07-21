@@ -147,6 +147,10 @@ namespace CustomComponents
             AddMaximumReached = category.AddMaximumReached;
             AddMaximumLocationReached = category.AddMaximumLocationReached;
             AddMixed = category.AddMixed;
+            Forbidden = category.Forbidden;
+            DefaultCustoms = category.DefaultCustoms;
+
+
 
             ValidateRequred = category.ValidateRequred;
             ValidateMinimum = category.ValidateMinimum;
@@ -155,6 +159,7 @@ namespace CustomComponents
             ValidateMaximum = category.ValidateMaximum;
             ValidateUniqueLocation = category.ValidateUniqueLocation;
             ValidateMaximumLocation = category.ValidateMaximumLocation;
+            ValidateForbidden = category.ValidateForbidden;
         }
     }
 }
