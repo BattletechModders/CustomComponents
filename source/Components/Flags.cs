@@ -32,6 +32,8 @@ namespace CustomComponents
         public bool NotDestroyed { get; private set; }
         [JsonIgnore]
         public bool Invalid { get; private set; }
+        [JsonIgnore]
+        public bool DontShowMessage { get; private set; }
 
 
 
@@ -56,7 +58,10 @@ namespace CustomComponents
             error = null;
             if (CannotRemove)
             {
-                error = string.Format(string.IsNullOrEmpty(ErrorCannotRemove) ? "Cannot remove vital component" : ErrorCannotRemove, Def.Description.Name);
+                if (!DontShowMessage)
+                    error = string.Format(
+                         string.IsNullOrEmpty(ErrorCannotRemove) ? "Cannot remove vital component" : ErrorCannotRemove,
+                         Def.Description.Name);
                 return false;
             }
             return true;
@@ -71,6 +76,7 @@ namespace CustomComponents
             NotBroken = false;
             NotDestroyed = false;
             Invalid = false;
+            DontShowMessage = false;
 
             if (flags == null)
             {
@@ -116,6 +122,9 @@ namespace CustomComponents
                     case "invalid":
                         Invalid = true;
                         break;
+                    case "hide_remove_message":
+                        DontShowMessage = true;
+                        break;
                 }
             }
 
@@ -131,7 +140,7 @@ namespace CustomComponents
             if (componentRef.DamageLevel == ComponentDamageLevel.Destroyed && (NotDestroyed || NotBroken))
             {
                 errors[MechValidationType.StructureDestroyed].Add(
-                    string.Format(string.IsNullOrEmpty(ErrorItemBroken) ? "{0} is destroyed, Replace it" : ErrorItemDestroyed, Def.Description.Name));
+                    string.Format(string.IsNullOrEmpty(ErrorItemBroken) ? "{0} is destroyed, replace it" : ErrorItemDestroyed, Def.Description.Name));
             }
 
             if (componentRef.DamageLevel == ComponentDamageLevel.Penalized && NotBroken)
