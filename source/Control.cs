@@ -20,7 +20,7 @@ namespace CustomComponents
 
         internal static ILog Logger;
         private static FileLogAppender logAppender;
-        
+
         internal const string CustomSectionName = "Custom";
 
         public static void Init(string directory, string settingsJSON)
@@ -50,13 +50,17 @@ namespace CustomComponents
                 Validator.RegisterMechValidator(CategoryController.ValidateMech, CategoryController.ValidateMechCanBeFielded);
 
                 Logger.Log("Loaded CustomComponents");
+#if CCDEBUG
                 Logger.LogDebug("Loading Categories");
+#endif  
                 foreach (var categoryDescriptor in Settings.Categories)
                 {
                     AddCategory(categoryDescriptor);
                     Logger.LogDebug(categoryDescriptor.Name + " - " + categoryDescriptor.DisplayName);
                 }
+#if CCDEBUG
                 Logger.LogDebug("done");
+#endif
             }
             catch (Exception e)
             {
@@ -66,10 +70,14 @@ namespace CustomComponents
 
         internal static void AddNewCategory(string category)
         {
+#if CCDEBUG
             Logger.LogDebug($"Create new category: {category}");
+#endif
             if (Categories.TryGetValue(category, out _))
             {
+#if CCDEBUG
                 Logger.LogDebug("Already exist");
+#endif
                 return;
             }
 
@@ -79,23 +87,31 @@ namespace CustomComponents
 
         public static void AddCategory(CategoryDescriptor category)
         {
+#if CCDEBUG
             Logger.LogDebug($"Add Category: {category.Name}");
+#endif
             if (Categories.TryGetValue(category.Name, out var c))
             {
+#if CCDEBUG
                 Logger.LogDebug($"Already have, apply: {category.Name}");
+#endif
                 c.Apply(category);
             }
             else
             {
+#if CCDEBUG
                 Logger.LogDebug($"Adding new: {category.Name}");
+#endif
                 Categories.Add(category.Name, category);
             }
 
-            Logger.LogError($"Current Categories");
+#if CCDEBUG
+            Logger.LogDebug($"Current Categories");
             foreach (var categoryDescriptor in Categories)
             {
                 Logger.LogDebug($" - {categoryDescriptor.Value.Name}");
             }
+#endif
         }
 
         public static CategoryDescriptor GetCategory(string name)
@@ -112,7 +128,7 @@ namespace CustomComponents
             return Categories.Values;
         }
 
-        #region LOGGING
+#region LOGGING
 
         internal static void SetupLogging(string Directory)
         {
@@ -163,6 +179,6 @@ namespace CustomComponents
             }
         }
 
-        #endregion
+#endregion
     }
 }
