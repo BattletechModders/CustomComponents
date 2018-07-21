@@ -22,6 +22,7 @@ namespace CustomComponents
             }
 
             DefaultHelper.AddMechLab(ComponentDefId, Def.ComponentType, new MechLabHelper(mechLab), widget.loadout.Location);
+            Control.Logger.LogDebug($"-- added {ComponentDefId}");
             mechLab.ValidateLoadout(false);
         }
 

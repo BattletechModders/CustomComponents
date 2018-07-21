@@ -37,6 +37,8 @@ namespace CustomComponents
             {
                 grab_handler.OnItemGrabbed(item, ___mechLab, __instance);
             }
+
+            ___mechLab.ValidateLoadout(false);
         }
     }
 }
