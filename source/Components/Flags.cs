@@ -34,6 +34,13 @@ namespace CustomComponents
         public bool Invalid { get; private set; }
 
 
+
+        public string ErrorCannotRemove { get; set; }
+        public string ErrorItemBroken { get; set; }
+        public string ErrorItemDestroyed { get; set; }
+        public string ErrorInvalid { get; set; }
+
+
         public bool CheckFilter(MechLabPanel panel)
         {
             return !HideFromInventory;
@@ -47,9 +54,9 @@ namespace CustomComponents
         public bool OnItemGrab(IMechLabDraggableItem item, MechLabPanel ___mechLab, out string error)
         {
             error = null;
-            if(CannotRemove)
+            if (CannotRemove)
             {
-                error = "Cannot remove vital component";
+                error = string.Format(string.IsNullOrEmpty(ErrorCannotRemove) ? "Cannot remove vital component" : ErrorCannotRemove, Def.Description.Name);
                 return false;
             }
             return true;
@@ -117,17 +124,20 @@ namespace CustomComponents
 
         public void ValidateMech(Dictionary<MechValidationType, List<string>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
         {
-            if(Invalid)
-                errors[MechValidationType.InvalidInventorySlots].Add($"{Def.Description.Name} is placeholder, remove it");
+            if (Invalid)
+                errors[MechValidationType.InvalidInventorySlots].Add(
+                    string.Format(string.IsNullOrEmpty(ErrorInvalid) ? "{0} is placeholder, remove it" : ErrorInvalid, Def.Description.Name));
 
             if (componentRef.DamageLevel == ComponentDamageLevel.Destroyed && (NotDestroyed || NotBroken))
             {
-                errors[MechValidationType.StructureDestroyed].Add($"{Def.Description.Name} is destroyed, Replace it");
+                errors[MechValidationType.StructureDestroyed].Add(
+                    string.Format(string.IsNullOrEmpty(ErrorItemBroken) ? "{0} is destroyed, Replace it" : ErrorItemDestroyed, Def.Description.Name));
             }
 
             if (componentRef.DamageLevel == ComponentDamageLevel.Penalized && NotBroken)
             {
-                errors[MechValidationType.StructureDestroyed].Add($"{Def.Description.Name} is damaged, Repair it");
+                errors[MechValidationType.StructureDestroyed].Add(
+                    string.Format(string.IsNullOrEmpty(ErrorItemBroken) ? "{0} is damaged, repair it" : ErrorItemBroken, Def.Description.Name));
             }
         }
 
