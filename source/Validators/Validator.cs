@@ -109,13 +109,24 @@ namespace CustomComponents
                 .GroupBy(s => s.location)
                 .Select(s => new { location = s.Key, val = s.Sum(i => i.val) });
 
+            Control.Logger.LogDebug($"drop_item={drop_item.ComponentRef.Def.Description.Id}");
             foreach(var location in change_by_location)
             {
+                Control.Logger.LogDebug($"location={location.location}");
+                foreach (var item in mech.Inventory.Where(i => i.MountedLocation == location.location))
+                {
+                    Control.Logger.LogDebug($" mech.Inventory item={item.Def.Description.Id} size={item.Def.InventorySize}");
+                }
+                foreach (var item in new_inventory.Where(i => i.location == location.location))
+                {
+                    Control.Logger.LogDebug($" new_inventory  item={item.item.Def.Description.Id} size={item.item.Def.InventorySize}");
+                }
                 int used = mech.Inventory.Where(i => i.MountedLocation == location.location).Sum(i => i.Def.InventorySize);
                 int max = mech.GetChassisLocationDef(location.location).InventorySlots;
+                Control.Logger.LogDebug($" used={used} location.val={location.val} max={max}");
 
                 if (used + location.val > max)
-                    return $"Cannot add {drop_item.ComponentRef.Def.Description.Name}: Not enought free slots.";
+                    return $"Cannot add {drop_item.ComponentRef.Def.Description.Name}: Not enough free slots.";
             }
             return string.Empty;
         }
