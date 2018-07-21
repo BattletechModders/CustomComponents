@@ -30,6 +30,8 @@ namespace CustomComponents
                 return Tag;
         }
 
+        public bool Placeholder { get; set; } // if true, item is invalid
+
         [JsonIgnore]
         public CategoryDescriptor CategoryDescriptor { get; set; }
 
