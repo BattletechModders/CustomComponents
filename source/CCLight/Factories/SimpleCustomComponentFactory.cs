@@ -13,7 +13,10 @@ namespace CustomComponents
             {
                 obj.Def = target;
                 if (obj is IAfterLoad load)
-                    load.OnLoaded();
+                {
+                    //Control.Logger.LogDebug($"IAfterLoad: {obj.Def.Description.Id}");
+                    load.OnLoaded(values);
+                }
             }
             return obj;
         }

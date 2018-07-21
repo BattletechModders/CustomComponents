@@ -6,6 +6,6 @@ namespace CustomComponents
 {
     interface IAfterLoad
     {
-        void OnLoaded();
+        void OnLoaded(Dictionary<string, object> values);
     }
 }

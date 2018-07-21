@@ -15,14 +15,13 @@ namespace CustomComponents
 {
     public static class Control
     {
-        private static Dictionary<string, CategoryDescriptor> categories = new Dictionary<string, CategoryDescriptor>();
-
-        public static CustomComponentSettings settings = new CustomComponentSettings();
-
+        private static readonly Dictionary<string, CategoryDescriptor> Categories = new Dictionary<string, CategoryDescriptor>();
+        public static CustomComponentSettings Settings = new CustomComponentSettings();
 
         internal static ILog Logger;
         private static FileLogAppender logAppender;
-
+        
+        internal const string CustomSectionName = "Custom";
 
         public static void Init(string directory, string settingsJSON)
         {
@@ -32,34 +31,32 @@ namespace CustomComponents
 
                 try
                 {
-                    settings = JsonConvert.DeserializeObject<CustomComponentSettings>(settingsJSON);
+                    Settings = JsonConvert.DeserializeObject<CustomComponentSettings>(settingsJSON);
+                    HBS.Logging.Logger.SetLoggerLevel(Logger.Name, Settings.LogLevel);
                 }
                 catch (Exception)
                 {
-                    settings = new CustomComponentSettings();
+                    Settings = new CustomComponentSettings();
                 }
-
-
+                
                 SetupLogging(directory);
 
                 var harmony = HarmonyInstance.Create("io.github.denadan.CustomComponents");
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
 
-
+                // make sure category is always run first, as it contains default customs
+                Registry.RegisterSimpleCustomComponents(typeof(Category));
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
                 Validator.RegisterMechValidator(CategoryController.ValidateMech, CategoryController.ValidateMechCanBeFielded);
 
-
                 Logger.Log("Loaded CustomComponents");
                 Logger.LogDebug("Loading Categories");
-                foreach (var categoryDescriptor in settings.Categories)
+                foreach (var categoryDescriptor in Settings.Categories)
                 {
                     AddCategory(categoryDescriptor);
                     Logger.LogDebug(categoryDescriptor.Name + " - " + categoryDescriptor.DisplayName);
                 }
                 Logger.LogDebug("done");
-
-
             }
             catch (Exception e)
             {
@@ -70,20 +67,20 @@ namespace CustomComponents
         internal static void AddNewCategory(string category)
         {
             Logger.LogDebug($"Create new category: {category}");
-            if (categories.TryGetValue(category, out _))
+            if (Categories.TryGetValue(category, out _))
             {
                 Logger.LogDebug("Already exist");
                 return;
             }
 
             var c = new CategoryDescriptor { Name = category };
-            categories.Add(category, c);
+            Categories.Add(category, c);
         }
 
         public static void AddCategory(CategoryDescriptor category)
         {
             Logger.LogDebug($"Add Category: {category.Name}");
-            if (categories.TryGetValue(category.Name, out var c))
+            if (Categories.TryGetValue(category.Name, out var c))
             {
                 Logger.LogDebug($"Already have, apply: {category.Name}");
                 c.Apply(category);
@@ -91,22 +88,22 @@ namespace CustomComponents
             else
             {
                 Logger.LogDebug($"Adding new: {category.Name}");
-                categories.Add(category.Name, category);
+                Categories.Add(category.Name, category);
             }
         }
 
         public static CategoryDescriptor GetCategory(string name)
         {
-            if (categories.TryGetValue(name, out var c))
+            if (Categories.TryGetValue(name, out var c))
                 return c;
             c = new CategoryDescriptor { Name = name };
-            categories.Add(name, c);
+            Categories.Add(name, c);
             return c;
         }
 
         public static IEnumerable<CategoryDescriptor> GetCategories()
         {
-            return categories.Values;
+            return Categories.Values;
         }
 
         #region LOGGING

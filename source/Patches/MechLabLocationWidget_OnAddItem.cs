@@ -9,20 +9,14 @@ namespace CustomComponents
     [HarmonyPatch(typeof(MechLabLocationWidget), "OnAddItem")]
     public static class MechLabLocationWidget_OnAddItem_Patch
     {
-        public static void Postfix(IMechLabDraggableItem item, MechLabLocationWidget __instance, List<MechLabItemSlotElement> ___localInventory, Transform ___inventoryParent)
+        public static void Postfix(IMechLabDraggableItem item, List<MechLabItemSlotElement> ___localInventory)
         {
-            if(item.ComponentRef.Def == null || !item.ComponentRef.Def.Is<Sorter>(out var sorter))
+            if (item.ComponentRef?.Def == null || !item.ComponentRef.Def.Is<Sorter>())
+            {
                 return;
-            
-            if(sorter.Order < 0 || sorter.Order >= ___localInventory.Count)
-                return;
+            }
 
-            var element = item as MechLabItemSlotElement;
-
-            ___localInventory.Remove(element);
-            ___localInventory.Insert(sorter.Order, element);
-            item.GameObject.transform.SetSiblingIndex(sorter.Order);
-
+            MechLabLocationWidget_SetData_Patch.Sorter.SortWidgetInventory(___localInventory);
         }
     }
 }

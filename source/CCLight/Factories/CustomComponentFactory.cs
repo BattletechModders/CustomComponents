@@ -10,13 +10,11 @@ namespace CustomComponents
     public class CustomComponentFactory<TCustomComponent> : ICustomComponentFactory
         where TCustomComponent : class, ICustomComponent, new()
     {
-        private const string CustomSectionName = "Custom";
-
         public string ComponentSectionName { get; set; }
 
         public virtual ICustomComponent Create(MechComponentDef target, Dictionary<string, object> values)
         {
-            if (!values.TryGetValue(CustomSectionName, out var customSettingsObject))
+            if (!values.TryGetValue(Control.CustomSectionName, out var customSettingsObject))
             {
                 return null;
             }
