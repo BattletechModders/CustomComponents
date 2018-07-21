@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CustomComponents
 {
-    interface IAfterLoad
+    public interface IAfterLoad
     {
         void OnLoaded(Dictionary<string, object> values);
     }
