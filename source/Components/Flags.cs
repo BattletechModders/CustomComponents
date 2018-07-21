@@ -30,6 +30,9 @@ namespace CustomComponents
         public bool NotBroken { get; private set; }
         [JsonIgnore]
         public bool NotDestroyed { get; private set; }
+        [JsonIgnore]
+        public bool Invalid { get; private set; }
+
 
         public bool CheckFilter(MechLabPanel panel)
         {
@@ -60,6 +63,7 @@ namespace CustomComponents
             NotSalvagable = false;
             NotBroken = false;
             NotDestroyed = false;
+            Invalid = false;
 
             if (flags == null)
             {
@@ -102,6 +106,9 @@ namespace CustomComponents
                     case "not_destroyed":
                         NotDestroyed = true;
                         break;
+                    case "invalid":
+                        Invalid = true;
+                        break;
                 }
             }
 
@@ -110,6 +117,9 @@ namespace CustomComponents
 
         public void ValidateMech(Dictionary<MechValidationType, List<string>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
         {
+            if(Invalid)
+                errors[MechValidationType.InvalidInventorySlots].Add($"{Def.Description.Name} is placeholder, remove it");
+
             if (componentRef.DamageLevel == ComponentDamageLevel.Destroyed && (NotDestroyed || NotBroken))
             {
                 errors[MechValidationType.StructureDestroyed].Add($"{Def.Description.Name} is destroyed, Replace it");
@@ -123,6 +133,9 @@ namespace CustomComponents
 
         public bool ValidateMechCanBeFielded(MechDef mechDef, MechComponentRef componentRef)
         {
+            if (Invalid)
+                return false;
+
             if (NotDestroyed && componentRef.DamageLevel == ComponentDamageLevel.Destroyed)
                 return false;
 

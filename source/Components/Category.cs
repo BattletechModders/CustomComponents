@@ -30,7 +30,7 @@ namespace CustomComponents
                 return Tag;
         }
 
-        public bool Placeholder { get; set; } // if true, item is invalid
+ //       public bool Placeholder { get; set; } // if true, item is invalid
 
         [JsonIgnore]
         public CategoryDescriptor CategoryDescriptor { get; set; }
@@ -44,6 +44,7 @@ namespace CustomComponents
                 return;
             }
             var customSection = (Dictionary<string, object>) values[Control.CustomSectionName];
+
             foreach (var customPair in CategoryDescriptor.DefaultCustoms)
             {
                 if (!customSection.ContainsKey(customPair.Key))

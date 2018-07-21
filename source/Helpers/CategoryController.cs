@@ -38,7 +38,7 @@ namespace CustomComponents
 
             var items_by_category = (from item in mechDef.Inventory
                                      let def = item.Def.GetComponent<Category>()
-                                     where def != null && !def.Placeholder
+                                     where def != null /// && !def.Placeholder
                                      select new
                                      {
                                          category = def.CategoryDescriptor,
