@@ -52,7 +52,7 @@ namespace CustomComponents
             return true;
         }
 
-        public virtual void OnLoaded()
+        public virtual void OnLoaded(Dictionary<string, object> values)
         {
             CannotRemove = false;
             AutoRepair = false;

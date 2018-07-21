@@ -33,9 +33,24 @@ namespace CustomComponents
         [JsonIgnore]
         public CategoryDescriptor CategoryDescriptor { get; set; }
 
-        public void OnLoaded()
+        public void OnLoaded(Dictionary<string, object> values)
         {
             CategoryDescriptor = Control.GetCategory(CategoryID);
+
+            if (CategoryDescriptor.DefaultCustoms == null)
+            {
+                return;
+            }
+            var customSection = (Dictionary<string, object>) values[Control.CustomSectionName];
+            foreach (var customPair in CategoryDescriptor.DefaultCustoms)
+            {
+                if (!customSection.ContainsKey(customPair.Key))
+                {
+                    customSection[customPair.Key] = customPair.Value;
+
+                    //Control.Logger.LogDebug($"{Def.Description.Id} added {customPair.Key}");
+                }
+            }
         }
 
         public void OnInstalled(WorkOrderEntry_InstallComponent order, SimGameState state, MechDef mech)

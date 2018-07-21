@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using Newtonsoft.Json;
 
@@ -60,6 +61,7 @@ namespace CustomComponents
 
         public string[] Forbidden;
 
+        public Dictionary<string, object> DefaultCustoms = null;
 
         [DefaultValue("{0} already installed on mech"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string AddAlreadyEquiped = "{0} already installed on mech";

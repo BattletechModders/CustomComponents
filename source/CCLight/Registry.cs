@@ -29,18 +29,32 @@ namespace CustomComponents
 
         public static void RegisterSimpleCustomComponents(Assembly assembly)
         {
+            RegisterSimpleCustomComponents(assembly.GetTypes());
+        }
+
+        public static void RegisterSimpleCustomComponents(params Type[] types)
+        {
             var sccType = typeof(SimpleCustomComponent);
-            foreach (var type in assembly.GetTypes().Where(t => sccType.IsAssignableFrom(t)))
+            foreach (var type in types.Where(t => sccType.IsAssignableFrom(t)))
             {
-                var custom_attribute = type.GetCustomAttributes(false).OfType<CustomComponentAttribute>().FirstOrDefault();
-                if (custom_attribute == null)
+                var customAttribute = type.GetCustomAttributes(false).OfType<CustomComponentAttribute>().FirstOrDefault();
+                if (customAttribute == null)
+                {
                     continue;
+                }
+
+                var name = customAttribute.Name;
+                if (Factories.Any(f => f.ComponentSectionName == name))
+                {
+                    continue;
+                }
 
                 var factoryGenericType = typeof(SimpleCustomComponentFactory<>);
                 var genericTypes = new[] { type };
                 var factoryType = factoryGenericType.MakeGenericType(genericTypes);
                 var factory = Activator.CreateInstance(factoryType) as ICustomComponentFactory;
-                factory.ComponentSectionName = custom_attribute.Name;
+                // ReSharper disable once PossibleNullReferenceException
+                factory.ComponentSectionName = name;
                 Factories.Add(factory);
             }
         }
@@ -70,9 +84,8 @@ namespace CustomComponents
                 {
                     continue;
                 }
-#if CCDEBUG
-                Control.Logger.LogDebug($"LOAD: {factory.ComponentSectionName} to {componentDef.Description.Id}");
-#endif
+
+                //Control.Logger.LogDebug($"Created {factory.ComponentSectionName} for {componentDef.Description.Id}");
                 SetCustomComponent(componentDef, component);
             }
 

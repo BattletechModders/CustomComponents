@@ -15,7 +15,7 @@ namespace CustomComponents
 
         public static void Prefix(object target, Dictionary<string, object> values)
         {
-            if (!Control.settings.TestEnableAllTags)
+            if (!Control.Settings.TestEnableAllTags)
             {
                 return;
             }
