@@ -1,4 +1,5 @@
-﻿using BattleTech.UI;
+﻿using System;
+using BattleTech.UI;
 using Harmony;
 
 namespace CustomComponents
@@ -8,16 +9,26 @@ namespace CustomComponents
     {
         public static bool Prefix(InventoryItemElement theWidget, ListElementController_SalvageGear_NotListView __instance)
         {
-            if (__instance.salvageDef.MechComponentDef.Is<ColorComponent>(out var color))
+            if (__instance.salvageDef.MechComponentDef == null)
+                return true;
+            try
             {
-                var uicolor = color.UIColor;
-                foreach (UIColorRefTracker uicolorRefTracker in theWidget.iconBGColors)
+                if (__instance.salvageDef.MechComponentDef.Is<ColorComponent>(out var color))
                 {
-                    uicolorRefTracker.SetUIColor(uicolor);
-                }
+                    var uicolor = color.UIColor;
+                    foreach (UIColorRefTracker uicolorRefTracker in theWidget.iconBGColors)
+                    {
+                        uicolorRefTracker.SetUIColor(uicolor);
+                    }
 
-                return false;
+                    return false;
+                }
             }
+            catch (Exception e)
+            {
+                Control.Logger.LogError("Salvage coloring problem!", e);
+            }
+
             return true;
         }
     }
