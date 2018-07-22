@@ -17,7 +17,7 @@ namespace CustomComponents
                 Control.Logger.LogDebug($"-- no replacement, skipping");
                 return;
             }
-
+            Control.Logger.LogDebug($"-- {widget}");
             DefaultHelper.AddMechLab(ComponentDefId, Def.ComponentType, new MechLabHelper(mechLab), widget.loadout.Location);
             Control.Logger.LogDebug($"-- added {ComponentDefId}");
             mechLab.ValidateLoadout(false);

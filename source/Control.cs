@@ -1,12 +1,10 @@
-﻿using Harmony;
+﻿#undef CCDEBUG
+
+using Harmony;
 using System;
 using System.Reflection;
-using System.Linq;
 using System.Collections.Generic;
 using System.IO;
-using BattleTech.Data;
-using System.Text.RegularExpressions;
-using BattleTech;
 using HBS.Logging;
 using Newtonsoft.Json;
 
@@ -49,7 +47,7 @@ namespace CustomComponents
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
                 Validator.RegisterMechValidator(CategoryController.ValidateMech, CategoryController.ValidateMechCanBeFielded);
 
-                Logger.Log("Loaded CustomComponents");
+                Logger.Log("Loaded CustomComponents v0.5.5.4");
 #if CCDEBUG
                 Logger.LogDebug("Loading Categories");
 #endif  

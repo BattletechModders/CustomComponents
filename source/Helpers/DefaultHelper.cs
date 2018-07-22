@@ -76,6 +76,7 @@ namespace CustomComponents
 
         public static void AddMechLab(string id, ComponentType type, MechLabHelper mechLab, ChassisLocations location)
         {
+            Control.Logger.LogDebug($"DefaultHelper.AddMechLab: adding {id} to {location}");
 
             var target = mechLab.GetLocationWidget(location);
             if (target == null)
@@ -126,6 +127,7 @@ namespace CustomComponents
             var component = item.ComponentRef.Def;
 
             repair_state = true;
+            repair_widget = widget;
 
             if (component.Is<Flags>(out var f) && f.AutoRepair)
             {
@@ -137,7 +139,6 @@ namespace CustomComponents
                 return true;
             }
 
-            repair_widget = widget;
 
 
             var mechlab = widget.parentDropTarget as MechLabPanel;
@@ -155,13 +156,23 @@ namespace CustomComponents
 
         internal static void ForceItemDropRepair(this MechLabPanel mechlab, MechLabItemSlotElement item)
         {
-            if (repair_state)
+            try
             {
-                foreach (var validator in item.ComponentRef.Def.GetComponents<IOnItemGrabbed>())
+
+                Control.Logger.Log($"Repair-Remove for {item.ComponentRef.ComponentDefID}");
+                if (repair_state)
                 {
-                    validator.OnItemGrabbed(item, mechlab, strip_widget);
+                    foreach (var validator in item.ComponentRef.Def.GetComponents<IOnItemGrabbed>())
+                    {
+                        Control.Logger.Log($" -  {validator.GetType()}");
+                        validator.OnItemGrabbed(item, mechlab, repair_widget);
+                    }
+                    mechlab.ForceItemDrop(item);
                 }
-                mechlab.ForceItemDrop(item);
+            }
+            catch (Exception e)
+            {
+                Control.Logger.Log($"ERROR", e);
             }
         }
         #endregion
