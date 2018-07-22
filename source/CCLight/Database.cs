@@ -94,6 +94,10 @@ namespace CustomComponents
                 CustomComponents[key] = ccs;
             }
 
+            var old = ccs.FirstOrDefault(i => i.GetType() == cc.GetType());
+            if (old != null)
+                ccs.Remove(old);
+
             ccs.Add(cc);
         }
 
