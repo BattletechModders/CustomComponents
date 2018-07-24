@@ -12,12 +12,31 @@ namespace CustomComponents
         internal static readonly Dictionary<string, List<ICustomComponent>> CustomComponents
             = new Dictionary<string, List<ICustomComponent>>();
 
-        private static GameInstance game;
+        public static DataManager DataManager { get; internal set; }
 
-        internal static T GetCustomComponent<T>(MechComponentDef def)
+
+        public static MechComponentDef RefreshDef(string id, ComponentType type)
         {
-            var key = Key(def);
+            switch (type)
+            {
+                case ComponentType.Weapon:
+                    return DataManager.WeaponDefs.Get(id);
+                case ComponentType.AmmunitionBox:
+                    return DataManager.AmmoBoxDefs.Get(id);
+                case ComponentType.HeatSink:
+                    return DataManager.HeatSinkDefs.Get(id);
+                case ComponentType.JumpJet:
+                    return DataManager.JumpJetDefs.Get(id);
+                case ComponentType.Upgrade:
+                    return DataManager.UpgradeDefs.Get(id);
 
+                default:
+                    return null;
+            }
+        }
+
+        public static T GetCustomComponent<T>(string key)
+        {
             if (!CustomComponents.TryGetValue(key, out var ccs))
             {
                 return default(T);
@@ -26,62 +45,60 @@ namespace CustomComponents
             return ccs.OfType<T>().FirstOrDefault();
         }
 
-        internal static IEnumerable<T> GetCustomComponents<T>(MechComponentDef def)
-        {
-            var key = Key(def);
+        
 
+        public static IEnumerable<T> GetCustomComponents<T>(string key)
+        {
             if (!CustomComponents.TryGetValue(key, out var ccs))
             {
                 return Enumerable.Empty<T>();
             }
 
             return ccs.OfType<T>();
+        }
+
+
+        internal static T GetCustomComponent<T>(MechComponentDef def)
+        {
+            return GetCustomComponent<T>(Key(def));
+        }
+
+        internal static IEnumerable<T> GetCustomComponents<T>(MechComponentDef def)
+        {
+            return GetCustomComponents<T>(Key(def));
         }
 
         internal static T GetCustomComponent<T>(MechComponentRef cref)
         {
 
-            if (cref.Def == null)
-            {
-                if (cref.DataManager == null)
-                {
-                    if (game.DataManager != null)
-                    {
-                        cref.DataManager = game.DataManager;
-                        cref.RefreshComponentDef();
-                    }
-                    else
-                    {
-                        Control.Logger.Log("No datamanager found!");
-                    }
-                }
-                else
-                    cref.RefreshComponentDef();
-            }
+            //if (cref.Def == null)
+            //{
+            //    if (cref.DataManager == null)
+            //    {
+            //        if (game.DataManager != null)
+            //        {
+            //            cref.DataManager = game.DataManager;
+            //            cref.RefreshComponentDef();
+            //        }
+            //        else
+            //        {
+            //            Control.Logger.Log("No datamanager found!");
+            //        }
+            //    }
+            //    else
+            //        cref.RefreshComponentDef();
+            //}
 
-            var key = Key(cref);
+            return GetCustomComponent<T>(Key(cref));
 
-            if (!CustomComponents.TryGetValue(key, out var ccs))
-            {
-                return default(T);
-            }
-
-            return ccs.OfType<T>().FirstOrDefault();
         }
 
-        internal static IEnumerable<T> GetCustomComponents<T>(MechComponentRef @ref)
+        internal static IEnumerable<T> GetCustomComponents<T>(MechComponentRef cref)
         {
-            if (@ref.Def == null)
-                @ref.RefreshComponentDef();
+            //if (@ref.Def == null)
+            //    @ref.RefreshComponentDef();
 
-            var key = Key(@ref);
-
-            if (!CustomComponents.TryGetValue(key, out var ccs))
-            {
-                return Enumerable.Empty<T>();
-            }
-
-            return ccs.OfType<T>();
+            return GetCustomComponents<T>(Key(cref));
         }
 
         internal static void SetCustomComponent(MechComponentDef def, ICustomComponent cc)
@@ -111,9 +128,5 @@ namespace CustomComponents
             return @ref.ComponentDefID;
         }
 
-        internal static void setDataManager(GameInstance value)
-        {
-            game = value;
-        }
     }
 }
