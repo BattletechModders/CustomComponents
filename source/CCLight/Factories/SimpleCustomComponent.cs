@@ -14,13 +14,13 @@ namespace CustomComponents
         private string id;
 
        [JsonIgnore]
-        public MechComponentDef Def
+        public MechComponentDef Def// { get; internal set; }
         {
             get
             {
                 if (_def == null)
                     return null;
-                if(!_def.IsAlive)
+                if (!_def.IsAlive)
                 {
                     var def = Database.RefreshDef(id, type);
                     if (def == null)
@@ -37,7 +37,7 @@ namespace CustomComponents
                     _def = null;
                     id = "";
                     type = ComponentType.NotSet;
-                } 
+                }
                 else
                 {
                     _def = new WeakReference(value);

@@ -71,23 +71,23 @@ namespace CustomComponents
         internal static T GetCustomComponent<T>(MechComponentRef cref)
         {
 
-            //if (cref.Def == null)
-            //{
-            //    if (cref.DataManager == null)
-            //    {
-            //        if (game.DataManager != null)
-            //        {
-            //            cref.DataManager = game.DataManager;
-            //            cref.RefreshComponentDef();
-            //        }
-            //        else
-            //        {
-            //            Control.Logger.Log("No datamanager found!");
-            //        }
-            //    }
-            //    else
-            //        cref.RefreshComponentDef();
-            //}
+            if (cref.Def == null)
+            {
+                if (cref.DataManager == null)
+                {
+                    if (DataManager != null)
+                    {
+                        cref.DataManager = DataManager;
+                        cref.RefreshComponentDef();
+                    }
+                    else
+                    {
+                        Control.Logger.LogError("No datamanager found!");
+                    }
+                }
+                else
+                    cref.RefreshComponentDef();
+            }
 
             return GetCustomComponent<T>(Key(cref));
 

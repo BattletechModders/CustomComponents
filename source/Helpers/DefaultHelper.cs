@@ -61,7 +61,6 @@ namespace CustomComponents
         public static MechLabItemSlotElement CreateSlot(string id, ComponentType type, MechLabPanel mechLab)
         {
             var component_ref = new MechComponentRef(id, string.Empty, type, ChassisLocations.None);
-            component_ref.DataManager = mechLab.dataManager;
 
             if (!component_ref.IsDefault())
             {

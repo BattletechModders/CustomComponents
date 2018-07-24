@@ -13,13 +13,11 @@ namespace CustomComponents
             if (def.ComponentType == ComponentType.MechPart)
                 return true;
 
-            if (def.MechComponentDef == null)
-            {
-                Control.Logger.Log($"AddToFinalSalvage: Def is null {def}");
-                return true;
-            }
+            var flags = Database.GetCustomComponent<Flags>(def.Description.Id);
 
-            return !(def.MechComponentDef.Is<Flags>(out var f) && f.NotSalvagable);
+            //Control.Logger.LogDebug($"AddToFinalSalvage: {def.Description.Id}, Salvagable:{flags == null || !flags.NotSalvagable}");
+
+            return flags == null || !flags.NotSalvagable;
         }
     }
 
@@ -28,8 +26,9 @@ namespace CustomComponents
     {
         public static bool Prefix(MechComponentDef def)
         {
-            Control.Logger.LogDebug(def.Description.Id);
-            return !(def.Is<Flags>(out var f) && f.NotSalvagable);
+            var flags = def.GetComponent<Flags>();
+            //Control.Logger.LogDebug($"salvage: {def.Description.Id}   Flags null:{flags == null}  Default:{flags!= null && flags.Default}  Salvagabe:{flags != null && flags.NotSalvagable}");
+            return !(flags!= null && flags.NotSalvagable);
         }
     }
 }

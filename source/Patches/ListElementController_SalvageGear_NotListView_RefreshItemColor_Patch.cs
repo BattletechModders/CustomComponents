@@ -9,11 +9,13 @@ namespace CustomComponents
     {
         public static bool Prefix(InventoryItemElement theWidget, ListElementController_SalvageGear_NotListView __instance)
         {
-            if (__instance.salvageDef.MechComponentDef == null)
+            if (__instance.salvageDef.MechComponentDef == null || __instance.salvageDef.Description == null)
                 return true;
             try
             {
-                if (__instance.salvageDef.MechComponentDef.Is<ColorComponent>(out var color))
+                var color = Database.GetCustomComponent<ColorComponent>(__instance.salvageDef.Description.Id);
+
+                if (color != null)
                 {
                     var uicolor = color.UIColor;
                     foreach (UIColorRefTracker uicolorRefTracker in theWidget.iconBGColors)
