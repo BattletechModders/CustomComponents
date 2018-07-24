@@ -67,10 +67,20 @@ namespace CustomComponents
 
         internal static void ProcessCustomCompontentFactories(object target, Dictionary<string, object> values)
         {
+
             if (!(target is MechComponentDef componentDef))
             {
                 return;
             }
+            Control.Logger.LogDebug($"ProcessCustomCompontentFactories for {target.GetType()}");
+            Control.Logger.LogDebug($"- {componentDef.Description.Id}");
+
+            if (Database.AlreadyLoaded(componentDef))
+            {
+                Control.Logger.LogDebug("- already loaded - return");
+                return;
+            }
+            Control.Logger.LogDebug("- continue");
 
             foreach (var preProcessor in PreProcessors)
             {
@@ -85,7 +95,7 @@ namespace CustomComponents
                     continue;
                 }
 
-                //Control.Logger.LogDebug($"Created {factory.ComponentSectionName} for {componentDef.Description.Id}");
+                Control.Logger.LogDebug($"-- Created {factory.ComponentSectionName} for {componentDef.Description.Id}");
                 SetCustomComponent(componentDef, component);
             }
 
@@ -93,6 +103,7 @@ namespace CustomComponents
             {
                 postProcessor.PostProcess(componentDef, values);
             }
+            Control.Logger.LogDebug("- done");
         }
     }
 }

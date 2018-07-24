@@ -115,5 +115,13 @@ namespace CustomComponents
         {
             game = value;
         }
+
+        public static bool AlreadyLoaded(MechComponentDef componentDef)
+        {
+            if (componentDef == null)
+                return false;
+
+            return CustomComponents.TryGetValue(Key(componentDef), out _);
+        }
     }
 }
