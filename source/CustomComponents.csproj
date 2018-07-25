@@ -72,9 +72,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CCLight\DataManagerPerfomance\DataManager_Clear_Patch.cs" />
+    <Compile Include="CCLight\DataManagerPerfomance\DataManager_GraduateBackgroundRequest_Patch.cs" />
+    <Compile Include="CCLight\DataManagerPerfomance\DataManager_NotifyFileLoaded_Patch.cs" />
+    <Compile Include="CCLight\DataManagerPerfomance\DataManager_RequestResource_Internal_Patch.cs" />
+    <Compile Include="CCLight\DataManagerPerfomance\DMPHelper.cs" />
     <Compile Include="CCLight\Factories\IPostProcessor.cs" />
     <Compile Include="CCLight\Factories\IPreProcessor.cs" />
-    <Compile Include="CCLight\Patches\GameInstance_Constructor_Patch_noarg.cs" />
     <Compile Include="Components\Sorter.cs" />
     <Compile Include="DropResults\IChange.cs" />
     <Compile Include="DropResults\InvItem.cs" />

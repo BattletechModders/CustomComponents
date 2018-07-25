@@ -12,7 +12,11 @@ namespace CustomComponents
         internal static readonly Dictionary<string, List<ICustomComponent>> CustomComponents
             = new Dictionary<string, List<ICustomComponent>>();
 
-        public static DataManager DataManager { get; internal set; }
+        //public static DataManager DataManager
+        //{
+        //    get;
+        //    internal set;
+        //}
 
 
         public static MechComponentDef RefreshDef(string id, ComponentType type)
@@ -20,15 +24,15 @@ namespace CustomComponents
             switch (type)
             {
                 case ComponentType.Weapon:
-                    return DataManager.WeaponDefs.Get(id);
+                    return UnityGameInstance.BattleTechGame.DataManager.WeaponDefs.Get(id);
                 case ComponentType.AmmunitionBox:
-                    return DataManager.AmmoBoxDefs.Get(id);
+                    return UnityGameInstance.BattleTechGame.DataManager.AmmoBoxDefs.Get(id);
                 case ComponentType.HeatSink:
-                    return DataManager.HeatSinkDefs.Get(id);
+                    return UnityGameInstance.BattleTechGame.DataManager.HeatSinkDefs.Get(id);
                 case ComponentType.JumpJet:
-                    return DataManager.JumpJetDefs.Get(id);
+                    return UnityGameInstance.BattleTechGame.DataManager.JumpJetDefs.Get(id);
                 case ComponentType.Upgrade:
-                    return DataManager.UpgradeDefs.Get(id);
+                    return UnityGameInstance.BattleTechGame.DataManager.UpgradeDefs.Get(id);
 
                 default:
                     return null;
@@ -73,20 +77,12 @@ namespace CustomComponents
 
             if (cref.Def == null)
             {
-                if (cref.DataManager == null)
+                if (cref.Def == null)
                 {
-                    if (DataManager != null)
-                    {
-                        cref.DataManager = DataManager;
-                        cref.RefreshComponentDef();
-                    }
-                    else
-                    {
-                        Control.Logger.LogError("No datamanager found!");
-                    }
-                }
-                else
+                    if (cref.DataManager == null)
+                        cref.DataManager = UnityGameInstance.BattleTechGame.DataManager;
                     cref.RefreshComponentDef();
+                }
             }
 
             return GetCustomComponent<T>(Key(cref));
@@ -95,8 +91,12 @@ namespace CustomComponents
 
         internal static IEnumerable<T> GetCustomComponents<T>(MechComponentRef cref)
         {
-            //if (@ref.Def == null)
-            //    @ref.RefreshComponentDef();
+            if (cref.Def == null)
+            {
+                if (cref.DataManager == null)
+                    cref.DataManager = UnityGameInstance.BattleTechGame.DataManager;
+                 cref.RefreshComponentDef();
+            }
 
             return GetCustomComponents<T>(Key(cref));
         }

@@ -13,7 +13,7 @@ namespace CustomComponents
         [JsonIgnore]
         private string id;
 
-       [JsonIgnore]
+        [JsonIgnore]
         public MechComponentDef Def// { get; internal set; }
         {
             get

@@ -72,15 +72,15 @@ namespace CustomComponents
             {
                 return;
             }
-            Control.Logger.LogDebug($"ProcessCustomCompontentFactories for {target.GetType()}");
-            Control.Logger.LogDebug($"- {componentDef.Description.Id}");
+            //Control.Logger.LogDebug($"ProcessCustomCompontentFactories for {target.GetType()}");
+            //Control.Logger.LogDebug($"- {componentDef.Description.Id}");
 
             if (Database.AlreadyLoaded(componentDef))
             {
-                Control.Logger.LogDebug("- already loaded - return");
+                //Control.Logger.LogDebug("- already loaded - return");
                 return;
             }
-            Control.Logger.LogDebug("- continue");
+            //Control.Logger.LogDebug("- continue");
 
             foreach (var preProcessor in PreProcessors)
             {
@@ -95,7 +95,7 @@ namespace CustomComponents
                     continue;
                 }
 
-                Control.Logger.LogDebug($"-- Created {factory.ComponentSectionName} for {componentDef.Description.Id}");
+                //Control.Logger.LogDebug($"-- Created {factory.ComponentSectionName} for {componentDef.Description.Id}");
                 SetCustomComponent(componentDef, component);
             }
 
@@ -103,7 +103,7 @@ namespace CustomComponents
             {
                 postProcessor.PostProcess(componentDef, values);
             }
-            Control.Logger.LogDebug("- done");
+            //Control.Logger.LogDebug("- done");
         }
     }
 }
