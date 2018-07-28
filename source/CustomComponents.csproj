@@ -79,6 +79,8 @@
     <Compile Include="CCLight\DataManagerPerfomance\DMPHelper.cs" />
     <Compile Include="CCLight\Factories\IPostProcessor.cs" />
     <Compile Include="CCLight\Factories\IPreProcessor.cs" />
+    <Compile Include="Components\RequieredCategory.cs" />
+    <Compile Include="Components\RequieredID.cs" />
     <Compile Include="Components\Sorter.cs" />
     <Compile Include="DropResults\IChange.cs" />
     <Compile Include="DropResults\InvItem.cs" />

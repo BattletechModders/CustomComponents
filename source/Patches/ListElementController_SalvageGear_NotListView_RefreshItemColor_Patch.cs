@@ -28,7 +28,8 @@ namespace CustomComponents
             }
             catch (Exception e)
             {
-                Control.Logger.LogError("Salvage coloring problem!", e);
+                //Control.Logger.LogError("Salvage coloring problem!", e);
+                return false;
             }
 
             return true;
