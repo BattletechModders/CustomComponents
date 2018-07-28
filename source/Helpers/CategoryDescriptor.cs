@@ -42,6 +42,10 @@ namespace CustomComponents
         [DefaultValue(false), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public bool AutoReplace = false;
 
+
+        [DefaultValue(false), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public bool ReplaceAnyLocation = false;
+
         /// <summary>
         /// max of items per mech
         /// </summary>

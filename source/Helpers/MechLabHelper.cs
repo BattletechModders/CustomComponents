@@ -1,4 +1,5 @@
-﻿using BattleTech;
+﻿using System.Collections.Generic;
+using BattleTech;
 using BattleTech.UI;
 using Harmony;
 
@@ -11,6 +12,19 @@ namespace CustomComponents
 
         private Traverse main;
         private Traverse drag_item;
+
+        public IEnumerable<MechLabLocationWidget> GetWidgets()
+        {
+            yield return MechLab.headWidget;
+            yield return MechLab.leftArmWidget;
+            yield return MechLab.leftTorsoWidget;
+            yield return MechLab.centerTorsoWidget;
+            yield return MechLab.rightTorsoWidget;
+            yield return MechLab.rightArmWidget;
+            yield return MechLab.leftLegWidget;
+            yield return MechLab.rightLegWidget;
+        }
+
 
         public MechLabLocationWidget GetLocationWidget(ChassisLocations location)
         {

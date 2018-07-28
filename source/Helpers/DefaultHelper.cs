@@ -85,6 +85,7 @@ namespace CustomComponents
             }
 
             var slot = CreateSlot(id, type, mechLab.MechLab);
+            slot.MountedLocation = location;
             target.OnAddItem(slot, false);
         }
 
@@ -246,7 +247,11 @@ namespace CustomComponents
                 if (list[i].Is<AutoReplace>(out var replace))
                 {
                     var ref_item = CreateRef(replace.ComponentDefId, list[i].ComponentDefType, list[i].DataManager, state);
-                    ref_item.SetData(list[i].MountedLocation, list[i].HardpointSlot, list[i].DamageLevel);
+                    var location = replace.Location == ChassisLocations.None
+                        ? list[i].MountedLocation
+                        : replace.Location;
+
+                    ref_item.SetData(location, list[i].HardpointSlot, list[i].DamageLevel);
                     ref_item.SetSimGameUID(state.GenerateSimGameUID());
                     result_list.Add(ref_item);
                     Control.Logger.LogDebug($"-- Replace with {ref_item.ComponentDefID} - {ref_item.SimGameUID}");

@@ -73,7 +73,7 @@ namespace CustomComponents
                 List<IChange> changes = new List<IChange>();
                 changes.Add(new AddChange(__instance.loadout.Location, dragItem));
                 if (replaceItem != null)
-                    changes.Add(new RemoveChange(__instance.loadout.Location, replaceItem));
+                    changes.Add(new RemoveChange(replaceItem.MountedLocation, replaceItem));
 
 
 

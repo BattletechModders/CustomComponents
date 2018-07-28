@@ -206,6 +206,19 @@ namespace CustomComponents
             {
                 validator(errors, validationLevel, mechDef);
             }
+
+            var sizes = mechDef.Inventory.Select(cref =>
+                    new { location = cref.MountedLocation, size = cref.Def.InventorySize })
+                .GroupBy(i => i.location)
+                .Select(i => new { location = i.Key, size = i.Sum(a => a.size) }).ToList();
+
+            foreach (var size in sizes)
+            {
+                if (mechDef.GetChassisLocationDef(size.location).InventorySlots < size.size)
+                {
+                    errors[MechValidationType.InvalidInventorySlots].Add($"{size.location} no space left, remove excess equipment");
+                }
+            }
         }
 
         internal static bool ValidateMechCanBeFielded(MechDef mechDef)
@@ -213,6 +226,17 @@ namespace CustomComponents
             foreach (var validateMechCanBeFieldedDelegate in field_validators)
             {
                 if (!validateMechCanBeFieldedDelegate(mechDef))
+                    return false;
+            }
+
+            var sizes = mechDef.Inventory.Select(cref =>
+                    new {location = cref.MountedLocation, size = cref.Def.InventorySize})
+                .GroupBy(i => i.location)
+                .Select(i => new {location = i.Key, size = i.Sum(a => a.size)}).ToList();
+
+            foreach (var size in sizes)
+            {
+                if (mechDef.GetChassisLocationDef(size.location).InventorySlots < size.size)
                     return false;
             }
 

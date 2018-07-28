@@ -19,7 +19,7 @@ namespace CustomComponents
             if (mechDef.Inventory.Any(i => i.IsCategory(CategoryID)))
                 return;
             errors[MechValidationType.InvalidInventorySlots].Add(string.IsNullOrEmpty(ErrorMessage) ?
-                $"{Def.Description.Name} require {category.displayName} installed" :
+                $"{Def.Description.Name} requires {category.displayName} installed" :
                 ErrorMessage);
         }
 

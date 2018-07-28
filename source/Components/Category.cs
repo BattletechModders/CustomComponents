@@ -90,7 +90,7 @@ namespace CustomComponents
 
             Control.Logger.LogDebug($"-- total {n1}/{CategoryDescriptor.MaxEquiped}  location: {n2}/{CategoryDescriptor.MaxEquipedPerLocation}");
 
-            var replace = mech.Inventory.FirstOrDefault(i => i.MountedLocation == order.DesiredLocation && i.IsCategory(CategoryID) && i.IsDefault());
+            var replace = mech.Inventory.FirstOrDefault(i => (i.MountedLocation == order.DesiredLocation || CategoryDescriptor.ReplaceAnyLocation) && i.IsCategory(CategoryID) && i.IsDefault());
 
             Control.Logger.LogDebug($"-- possible replace: {(replace == null ? "not found" : replace.ComponentDefID)}");
 
@@ -103,7 +103,7 @@ namespace CustomComponents
             Control.Logger.LogDebug($"-- need_repalce: {need_replace}");
 
             if (need_replace)
-                DefaultHelper.RemoveInventory(replace.ComponentDefID, mech, order.DesiredLocation, replace.ComponentDefType);
+                DefaultHelper.RemoveInventory(replace.ComponentDefID, mech, replace.MountedLocation, replace.ComponentDefType);
 
         }
 
@@ -117,7 +117,7 @@ namespace CustomComponents
                 CategoryDescriptor.MaxEquiped <= 0 && CategoryDescriptor.MaxEquipedPerLocation <= 0)
             {
 #if CCDEBUG
-            Control.Logger.LogDebug($"--- no replace needed");
+                Control.Logger.LogDebug($"--- no replace needed");
 #endif
                 return String.Empty;
             }
@@ -159,8 +159,25 @@ namespace CustomComponents
 
                 if (n >= CategoryDescriptor.MaxEquiped)
                 {
-                    var replace = location.LocalInventory
+                    var 
+                    replace = location.LocalInventory
                         .FirstOrDefault(i => i.ComponentRef.Def.IsCategory(CategoryID));
+                    if (CategoryDescriptor.ReplaceAnyLocation && replace == null)
+                    {
+                        var mechlab = new MechLabHelper(location.mechLab);
+                        foreach (var widget in mechlab.GetWidgets())
+                        {
+                            if(widget.loadout.Location == location.widget.loadout.Location)
+                                continue;
+                           
+                            var loc_helper = new LocationHelper(widget);
+                            replace = loc_helper.LocalInventory
+                                .FirstOrDefault(i => i.ComponentRef.Def.IsCategory(CategoryID));
+                            if(replace != null)
+                                break;
+                        }
+                    }
+
 #if CCDEBUG
                     Control.Logger.LogDebug($"--- replace: {(replace == null ? "none" : replace.ComponentRef.ComponentDefID)}");
 #endif
