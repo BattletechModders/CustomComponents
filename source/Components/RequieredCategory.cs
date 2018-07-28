@@ -5,7 +5,7 @@ using BattleTech;
 namespace CustomComponents
 {
     [CustomComponent("RequiredCategory")]
-    public class RequieredCategory : SimpleCustomComponent, IMechValidate
+    public class RequiredCategory : SimpleCustomComponent, IMechValidate
     {
         public string CategoryID { get; set; }
         public string ErrorMessage { get; set; }
@@ -19,7 +19,7 @@ namespace CustomComponents
             if (mechDef.Inventory.Any(i => i.IsCategory(CategoryID)))
                 return;
             errors[MechValidationType.InvalidInventorySlots].Add(string.IsNullOrEmpty(ErrorMessage) ?
-                $"{Def.Description.Name} requшere {category.displayName} installed" :
+                $"{Def.Description.Name} require {category.displayName} installed" :
                 ErrorMessage);
         }
 

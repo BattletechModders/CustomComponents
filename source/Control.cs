@@ -48,7 +48,7 @@ namespace CustomComponents
                 Validator.RegisterMechValidator(CategoryController.ValidateMech, CategoryController.ValidateMechCanBeFielded);
                 
 
-                Logger.Log("Loaded CustomComponents v0.6.2.0.0");
+                Logger.Log("Loaded CustomComponents v0.6.2.1.0");
 #if CCDEBUG
                 Logger.LogDebug("Loading Categories");
 #endif  

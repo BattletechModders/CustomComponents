@@ -4,8 +4,8 @@ using BattleTech;
 
 namespace CustomComponents
 {
-    [CustomComponent("RequredID")]
-    public class RequieredID : SimpleCustomComponent, IMechValidate
+    [CustomComponent("RequiredID")]
+    public class RequiredID : SimpleCustomComponent, IMechValidate
     {
         public string ComponentDefId { get; set; }
         public string ErrorMessage { get; set; } 
@@ -20,7 +20,7 @@ namespace CustomComponents
                 if (cref.ComponentDefID == ComponentDefId)
                     return;
             }
-            errors[MechValidationType.InvalidInventorySlots].Add(string.IsNullOrEmpty(ErrorMessage) ? $"{Def.Description.Name} missed requred components" : ErrorMessage);
+            errors[MechValidationType.InvalidInventorySlots].Add(string.IsNullOrEmpty(ErrorMessage) ? $"{Def.Description.Name} missed required components" : ErrorMessage);
         }
 
         public bool ValidateMechCanBeFielded(MechDef mechDef, MechComponentRef componentRef)
