@@ -1,19 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using BattleTech;
+﻿using System.Collections.Generic;
 using HBS.Util;
 
 namespace CustomComponents
 {
-    public class CustomComponentFactory<TCustomComponent> : ICustomComponentFactory
-        where TCustomComponent : class, ICustomComponent, new()
+    public class SimpleCustomFactory<TCustom, TDef> : ICustomFactory
+        where TCustom : SimpleCustom<TDef>, new()
+        where TDef : class
     {
-        public string ComponentSectionName { get; set; }
-
-        public virtual ICustomComponent Create(MechComponentDef target, Dictionary<string, object> values)
+        public SimpleCustomFactory(string customName)
         {
+            CustomName = customName;
+        }
+
+        public string CustomName { get; }
+
+        public virtual ICustom Create(object target, Dictionary<string, object> values)
+        {
+            if (!(target is TDef def))
+            {
+                return null;
+            }
+
             if (!values.TryGetValue(Control.CustomSectionName, out var customSettingsObject))
             {
                 return null;
@@ -24,7 +31,7 @@ namespace CustomComponents
                 return null;
             }
 
-            if (!customSettings.TryGetValue(ComponentSectionName, out var componentSettingsObject))
+            if (!customSettings.TryGetValue(CustomName, out var componentSettingsObject))
             {
                 return null;
             }
@@ -34,8 +41,10 @@ namespace CustomComponents
                 return null;
             }
 
-            var obj = new TCustomComponent();
+            var obj = new TCustom();
             JSONSerializationUtility.RehydrateObjectFromDictionary(obj, componentSettings);
+            obj.Def = def;
+
             return obj;
         }
     }

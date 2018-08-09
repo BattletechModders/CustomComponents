@@ -54,7 +54,7 @@ namespace CustomComponents
 
         public static void Postfix(object target, Dictionary<string, object> values)
         {
-            Registry.ProcessCustomCompontentFactories(target, values);
+            Registry.ProcessCustomFactories(target, values);
         }
     }
 }

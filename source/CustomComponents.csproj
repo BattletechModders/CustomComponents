@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +30,7 @@
     <DefineConstants>TRACE;CCDEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
@@ -77,8 +79,8 @@
     <Compile Include="CCLight\DataManagerPerfomance\DataManager_NotifyFileLoaded_Patch.cs" />
     <Compile Include="CCLight\DataManagerPerfomance\DataManager_RequestResource_Internal_Patch.cs" />
     <Compile Include="CCLight\DataManagerPerfomance\DMPHelper.cs" />
-    <Compile Include="CCLight\Factories\IPostProcessor.cs" />
     <Compile Include="CCLight\Factories\IPreProcessor.cs" />
+    <Compile Include="CCLight\Factories\SimpleCustom.cs" />
     <Compile Include="Components\RequieredCategory.cs" />
     <Compile Include="Components\RequieredID.cs" />
     <Compile Include="Components\Sorter.cs" />
@@ -91,11 +93,10 @@
     <Compile Include="CCLight\CustomComponentAttribute.cs" />
     <Compile Include="CCLight\Database.cs" />
     <Compile Include="CCLight\Extensions.cs" />
-    <Compile Include="CCLight\Factories\CustomComponentFactory.cs" />
-    <Compile Include="CCLight\Factories\ICustomComponent.cs" />
-    <Compile Include="CCLight\Factories\ICustomComponentFactory.cs" />
+    <Compile Include="CCLight\Factories\SimpleCustomFactory.cs" />
+    <Compile Include="CCLight\Factories\ICustom.cs" />
+    <Compile Include="CCLight\Factories\ICustomFactory.cs" />
     <Compile Include="CCLight\Factories\SimpleCustomComponent.cs" />
-    <Compile Include="CCLight\Factories\SimpleCustomComponentFactory.cs" />
     <Compile Include="Interfaces\IAfterLoad.cs" />
     <Compile Include="CCLight\Patches\JSONSerializationUtility_RehydrateObjectFromDictionary_Patch.cs" />
     <Compile Include="CCLight\Registry.cs" />
