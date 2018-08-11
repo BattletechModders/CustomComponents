@@ -3,28 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using BattleTech;
+using Harmony;
 
 namespace CustomComponents
 {
     public static class Registry
     {
         private static readonly List<IPreProcessor> PreProcessors = new List<IPreProcessor>();
-        private static readonly List<ICustomComponentFactory> Factories = new List<ICustomComponentFactory>();
-        private static readonly List<IPostProcessor> PostProcessors = new List<IPostProcessor>();
+        private static readonly List<ICustomFactory> Factories = new List<ICustomFactory>();
+        private static readonly HashSet<string> SimpleIdentifiers = new HashSet<string>();
 
         public static void RegisterPreProcessor(IPreProcessor preProcessor)
         {
             PreProcessors.Add(preProcessor);
         }
 
-        public static void RegisterFactory(ICustomComponentFactory factory)
+        public static void RegisterFactory(ICustomFactory factory)
         {
             Factories.Add(factory);
-        }
-
-        public static void RegisterPostProcessor(IPostProcessor postProcessor)
-        {
-            PostProcessors.Add(postProcessor);
         }
 
         public static void RegisterSimpleCustomComponents(Assembly assembly)
@@ -32,11 +28,14 @@ namespace CustomComponents
             RegisterSimpleCustomComponents(assembly.GetTypes());
         }
 
+        #region here be dragons
+
         public static void RegisterSimpleCustomComponents(params Type[] types)
         {
-            var sccType = typeof(SimpleCustomComponent);
-            foreach (var type in types.Where(t => sccType.IsAssignableFrom(t)))
+            var scGenericType = typeof(SimpleCustom<>);
+            foreach (var tuple in types.Select(t => new {type = t, typeWithGenericType = GetTypeWithGenericType(t, scGenericType)}).Where(t => t.typeWithGenericType != null))
             {
+                var type = tuple.type;
                 var customAttribute = type.GetCustomAttributes(false).OfType<CustomComponentAttribute>().FirstOrDefault();
                 if (customAttribute == null)
                 {
@@ -44,65 +43,83 @@ namespace CustomComponents
                 }
 
                 var name = customAttribute.Name;
-                if (Factories.Any(f => f.ComponentSectionName == name))
+                if (!SimpleIdentifiers.Add(name))
                 {
+                    Control.Logger.LogWarning($"SimpleCustom {name} already registered");
                     continue;
                 }
 
-                var factoryGenericType = typeof(SimpleCustomComponentFactory<>);
-                var genericTypes = new[] { type };
+                var typeWithGenericType = tuple.typeWithGenericType;
+                var defType = typeWithGenericType.GetGenericArguments()[0];
+
+                var factoryGenericType = typeof(SimpleCustomFactory<,>);
+                var genericTypes = new[] {type, defType};
                 var factoryType = factoryGenericType.MakeGenericType(genericTypes);
-                var factory = Activator.CreateInstance(factoryType) as ICustomComponentFactory;
-                // ReSharper disable once PossibleNullReferenceException
-                factory.ComponentSectionName = name;
+                var factory = Activator.CreateInstance(factoryType, name) as ICustomFactory;
                 Factories.Add(factory);
+
+                Control.Logger.Log($"SimpleCustom {name} registered for type {defType}");
             }
         }
 
-        // can be used by post or preprocessors
-        public static void SetCustomComponent(MechComponentDef def, ICustomComponent component)
+        public static Type GetTypeWithGenericType(Type givenType, Type genericType)
         {
-            Database.SetCustomComponent(def, component);
+            var type = givenType.GetInterfaces().FirstOrDefault(it => it.IsGenericType && it.GetGenericTypeDefinition() == genericType);
+            if (type != null)
+            {
+                return type;
+            }
+
+            type = givenType.BaseType;
+            if (type == null)
+            {
+                return null;
+            }
+
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == genericType)
+            {
+                return type;
+            }
+
+            return GetTypeWithGenericType(type, genericType);
         }
 
-        internal static void ProcessCustomCompontentFactories(object target, Dictionary<string, object> values)
-        {
+        #endregion
 
-            if (!(target is MechComponentDef componentDef))
+        internal static void ProcessCustomFactories(object target, Dictionary<string, object> values)
+        {
+            var identifier = Database.Identifier(target);
+            if (identifier == null)
             {
                 return;
             }
+
             //Control.Logger.LogDebug($"ProcessCustomCompontentFactories for {target.GetType()}");
-            //Control.Logger.LogDebug($"- {componentDef.Description.Id}");
-
-            if (Database.AlreadyLoaded(componentDef))
-            {
-                //Control.Logger.LogDebug("- already loaded - return");
-                return;
-            }
-            //Control.Logger.LogDebug("- continue");
+            //Control.Logger.LogDebug($"- {identifier}");
 
             foreach (var preProcessor in PreProcessors)
             {
-                preProcessor.PreProcess(componentDef, values);
+                preProcessor.PreProcess(target, values);
             }
 
             foreach (var factory in Factories)
             {
-                var component = factory.Create(componentDef, values);
+                var component = factory.Create(target, values);
                 if (component == null)
                 {
                     continue;
                 }
 
-                //Control.Logger.LogDebug($"-- Created {factory.ComponentSectionName} for {componentDef.Description.Id}");
-                SetCustomComponent(componentDef, component);
+                //Control.Logger.LogDebug($"-- Created {factory} for {identifier}");
+                Database.Set(identifier, component);
+
+                if (component is IAfterLoad load)
+                {
+                    //Control.Logger.LogDebug($"IAfterLoad: {obj.Def.Description.Id}");
+                    load.OnLoaded(values);
+                }
             }
 
-            foreach (var postProcessor in PostProcessors)
-            {
-                postProcessor.PostProcess(componentDef, values);
-            }
             //Control.Logger.LogDebug("- done");
         }
     }

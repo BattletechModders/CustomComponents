@@ -10,10 +10,7 @@ namespace CustomComponents
     {
         public static bool Prefix(SalvageDef def)
         {
-            if (def.ComponentType == ComponentType.MechPart)
-                return true;
-
-            var flags = Database.GetCustomComponent<Flags>(def.Description.Id);
+            var flags = def.MechComponentDef?.GetComponent<Flags>();
 
             //Control.Logger.LogDebug($"AddToFinalSalvage: {def.Description.Id}, Salvagable:{flags == null || !flags.NotSalvagable}");
 

@@ -9,11 +9,9 @@ namespace CustomComponents
     {
         public static bool Prefix(InventoryItemElement theWidget, ListElementController_SalvageGear_NotListView __instance)
         {
-            if (__instance.salvageDef.MechComponentDef == null || __instance.salvageDef.Description == null)
-                return true;
             try
             {
-                var color = Database.GetCustomComponent<ColorComponent>(__instance.salvageDef.Description.Id);
+                var color = __instance.salvageDef.MechComponentDef?.GetComponent<ColorComponent>();
 
                 if (color != null)
                 {
@@ -28,8 +26,7 @@ namespace CustomComponents
             }
             catch (Exception e)
             {
-                //Control.Logger.LogError("Salvage coloring problem!", e);
-                return false;
+                Control.Logger.LogError(e);
             }
 
             return true;

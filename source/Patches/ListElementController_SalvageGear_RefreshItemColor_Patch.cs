@@ -9,11 +9,9 @@ namespace CustomComponents
     {
         public static bool Prefix(InventoryItemElement theWidget, ListElementController_SalvageGear __instance)
         {
-            if (__instance.salvageDef.MechComponentDef == null || __instance.salvageDef.Description == null)
-                return true;
             try
             {
-                var color = Database.GetCustomComponent<ColorComponent>(__instance.salvageDef.Description.Id);
+                var color = __instance.salvageDef.MechComponentDef?.GetComponent<ColorComponent>();
 
                 if (color != null)
                 {
@@ -41,11 +39,9 @@ namespace CustomComponents
     {
         public static bool Prefix(InventoryItemElement theWidget, ListElementController_ShopGear __instance)
         {
-            if (__instance.componentDef == null )
-                return true;
             try
             {
-                var color = Database.GetCustomComponent<ColorComponent>(__instance.componentDef.Description.Id);
+                var color = __instance.componentDef?.GetComponent<ColorComponent>();
 
                 if (color != null)
                 {
