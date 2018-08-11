@@ -50,8 +50,9 @@ namespace CustomComponents
                 return mechComponentDef.Description.Id;
             }
 
-            var description = target.GetType().GetProperty(nameof(MechComponentDef.Description), typeof(DescriptionDef));
-            return description?.GetValue(target, null) as string;
+            var descriptionProperty = target.GetType().GetProperty(nameof(MechComponentDef.Description), typeof(DescriptionDef));
+            var description = descriptionProperty?.GetValue(target, null) as DescriptionDef;
+            return description?.Id;
         }
 
         #endregion

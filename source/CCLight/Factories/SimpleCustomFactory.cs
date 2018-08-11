@@ -47,5 +47,10 @@ namespace CustomComponents
 
             return obj;
         }
+
+        public override string ToString()
+        {
+            return CustomName;
+        }
     }
 }

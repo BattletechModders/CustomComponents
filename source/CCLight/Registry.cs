@@ -45,6 +45,7 @@ namespace CustomComponents
                 var name = customAttribute.Name;
                 if (!SimpleIdentifiers.Add(name))
                 {
+                    Control.Logger.LogWarning($"SimpleCustom {name} already registered");
                     continue;
                 }
 
@@ -56,6 +57,8 @@ namespace CustomComponents
                 var factoryType = factoryGenericType.MakeGenericType(genericTypes);
                 var factory = Activator.CreateInstance(factoryType, name) as ICustomFactory;
                 Factories.Add(factory);
+
+                Control.Logger.Log($"SimpleCustom {name} registered for type {defType}");
             }
         }
 
@@ -92,7 +95,7 @@ namespace CustomComponents
             }
 
             //Control.Logger.LogDebug($"ProcessCustomCompontentFactories for {target.GetType()}");
-            //Control.Logger.LogDebug($"- {key}");
+            //Control.Logger.LogDebug($"- {identifier}");
 
             foreach (var preProcessor in PreProcessors)
             {
@@ -107,7 +110,7 @@ namespace CustomComponents
                     continue;
                 }
 
-                //Control.Logger.LogDebug($"-- Created {factory.ComponentSectionName} for {componentDef.Description.Id}");
+                //Control.Logger.LogDebug($"-- Created {factory} for {identifier}");
                 Database.Set(identifier, component);
 
                 if (component is IAfterLoad load)
