@@ -75,7 +75,7 @@ namespace CustomComponents
         
         private void SetCustomInternal(string key, ICustom cc)
         {
-            //Control.Logger.LogDebug($"SetCustomInternal key={key}");
+            //Control.Logger.LogDebug($"SetCustomInternal key={key} cc={cc}");
 
             if (!customs.TryGetValue(key, out var ccs))
             {
@@ -83,7 +83,12 @@ namespace CustomComponents
                 customs[key] = ccs;
             }
 
-            ccs.RemoveAll(i => i.GetType() == cc.GetType());
+            // same behavior as DictionaryStore<T>.Add
+            if (ccs.Any(i => i.GetType() == cc.GetType()))
+            {
+                return;
+            }
+
             ccs.Add(cc);
         }
 

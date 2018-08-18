@@ -94,7 +94,7 @@ namespace CustomComponents
                 return;
             }
 
-            //Control.Logger.LogDebug($"ProcessCustomCompontentFactories for {target.GetType()}");
+            //Control.Logger.LogDebug($"ProcessCustomCompontentFactories for {target.GetType()} ({target.GetHashCode()})");
             //Control.Logger.LogDebug($"- {identifier}");
 
             foreach (var preProcessor in PreProcessors)
@@ -115,7 +115,7 @@ namespace CustomComponents
 
                 if (component is IAfterLoad load)
                 {
-                    //Control.Logger.LogDebug($"IAfterLoad: {obj.Def.Description.Id}");
+                    //Control.Logger.LogDebug($"IAfterLoad: {identifier}");
                     load.OnLoaded(values);
                 }
             }
