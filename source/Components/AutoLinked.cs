@@ -37,12 +37,12 @@ namespace CustomComponents
             }
         }
 
-        public void ValidateMech(Dictionary<MechValidationType, List<string>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
+        public void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
         {
             if (Links?.Any(link => !mechDef.Inventory.Any(i =>
                     i.MountedLocation == link.Location && i.ComponentDefID == link.ComponentDefId)) == true)
             {
-                errors[MechValidationType.InvalidInventorySlots].Add($"{Def.Description.Name} have critical errors, reinstall it to fix");
+                errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text($"{Def.Description.Name} have critical errors, reinstall it to fix"));
             }
         }
 

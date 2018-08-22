@@ -10,7 +10,7 @@ namespace CustomComponents
         public string CategoryID { get; set; }
         public string ErrorMessage { get; set; }
 
-        public void ValidateMech(Dictionary<MechValidationType, List<string>> errors, MechValidationLevel validationLevel, MechDef mechDef,
+        public void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors, MechValidationLevel validationLevel, MechDef mechDef,
             MechComponentRef componentRef)
         {
             if (string.IsNullOrEmpty(CategoryID))
@@ -18,9 +18,9 @@ namespace CustomComponents
             var category = Control.GetCategory(CategoryID);
             if (mechDef.Inventory.Any(i => i.IsCategory(CategoryID)))
                 return;
-            errors[MechValidationType.InvalidInventorySlots].Add(string.IsNullOrEmpty(ErrorMessage) ?
+            errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.IsNullOrEmpty(ErrorMessage) ?
                 $"{Def.Description.Name} requires {category.displayName} installed" :
-                ErrorMessage);
+                ErrorMessage));
         }
 
         public bool ValidateMechCanBeFielded(MechDef mechDef, MechComponentRef componentRef)

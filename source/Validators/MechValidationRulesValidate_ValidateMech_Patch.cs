@@ -2,13 +2,14 @@
 using System.Linq;
 using BattleTech;
 using Harmony;
+using Localize;
 
 namespace CustomComponents
 {
     [HarmonyPatch(typeof(MechValidationRules), "ValidateMechDef")]
     internal static class MechValidationRulesValidate_ValidateMech_Patch
     {
-        public static void Postfix(Dictionary<MechValidationType, List<string>> __result,
+        public static void Postfix(Dictionary<MechValidationType, List<Text>> __result,
             MechValidationLevel validationLevel, MechDef mechDef)
         {
             Validator.ValidateMech(__result, validationLevel, mechDef);

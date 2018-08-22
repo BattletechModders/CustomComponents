@@ -44,16 +44,16 @@ namespace CustomComponents
             return string.Empty;
         }
 
-        public void ValidateMech(Dictionary<MechValidationType, List<string>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
+        public void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
         {
             if(mechDef.Chassis.Tonnage < Min && mechDef.Chassis.Tonnage > Max)
 
             if (Min == Max)
-                errors[MechValidationType.InvalidInventorySlots].Add(
-                    $"{Def.Description.Name.ToUpper()} designed for {Min}t 'Mech");
+                errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(
+                    $"{Def.Description.Name.ToUpper()} designed for {Min}t 'Mech"));
             else
-                errors[MechValidationType.InvalidInventorySlots].Add(
-                    $"{Def.Description.Name.ToUpper()} designed for {Min}t-{Max}t 'Mech");
+                errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(
+                    $"{Def.Description.Name.ToUpper()} designed for {Min}t-{Max}t 'Mech"));
         }
 
         public bool ValidateMechCanBeFielded(MechDef mechDef, MechComponentRef componentRef)

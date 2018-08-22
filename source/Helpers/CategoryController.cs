@@ -34,7 +34,7 @@ namespace CustomComponents
         /// <param name="errors">errors by category</param>
         /// <param name="validationLevel"></param>
         /// <param name="mechDef">mech to validate</param>
-        internal static void ValidateMech(Dictionary<MechValidationType, List<string>> errors,
+        internal static void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors,
             MechValidationLevel validationLevel, MechDef mechDef)
         {
 
@@ -57,9 +57,9 @@ namespace CustomComponents
             {
                 if (!items_by_category.ContainsKey(category) || items_by_category[category].Count < category.MinEquiped)
                     if (category.MinEquiped == 1)
-                        errors[MechValidationType.InvalidInventorySlots].Add(string.Format(category.ValidateRequred, category.DisplayName.ToUpper(), category.DisplayName));
+                        errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(category.ValidateRequred, category.DisplayName.ToUpper(), category.DisplayName)));
                     else
-                        errors[MechValidationType.InvalidInventorySlots].Add(string.Format(category.ValidateMinimum, category.DisplayName.ToUpper(), category.DisplayName, category.MinEquiped));
+                        errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(category.ValidateMinimum, category.DisplayName.ToUpper(), category.DisplayName, category.MinEquiped)));
             }
 
             foreach (var pair in items_by_category)
@@ -67,11 +67,11 @@ namespace CustomComponents
                 //check if too mant items of same category
                 if (pair.Key.MaxEquiped > 0 && pair.Value.Count > pair.Key.MaxEquiped)
                     if (pair.Key.MaxEquiped == 1)
-                        errors[MechValidationType.InvalidInventorySlots].Add(string.Format(pair.Key.ValidateUnique,
-                            pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName));
+                        errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(pair.Key.ValidateUnique,
+                            pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName)));
                     else
-                        errors[MechValidationType.InvalidInventorySlots].Add(string.Format(pair.Key.ValidateMaximum,
-                            pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName, pair.Key.MaxEquiped));
+                        errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(pair.Key.ValidateMaximum,
+                            pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName, pair.Key.MaxEquiped)));
 
                 //check if cateory mix tags
                 if (!pair.Key.AllowMixTags)
@@ -81,8 +81,8 @@ namespace CustomComponents
                     bool flag = pair.Value.Any(i => i.mix != def);
                     if (flag)
                     {
-                        errors[MechValidationType.InvalidInventorySlots].Add(string.Format(pair.Key.ValidateMixed,
-                            pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName));
+                        errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(pair.Key.ValidateMixed,
+                            pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName)));
                     }
                 }
 
@@ -92,11 +92,11 @@ namespace CustomComponents
                     var max = pair.Value.GroupBy(i => i.itemref.MountedLocation).Max(i => i.Count());
                     if (max > pair.Key.MaxEquipedPerLocation)
                         if (pair.Key.MaxEquipedPerLocation == 1)
-                            errors[MechValidationType.InvalidInventorySlots].Add(string.Format(pair.Key.ValidateUniqueLocation,
-                                pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName));
+                            errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(pair.Key.ValidateUniqueLocation,
+                                pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName)));
                         else
-                            errors[MechValidationType.InvalidInventorySlots].Add(string.Format(pair.Key.ValidateMaximumLocation,
-                                pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName, pair.Key.MaxEquipedPerLocation));
+                            errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(pair.Key.ValidateMaximumLocation,
+                                pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName, pair.Key.MaxEquipedPerLocation)));
                 }
 
                 //check forbidden
@@ -107,7 +107,7 @@ namespace CustomComponents
                         var category2 = Control.GetCategory(item);
                         if (items_by_category.ContainsKey(category2))
                         {
-                            errors[MechValidationType.InvalidInventorySlots].Add(string.Format(pair.Key.ValidateForbidden, pair.Key.DisplayName, category2.DisplayName));
+                            errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(pair.Key.ValidateForbidden, pair.Key.DisplayName, category2.DisplayName)));
                         }
                     }
                 }

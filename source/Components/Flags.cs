@@ -131,22 +131,22 @@ namespace CustomComponents
             flags = new_flags.Distinct().ToList();
         }
 
-        public void ValidateMech(Dictionary<MechValidationType, List<string>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
+        public void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
         {
             if (Invalid)
-                errors[MechValidationType.InvalidInventorySlots].Add(
-                    string.Format(string.IsNullOrEmpty(ErrorInvalid) ? "{0} is placeholder, remove it" : ErrorInvalid, Def.Description.Name));
+                errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(
+                    string.Format(string.IsNullOrEmpty(ErrorInvalid) ? "{0} is placeholder, remove it" : ErrorInvalid, Def.Description.Name)));
 
             if (componentRef.DamageLevel == ComponentDamageLevel.Destroyed && (NotDestroyed || NotBroken))
             {
-                errors[MechValidationType.StructureDestroyed].Add(
-                    string.Format(string.IsNullOrEmpty(ErrorItemBroken) ? "{0} is destroyed, replace it" : ErrorItemDestroyed, Def.Description.Name));
+                errors[MechValidationType.StructureDestroyed].Add(new Localize.Text(
+                    string.Format(string.IsNullOrEmpty(ErrorItemBroken) ? "{0} is destroyed, replace it" : ErrorItemDestroyed, Def.Description.Name)));
             }
 
             if (componentRef.DamageLevel == ComponentDamageLevel.Penalized && NotBroken)
             {
-                errors[MechValidationType.StructureDestroyed].Add(
-                    string.Format(string.IsNullOrEmpty(ErrorItemBroken) ? "{0} is damaged, repair it" : ErrorItemBroken, Def.Description.Name));
+                errors[MechValidationType.StructureDestroyed].Add(new Localize.Text(
+                    string.Format(string.IsNullOrEmpty(ErrorItemBroken) ? "{0} is damaged, repair it" : ErrorItemBroken, Def.Description.Name)));
             }
         }
 

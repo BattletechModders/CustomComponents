@@ -199,7 +199,7 @@ namespace CustomComponents
             return string.Empty; 
         }
 
-        internal static void ValidateMech(Dictionary<MechValidationType, List<string>> errors,
+        internal static void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors,
             MechValidationLevel validationLevel, MechDef mechDef)
         {
             foreach (var validator in mech_validators)
@@ -216,7 +216,7 @@ namespace CustomComponents
             {
                 if (mechDef.GetChassisLocationDef(size.location).InventorySlots < size.size)
                 {
-                    errors[MechValidationType.InvalidInventorySlots].Add($"{size.location} no space left, remove excess equipment");
+                    errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text($"{size.location} no space left, remove excess equipment"));
                 }
             }
         }

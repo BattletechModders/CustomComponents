@@ -27,12 +27,12 @@ namespace CustomComponents
             return string.Empty;
         }
 
-        public void ValidateMech(Dictionary<MechValidationType, List<string>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
+        public void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
         {
             if (mechDef.Chassis.Tonnage != Tonnage)
             {
-                errors[MechValidationType.InvalidInventorySlots].Add(
-                    $"{Def.Description.Name} designed for {Tonnage}t mech");
+                errors[MechValidationType.InvalidInventorySlots].Add( new Localize.Text(
+                    $"{Def.Description.Name} designed for {Tonnage}t mech"));
             }
         }
 
