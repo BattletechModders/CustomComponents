@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using BattleTech;
 using BattleTech.UI;
 using Harmony;
-
+using Localize;
 using UnityEngine.EventSystems;
 
 namespace CustomComponents
@@ -27,7 +27,7 @@ namespace CustomComponents
 
                     Control.Logger.LogDebug($"- Canceled: {error}");
 
-                    ___mechLab.ShowDropErrorMessage(error);
+                    ___mechLab.ShowDropErrorMessage(new Text(error));
                     ___mechLab.OnDrop(eventData);
                     return true;
                 }

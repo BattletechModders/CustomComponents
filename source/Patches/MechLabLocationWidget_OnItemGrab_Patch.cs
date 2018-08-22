@@ -2,6 +2,7 @@
 using BattleTech;
 using BattleTech.UI;
 using Harmony;
+using Localize;
 
 namespace CustomComponents
 { 
@@ -20,7 +21,7 @@ namespace CustomComponents
                 if(!grab_handler.OnItemGrab(item, ___mechLab, out var error))
                 {
                     if (!string.IsNullOrEmpty(error))
-                        ___mechLab.ShowDropErrorMessage(error);
+                        ___mechLab.ShowDropErrorMessage(new Text(error));
                     __result = false;
                     return false;
                 }
