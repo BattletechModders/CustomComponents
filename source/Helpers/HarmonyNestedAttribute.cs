@@ -14,14 +14,14 @@ namespace CustomComponents
         public HarmonyNestedAttribute(Type baseType, string nestedType, string method, Type[] parameters = null)
             : base(null, method, null)
         {
-            this.info.originalType = baseType.GetNestedType(nestedType, BindingFlags.Static |
+            this.info.declaringType = baseType.GetNestedType(nestedType, BindingFlags.Static |
                                                    BindingFlags.Instance |
                                                    BindingFlags.Public |
                                                    BindingFlags.NonPublic);
-            this.info.parameter = parameters;
+            this.info.argumentTypes = parameters;
             this.info.methodName = method;
 
-            Control.Logger.LogDebug($"Type: {this.info.originalType}\tMethod: {this.info.methodName}");
+            Control.Logger.LogDebug($"Type: {this.info.declaringType}\tMethod: {this.info.methodName}");
         }
     }
 }
