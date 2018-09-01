@@ -110,7 +110,7 @@ namespace CustomComponents
                     continue;
                 }
 
-                //Control.Logger.LogDebug($"-- Created {factory} for {identifier}");
+                Control.Logger.Log($"Created {factory} for {identifier}");
                 Database.Set(identifier, component);
 
                 if (component is IAfterLoad load)
