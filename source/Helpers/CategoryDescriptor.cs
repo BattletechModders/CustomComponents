@@ -62,9 +62,6 @@ namespace CustomComponents
         [DefaultValue(0), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public int MinEquiped = 0;
 
-
-        public string[] Forbidden;
-
         public Dictionary<string, object> DefaultCustoms = null;
 
         [DefaultValue("{0} already installed on mech"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
@@ -103,10 +100,6 @@ namespace CustomComponents
 
         [DefaultValue("EXCESS {0}: This mech can't mount more then {2} of {1} any location"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string ValidateMaximumLocation = "EXCESS {0}: This mech can't mount more then {2} of {1} any location";
-
-
-        [DefaultValue("Cannot use {0} and {1} together"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public string ValidateForbidden = "Cannot use {0} and {1} together";
 
 
         [JsonIgnore]
@@ -151,7 +144,6 @@ namespace CustomComponents
             AddMaximumReached = category.AddMaximumReached;
             AddMaximumLocationReached = category.AddMaximumLocationReached;
             AddMixed = category.AddMixed;
-            Forbidden = category.Forbidden;
             DefaultCustoms = category.DefaultCustoms;
 
 
@@ -163,7 +155,6 @@ namespace CustomComponents
             ValidateMaximum = category.ValidateMaximum;
             ValidateUniqueLocation = category.ValidateUniqueLocation;
             ValidateMaximumLocation = category.ValidateMaximumLocation;
-            ValidateForbidden = category.ValidateForbidden;
         }
     }
 }

@@ -251,21 +251,6 @@ namespace CustomComponents
             if (!CategoryDescriptor.AllowMixTags && mechlab.MechLab.activeMechDef.Inventory.Any(i => i.Def.Is<Category>(out var c) && c.CategoryID == CategoryID && GetTag() != c.GetTag()))
                 return string.Format(CategoryDescriptor.AddMixed, CategoryDescriptor.DisplayName);
 
-            if (CategoryDescriptor.Forbidden != null && CategoryDescriptor.Forbidden.Length > 0)
-            {
-                foreach (var forbidden in CategoryDescriptor.Forbidden)
-                {
-                    var f_item =
-                        mechlab.MechLab.activeMechDef.Inventory.FirstOrDefault(i => i.Def.IsCategory(forbidden));
-                    if (f_item != null)
-                    {
-                        var c = f_item.Def.GetComponent<Category>();
-                        return string.Format(CategoryDescriptor.ValidateForbidden, CategoryDescriptor.DisplayName,
-                            c.CategoryDescriptor.DisplayName);
-                    }
-                }
-            }
-
             return string.Empty;
         }
 

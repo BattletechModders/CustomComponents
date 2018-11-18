@@ -98,19 +98,6 @@ namespace CustomComponents
                             errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(pair.Key.ValidateMaximumLocation,
                                 pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName, pair.Key.MaxEquipedPerLocation)));
                 }
-
-                //check forbidden
-                if (pair.Key.Forbidden != null && pair.Key.Forbidden.Length > 0)
-                {
-                    foreach (var item in pair.Key.Forbidden)
-                    {
-                        var category2 = Control.GetCategory(item);
-                        if (items_by_category.ContainsKey(category2))
-                        {
-                            errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(pair.Key.ValidateForbidden, pair.Key.DisplayName, category2.DisplayName)));
-                        }
-                    }
-                }
             }
         }
 
@@ -195,24 +182,6 @@ namespace CustomComponents
                         Control.Logger.LogDebug($"--- not passed {max}/{pair.Key.MaxEquipedPerLocation}");
 #endif
                         return false;
-                    }
-                }
-
-                if (pair.Key.Forbidden != null && pair.Key.Forbidden.Length > 0)
-                {
-#if CCDEBUG
-                    Control.Logger.LogDebug($"-- forbidden {pair.Key.displayName}");
-#endif
-                    foreach (var item in pair.Key.Forbidden)
-                    {
-                        var category2 = Control.GetCategory(item);
-                        if (items_by_category.ContainsKey(category2))
-                        {
-#if CCDEBUG
-                                   Control.Logger.LogDebug($"--- not passed {item}-{category2.Name}");
-#endif
-                            return false;
-                        }
                     }
                 }
             }
