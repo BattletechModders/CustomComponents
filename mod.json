@@ -9,10 +9,9 @@
 	"DLLEntryPoint": "CustomComponents.Control.Init",
 	"Settings" : {
 		"LogLevel": "Debug",
-		"Categories": [
-		]
+		"Categories": [ ],
+		"TagRestrictions": [ ]
 	},	
 		
-	"Manifest": [ 
-	]
+	"Manifest": [ ]
 }

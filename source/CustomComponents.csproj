@@ -81,10 +81,9 @@
     <Compile Include="CCLight\DataManagerPerfomance\DMPHelper.cs" />
     <Compile Include="CCLight\Factories\IPreProcessor.cs" />
     <Compile Include="CCLight\Factories\SimpleCustom.cs" />
-    <Compile Include="Components\RequieredCategories.cs" />
-    <Compile Include="Components\RequieredCategory.cs" />
-    <Compile Include="Components\RequieredID.cs" />
     <Compile Include="Components\Sorter.cs" />
+    <Compile Include="TagRestrictions\TagRestrictions.cs" />
+    <Compile Include="TagRestrictions\TagRestrictionsHandler.cs" />
     <Compile Include="DropResults\IChange.cs" />
     <Compile Include="DropResults\InvItem.cs" />
     <Compile Include="Interfaces\IPreValidateDrop.cs" />

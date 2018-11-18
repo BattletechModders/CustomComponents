@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using HBS.Logging;
-using Newtonsoft.Json;
 
 namespace CustomComponents
 {
@@ -8,6 +7,7 @@ namespace CustomComponents
     {
         public LogLevel LogLevel = LogLevel.Debug;
         public List<CategoryDescriptor> Categories = new List<CategoryDescriptor>();
+        public List<TagRestrictions> TagRestrictions = new List<TagRestrictions>();
         public bool TestEnableAllTags = false;
     }
 }

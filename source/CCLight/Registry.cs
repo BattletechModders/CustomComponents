@@ -111,7 +111,7 @@ namespace CustomComponents
                 }
 
                 Control.Logger.Log($"Created {factory} for {identifier}");
-                Database.Set(identifier, component);
+                Database.SetCustomWithIdentifier(identifier, component);
 
                 if (component is IAfterLoad load)
                 {

@@ -10,20 +10,24 @@ namespace CustomComponents
     {
         #region internal
 
-        internal static void Set(string identifier, ICustom cc)
+        internal static void SetCustomWithIdentifier(string identifier, ICustom cc)
         {
             Shared.SetCustomInternal(identifier, cc);
+        }
+
+        internal static IEnumerable<T> GetCustomsFromIdentifier<T>(string identifier)
+        {
+            if (identifier == null)
+            {
+                return Enumerable.Empty<T>();
+            }
+            return Shared.GetCustomsInternal<T>(identifier);
         }
 
         internal static IEnumerable<T> GetCustoms<T>(object target)
         {
             var identifier = Identifier(target);
-            if (identifier == null)
-            {
-                // TODO add logging or throw exception
-                return Enumerable.Empty<T>();
-            }
-            return Shared.GetCustomsInternal<T>(identifier);
+            return GetCustomsFromIdentifier<T>(identifier);
         }
 
         internal static T GetCustom<T>(object target)

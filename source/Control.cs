@@ -46,7 +46,6 @@ namespace CustomComponents
                 Registry.RegisterSimpleCustomComponents(typeof(Category));
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
                 Validator.RegisterMechValidator(CategoryController.ValidateMech, CategoryController.ValidateMechCanBeFielded);
-                
 
                 Logger.Log("Loaded CustomComponents v0.7.1.0.0");
 #if CCDEBUG
@@ -59,6 +58,12 @@ namespace CustomComponents
                     Logger.LogDebug(categoryDescriptor.Name + " - " + categoryDescriptor.DisplayName);
 #endif  
                 }
+
+                Validator.RegisterMechValidator(TagRestrictionsHandler.Shared.ValidateMech, TagRestrictionsHandler.Shared.ValidateMechCanBeFielded);
+                foreach (var restriction in Settings.TagRestrictions)
+                {
+                    TagRestrictionsHandler.Shared.Add(restriction);
+                }
 #if CCDEBUG
                 Logger.LogDebug("done");
 #endif
@@ -67,6 +72,11 @@ namespace CustomComponents
             {
                 Logger.LogError(e);
             }
+        }
+
+        public static void AddTagRestrictions(TagRestrictions restrictions)
+        {
+            TagRestrictionsHandler.Shared.Add(restrictions);
         }
 
         internal static void AddNewCategory(string category)
