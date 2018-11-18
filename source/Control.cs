@@ -60,6 +60,7 @@ namespace CustomComponents
                 }
 
                 Validator.RegisterMechValidator(TagRestrictionsHandler.Shared.ValidateMech, TagRestrictionsHandler.Shared.ValidateMechCanBeFielded);
+                // Validator.RegisterDropValidator(check: TagRestrictionsHandler.Shared.ValidateDrop);
                 foreach (var restriction in Settings.TagRestrictions)
                 {
                     TagRestrictionsHandler.Shared.Add(restriction);

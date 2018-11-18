@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
+using BattleTech.UI;
 using Localize;
 
 namespace CustomComponents
@@ -19,17 +20,27 @@ namespace CustomComponents
 
         internal bool ValidateMechCanBeFielded(MechDef mechDef)
         {
-            return ValidateMech(mechDef);
+            return ValidateMech(out var error, mechDef);
         }
 
         internal void ValidateMech(Dictionary<MechValidationType, List<Text>> errors, MechValidationLevel validationLevel, MechDef mechDef)
         {
-            ValidateMech(mechDef, errors);
+            ValidateMech(out var error, mechDef, errors: errors);
         }
 
-        internal bool ValidateMech(MechDef mechDef, Dictionary<MechValidationType, List<Text>> errors = null)
+        internal string ValidateDrop(MechLabItemSlotElement drop_item, MechDef mech, List<InvItem> new_inventory, List<IChange> changes)
         {
-            var valid = true;
+            ValidateMech(out var error, mech, drop_item.ComponentRef.Def);
+            return error;
+        }
+
+        internal bool ValidateMech(
+            out string error,
+            MechDef mechDef,
+            MechComponentDef droppedComponent = null,
+            Dictionary<MechValidationType, List<Text>> errors = null)
+        {
+            error = null;
             var tagsUINames = new Dictionary<string, string>();
             void AddNameForTag(string tag, string UIName)
             {
@@ -52,7 +63,7 @@ namespace CustomComponents
                 return UIName;
             }
 
-            var tags = new HashSet<string>();
+            var tagsOnMech = new HashSet<string>();
 
             // chassis
             {
@@ -60,27 +71,26 @@ namespace CustomComponents
                 // tags
                 if (chassis.ChassisTags != null)
                 {
-                    tags.UnionWith(chassis.ChassisTags);
+                    tagsOnMech.UnionWith(chassis.ChassisTags);
                 }
 
                 // id
                 var identifier = chassis.Description.Id;
-                tags.Add(identifier);
+                tagsOnMech.Add(identifier);
                 AddNameForTag(identifier, chassis.Description.UIName);
             }
 
-            // components
-            foreach (var def in mechDef.Inventory.Select(r => r.Def))
+            void ProcessComponent(MechComponentDef def, HashSet<string> tagsForComponent)
             {
                 // tags
                 if (def.ComponentTags != null)
                 {
-                    tags.UnionWith(def.ComponentTags);
+                    tagsForComponent.UnionWith(def.ComponentTags);
                 }
 
                 // id
                 var identifier = def.Description.Id;
-                tags.Add(identifier);
+                tagsForComponent.Add(identifier);
                 AddNameForTag(identifier, def.Description.UIName);
 
                 // category for component
@@ -90,7 +100,7 @@ namespace CustomComponents
                     var categoryDescriptor = Control.GetCategory(category.CategoryID);
 
                     // category id
-                    tags.Add(category.CategoryID);
+                    tagsForComponent.Add(category.CategoryID);
                     if (categoryDescriptor != null)
                     {
                         AddNameForTag(category.CategoryID, categoryDescriptor.DisplayName);
@@ -99,7 +109,7 @@ namespace CustomComponents
                     // category tag
                     if (category.Tag != null)
                     {
-                        tags.Add(category.Tag);
+                        tagsForComponent.Add(category.Tag);
                         if (categoryDescriptor != null)
                         {
                             AddNameForTag(category.Tag, categoryDescriptor.DisplayName);
@@ -108,46 +118,69 @@ namespace CustomComponents
                 }
             }
 
-            foreach (var tag in tags)
+            // components
+            foreach (var def in mechDef.Inventory.Select(r => r.Def))
             {
-                foreach (var requiredTag in RequiredTags(tag))
+                ProcessComponent(def, tagsOnMech);
+            }
+
+            HashSet<string> tagsForDropped = null;
+            if (droppedComponent != null)
+            {
+                tagsForDropped = new HashSet<string>();
+                ProcessComponent(droppedComponent, tagsForDropped);
+                tagsOnMech.UnionWith(tagsForDropped); // used for incompatible check
+            }
+
+            foreach (var tag in tagsForDropped ?? tagsOnMech)
+            {
+                var requiredTags = RequiredTags(tag);
+                foreach (var requiredTag in requiredTags)
                 {
-                    if (tags.Contains(requiredTag))
+                    if (tagsOnMech.Contains(requiredTag))
                     {
                         continue;
                     }
 
-                    if (errors == null)
-                    {
-                        return false;
-                    }
-
-                    valid = false;
                     var tagName = NameForTag(tag);
                     var requiredTagName = NameForTag(requiredTag);
-                    errors[MechValidationType.InvalidInventorySlots].Add(new Text($"{tagName} requires {requiredTagName}"));
-                }
-
-                foreach (var incompatibleTag in IncompatibleTags(tag))
-                {
-                    if (!tags.Contains(incompatibleTag))
-                    {
-                        continue;
-                    }
+                    error = $"{tagName} requires {requiredTagName}";
 
                     if (errors == null)
                     {
                         return false;
                     }
 
-                    valid = false;
-                    var tagName = NameForTag(tag);
-                    var incompatibleTagName = NameForTag(incompatibleTag);
-                    errors[MechValidationType.InvalidInventorySlots].Add(new Text($"{tagName} can't be used with {incompatibleTagName}"));
+                    errors[MechValidationType.InvalidInventorySlots].Add(new Text(error));
                 }
             }
 
-            return valid;
+            foreach (var tag in tagsOnMech)
+            {
+                var incompatibleTags = IncompatibleTags(tag);
+                foreach (var incompatibleTag in incompatibleTags)
+                {
+                    // if dropped, we either want only to check against dropped or the dropped against everything
+                    var checkedTags = tagsForDropped != null && !tagsForDropped.Contains(tag) ? tagsForDropped : tagsOnMech;
+                    if (!checkedTags.Contains(incompatibleTag))
+                    {
+                        continue;
+                    }
+                    
+                    var tagName = NameForTag(tag);
+                    var incompatibleTagName = NameForTag(incompatibleTag);
+                    error = $"{tagName} can't be used with {incompatibleTagName}";
+
+                    if (errors == null)
+                    {
+                        return false;
+                    }
+                    
+                    errors[MechValidationType.InvalidInventorySlots].Add(new Text(error));
+                }
+            }
+
+            return error == null;
         }
 
         private IEnumerable<string> RequiredTags(string tag)
