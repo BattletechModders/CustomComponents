@@ -10,7 +10,9 @@
 	"Settings" : {
 		"LogLevel": "Debug",
 		"Categories": [ ],
-		"TagRestrictions": [ ]
+		"TagRestrictions": [ ],
+		"TagRestrictionDropValidateRequiredTags":  false,
+		"TagRestrictionDropValidateIncompatibleTags":  true
 	},	
 		
 	"Manifest": [ ]

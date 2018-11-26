@@ -37,7 +37,7 @@ namespace CustomComponents
 
         public void OnLoaded(Dictionary<string, object> values)
         {
-            CategoryDescriptor = Control.GetCategory(CategoryID);
+            CategoryDescriptor = Control.GetOrCreateCategory(CategoryID);
 
             if (CategoryDescriptor.DefaultCustoms == null)
             {

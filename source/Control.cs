@@ -60,7 +60,7 @@ namespace CustomComponents
                 }
 
                 Validator.RegisterMechValidator(TagRestrictionsHandler.Shared.ValidateMech, TagRestrictionsHandler.Shared.ValidateMechCanBeFielded);
-                // Validator.RegisterDropValidator(check: TagRestrictionsHandler.Shared.ValidateDrop);
+                Validator.RegisterDropValidator(check: TagRestrictionsHandler.Shared.ValidateDrop);
                 foreach (var restriction in Settings.TagRestrictions)
                 {
                     TagRestrictionsHandler.Shared.Add(restriction);
@@ -126,13 +126,18 @@ namespace CustomComponents
 #endif
         }
 
-        public static CategoryDescriptor GetCategory(string name)
+        public static CategoryDescriptor GetOrCreateCategory(string name)
         {
             if (Categories.TryGetValue(name, out var c))
                 return c;
             c = new CategoryDescriptor { Name = name };
             Categories.Add(name, c);
             return c;
+        }
+
+        public static CategoryDescriptor GetCategory(string name)
+        {
+            return Categories.TryGetValue(name, out var c) ? c : null;
         }
 
         public static IEnumerable<CategoryDescriptor> GetCategories()

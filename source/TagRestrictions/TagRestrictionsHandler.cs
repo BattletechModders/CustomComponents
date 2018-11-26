@@ -41,27 +41,6 @@ namespace CustomComponents
             Dictionary<MechValidationType, List<Text>> errors = null)
         {
             error = null;
-            var tagsUINames = new Dictionary<string, string>();
-            void AddNameForTag(string tag, string UIName)
-            {
-                try
-                {
-                    tagsUINames.Add(tag, UIName);
-                }
-                catch (ArgumentException)
-                {
-                }
-            }
-
-            string NameForTag(string tag)
-            {
-                if (!tagsUINames.TryGetValue(tag, out var UIName))
-                {
-                    UIName = tag;
-                }
-
-                return UIName;
-            }
 
             var tagsOnMech = new HashSet<string>();
 
@@ -77,7 +56,6 @@ namespace CustomComponents
                 // id
                 var identifier = chassis.Description.Id;
                 tagsOnMech.Add(identifier);
-                AddNameForTag(identifier, chassis.Description.UIName);
             }
 
             void ProcessComponent(MechComponentDef def, HashSet<string> tagsForComponent)
@@ -91,29 +69,18 @@ namespace CustomComponents
                 // id
                 var identifier = def.Description.Id;
                 tagsForComponent.Add(identifier);
-                AddNameForTag(identifier, def.Description.UIName);
 
                 // category for component
                 var category = def.GetComponent<Category>();
                 if (category != null)
                 {
-                    var categoryDescriptor = Control.GetCategory(category.CategoryID);
-
                     // category id
                     tagsForComponent.Add(category.CategoryID);
-                    if (categoryDescriptor != null)
-                    {
-                        AddNameForTag(category.CategoryID, categoryDescriptor.DisplayName);
-                    }
                     
                     // category tag
                     if (category.Tag != null)
                     {
                         tagsForComponent.Add(category.Tag);
-                        if (categoryDescriptor != null)
-                        {
-                            AddNameForTag(category.Tag, categoryDescriptor.DisplayName);
-                        }
                     }
                 }
             }
@@ -132,7 +99,18 @@ namespace CustomComponents
                 tagsOnMech.UnionWith(tagsForDropped); // used for incompatible check
             }
 
-            foreach (var tag in tagsForDropped ?? tagsOnMech)
+            var checkRequiresForTags = tagsOnMech;
+            if (tagsForDropped != null)
+            {
+                checkRequiresForTags = tagsForDropped;
+
+                if (!Control.Settings.TagRestrictionDropValidateRequiredTags)
+                {
+                    checkRequiresForTags = new HashSet<string>();
+                }
+            }
+
+            foreach (var tag in checkRequiresForTags)
             {
                 var requiredTags = RequiredTags(tag);
                 foreach (var requiredTag in requiredTags)
@@ -155,14 +133,30 @@ namespace CustomComponents
                 }
             }
 
-            foreach (var tag in tagsOnMech)
+            var checkIncompatiblesForTags = tagsOnMech;
+            if (tagsForDropped != null)
             {
+                if (!Control.Settings.TagRestrictionDropValidateIncompatibleTags)
+                {
+                    checkIncompatiblesForTags = new HashSet<string>();
+                }
+            }
+
+            foreach (var tag in checkIncompatiblesForTags)
+            {
+                var tagsPool = tagsOnMech;
+                // if dropping we either want only to check either:
+                // - the "dropped tags incompatibles" with mech+items
+                // - each "mech+items incompatibles" with dropped tags
+                if (tagsForDropped != null && !tagsForDropped.Contains(tag))
+                {
+                    tagsPool = tagsForDropped;
+                }
+
                 var incompatibleTags = IncompatibleTags(tag);
                 foreach (var incompatibleTag in incompatibleTags)
                 {
-                    // if dropped, we either want only to check against dropped or the dropped against everything
-                    var checkedTags = tagsForDropped != null && !tagsForDropped.Contains(tag) ? tagsForDropped : tagsOnMech;
-                    if (!checkedTags.Contains(incompatibleTag))
+                    if (!tagsPool.Contains(incompatibleTag))
                     {
                         continue;
                     }
@@ -217,6 +211,57 @@ namespace CustomComponents
             {
                 yield return incompatibleTag;
             }
+        }
+
+        private static string NameForTag(string tag)
+        {
+            {
+                var categoryDescriptor = Control.GetCategory(tag);
+                if (categoryDescriptor != null)
+                {
+                    return categoryDescriptor.DisplayName;
+                }
+            }
+
+            {
+                var dataManager = UnityGameInstance.BattleTechGame.DataManager;
+
+                // ChassisDef
+
+                if (dataManager.ChassisDefs.TryGet(tag, out var chassis))
+                {
+                    return chassis.Description.UIName;
+                }
+
+                // MechComponentDef
+
+                if (dataManager.AmmoBoxDefs.TryGet(tag, out var ammoBox))
+                {
+                    return ammoBox.Description.UIName;
+                }
+
+                if (dataManager.HeatSinkDefs.TryGet(tag, out var heatSink))
+                {
+                    return heatSink.Description.UIName;
+                }
+
+                if (dataManager.JumpJetDefs.TryGet(tag, out var jumpJet))
+                {
+                    return jumpJet.Description.UIName;
+                }
+
+                if (dataManager.UpgradeDefs.TryGet(tag, out var upgrade))
+                {
+                    return upgrade.Description.UIName;
+                }
+
+                if (dataManager.WeaponDefs.TryGet(tag, out var weapon))
+                {
+                    return weapon.Description.UIName;
+                }
+            }
+
+            return tag;
         }
     }
 }
