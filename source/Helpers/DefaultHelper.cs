@@ -227,10 +227,11 @@ namespace CustomComponents
 
             var list = source.Inventory.ToList();
 
-            var result_list = list.Where(i => i.Is<Flags>(out var f) && f.CannotRemove).ToList();
+            var result_list = list.Where(i => i.Is<Flags>(out var f) && f.CannotRemove || i.IsFixed).ToList();
 
             for (int i = list.Count - 1; i >= 0; i--)
             {
+
                 Control.Logger.LogDebug($"- {list[i].ComponentDefID} - {(list[i].Def == null ? "NULL" : list[i].SimGameUID)}");
                 if (list[i].Def == null)
                 {

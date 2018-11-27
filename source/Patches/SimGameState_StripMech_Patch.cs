@@ -15,9 +15,7 @@ namespace CustomComponents
             {
                 Control.Logger.LogDebug(item.ComponentDefID);
             }
-
             def.SetInventory(def.Inventory.Where(i => !(i.Is<Flags>(out var f) && f.CannotRemove)).ToArray());
-
             Control.Logger.LogDebug("SimGameState.StripMech - after clear");
             foreach (var item in def.Inventory)
             {
