@@ -51,7 +51,7 @@ namespace CustomComponents
             var r = CreateRef(defaultID, type, mech.DataManager, state);
             if (r != null)
             {
-                r.SetData(location, -1, ComponentDamageLevel.Functional);
+                r.SetData(location, -1, ComponentDamageLevel.Functional, false);
                 var inv = mech.Inventory.ToList();
                 inv.Add(r);
                 mech.SetInventory(inv.ToArray());
@@ -251,7 +251,7 @@ namespace CustomComponents
                         ? list[i].MountedLocation
                         : replace.Location;
 
-                    ref_item.SetData(location, list[i].HardpointSlot, list[i].DamageLevel);
+                    ref_item.SetData(location, list[i].HardpointSlot, list[i].DamageLevel, false);
                     ref_item.SetSimGameUID(state.GenerateSimGameUID());
                     result_list.Add(ref_item);
                     Control.Logger.LogDebug($"-- Replace with {ref_item.ComponentDefID} - {ref_item.SimGameUID}");
