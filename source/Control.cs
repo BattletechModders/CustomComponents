@@ -47,7 +47,7 @@ namespace CustomComponents
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
                 Validator.RegisterMechValidator(CategoryController.ValidateMech, CategoryController.ValidateMechCanBeFielded);
 
-                Logger.Log("Loaded CustomComponents v0.8.0.0.0 for bt 1.3");
+                Logger.Log("Loaded CustomComponents v0.8.0.1.0 for bt 1.3");
 #if CCDEBUG
                 Logger.LogDebug("Loading Categories");
 #endif  

@@ -184,10 +184,16 @@ namespace CustomComponents
                 if (num >= num2)
                     return $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.";
             }
+
             else if (num == num2)
             {
+                var mech = location.mechLab.activeMechDef;
+
                 var replace = location.LocalInventory.FirstOrDefault(i =>
-                    (i?.ComponentRef?.Def is WeaponDef def) && def.Category == weaponDef.Category && def.Description.Id != drop_item.ComponentRef.ComponentDefID);
+                    (i?.ComponentRef?.Def is WeaponDef def)
+                    && def.Category == weaponDef.Category
+                    && def.Description.Id != drop_item.ComponentRef.ComponentDefID
+                    && !i.ComponentRef.IsModuleFixed(mech));
                 if (replace == null)
                     return $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.";
                 else

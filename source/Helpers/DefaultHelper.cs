@@ -22,6 +22,39 @@ namespace CustomComponents
             return cref.Is<Flags>(out var f) && f.Default;
         }
 
+        public static bool IsModuleFixed(this MechComponentRef item, MechDef mech)
+        {
+#if CCDEBUG
+            Control.Logger.LogError($"IsModuleFixed: {item.ComponentDefID}");
+#endif
+            if (!item.IsFixed)
+            {
+#if CCDEBUG
+                Control.Logger.LogError($"-- false: not fixed");
+#endif
+
+                return false;
+
+            }
+
+            foreach (var mref in mech.Chassis.FixedEquipment)
+            {
+
+                if (mref.MountedLocation == item.MountedLocation && item.ComponentDefID == mref.ComponentDefID)
+                {
+#if CCDEBUG
+                    Control.Logger.LogError($"-- true!");
+#endif
+                    return true;
+                }
+            }
+#if CCDEBUG
+            Control.Logger.LogError($"-- false: not really fixed");
+#endif
+
+            return false;
+    }
+
         #endregion
 
 

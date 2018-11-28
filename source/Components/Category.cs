@@ -90,7 +90,7 @@ namespace CustomComponents
 
             Control.Logger.LogDebug($"-- total {n1}/{CategoryDescriptor.MaxEquiped}  location: {n2}/{CategoryDescriptor.MaxEquipedPerLocation}");
 
-            var replace = mech.Inventory.FirstOrDefault(i => (i.MountedLocation == order.DesiredLocation || CategoryDescriptor.ReplaceAnyLocation) && i.IsCategory(CategoryID) && i.IsDefault());
+            var replace = mech.Inventory.FirstOrDefault(i => !i.IsModuleFixed(mech) && (i.MountedLocation == order.DesiredLocation || CategoryDescriptor.ReplaceAnyLocation) && i.IsCategory(CategoryID) && i.IsDefault());
 
             Control.Logger.LogDebug($"-- possible replace: {(replace == null ? "not found" : replace.ComponentDefID)}");
 
@@ -146,6 +146,7 @@ namespace CustomComponents
 
             }
 #endif
+            var mech = location.mechLab.activeMechDef;
 
             if (CategoryDescriptor.MaxEquiped > 0)
             {
@@ -159,9 +160,9 @@ namespace CustomComponents
 
                 if (n >= CategoryDescriptor.MaxEquiped)
                 {
-                    var 
-                    replace = location.LocalInventory
-                        .FirstOrDefault(i => i.ComponentRef.Def.IsCategory(CategoryID));
+                    var replace = location.LocalInventory
+                        .FirstOrDefault(i => i.ComponentRef.Def.IsCategory(CategoryID) && !i.ComponentRef.IsModuleFixed(mech));
+
                     if (CategoryDescriptor.ReplaceAnyLocation && replace == null)
                     {
                         var mechlab = new MechLabHelper(location.mechLab);
@@ -172,7 +173,7 @@ namespace CustomComponents
                            
                             var loc_helper = new LocationHelper(widget);
                             replace = loc_helper.LocalInventory
-                                .FirstOrDefault(i => i.ComponentRef.Def.IsCategory(CategoryID));
+                                .FirstOrDefault(i => i.ComponentRef.Def.IsCategory(CategoryID) && !i.ComponentRef.IsModuleFixed(mech));
                             if(replace != null)
                                 break;
                         }
@@ -216,7 +217,7 @@ namespace CustomComponents
 
 
                     var replace = location.LocalInventory
-                        .FirstOrDefault(i => i.ComponentRef.Def.IsCategory(CategoryID));
+                        .FirstOrDefault(i => i.ComponentRef.Def.IsCategory(CategoryID) && !i.ComponentRef.IsModuleFixed(mech));
 #if CCDEBUG
                     Control.Logger.LogDebug($"--- replace: {(replace == null ? "none" : replace.ComponentRef.ComponentDefID)}");
 #endif
