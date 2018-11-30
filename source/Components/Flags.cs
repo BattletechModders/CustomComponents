@@ -7,7 +7,7 @@ using BattleTech;
 namespace CustomComponents
 {
     [CustomComponent("Flags")]
-    public class Flags : SimpleCustomComponent, IAfterLoad, IMechLabFilter, IOnItemGrab, IMechValidate
+    public class Flags : SimpleCustomComponent, IAfterLoad, IMechLabFilter, IMechValidate
     {
         public List<string> flags;
 
@@ -51,20 +51,6 @@ namespace CustomComponents
         public bool IsSet(string value)
         {
             return flags.Contains(value);
-        }
-
-        public bool OnItemGrab(IMechLabDraggableItem item, MechLabPanel ___mechLab, out string error)
-        {
-            error = null;
-            if (CannotRemove)
-            {
-                if (!DontShowMessage)
-                    error = string.Format(
-                         string.IsNullOrEmpty(ErrorCannotRemove) ? "Cannot remove vital component" : ErrorCannotRemove,
-                         Def.Description.Name);
-                return false;
-            }
-            return true;
         }
 
         public virtual void OnLoaded(Dictionary<string, object> values)

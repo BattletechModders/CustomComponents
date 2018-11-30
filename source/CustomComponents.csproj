@@ -82,6 +82,7 @@
     <Compile Include="CCLight\Factories\IPreProcessor.cs" />
     <Compile Include="CCLight\Factories\SimpleCustom.cs" />
     <Compile Include="Components\Sorter.cs" />
+    <Compile Include="Interfaces\IClearInventory.cs" />
     <Compile Include="TagRestrictions\TagRestrictions.cs" />
     <Compile Include="TagRestrictions\TagRestrictionsHandler.cs" />
     <Compile Include="DropResults\IChange.cs" />
@@ -115,7 +116,6 @@
     <Compile Include="Helpers\DefaultHelper.cs" />
     <Compile Include="Patches\SimGameState_AddMechPart_Patch.cs" />
     <Compile Include="Patches\SimGameState_ReadyMech_Patch.cs" />
-    <Compile Include="Patches\SimGameState_StripMech_Patch.cs" />
     <Compile Include="Interfaces\IMechValidate.cs" />
     <Compile Include="Interfaces\IOnInstalled.cs" />
     <Compile Include="Interfaces\IOnItemGrab.cs" />
@@ -124,6 +124,9 @@
     <Compile Include="Interfaces\IReplaceValidateDrop.cs" />
     <Compile Include="Patches\SimGameState_ML_InstallComponent_Patch.cs" />
     <Compile Include="Interfaces\IPostValidateDrop.cs" />
+    <Compile Include="Patches\MechLabSlotItem_RefreshItemColor.cs" />
+    <Compile Include="Patches\MechLabLocationWidjet_OnRemove.cs" />
+    <Compile Include="Patches\MechComponentRef_RefreshData.cs" />
     <Compile Include="Validators\MechLabLocationWidget_OnMechLabDrop_Patch.cs" />
     <Compile Include="Patches\MechLabLocationWidget_OnItemGrab_Patch.cs" />
     <Compile Include="Components\ColorComponent.cs" />
@@ -145,6 +148,9 @@
     <None Include="..\mod.json">
       <Link>mod.json</Link>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TEST\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,10 +1,11 @@
-﻿using BattleTech;
+﻿using System.Collections.Generic;
+using BattleTech;
 using BattleTech.UI;
 
 namespace CustomComponents
 {
     [CustomComponent("Replace")]
-    public class AutoReplace : SimpleCustomComponent, IOnItemGrabbed, IOnInstalled
+    public class AutoReplace : SimpleCustomComponent, IOnItemGrabbed, IOnInstalled, IClearInventory
     {
         public string ComponentDefId { get; set; }
         public ChassisLocations Location { get; set; }
@@ -40,6 +41,19 @@ namespace CustomComponents
             {
                 Control.Logger.LogDebug($"-- new component, not replacement needed");
             }
+        }
+
+        public void ClearInventory(List<MechComponentRef> result, SimGameState state, MechComponentRef source)
+        {
+            var ref_item = new MechComponentRef(ComponentDefId, state.GenerateSimGameUID(), source.ComponentDefType,
+                Location == ChassisLocations.None ? source.MountedLocation : Location)
+            {
+                DataManager = state.DataManager
+            };
+            ref_item.RefreshComponentDef();
+            result.Add(ref_item);
+            Control.Logger.LogDebug($"-- Replace with {ref_item.ComponentDefID} - {ref_item.SimGameUID}");
+
         }
     }
 }

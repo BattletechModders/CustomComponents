@@ -1,4 +1,6 @@
-﻿using System;
+﻿#undef CCDEBUG
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -6,6 +8,7 @@ using BattleTech;
 using BattleTech.Data;
 using BattleTech.UI;
 using Harmony;
+
 
 namespace CustomComponents
 {
@@ -25,35 +28,36 @@ namespace CustomComponents
         public static bool IsModuleFixed(this MechComponentRef item, MechDef mech)
         {
 #if CCDEBUG
-            Control.Logger.LogError($"IsModuleFixed: {item.ComponentDefID}");
+            Control.Logger.LogDebug($"IsModuleFixed: {item.ComponentDefID}");
 #endif
             if (!item.IsFixed)
             {
 #if CCDEBUG
-                Control.Logger.LogError($"-- false: not fixed");
+                Control.Logger.LogDebug($"-- false: not fixed");
 #endif
 
                 return false;
 
             }
 
-            foreach (var mref in mech.Chassis.FixedEquipment)
-            {
-
-                if (mref.MountedLocation == item.MountedLocation && item.ComponentDefID == mref.ComponentDefID)
+            if (mech.Chassis.FixedEquipment != null && mech.Chassis.FixedEquipment.Length > 0)
+                foreach (var mref in mech.Chassis.FixedEquipment)
                 {
+
+                    if (mref.MountedLocation == item.MountedLocation && item.ComponentDefID == mref.ComponentDefID)
+                    {
 #if CCDEBUG
-                    Control.Logger.LogError($"-- true!");
+                        Control.Logger.LogDebug($"-- true!");
 #endif
-                    return true;
+                        return true;
+                    }
                 }
-            }
 #if CCDEBUG
             Control.Logger.LogError($"-- false: not really fixed");
 #endif
 
             return false;
-    }
+        }
 
         #endregion
 
@@ -84,7 +88,7 @@ namespace CustomComponents
             var r = CreateRef(defaultID, type, mech.DataManager, state);
             if (r != null)
             {
-                r.SetData(location, -1, ComponentDamageLevel.Functional, false);
+                r.SetData(location, -1, ComponentDamageLevel.Functional, true);
                 var inv = mech.Inventory.ToList();
                 inv.Add(r);
                 mech.SetInventory(inv.ToArray());
@@ -93,7 +97,7 @@ namespace CustomComponents
 
         public static MechLabItemSlotElement CreateSlot(string id, ComponentType type, MechLabPanel mechLab)
         {
-            var component_ref = new MechComponentRef(id, string.Empty, type, ChassisLocations.None);
+            var component_ref = new MechComponentRef(id, string.Empty, type, ChassisLocations.None, isFixed: true);
 
             if (!component_ref.IsDefault())
             {
@@ -172,10 +176,8 @@ namespace CustomComponents
                 return true;
             }
 
-
-
-            var mechlab = widget.parentDropTarget as MechLabPanel;
             repair_state = true;
+            var mechlab = widget.parentDropTarget as MechLabPanel;
             foreach (var validator in component.GetComponents<IOnItemGrab>())
             {
                 repair_state = validator.OnItemGrab(item, mechlab, out _);
@@ -260,7 +262,7 @@ namespace CustomComponents
 
             var list = source.Inventory.ToList();
 
-            var result_list = list.Where(i => i.Is<Flags>(out var f) && f.CannotRemove || i.IsFixed).ToList();
+            var result_list = list.Where(i => i.IsFixed).ToList();
 
             for (int i = list.Count - 1; i >= 0; i--)
             {
@@ -272,32 +274,15 @@ namespace CustomComponents
                     list[i].SetSimGameUID(state.GenerateSimGameUID());
                 }
 
-                if (list[i].Is<Flags>(out var f) && f.CannotRemove)
+                if (list[i].IsFixed)
                 {
-                    Control.Logger.LogDebug("-- Default - skipping");
+                    Control.Logger.LogDebug("-- fixed - skipping");
                     continue;
                 }
 
-                if (list[i].Is<AutoReplace>(out var replace))
+                foreach (var clear in list[i].GetComponents<IClearInventory>())
                 {
-                    var ref_item = CreateRef(replace.ComponentDefId, list[i].ComponentDefType, list[i].DataManager, state);
-                    var location = replace.Location == ChassisLocations.None
-                        ? list[i].MountedLocation
-                        : replace.Location;
-
-                    ref_item.SetData(location, list[i].HardpointSlot, list[i].DamageLevel, false);
-                    ref_item.SetSimGameUID(state.GenerateSimGameUID());
-                    result_list.Add(ref_item);
-                    Control.Logger.LogDebug($"-- Replace with {ref_item.ComponentDefID} - {ref_item.SimGameUID}");
-                }
-
-
-                if (list[i].Is<AutoLinked>(out var link) && link.Links != null)
-                {
-                    foreach (var l in link.Links)
-                    {
-                        result_list.RemoveAll(item => item.ComponentDefID == l.ComponentDefId && item.MountedLocation == l.Location);
-                    }
+                    clear.ClearInventory(result_list, state, list[i]);
                 }
             }
 
