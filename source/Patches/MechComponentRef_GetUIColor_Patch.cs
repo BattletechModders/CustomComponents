@@ -22,10 +22,17 @@ namespace CustomComponents
                     return;
                 }
 
-                if (componentRef.Is<Flags>(out var f) && f.Default)
+
+                if (componentRef.Is<Flags>(out var f))
                 {
-                    __result = UIColor.DarkGray;
-                    return;
+                    if (f.Invalid)
+                    {
+                        __result = UIColor.Red;
+                    }
+                    else if (f.Default)
+                    {
+                        __result = Control.Settings.DefaultFlagBackgroundColor;
+                    }
                 }
             }
             catch(Exception e)
