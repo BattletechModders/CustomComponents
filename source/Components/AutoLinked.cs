@@ -12,7 +12,7 @@ namespace CustomComponents
     }
 
     [CustomComponent("Linked")]
-    public class AutoLinked : SimpleCustomComponent, IOnItemGrabbed, IMechValidate, IOnInstalled, IAdjustValidateDrop
+    public class AutoLinked : SimpleCustomComponent, IOnItemGrabbed, IMechValidate, IOnInstalled, IAdjustValidateDrop, IClearInventory
     {
 
         public Link[] Links { get; set; }
@@ -119,6 +119,14 @@ namespace CustomComponents
                     else
                         Control.Logger.LogDebug($"---- not found");
                 }
+            }
+        }
+
+        public void ClearInventory(List<MechComponentRef> result, SimGameState state, MechComponentRef source)
+        {
+            foreach (var l in Links)
+            {
+                result.RemoveAll(item => item.ComponentDefID == l.ComponentDefId && item.MountedLocation == l.Location);
             }
         }
     }

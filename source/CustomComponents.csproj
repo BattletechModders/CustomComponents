@@ -82,6 +82,7 @@
     <Compile Include="CCLight\Factories\IPreProcessor.cs" />
     <Compile Include="CCLight\Factories\SimpleCustom.cs" />
     <Compile Include="Components\Sorter.cs" />
+    <Compile Include="Interfaces\IClearInventory.cs" />
     <Compile Include="TagRestrictions\TagRestrictions.cs" />
     <Compile Include="TagRestrictions\TagRestrictionsHandler.cs" />
     <Compile Include="DropResults\IChange.cs" />
@@ -115,7 +116,6 @@
     <Compile Include="Helpers\DefaultHelper.cs" />
     <Compile Include="Patches\SimGameState_AddMechPart_Patch.cs" />
     <Compile Include="Patches\SimGameState_ReadyMech_Patch.cs" />
-    <Compile Include="Patches\SimGameState_StripMech_Patch.cs" />
     <Compile Include="Interfaces\IMechValidate.cs" />
     <Compile Include="Interfaces\IOnInstalled.cs" />
     <Compile Include="Interfaces\IOnItemGrab.cs" />

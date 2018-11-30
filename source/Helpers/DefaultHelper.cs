@@ -176,10 +176,8 @@ namespace CustomComponents
                 return true;
             }
 
-
-
-            var mechlab = widget.parentDropTarget as MechLabPanel;
             repair_state = true;
+            var mechlab = widget.parentDropTarget as MechLabPanel;
             foreach (var validator in component.GetComponents<IOnItemGrab>())
             {
                 repair_state = validator.OnItemGrab(item, mechlab, out _);
@@ -264,7 +262,7 @@ namespace CustomComponents
 
             var list = source.Inventory.ToList();
 
-            var result_list = list.Where(i => i.Is<Flags>(out var f) && f.CannotRemove || i.IsFixed).ToList();
+            var result_list = list.Where(i => i.IsFixed).ToList();
 
             for (int i = list.Count - 1; i >= 0; i--)
             {
@@ -276,32 +274,15 @@ namespace CustomComponents
                     list[i].SetSimGameUID(state.GenerateSimGameUID());
                 }
 
-                if (list[i].Is<Flags>(out var f) && f.CannotRemove)
+                if (list[i].IsFixed)
                 {
-                    Control.Logger.LogDebug("-- Default - skipping");
+                    Control.Logger.LogDebug("-- fixed - skipping");
                     continue;
                 }
 
-                if (list[i].Is<AutoReplace>(out var replace))
+                foreach (var clear in list[i].GetComponents<IClearInventory>())
                 {
-                    var ref_item = CreateRef(replace.ComponentDefId, list[i].ComponentDefType, list[i].DataManager, state);
-                    var location = replace.Location == ChassisLocations.None
-                        ? list[i].MountedLocation
-                        : replace.Location;
-
-                    ref_item.SetData(location, list[i].HardpointSlot, list[i].DamageLevel, true);
-                    ref_item.SetSimGameUID(state.GenerateSimGameUID());
-                    result_list.Add(ref_item);
-                    Control.Logger.LogDebug($"-- Replace with {ref_item.ComponentDefID} - {ref_item.SimGameUID}");
-                }
-
-
-                if (list[i].Is<AutoLinked>(out var link) && link.Links != null)
-                {
-                    foreach (var l in link.Links)
-                    {
-                        result_list.RemoveAll(item => item.ComponentDefID == l.ComponentDefId && item.MountedLocation == l.Location);
-                    }
+                    clear.ClearInventory(result_list, state, list[i]);
                 }
             }
 
