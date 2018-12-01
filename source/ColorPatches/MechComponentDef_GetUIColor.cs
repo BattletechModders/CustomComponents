@@ -5,25 +5,17 @@ using System;
 
 namespace CustomComponents
 {
-    [HarmonyPatch(typeof(MechComponentRef), "GetUIColor")]
-    internal static class MechComponentRef_GetUIColor
+    [HarmonyPatch(typeof(MechComponentDef), "GetUIColor")]
+    internal static class MechComponentDef_GetUIColor
     {
 
         [HarmonyPostfix]
-        public static void Postfix(MechComponentRef __instance,
-            ref UIColor __result,
-            MechComponentRef componentRef)
+        public static void Postfix(MechComponentDef componentDef,
+            ref UIColor __result)
         {
             try
             {
-                if (componentRef.Is<ColorComponent>(out var color))
-                {
-                    __result = color.UIColor;
-                    return;
-                }
-
-
-                if (componentRef.Is<Flags>(out var f))
+                if (componentDef.Is<Flags>(out var f))
                 {
                     if (f.Invalid)
                     {
@@ -35,7 +27,7 @@ namespace CustomComponents
                     }
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Control.Logger.LogError(e);
             }

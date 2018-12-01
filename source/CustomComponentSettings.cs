@@ -20,11 +20,28 @@ namespace CustomComponents
         }
     }
 
+    [SerializeField]
+    public struct TagColor
+    {
+        public string Color { get; set; }
+        public string Tag { get; set; }
+
+        public Color ToColor()
+        {
+            if (ColorUtility.TryParseHtmlString(Color, out var color))
+                return color;
+            return UnityEngine.Color.magenta;
+        }
+    }
+
     public class CustomComponentSettings
     {
         public LogLevel LogLevel = LogLevel.Debug;
         public List<CategoryDescriptor> Categories = new List<CategoryDescriptor>();
         public List<TagRestrictions> TagRestrictions = new List<TagRestrictions>();
+        public List<TagColor> ColorTags = new List<TagColor>();
+
+
         public bool TagRestrictionDropValidateRequiredTags = false;
         public bool TagRestrictionDropValidateIncompatibleTags = true;
 
@@ -37,6 +54,7 @@ namespace CustomComponents
 
         [JsonIgnore] public Color PreinstalledOverlayColor;
         [JsonIgnore] public Color DefaultFlagOverlayColor;
+        [JsonIgnore] public Dictionary<string, Color> ColorTagsDictionary;
 
         public bool TestEnableAllTags = false;
 
@@ -44,6 +62,14 @@ namespace CustomComponents
         {
             PreinstalledOverlayColor = PreinstalledOverlayCColor.ToColor();
             DefaultFlagOverlayColor = DefaultFlagOverlayCColor.ToColor();
+
+            ColorTagsDictionary = new Dictionary<string, Color>();
+            if(ColorTags != null)
+                foreach (var colorTag in ColorTags)
+                {
+                    if(!ColorTagsDictionary.ContainsKey(colorTag.Tag))
+                        ColorTagsDictionary.Add(colorTag.Tag, colorTag.ToColor());
+                }
         }
     }
 }
