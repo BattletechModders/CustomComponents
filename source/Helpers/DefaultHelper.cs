@@ -40,6 +40,7 @@ namespace CustomComponents
 
             }
 
+            
             if (mech.Chassis.FixedEquipment != null && mech.Chassis.FixedEquipment.Length > 0)
                 foreach (var mref in mech.Chassis.FixedEquipment)
                 {
