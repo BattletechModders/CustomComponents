@@ -13,6 +13,7 @@ namespace CustomComponents.Fixes
             MechComponentRef mechComponent,
             ChassisLocations newLocation,
             ChassisLocations previousLocation,
+            string mechSimGameUID,
             WorkOrderEntry_InstallComponent __result)
         {
 #if CCDEBUG
@@ -44,6 +45,22 @@ namespace CustomComponents.Fixes
                     return;
 
                 }
+                MechDef mechByID = __instance.GetMechByID(mechSimGameUID);
+#if CCDEBUG
+                if (mechByID == null)
+                    Control.Logger.LogDebug("-- no mech found!");
+#endif
+                if (mechByID != null && mechByID.Chassis.ChassisTags.Contains(Control.Settings.OmniTechFlag))
+                {
+#if CCDEBUG
+                    if (mechByID == null)
+                        Control.Logger.LogDebug("-- mech is omni!");
+#endif
+
+                    tr.Value = (Control.Settings.OmniTechCostBySize ? mechComponent.Def.InventorySize / 2 : 1) * Control.Settings.OmniTechInstallCost;
+                }
+
+
                 if (tr.Value == 0)
                     tr.Value = 1;
             }

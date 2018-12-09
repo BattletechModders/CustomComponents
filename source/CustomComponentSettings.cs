@@ -57,6 +57,9 @@ namespace CustomComponents
         [JsonIgnore] public Dictionary<string, Color> ColorTagsDictionary;
 
         public bool TestEnableAllTags = false;
+        public string OmniTechFlag = "cc_omnitech";
+        public bool OmniTechCostBySize = false;
+        public int OmniTechInstallCost = 1;
 
         public void Complete()
         {

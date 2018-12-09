@@ -94,9 +94,10 @@ namespace CustomComponents
                 return;
             }
 
-            //Control.Logger.LogDebug($"ProcessCustomCompontentFactories for {target.GetType()} ({target.GetHashCode()})");
-            //Control.Logger.LogDebug($"- {identifier}");
-
+#if CCDEBUG
+            Control.Logger.LogDebug($"ProcessCustomCompontentFactories for {target.GetType()} ({target.GetHashCode()})");
+            Control.Logger.LogDebug($"- {identifier}");
+#endif
             foreach (var preProcessor in PreProcessors)
             {
                 preProcessor.PreProcess(target, values);
@@ -110,17 +111,24 @@ namespace CustomComponents
                     continue;
                 }
 
+#if CCDEBUG
                 Control.Logger.Log($"Created {factory} for {identifier}");
+                
+#endif
                 Database.SetCustomWithIdentifier(identifier, component);
 
                 if (component is IAfterLoad load)
                 {
-                    //Control.Logger.LogDebug($"IAfterLoad: {identifier}");
+#if CCDEBUG
+                    Control.Logger.LogDebug($"IAfterLoad: {identifier}");
+#endif
                     load.OnLoaded(values);
                 }
             }
 
-            //Control.Logger.LogDebug("- done");
+#if CCDEBUG
+            Control.Logger.LogDebug("- done");
+#endif
         }
     }
 }
