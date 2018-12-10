@@ -1,4 +1,4 @@
-﻿#undef CCDEBUG
+﻿//#undef CCDEBUG
 
 using System;
 using System.Collections.Generic;
@@ -259,16 +259,18 @@ namespace CustomComponents
 
         internal static MechComponentRef[] ClearInventory(MechDef source, SimGameState state)
         {
+#if CCDEBUG
             Control.Logger.LogDebug("Clearing Inventory");
-
+#endif
             var list = source.Inventory.ToList();
 
             var result_list = list.Where(i => i.IsFixed).ToList();
 
             for (int i = list.Count - 1; i >= 0; i--)
             {
-
+#if CCDEBUG
                 Control.Logger.LogDebug($"- {list[i].ComponentDefID} - {(list[i].Def == null ? "NULL" : list[i].SimGameUID)}");
+#endif
                 if (list[i].Def == null)
                 {
                     list[i].RefreshComponentDef();
@@ -277,7 +279,9 @@ namespace CustomComponents
 
                 if (list[i].IsFixed)
                 {
+#if CCDEBUG
                     Control.Logger.LogDebug("-- fixed - skipping");
+#endif
                     continue;
                 }
 
@@ -289,14 +293,17 @@ namespace CustomComponents
 
             foreach (var item in result_list)
             {
-                item.SetSimGameUID(state.GenerateSimGameUID());
-                Control.Logger.LogDebug($"- {item.ComponentDefID} - {item.SimGameUID}");
+                if(string.IsNullOrEmpty(item.SimGameUID))
+                    item.SetSimGameUID(state.GenerateSimGameUID());
+#if CCDEBUG
+                    Control.Logger.LogDebug($"- {item.ComponentDefID} - {item.SimGameUID}");
+#endif
             }
 
             return result_list.ToArray();
         }
 
-        #endregion
+#endregion
 
     }
 }

@@ -15,6 +15,9 @@ namespace CustomComponents
 
         public static void Prefix(SimGameState __instance)
         {
+#if CCDEBUG
+            DEBUGTOOLS.NEEDTOSHOW = true;
+#endif
             state = __instance;
         }
 
@@ -35,10 +38,19 @@ namespace CustomComponents
 
         public static MechDef CreateMech(ChassisDef chassis, string simuid, MechDef original)
         {
+#if CCDEBUG
             Control.Logger.LogDebug($"Createing Mech {chassis.Description.Id} - {original.Description.Id}");
+#endif
             var result = new MechDef(chassis, simuid, original);
+#if CCDEBUG
+            DEBUGTOOLS.ShowInventory(result);
+#endif
             result.SetInventory(DefaultHelper.ClearInventory(original, state));
+#if CCDEBUG
+            DEBUGTOOLS.ShowInventory(result);
+#endif
             return result;
         }
+
     }
 }
