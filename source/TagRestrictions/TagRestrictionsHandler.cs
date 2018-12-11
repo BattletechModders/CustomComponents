@@ -112,25 +112,32 @@ namespace CustomComponents
 
             foreach (var tag in checkRequiresForTags)
             {
-                var requiredTags = RequiredTags(tag);
-                foreach (var requiredTag in requiredTags)
+                var requiredAnyTags = RequiredAnyTags(tag);
+                var hasMetAnyRequiredAnyTags = true; // no required any tags = ok
+                foreach (var requiredAnyTag in requiredAnyTags)
                 {
-                    if (tagsOnMech.Contains(requiredTag))
+                    hasMetAnyRequiredAnyTags = false; // at least one required any tag check = nok
+                    if (tagsOnMech.Contains(requiredAnyTag))
                     {
-                        continue;
+                        hasMetAnyRequiredAnyTags = true; // at least on required any tag found = ok
+                        break;
                     }
-
-                    var tagName = NameForTag(tag);
-                    var requiredTagName = NameForTag(requiredTag);
-                    error = $"{tagName} requires {requiredTagName}";
-
-                    if (errors == null)
-                    {
-                        return false;
-                    }
-
-                    errors[MechValidationType.InvalidInventorySlots].Add(new Text(error));
                 }
+
+                if (hasMetAnyRequiredAnyTags)
+                {
+                    continue;
+                }
+
+                var tagName = NameForTag(tag);
+                error = $"{tagName} requirements are not met";
+
+                if (errors == null)
+                {
+                    return false;
+                }
+
+                errors[MechValidationType.InvalidInventorySlots].Add(new Text(error));
             }
 
             var checkIncompatiblesForTags = tagsOnMech;
@@ -177,19 +184,19 @@ namespace CustomComponents
             return error == null;
         }
 
-        private IEnumerable<string> RequiredTags(string tag)
+        private IEnumerable<string> RequiredAnyTags(string tag)
         {
             if (!Restrictions.TryGetValue(tag, out var restriction))
             {
                 yield break;
             }
 
-            if (restriction.RequiredTags == null)
+            if (restriction.RequiredAnyTags == null)
             {
                 yield break;
             }
 
-            foreach (var requiredTag in restriction.RequiredTags)
+            foreach (var requiredTag in restriction.RequiredAnyTags)
             {
                 yield return requiredTag;
             }
