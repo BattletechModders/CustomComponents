@@ -140,6 +140,31 @@ namespace CustomComponents
                 errors[MechValidationType.InvalidInventorySlots].Add(new Text(error));
             }
 
+
+            foreach (var tag in checkRequiresForTags)
+            {
+                var requiredTags = RequiredTags(tag);
+                foreach (var requiredTag in requiredTags)
+                {
+                    if (tagsOnMech.Contains(requiredTag))
+                    {
+                        continue;
+                    }
+
+                    var tagName = NameForTag(tag);
+                    var requiredTagName = NameForTag(requiredTag);
+                    error = $"{tagName} requires {requiredTagName}";
+
+                    if (errors == null)
+                    {
+                        return false;
+                    }
+
+                    errors[MechValidationType.InvalidInventorySlots].Add(new Text(error));
+                }
+            }
+
+
             var checkIncompatiblesForTags = tagsOnMech;
             if (tagsForDropped != null)
             {
@@ -182,6 +207,24 @@ namespace CustomComponents
             }
 
             return error == null;
+        }
+
+        private IEnumerable<string> RequiredTags(string tag)
+        {
+            if (!Restrictions.TryGetValue(tag, out var restriction))
+            {
+                yield break;
+            }
+
+            if (restriction.RequiredTags == null)
+            {
+                yield break;
+            }
+
+            foreach (var requiredTag in restriction.RequiredTags)
+            {
+                yield return requiredTag;
+            }
         }
 
         private IEnumerable<string> RequiredAnyTags(string tag)
