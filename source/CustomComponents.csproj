@@ -92,7 +92,7 @@
     <Compile Include="DEBUGTOOLS\MechDef_RefreshInventory.cs" />
     <Compile Include="Fixes\MechDef_InsertFixedEquipmentIntoInventory.cs" />
     <Compile Include="Fixes\SimGameState_CreateComponentInstallWorkOrder.cs" />
-    <Compile Include="Helpers\Adapter.cs" />
+    <Compile Include="WorkOrderCosts\Utils\Adapter.cs" />
     <Compile Include="Interfaces\IColorComponent.cs" />
     <Compile Include="Components\RGBColorComponent.cs" />
     <Compile Include="Components\Sorter.cs" />
