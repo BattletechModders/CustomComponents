@@ -92,6 +92,7 @@
     <Compile Include="DEBUGTOOLS\MechDef_RefreshInventory.cs" />
     <Compile Include="Fixes\MechDef_InsertFixedEquipmentIntoInventory.cs" />
     <Compile Include="Fixes\SimGameState_CreateComponentInstallWorkOrder.cs" />
+    <Compile Include="Helpers\Adapter.cs" />
     <Compile Include="Interfaces\IColorComponent.cs" />
     <Compile Include="Components\RGBColorComponent.cs" />
     <Compile Include="Components\Sorter.cs" />
@@ -156,6 +157,12 @@
     <Compile Include="Components\TonnageAllowed.cs" />
     <Compile Include="Components\TonnageLimited.cs" />
     <Compile Include="Patches\MechLabInventoryWidget_ApplyFiltering_Patch.cs" />
+    <Compile Include="WorkOrderCosts\Utils\FormulaEvaluator.cs" />
+    <Compile Include="WorkOrderCosts\Patches\SimGameState_CreateComponentInstallWorkOrder_Patch.cs" />
+    <Compile Include="WorkOrderCosts\Patches\SimGameState_CreateComponentRepairWorkOrder_Patch.cs" />
+    <Compile Include="WorkOrderCosts\WorkOrderCosts.cs" />
+    <Compile Include="WorkOrderCosts\WorkOrderCostsHandler.cs" />
+    <Compile Include="WorkOrderCosts\Utils\WorkOrderEntry_MechLabAdapter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\mod.json">
