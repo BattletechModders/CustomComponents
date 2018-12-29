@@ -32,9 +32,9 @@
 		},
 		 
 		"TestEnableAllTags": false,
-		"OmniTechFlag" = "cc_omnitech",
-        "OmniTechCostBySize" = false,
-        "OmniTechInstallCost" = 1
+		"OmniTechFlag": "cc_omnitech",
+        "OmniTechCostBySize": false,
+        "OmniTechInstallCost": 1
 	},	
 		
 	"Manifest": [ ]
