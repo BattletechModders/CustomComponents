@@ -22,7 +22,7 @@ namespace CustomComponents
         public bool CheckFilter(MechLabPanel panel)
         {
             var tonnage = panel.activeMechDef.Chassis.Tonnage;
-            return Min >= tonnage && Max <= tonnage;
+            return tonnage >= Min && tonnage <= Max;
         }
 
 
