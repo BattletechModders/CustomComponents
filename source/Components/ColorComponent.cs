@@ -7,7 +7,7 @@ namespace CustomComponents
     /// <summary>
     /// component has specific color
     /// </summary>
-    [CustomComponent("Color")]
+    [CustomComponent("Color", group: "ColorType")]
     public class ColorComponent : SimpleCustomComponent, IColorComponent
     {
         /// <summary>

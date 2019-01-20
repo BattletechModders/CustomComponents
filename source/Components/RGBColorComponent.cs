@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace CustomComponents
 {
-    [CustomComponent("RGBColor")]
+    [CustomComponent("RGBColor", group: "ColorType")]
     public class RGBColorComponent : SimpleCustomComponent, IColorComponent, IAfterLoad
     {
         [JsonIgnore]

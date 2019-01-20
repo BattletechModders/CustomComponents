@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CustomComponents</RootNamespace>
     <AssemblyName>CustomComponents</AssemblyName>
-    <TargetFrameworkVersion>v3.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -74,11 +74,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CCLight\DataManagerPerfomance\DataManager_Clear_Patch.cs" />
-    <Compile Include="CCLight\DataManagerPerfomance\DataManager_GraduateBackgroundRequest_Patch.cs" />
-    <Compile Include="CCLight\DataManagerPerfomance\DataManager_NotifyFileLoaded_Patch.cs" />
-    <Compile Include="CCLight\DataManagerPerfomance\DataManager_RequestResource_Internal_Patch.cs" />
-    <Compile Include="CCLight\DataManagerPerfomance\DMPHelper.cs" />
+    <Compile Include="CCLight\ComponentCount.cs" />
+    <Compile Include="CCLight\Factories\ArrayCustomFactory.cs" />
     <Compile Include="CCLight\Factories\IPreProcessor.cs" />
     <Compile Include="CCLight\Factories\SimpleCustom.cs" />
     <Compile Include="ColorPatches\ColorExtentions.cs" />

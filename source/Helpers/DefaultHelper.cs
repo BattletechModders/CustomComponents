@@ -257,7 +257,7 @@ namespace CustomComponents
             }
         }
 
-        internal static MechComponentRef[] ClearInventory(MechDef source, SimGameState state)
+        public static MechComponentRef[] ClearInventory(MechDef source, SimGameState state)
         {
 #if CCDEBUG
             Control.Logger.LogDebug("Clearing Inventory");

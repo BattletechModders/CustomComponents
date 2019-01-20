@@ -36,7 +36,7 @@ namespace CustomComponents
         {
             Control.Logger.Log($"Create mech from parts need_equip:{need_equip}");
 
-            var result = new MechDef(mechDef, simguid, need_equip);
+            var result = new MechDef(mechDef, simguid, true);
             if (!need_equip)
             {
                 result.SetInventory(DefaultHelper.ClearInventory(mechDef, state));

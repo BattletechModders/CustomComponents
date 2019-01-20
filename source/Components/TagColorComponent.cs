@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace CustomComponents
 {
-    [CustomComponent("ColorTag")]
+    [CustomComponent("ColorTag", group: "ColorType")]
     public class TagColorComponent : SimpleCustomComponent, IColorComponent, IAfterLoad
     {
         [JsonIgnore] public UIColor UIColor => UIColor.Custom;

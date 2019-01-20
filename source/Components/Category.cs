@@ -10,8 +10,9 @@ namespace CustomComponents
     /// <summary>
     /// component use category logic
     /// </summary>
-    [CustomComponent("Category")]
-    public class Category : SimpleCustomComponent, IAfterLoad, IOnInstalled, IReplaceValidateDrop, IPreValidateDrop, IPostValidateDrop
+    [CustomComponent("Category", "Categories", true)]
+    public class Category : SimpleCustomComponent, IAfterLoad, IOnInstalled, IReplaceValidateDrop, 
+        IPreValidateDrop, IPostValidateDrop, IRepalceIdentifier
     {
         /// <summary>
         /// name of category
@@ -21,6 +22,9 @@ namespace CustomComponents
         /// optional tag for AllowMixTags, if not set defid will used
         /// </summary>
         public string Tag { get; set; }
+
+        public string ReplaceID => CategoryID;
+
 
         public string GetTag()
         {
@@ -39,26 +43,16 @@ namespace CustomComponents
         {
             CategoryDescriptor = Control.GetOrCreateCategory(CategoryID);
 
-            if (CategoryDescriptor.DefaultCustoms == null)
+            if (CategoryDescriptor.Defaults == null)
             {
                 return;
             }
-            var customSection = (Dictionary<string, object>)values[Control.CustomSectionName];
 
-            foreach (var customPair in CategoryDescriptor.DefaultCustoms)
-            {
-                if (!customSection.ContainsKey(customPair.Key))
-                {
-                    customSection[customPair.Key] = customPair.Value;
-
-                    //Control.Logger.LogDebug($"{Def.Description.Id} added {customPair.Key}");
-                }
-            }
+            Registry.ProcessCustomFactories(Def, CategoryDescriptor.Defaults, false);
         }
 
         public void OnInstalled(WorkOrderEntry_InstallComponent order, SimGameState state, MechDef mech)
         {
-
             Control.Logger.LogDebug($"- Category");
 
             if (!CategoryDescriptor.AutoReplace || CategoryDescriptor.MaxEquiped < 0 && CategoryDescriptor.MaxEquipedPerLocation < 0)
@@ -288,6 +282,11 @@ namespace CustomComponents
             }
 
             return string.Empty;
+        }
+
+        public override string ToString()
+        {
+            return "Category: " + CategoryID;
         }
     }
 }

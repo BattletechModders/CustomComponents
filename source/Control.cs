@@ -50,11 +50,11 @@ namespace CustomComponents
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
 
                 // make sure category is always run first, as it contains default customs
-                Registry.RegisterSimpleCustomComponents(typeof(Category));
+//                Registry.RegisterSimpleCustomComponents(typeof(Category));
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
                 Validator.RegisterMechValidator(CategoryController.ValidateMech, CategoryController.ValidateMechCanBeFielded);
 
-                Logger.Log("Loaded CustomComponents v0.8.5.0 for bt 1.3.2");
+                Logger.Log("Loaded CustomComponents v0.9.0.0 for bt 1.3.2");
 #if CCDEBUG
                 Logger.LogDebug("Loading Categories");
 #endif  
@@ -122,6 +122,7 @@ namespace CustomComponents
                 Logger.LogDebug($"Adding new: {category.Name}");
 #endif
                 Categories.Add(category.Name, category);
+                category.InitDefaults();
             }
 
 #if CCDEBUG

@@ -3,8 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using BattleTech;
-using Harmony;
+
 
 namespace CustomComponents
 {
@@ -13,6 +12,16 @@ namespace CustomComponents
         private static readonly List<IPreProcessor> PreProcessors = new List<IPreProcessor>();
         private static readonly List<ICustomFactory> Factories = new List<ICustomFactory>();
         private static readonly HashSet<string> SimpleIdentifiers = new HashSet<string>();
+
+        private static Dictionary<Type, CustomComponentAttribute> attributes = new Dictionary<Type, CustomComponentAttribute>() ;
+
+
+        public static CustomComponentAttribute GetAttributeByType(Type type)
+        {
+            if (attributes.TryGetValue(type, out var result))
+                return result;
+            return null;
+        }
 
         public static void RegisterPreProcessor(IPreProcessor preProcessor)
         {
@@ -34,7 +43,7 @@ namespace CustomComponents
         public static void RegisterSimpleCustomComponents(params Type[] types)
         {
             var scGenericType = typeof(SimpleCustom<>);
-            foreach (var tuple in types.Select(t => new {type = t, typeWithGenericType = GetTypeWithGenericType(t, scGenericType)}).Where(t => t.typeWithGenericType != null))
+            foreach (var tuple in types.Select(t => new { type = t, typeWithGenericType = GetTypeWithGenericType(t, scGenericType) }).Where(t => t.typeWithGenericType != null))
             {
                 var type = tuple.type;
                 var customAttribute = type.GetCustomAttributes(false).OfType<CustomComponentAttribute>().FirstOrDefault();
@@ -50,16 +59,28 @@ namespace CustomComponents
                     continue;
                 }
 
+                attributes.Add(tuple.type, customAttribute);
+
                 var typeWithGenericType = tuple.typeWithGenericType;
                 var defType = typeWithGenericType.GetGenericArguments()[0];
 
                 var factoryGenericType = typeof(SimpleCustomFactory<,>);
-                var genericTypes = new[] {type, defType};
+                var genericTypes = new[] { type, defType };
                 var factoryType = factoryGenericType.MakeGenericType(genericTypes);
                 var factory = Activator.CreateInstance(factoryType, name) as ICustomFactory;
                 Factories.Add(factory);
-
                 Control.Logger.Log($"SimpleCustom {name} registered for type {defType}");
+
+                if (!string.IsNullOrEmpty(customAttribute.ArrayName))
+                {
+                    factoryGenericType = typeof(ArrayCustomFactory<,>);
+                    factoryType = factoryGenericType.MakeGenericType(genericTypes);
+                    factory = Activator.CreateInstance(factoryType, customAttribute.ArrayName) as ICustomFactory;
+                    Factories.Add(factory);
+                        Control.Logger.Log($"- ArrayCustom {customAttribute.ArrayName} registered for type {defType}");
+
+                }
+
             }
         }
 
@@ -87,7 +108,7 @@ namespace CustomComponents
 
         #endregion
 
-        internal static void ProcessCustomFactories(object target, Dictionary<string, object> values)
+        internal static void ProcessCustomFactories(object target, Dictionary<string, object> values, bool replace = true)
         {
             var identifier = Database.Identifier(target);
             if (identifier == null)
@@ -104,31 +125,50 @@ namespace CustomComponents
                 preProcessor.PreProcess(target, values);
             }
 
+#if CCDEBUG
+            bool loaded = false;
+#endif
             foreach (var factory in Factories)
-            {
-                var component = factory.Create(target, values);
-                if (component == null)
+                foreach (var component in factory.Create(target, values))
+
                 {
-                    continue;
-                }
+#if CCDEBUG
+                    loaded = true;
+#endif
+                    if (component == null)
+                    {
+                        continue;
+                    }
 
 #if CCDEBUG
-                Control.Logger.Log($"Created {factory} for {identifier}");
+                    Control.Logger.Log($"Created {component} for {identifier}");
                 
 #endif
-                Database.SetCustomWithIdentifier(identifier, component);
-
-                if (component is IAfterLoad load)
-                {
+                    if (Database.SetCustomWithIdentifier(identifier, component, replace) && component is IAfterLoad load)
+                    {
 #if CCDEBUG
                     Control.Logger.LogDebug($"IAfterLoad: {identifier}");
 #endif
-                    load.OnLoaded(values);
+                        load.OnLoaded(values);
+                    }
                 }
-            }
 
 #if CCDEBUG
-            Control.Logger.LogDebug("- done");
+            if (loaded)
+            {
+                Control.Logger.LogDebug($"ProcessCustomCompontentFactories for {target.GetType()} ({target.GetHashCode()})");
+                Control.Logger.LogDebug($"- {identifier}");
+
+                Control.Logger.LogDebug("- Loaded:");
+
+                foreach (var custom in Database.GetCustoms<ICustom>(target))
+                {
+                    Control.Logger.LogDebug($"--- {custom}");
+                }
+
+                Control.Logger.LogDebug("- done");
+            }
+
 #endif
         }
     }

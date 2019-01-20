@@ -3,16 +3,17 @@ using HBS.Util;
 
 namespace CustomComponents
 {
-    public class SimpleCustomFactory<TCustom, TDef> : ICustomFactory
+    public class ArrayCustomFactory<TCustom, TDef> : ICustomFactory
         where TCustom : SimpleCustom<TDef>, new()
         where TDef : class
     {
-        public SimpleCustomFactory(string customName)
+        public string CustomName { get; }
+
+
+        public ArrayCustomFactory(string customName)
         {
             CustomName = customName;
         }
-
-        public string CustomName { get; }
 
         public virtual IEnumerable<ICustom> Create(object target, Dictionary<string, object> values)
         {
@@ -36,21 +37,29 @@ namespace CustomComponents
                 yield break;
             }
 
-            if (!(componentSettingsObject is Dictionary<string, object> componentSettings))
+            if (!(componentSettingsObject is IEnumerable<object> componentSettings))
             {
                 yield break;
             }
 
-            var obj = new TCustom();
-            JSONSerializationUtility.RehydrateObjectFromDictionary(obj, componentSettings);
-            obj.Def = def;
+            foreach (var item in componentSettings)
+            {
+                if (item is Dictionary<string, object> component)
+                {
+                    var obj = new TCustom();
 
-            yield return obj;
+                    JSONSerializationUtility.RehydrateObjectFromDictionary(obj, component);
+                    obj.Def = def;
+
+                    yield return obj;
+                }
+            }
         }
+
 
         public override string ToString()
         {
-            return CustomName + ".SimpleFactory";
+            return CustomName + ".ArrayFactory";
         }
     }
 }

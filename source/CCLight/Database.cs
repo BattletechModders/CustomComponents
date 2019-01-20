@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#undef CCDEBUG
+using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 using BattleTech.Data;
@@ -10,9 +11,9 @@ namespace CustomComponents
     {
         #region internal
 
-        internal static void SetCustomWithIdentifier(string identifier, ICustom cc)
+        internal static bool  SetCustomWithIdentifier(string identifier, ICustom cc, bool replace)
         {
-            Shared.SetCustomInternal(identifier, cc);
+            return Shared.SetCustomInternal(identifier, cc, replace);
         }
 
         internal static IEnumerable<T> GetCustomsFromIdentifier<T>(string identifier)
@@ -76,10 +77,12 @@ namespace CustomComponents
 
             return ccs.OfType<T>();
         }
-        
-        private void SetCustomInternal(string key, ICustom cc)
+
+        private bool SetCustomInternal(string key, ICustom cc, bool replace)
         {
-            //Control.Logger.LogDebug($"SetCustomInternal key={key} cc={cc}");
+#if CCDEBUG
+            Control.Logger.LogDebug($"SetCustomInternal key={key} cc={cc}");
+#endif
 
             if (!customs.TryGetValue(key, out var ccs))
             {
@@ -87,13 +90,54 @@ namespace CustomComponents
                 customs[key] = ccs;
             }
 
-            // same behavior as DictionaryStore<T>.Add
-            if (ccs.Any(i => i.GetType() == cc.GetType()))
+            var attribute = Registry.GetAttributeByType(cc.GetType());
+
+            for (int i = 0; i < ccs.Count; i++)
             {
-                return;
+                var custom = ccs[i];
+                var attribute2 = Registry.GetAttributeByType(custom.GetType());
+
+                bool same_type = string.IsNullOrEmpty(attribute.Group)
+                    ? attribute.Name == attribute2.Name
+                    : attribute.Group == attribute2.Group;
+
+                if (!same_type)
+                    continue;
+
+                if (attribute.AllowArray)
+                {
+                    if (!(cc is IRepalceIdentifier cci1))
+                        break;
+
+                    if (custom is IRepalceIdentifier cci2 &&
+                        cci1.ReplaceID == cci2.ReplaceID)
+                    {
+#if CCDEBUG
+                        Control.Logger.LogDebug($"--find replace: add:{attribute.Name} fnd:{attribute2.Name} grp:{attribute.Group} rid:{cci1.ReplaceID} Replace: {replace}");
+                        Control.Logger.LogDebug($"--replace: from:{custom} to:{cc}");
+#endif
+                        if (replace)
+                            ccs[i] = cc;
+                        return false;
+                    }
+                }
+                else
+                {
+#if CCDEBUG
+                    Control.Logger.LogDebug($"--find replace: add:{attribute.Name} fnd:{attribute2.Name} grp:{attribute.Group} Replace: {replace}");
+                    Control.Logger.LogDebug($"--replace: from:{custom} to:{cc}");
+#endif
+                    if (replace)
+                        ccs[i] = cc;
+                    return false;
+                }
             }
 
+#if CCDEBUG
+            Control.Logger.LogDebug($"--added");
+#endif
             ccs.Add(cc);
+            return true;
         }
 
         private void Clear()

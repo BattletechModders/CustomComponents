@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace CustomComponents
@@ -13,7 +11,6 @@ namespace CustomComponents
         /// <summary>
         /// Name to display in error messages
         /// </summary>
-        [DefaultValue(""), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string displayName = "";
 
         /// <summary>
@@ -34,71 +31,53 @@ namespace CustomComponents
         /// <summary>
         /// if allow mixing items of same category with different
         /// </summary>
-        [DefaultValue(true), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public bool AllowMixTags = true;
         /// <summary>
         /// auto replace item if maximum reached
         /// </summary>
-        [DefaultValue(false), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public bool AutoReplace = false;
 
 
-        [DefaultValue(false), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public bool ReplaceAnyLocation = false;
 
         /// <summary>
         /// max of items per mech
         /// </summary>
-        [DefaultValue(-1), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public int MaxEquiped = -1;
         /// <summary>
         /// max of items per location
         /// </summary>
-        [DefaultValue(-1), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public int MaxEquipedPerLocation = -1;
         /// <summary>
         /// Minimum item per mech(required items)
         /// </summary>
-        [DefaultValue(0), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public int MinEquiped = 0;
 
         public Dictionary<string, object> DefaultCustoms = null;
 
-        [DefaultValue("{0} already installed on mech"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string AddAlreadyEquiped = "{0} already installed on mech";
 
-        [DefaultValue("{0} already installed on {1}"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string AddAlreadyEquipedLocation = "{0} already installed on {1}";
 
-        [DefaultValue("Mech already have {1} of {0} installed"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string AddMaximumReached = "Mech already have {1} of {0} installed";
 
-        [DefaultValue("Mech can have obly {1} of {0} installed at {2}"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string AddMaximumLocationReached = "Mech already have {1} of {0} installed at {2}";
 
-        [DefaultValue("Mech can have only one type of {0}"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string AddMixed = "Mech can have only one type of {0}";
 
 
-        [DefaultValue("MISSING {0}: This mech must mount a {1}"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string ValidateRequred = "MISSING {0}: This mech must mount a {1}";
 
-        [DefaultValue("MISSING {0}: This mech must mount at least {2} of {1}"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string ValidateMinimum = "MISSING {0}: This mech must mount at least {2} of {1}";
 
-        [DefaultValue("WRONG {0}: Mech can have only one type of {1}"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string ValidateMixed = "WRONG {0}: Mech can have only one type of {1}";
 
-        [DefaultValue("EXCESS {0}: This mech can't mount more then one {1}"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string ValidateUnique = "EXCESS {0}: This mech can't mount more then one {1}";
 
-        [DefaultValue("EXCESS {0}: This mech can't mount more then {2} of {1}"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string ValidateMaximum = "EXCESS {0}: This mech can't mount more then {2} of {1}";
 
-        [DefaultValue("EXCESS {0}: This mech can't mount more then one {1} at any location"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string ValidateUniqueLocation = "EXCESS {0}: This mech can't mount more then one {1} at any location";
 
-        [DefaultValue("EXCESS {0}: This mech can't mount more then {2} of {1} any location"), JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string ValidateMaximumLocation = "EXCESS {0}: This mech can't mount more then {2} of {1} any location";
 
 
@@ -155,6 +134,23 @@ namespace CustomComponents
             ValidateMaximum = category.ValidateMaximum;
             ValidateUniqueLocation = category.ValidateUniqueLocation;
             ValidateMaximumLocation = category.ValidateMaximumLocation;
+
+            InitDefaults();
+        }
+
+        [JsonIgnore]
+        public Dictionary<string, object> Defaults = null;
+
+        public void InitDefaults()
+        {
+            if (DefaultCustoms == null)
+            {
+                Defaults = null;
+                return;
+            }
+
+            Defaults = new Dictionary<string, object>();
+            Defaults.Add(Control.CustomSectionName, DefaultCustoms);
         }
     }
 }
