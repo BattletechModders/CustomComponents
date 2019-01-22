@@ -74,8 +74,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CCLight\ComponentCount.cs" />
-    <Compile Include="CCLight\Factories\ArrayCustomFactory.cs" />
+    <Compile Include="CCLight\IReplaceIdentifier.cs" />
     <Compile Include="CCLight\Factories\IPreProcessor.cs" />
     <Compile Include="CCLight\Factories\SimpleCustom.cs" />
     <Compile Include="ColorPatches\ColorExtentions.cs" />
@@ -89,6 +88,7 @@
     <Compile Include="DEBUGTOOLS\MechDef_RefreshInventory.cs" />
     <Compile Include="Fixes\MechDef_InsertFixedEquipmentIntoInventory.cs" />
     <Compile Include="Fixes\SimGameState_CreateComponentInstallWorkOrder.cs" />
+    <Compile Include="Interfaces\IAdjustDescription.cs" />
     <Compile Include="WorkOrderCosts\Utils\Adapter.cs" />
     <Compile Include="Interfaces\IColorComponent.cs" />
     <Compile Include="Components\RGBColorComponent.cs" />

@@ -106,10 +106,10 @@ namespace CustomComponents
 
                 if (attribute.AllowArray)
                 {
-                    if (!(cc is IRepalceIdentifier cci1))
+                    if (!(cc is IReplaceIdentifier cci1))
                         break;
 
-                    if (custom is IRepalceIdentifier cci2 &&
+                    if (custom is IReplaceIdentifier cci2 &&
                         cci1.ReplaceID == cci2.ReplaceID)
                     {
 #if CCDEBUG

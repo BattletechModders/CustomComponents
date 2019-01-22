@@ -70,17 +70,6 @@ namespace CustomComponents
                 var factory = Activator.CreateInstance(factoryType, name) as ICustomFactory;
                 Factories.Add(factory);
                 Control.Logger.Log($"SimpleCustom {name} registered for type {defType}");
-
-                if (!string.IsNullOrEmpty(customAttribute.ArrayName))
-                {
-                    factoryGenericType = typeof(ArrayCustomFactory<,>);
-                    factoryType = factoryGenericType.MakeGenericType(genericTypes);
-                    factory = Activator.CreateInstance(factoryType, customAttribute.ArrayName) as ICustomFactory;
-                    Factories.Add(factory);
-                        Control.Logger.Log($"- ArrayCustom {customAttribute.ArrayName} registered for type {defType}");
-
-                }
-
             }
         }
 
@@ -120,6 +109,8 @@ namespace CustomComponents
             Control.Logger.LogDebug($"ProcessCustomCompontentFactories for {target.GetType()} ({target.GetHashCode()})");
             Control.Logger.LogDebug($"- {identifier}");
 #endif
+
+            if(replace)
             foreach (var preProcessor in PreProcessors)
             {
                 preProcessor.PreProcess(target, values);

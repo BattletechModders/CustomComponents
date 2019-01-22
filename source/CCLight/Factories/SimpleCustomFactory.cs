@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿#undef CCDEBUG
+using System.Collections.Generic;
+using System.Linq;
 using HBS.Util;
 
 namespace CustomComponents
@@ -36,16 +38,47 @@ namespace CustomComponents
                 yield break;
             }
 
-            if (!(componentSettingsObject is Dictionary<string, object> componentSettings))
+
+#if CCDEBUG
+            Control.Logger.LogDebug($"Factory {CustomName} for {customSettingsObject})");
+#endif
+            if (componentSettingsObject is Dictionary<string, object> compDictionary)
             {
-                yield break;
+#if CCDEBUG
+                Control.Logger.LogDebug($"-- Dictionary - return one {compDictionary}");
+                foreach (var pair in compDictionary)
+                {
+                    Control.Logger.LogDebug($"---- {pair.Key}: {pair.Value}");
+                }
+#endif
+                var obj = new TCustom();
+                JSONSerializationUtility.RehydrateObjectFromDictionary(obj, compDictionary);
+                obj.Def = def;
+
+                yield return obj;
+            }
+            else if (componentSettingsObject is IEnumerable<object> compList)
+            {
+#if CCDEBUG
+                Control.Logger.LogDebug($"-- List - return {compList.Count()} items {compList}");
+#endif
+                foreach (var item in compList)
+                {
+                    if (item is Dictionary<string, object> compDictItem)
+                    {
+                        var obj = new TCustom();
+                        JSONSerializationUtility.RehydrateObjectFromDictionary(obj, compDictItem);
+                        obj.Def = def;
+
+#if CCDEBUG
+                        Control.Logger.LogDebug($"---- Factory for {obj}");
+#endif
+
+                        yield return obj;
+                    }
+                }
             }
 
-            var obj = new TCustom();
-            JSONSerializationUtility.RehydrateObjectFromDictionary(obj, componentSettings);
-            obj.Def = def;
-
-            yield return obj;
         }
 
         public override string ToString()

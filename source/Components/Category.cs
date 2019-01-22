@@ -10,9 +10,9 @@ namespace CustomComponents
     /// <summary>
     /// component use category logic
     /// </summary>
-    [CustomComponent("Category", "Categories", true)]
+    [CustomComponent("Category", true)]
     public class Category : SimpleCustomComponent, IAfterLoad, IOnInstalled, IReplaceValidateDrop, 
-        IPreValidateDrop, IPostValidateDrop, IRepalceIdentifier
+        IPreValidateDrop, IPostValidateDrop, IReplaceIdentifier
     {
         /// <summary>
         /// name of category
