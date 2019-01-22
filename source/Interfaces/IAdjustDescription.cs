@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CustomComponents.Interfaces
+namespace CustomComponents
 {
     public interface IAdjustDescription
     {
-        string AdjustDesctiption(string Description);
+        string AdjustDescription(string Description);
     }
 }

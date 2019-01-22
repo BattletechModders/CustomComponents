@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using BattleTech;
 using Harmony;
 using HBS.Util;
 
@@ -55,6 +57,18 @@ namespace CustomComponents
         public static void Postfix(object target, Dictionary<string, object> values)
         {
             Registry.ProcessCustomFactories(target, values);
+
+            if (target is MechComponentDef def)
+            {
+                var description = def.GetComponents<IAdjustDescription>()
+                    .Aggregate("", (current, adjuster) => adjuster.AdjustDescription(current));
+
+                if (description != "")
+                {
+                    var trav = new Traverse(def.Description).Property<string>("Details");
+                    trav.Value = def.Description.Details + "\n" +  description;
+                }
+            }
         }
     }
 }

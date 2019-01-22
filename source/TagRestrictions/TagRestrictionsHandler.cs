@@ -71,17 +71,11 @@ namespace CustomComponents
                 tagsForComponent.Add(identifier);
 
                 // category for component
-                var category = def.GetComponent<Category>();
-                if (category != null)
+                foreach (var component in def.GetComponents<Category>())
                 {
-                    // category id
-                    tagsForComponent.Add(category.CategoryID);
-                    
-                    // category tag
-                    if (category.Tag != null)
-                    {
-                        tagsForComponent.Add(category.Tag);
-                    }
+                    tagsForComponent.Add(component.CategoryID);
+                    if (!string.IsNullOrEmpty(component.Tag))
+                        tagsForComponent.Add(component.Tag);
                 }
             }
 

@@ -53,6 +53,8 @@ namespace CustomComponents
         /// </summary>
         public int MinEquiped = 0;
 
+        public bool AddCategoryToDescription = true;
+
         public Dictionary<string, object> DefaultCustoms = null;
 
         public string AddAlreadyEquiped = "{0} already installed on mech";
@@ -117,6 +119,8 @@ namespace CustomComponents
             MaxEquiped = category.MaxEquiped;
             MaxEquipedPerLocation = category.MaxEquipedPerLocation;
             MinEquiped = category.MinEquiped;
+
+            AddCategoryToDescription = category.AddCategoryToDescription;
 
             AddAlreadyEquiped = category.AddAlreadyEquiped;
             AddAlreadyEquipedLocation = category.AddAlreadyEquipedLocation;

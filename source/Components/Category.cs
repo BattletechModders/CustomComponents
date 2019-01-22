@@ -5,6 +5,7 @@ using BattleTech;
 using BattleTech.UI;
 using fastJSON;
 
+
 namespace CustomComponents
 {
     /// <summary>
@@ -12,7 +13,7 @@ namespace CustomComponents
     /// </summary>
     [CustomComponent("Category", true)]
     public class Category : SimpleCustomComponent, IAfterLoad, IOnInstalled, IReplaceValidateDrop, 
-        IPreValidateDrop, IPostValidateDrop, IReplaceIdentifier
+        IPreValidateDrop, IPostValidateDrop, IReplaceIdentifier, IAdjustDescription
     {
         /// <summary>
         /// name of category
@@ -66,11 +67,13 @@ namespace CustomComponents
 
             if (order.DesiredLocation == ChassisLocations.None)
             {
+#if CCDEBUG
                 Control.Logger.LogDebug("-- removing, no additional actions");
+#endif
                 return;
             }
 
-            int n1 = mech.Inventory.Count(i => i.Is<Category>(out var cat) && CategoryID == cat.CategoryID);
+            int n1 = mech.Inventory.Count(i => i.IsCategory(CategoryID));
             int n2 = mech.Inventory.Count(i => i.MountedLocation == order.DesiredLocation && i.IsCategory(CategoryID));
 
 #if CCDEBUG
@@ -125,19 +128,12 @@ namespace CustomComponents
             }
 
 #if CCDEBUG
-            foreach (var def in location.LocalInventory.Select(i => i.ComponentRef.Def))
+            foreach (var c in location.LocalInventory.Select(i => i.ComponentRef.Def).SelectMany(def => def.GetComponents<Category>()))
             {
-                var c = def.GetComponent<Category>();
-                string error = def.Description.Id;
-                if (c == null)
-                    error += " : not category";
-                else
-                {
-                    error =
-                        $"{error} : {c.CategoryID}, M:{c.CategoryDescriptor.MaxEquiped}, MPL: {c.CategoryDescriptor.MaxEquipedPerLocation} cd is null: {c.CategoryDescriptor.DefaultCustoms == null}";
-                }
+//                var c = def.GetComponent<Category>();
+                string error = c.Def.Description.Id;
+                error += $" : {c.CategoryID}, M:{c.CategoryDescriptor.MaxEquiped}, MPL: {c.CategoryDescriptor.MaxEquipedPerLocation} cd is null: {c.CategoryDescriptor.DefaultCustoms == null}";
                 Control.Logger.LogDebug($"---- {error}");
-
             }
 #endif
             var mech = location.mechLab.activeMechDef;
@@ -241,9 +237,11 @@ namespace CustomComponents
 
         public string PreValidateDrop(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab)
         {
-            Control.Logger.LogDebug("-- Category");
-
-            if (!CategoryDescriptor.AllowMixTags && mechlab.MechLab.activeMechDef.Inventory.Any(i => i.Def.Is<Category>(out var c) && c.CategoryID == CategoryID && GetTag() != c.GetTag()))
+#if CCDEBUG
+            Control.Logger.LogDebug($"-- Category {CategoryID}");
+#endif
+            
+            if (!CategoryDescriptor.AllowMixTags && mechlab.MechLab.activeMechDef.Inventory.Any(i => i.Def.IsCategory(CategoryID, out var c) && GetTag() != c.GetTag()))
                 return string.Format(CategoryDescriptor.AddMixed, CategoryDescriptor.DisplayName);
 
             return string.Empty;
@@ -251,14 +249,18 @@ namespace CustomComponents
 
         public string PostValidateDrop(MechLabItemSlotElement drop_item, MechDef mech, List<InvItem> new_inventory, List<IChange> changes)
         {
-            Control.Logger.LogDebug("-- Category");
+#if CCDEBUG
+            Control.Logger.LogDebug($"-- Category {CategoryID}");
+#endif
 
             if (CategoryDescriptor.MaxEquiped > 0)
             {
                 var total = new_inventory.Count(i => i.item.Def.IsCategory(CategoryID));
-
+#if CCDEBUG
+                Control.Logger.LogDebug($"---- {total}/{CategoryDescriptor.MaxEquiped}");
+#endif
                 if (total > CategoryDescriptor.MaxEquiped)
-                    if (CategoryDescriptor.MaxEquiped > 1)
+                if (CategoryDescriptor.MaxEquiped > 1)
                         return string.Format(CategoryDescriptor.AddMaximumReached, CategoryDescriptor.displayName, CategoryDescriptor.MaxEquiped);
                     else
                         return string.Format(CategoryDescriptor.AddAlreadyEquiped, CategoryDescriptor.displayName);
@@ -268,7 +270,11 @@ namespace CustomComponents
             {
                 var total = new_inventory
                     .Where(i => i.item.Def.IsCategory(CategoryID))
-                    .Select(i => new { l = i.location, c = i.item.Def.GetComponent<Category>() })
+                    .Select(i =>
+                    {
+                        i.item.Def.IsCategory(CategoryID, out var component);
+                        return new {l = i.location, c = component};
+                    })
                     .GroupBy(i => i.l)
                     .FirstOrDefault(i => i.Count() > CategoryDescriptor.MaxEquipedPerLocation);
 
@@ -287,6 +293,25 @@ namespace CustomComponents
         public override string ToString()
         {
             return "Category: " + CategoryID;
+        }
+
+        public string AdjustDescription(string Description)
+        {
+            if (CategoryDescriptor.AddCategoryToDescription)
+            {
+                var color_start = $"<b><color={Control.Settings.CategoryDescriptionColor}>[";
+                var color_end = "]</color><b>";
+                if (Description.Contains(color_start))
+                {
+                    int pos = Description.IndexOf(color_start, 0) + color_start.Length;
+                    Description = Description.Substring(0, pos) + CategoryDescriptor.DisplayName + ", " +
+                                  Description.Substring(pos);
+                }
+                else
+                    Description = Description + "\n" + color_start + CategoryDescriptor.DisplayName + color_end;
+            }
+
+            return Description;
         }
     }
 }

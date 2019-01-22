@@ -38,16 +38,18 @@ namespace CustomComponents
             MechValidationLevel validationLevel, MechDef mechDef)
         {
 
-            var items_by_category = (from item in mechDef.Inventory
-                                     let def = item.Def.GetComponent<Category>()
-                                     where def != null /// && !def.Placeholder
-                                     select new
-                                     {
-                                         category = def.CategoryDescriptor,
-                                         itemdef = item.Def,
-                                         itemref = item,
-                                         mix = def.GetTag()
-                                     }).GroupBy(i => i.category).ToDictionary(i => i.Key, i => i.ToList());
+            var items_by_category = mechDef.Inventory
+                .Select(item => new { item, def = item.Def.GetComponents<Category>() })
+                .Where(@t => @t.def != null)
+                .SelectMany(@t => t.def.Select(item => new
+                    {
+                        category = item.CategoryDescriptor,
+                        itemdef = @t.item.Def,
+                        itemref = @t.item,
+                        mix = item.GetTag()
+                    }))
+                .GroupBy(i => i.category)
+                .ToDictionary(i => i.Key, i => i.ToList());
 
 
             //fcache.Clear();
@@ -111,16 +113,29 @@ namespace CustomComponents
 #if CCDEBUG
             Control.Logger.LogDebug($"- Category");
 #endif
-            var items_by_category = (from item in mechDef.Inventory
-                                     let def = item.Def.GetComponent<Category>()
-                                     where def != null
-                                     select new
-                                     {
-                                         category = def.CategoryDescriptor,
-                                         itemdef = item.Def,
-                                         itemref = item,
-                                         mix = def.GetTag()
-                                     }).GroupBy(i => i.category).ToDictionary(i => i.Key, i => i.ToList());
+            //var items_by_category = (from item in mechDef.Inventory
+            //                         let def = item.Def.GetComponent<Category>()
+            //                         where def != null
+            //                         select new
+            //                         {
+            //                             category = def.CategoryDescriptor,
+            //                             itemdef = item.Def,
+            //                             itemref = item,
+            //                             mix = def.GetTag()
+            //                         }).GroupBy(i => i.category).ToDictionary(i => i.Key, i => i.ToList());
+
+            var items_by_category = mechDef.Inventory
+                .Select(item => new { item, def = item.Def.GetComponents<Category>() })
+                .Where(@t => @t.def != null)
+                .SelectMany(@t => t.def.Select(item => new
+                {
+                    category = item.CategoryDescriptor,
+                    itemdef = @t.item.Def,
+                    itemref = @t.item,
+                    mix = item.GetTag()
+                }))
+                .GroupBy(i => i.category)
+                .ToDictionary(i => i.Key, i => i.ToList());
 
             // if all required category present
             foreach (var category in Control.GetCategories().Where(i => i.Required))
@@ -193,12 +208,30 @@ namespace CustomComponents
 
         public static bool IsCategory(this MechComponentDef cdef, string category)
         {
-            return cdef.Is<Category>(out var c) && c.CategoryID == category;
+            return cdef.GetComponents<Category>().Any(c => c.CategoryID == category);
+
+            // Is<Category>
+            // GetComponent<Category>
         }
 
         public static bool IsCategory(this MechComponentRef cref, string category)
         {
-            return cref.Is<Category>(out var c) && c.CategoryID == category;
+            return cref.GetComponents<Category>().Any(c => c.CategoryID == category);
+        }
+
+
+        public static bool IsCategory(this MechComponentDef cdef, string categoryid, out Category category)
+        {
+            category = cdef.GetComponents<Category>().FirstOrDefault(c => c.CategoryID == categoryid);
+            return category != null;
+            // Is<Category>
+            // GetComponent<Category>
+        }
+
+        public static bool IsCategory(this MechComponentRef cref, string categoryid, out Category category)
+        {
+            category = cref.GetComponents<Category>().FirstOrDefault(c => c.CategoryID == categoryid);
+            return category != null;
         }
     }
 }

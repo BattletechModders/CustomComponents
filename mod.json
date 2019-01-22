@@ -30,8 +30,9 @@
 			"B": 180,
 			"A": 10
 		},
+		"CategoryDescriptionColor" : "#008000", 
 		 
-		"TestEnableAllTags": false,
+		"TestEnableAllTags": true,
 		"OmniTechFlag": "cc_omnitech",
         "OmniTechCostBySize": false,
         "OmniTechInstallCost": 1
