@@ -46,7 +46,7 @@ namespace CustomComponents
         public void ClearInventory(List<MechComponentRef> result, SimGameState state, MechComponentRef source)
         {
             var ref_item = new MechComponentRef(ComponentDefId, state.GenerateSimGameUID(), source.ComponentDefType,
-                Location == ChassisLocations.None ? source.MountedLocation : Location)
+                Location == ChassisLocations.None ? source.MountedLocation : Location, isFixed: true)
             {
                 DataManager = state.DataManager
             };

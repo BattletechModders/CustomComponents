@@ -150,5 +150,11 @@ namespace CustomComponents
 
             return true;
         }
+
+        public override string ToString()
+        {
+
+            return flags.Aggregate("Flags: [", (current, flag) => current + flag + " ") + "]";
+        }
     }
 }
