@@ -93,6 +93,22 @@ namespace CustomComponents
                 var inv = mech.Inventory.ToList();
                 inv.Add(r);
                 mech.SetInventory(inv.ToArray());
+#if CCDEBUG
+                var flag = r.GetComponent<Flags>();
+                Control.Logger.LogDebug($"AddInventory: {r.Def.Description.Id} isdefult:{r.Def.IsDefault()} isfixed:{r.IsFixed} isFlag:{flag == null}");
+                if (flag == null)
+                {
+                    Control.Logger.LogDebug($"-- NO FLAGS!");
+                }
+                else
+                {
+                    Control.Logger.LogDebug($"-- default: {flag.IsSet("default")} isdefault:{flag.Default}");
+                }
+                foreach (var simpleCustomComponent in r.GetComponents<SimpleCustomComponent>())
+                {
+                    Control.Logger.LogDebug($"-- {simpleCustomComponent}");
+                }
+#endif
             }
         }
 

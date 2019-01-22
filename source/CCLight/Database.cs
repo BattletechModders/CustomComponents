@@ -117,7 +117,11 @@ namespace CustomComponents
                         Control.Logger.LogDebug($"--replace: from:{custom} to:{cc}");
 #endif
                         if (replace)
+                        {
                             ccs[i] = cc;
+                            return true;
+                        }
+
                         return false;
                     }
                 }
@@ -128,7 +132,10 @@ namespace CustomComponents
                     Control.Logger.LogDebug($"--replace: from:{custom} to:{cc}");
 #endif
                     if (replace)
+                    {
                         ccs[i] = cc;
+                        return true;
+                    }
                     return false;
                 }
             }
