@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using BattleTech;
 using BattleTech.UI;
 using HBS.Logging;
 using Newtonsoft.Json;
@@ -6,6 +7,48 @@ using UnityEngine;
 
 namespace CustomComponents
 {
+    [SerializeField]
+    public class DefaultsInfo : IDefault
+    {
+        public string Tag { get; set; }
+
+        public ChassisLocations Location { get; set; }
+        public string CategoryID { get; set; }
+        public string DefID { get; set; }
+        public ComponentType Type { get; set; }
+        public bool AnyLocation { get; set; } = true;
+        public bool AddIfNotPresent { get; set; } = true;
+
+        public MechComponentRef GetReplace(MechDef mechDef, SimGameState state)
+        {
+            var res = DefaultHelper.CreateRef(DefID, Type, mechDef.DataManager, state);
+            res.SetData(Location, -1, ComponentDamageLevel.Functional, true);
+            return res;
+        }
+
+        public virtual bool AddItems(MechDef mechDef, SimGameState state)
+        {
+            if (AddIfNotPresent)
+            {
+                DefaultHelper.AddInventory(DefID, mechDef, Location, Type, state);
+                return true;
+            }
+            return false;
+        }
+
+        public bool NeedReplaceExistDefault(MechDef mechDef, MechComponentRef item)
+        {
+            return item.ComponentDefID != DefID;
+        }
+
+        public override string ToString()
+        {
+            return "DefaultsInfo: " + DefID;
+        }
+    }
+
+
+
     [SerializeField]
     public struct CCColor
     {
@@ -40,8 +83,10 @@ namespace CustomComponents
         public List<CategoryDescriptor> Categories = new List<CategoryDescriptor>();
         public List<TagRestrictions> TagRestrictions = new List<TagRestrictions>();
         public List<TagColor> ColorTags = new List<TagColor>();
+        public List<DefaultsInfo> TaggedDefaults = new List<DefaultsInfo>();
+        public List<DefaultsInfo> Defaults = new List<DefaultsInfo>();
 
-
+        public bool FixWrongDefaults = true;
         public bool TagRestrictionDropValidateRequiredTags = false;
         public bool TagRestrictionDropValidateIncompatibleTags = true;
 
@@ -68,10 +113,10 @@ namespace CustomComponents
             DefaultFlagOverlayColor = DefaultFlagOverlayCColor.ToColor();
 
             ColorTagsDictionary = new Dictionary<string, Color>();
-            if(ColorTags != null)
+            if (ColorTags != null)
                 foreach (var colorTag in ColorTags)
                 {
-                    if(!ColorTagsDictionary.ContainsKey(colorTag.Tag))
+                    if (!ColorTagsDictionary.ContainsKey(colorTag.Tag))
                         ColorTagsDictionary.Add(colorTag.Tag, colorTag.ToColor());
                 }
         }

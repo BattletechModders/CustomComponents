@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using BattleTech;
 using BattleTech.Data;
 using BattleTech.UI;
@@ -27,12 +26,12 @@ namespace CustomComponents
 
         public static bool IsModuleFixed(this MechComponentRef item, MechDef mech)
         {
-#if CCDEBUG
+#if CCDEBUG1
             Control.Logger.LogDebug($"IsModuleFixed: {item.ComponentDefID}");
 #endif
             if (!item.IsFixed)
             {
-#if CCDEBUG
+#if CCDEBUG1
                 Control.Logger.LogDebug($"-- false: not fixed");
 #endif
 
@@ -63,7 +62,7 @@ namespace CustomComponents
         #endregion
 
 
-        private static MechComponentRef CreateRef(string id, ComponentType type, DataManager datamanager, SimGameState state)
+        public static MechComponentRef CreateRef(string id, ComponentType type, DataManager datamanager, SimGameState state)
         {
             var component_ref = new MechComponentRef(id, string.Empty, type, ChassisLocations.None);
             component_ref.DataManager = datamanager;
@@ -93,7 +92,7 @@ namespace CustomComponents
                 var inv = mech.Inventory.ToList();
                 inv.Add(r);
                 mech.SetInventory(inv.ToArray());
-#if CCDEBUG
+#if CCDEBUG1
                 var flag = r.GetComponent<Flags>();
                 Control.Logger.LogDebug($"AddInventory: {r.Def.Description.Id} isdefult:{r.Def.IsDefault()} isfixed:{r.IsFixed} isFlag:{flag == null}");
                 if (flag == null)
@@ -125,6 +124,28 @@ namespace CustomComponents
                 component_ref.SetSimGameUID(mechLab.Sim.GenerateSimGameUID());
 
             return mechLab.CreateMechComponentItem(component_ref, false, ChassisLocations.None, mechLab);
+        }
+
+        public static MechLabItemSlotElement CreateSlot(MechComponentRef item, MechLabPanel mechLab)
+        {
+            return mechLab.CreateMechComponentItem(item, false, ChassisLocations.None, mechLab);
+        }
+
+        internal static void AddMechLab(MechComponentRef replace, MechLabHelper mechLab)
+        {
+            Control.Logger.LogDebug($"DefaultHelper.AddMechLab: adding {replace.ComponentDefID} to {replace.MountedLocation}");
+
+            var target = mechLab.GetLocationWidget(replace.MountedLocation);
+
+            if (target == null)
+            {
+                Control.Logger.LogError($"DefaultHelper: Cannot add - wrong location ");
+                return;
+            }
+
+            var slot = CreateSlot(replace, mechLab.MechLab);
+            slot.MountedLocation = replace.MountedLocation;
+            target.OnAddItem(slot, false);
         }
 
         public static void AddMechLab(string id, ComponentType type, MechLabHelper mechLab, ChassisLocations location)
@@ -303,7 +324,7 @@ namespace CustomComponents
 
                 foreach (var clear in list[i].GetComponents<IClearInventory>())
                 {
-                    clear.ClearInventory(result_list, state, list[i]);
+                    clear.ClearInventory(source, result_list, state, list[i]);
                 }
             }
 
@@ -318,8 +339,7 @@ namespace CustomComponents
 
             return result_list.ToArray();
         }
-
-#endregion
+        #endregion
 
     }
 }

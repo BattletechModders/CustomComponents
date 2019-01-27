@@ -71,33 +71,32 @@ namespace CustomComponents
 
         }
 
-        public IEnumerable<IChange> ValidateDropOnAdd(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab)
+        public IEnumerable<IChange> ValidateDropOnAdd(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab , List<IChange> changes)
         {
-            Control.Logger.LogDebug("-- AutoLinked Add");
+            Control.Logger.LogDebug("--- AutoLinked Add");
 
             if (Links == null || Links.Length == 0)
                 yield break;
 
             foreach (var link in Links)
             {
-                Control.Logger.LogDebug($"--- {link.ComponentDefId} to {link.Location}");
+                Control.Logger.LogDebug($"---- {link.ComponentDefId} to {link.Location}");
                 var slot = DefaultHelper.CreateSlot(link.ComponentDefId, Def.ComponentType, mechlab.MechLab);
 
                 if (slot != null)
                 {
-                    Control.Logger.LogDebug($"---- added");
+                    Control.Logger.LogDebug($"----- added");
                     yield return new AddChange(link.Location, slot);
                 }
                 else
-                    Control.Logger.LogDebug($"---- not found");
+                    Control.Logger.LogDebug($"----- not found");
             }
 
         }
 
-        public IEnumerable<IChange> ValidateDropOnRemove(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab)
+        public IEnumerable<IChange> ValidateDropOnRemove(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab, List<IChange> changes)
         {
-
-            Control.Logger.LogDebug("-- AutoLinked Remove");
+            Control.Logger.LogDebug("--- AutoLinked Remove");
 
             if (Links == null || Links.Length == 0)
                 yield break;
@@ -107,22 +106,22 @@ namespace CustomComponents
                 var widget = mechlab.GetLocationWidget(link.Location);
                 if (widget != null)
                 {
-                    Control.Logger.LogDebug($"--- {link.ComponentDefId} from {link.Location}");
+                    Control.Logger.LogDebug($"---- {link.ComponentDefId} from {link.Location}");
                     var remove = new LocationHelper(widget).LocalInventory.FirstOrDefault(e =>
                         e?.ComponentRef?.ComponentDefID == link.ComponentDefId);
                     if (remove != null)
                     {
-                        Control.Logger.LogDebug($"---- removed");
+                        Control.Logger.LogDebug($"----- removed");
                         yield return new RemoveChange(link.Location, remove);
 
                     }
                     else
-                        Control.Logger.LogDebug($"---- not found");
+                        Control.Logger.LogDebug($"----- not found");
                 }
             }
         }
 
-        public void ClearInventory(List<MechComponentRef> result, SimGameState state, MechComponentRef source)
+        public void ClearInventory(MechDef mech, List<MechComponentRef> result, SimGameState state, MechComponentRef source)
         {
             foreach (var l in Links)
             {

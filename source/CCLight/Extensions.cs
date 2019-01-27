@@ -16,12 +16,37 @@ namespace CustomComponents
         {
             return Database.GetCustoms<T>(target);
         }
+
         public static bool Is<T>(this MechComponentDef target, out T res)
         {
             return Database.Is(target, out res);
         }
 
         public static bool Is<T>(this MechComponentDef target)
+        {
+            return Database.Is<T>(target);
+        }
+    }
+
+    public static class MechDefExtentions
+    {
+        public static T GetComponent<T>(this MechDef target)
+        {
+            return Database.GetCustom<T>(target);
+        }
+
+        public static IEnumerable<T> GetComponents<T>(this MechDef target)
+        {
+            return Database.GetCustoms<T>(target);
+        }
+
+
+        public static bool Is<T>(this MechDef target, out T res)
+        {
+            return Database.Is(target, out res);
+        }
+
+        public static bool Is<T>(this MechDef target)
         {
             return Database.Is<T>(target);
         }

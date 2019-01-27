@@ -4,7 +4,7 @@ using BattleTech.UI;
 
 namespace CustomComponents
 {
-    [CustomComponent("Replace")]
+    [CustomComponent("AutoReplace")]
     public class AutoReplace : SimpleCustomComponent, IOnItemGrabbed, IOnInstalled, IClearInventory
     {
         public string ComponentDefId { get; set; }
@@ -43,7 +43,7 @@ namespace CustomComponents
             }
         }
 
-        public void ClearInventory(List<MechComponentRef> result, SimGameState state, MechComponentRef source)
+        public void ClearInventory(MechDef mech, List<MechComponentRef> result, SimGameState state, MechComponentRef source)
         {
             var ref_item = new MechComponentRef(ComponentDefId, state.GenerateSimGameUID(), source.ComponentDefType,
                 Location == ChassisLocations.None ? source.MountedLocation : Location, isFixed: true)
@@ -53,7 +53,6 @@ namespace CustomComponents
             ref_item.RefreshComponentDef();
             result.Add(ref_item);
             Control.Logger.LogDebug($"-- Replace with {ref_item.ComponentDefID} - {ref_item.SimGameUID}");
-
         }
     }
 }

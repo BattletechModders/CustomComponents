@@ -12,8 +12,9 @@ namespace CustomComponents
     /// component use category logic
     /// </summary>
     [CustomComponent("Category", true)]
-    public class Category : SimpleCustomComponent, IAfterLoad, IOnInstalled, IReplaceValidateDrop, 
-        IPreValidateDrop, IPostValidateDrop, IReplaceIdentifier, IAdjustDescription
+    public class Category : SimpleCustomComponent, IAfterLoad, IOnInstalled, IReplaceValidateDrop,
+        IPreValidateDrop, IPostValidateDrop, IReplaceIdentifier, IAdjustDescription, IOnItemGrabbed,
+        IClearInventory, IAdjustValidateDrop
     {
         /// <summary>
         /// name of category
@@ -55,6 +56,25 @@ namespace CustomComponents
         public void OnInstalled(WorkOrderEntry_InstallComponent order, SimGameState state, MechDef mech)
         {
             Control.Logger.LogDebug($"- Category");
+            if (order.PreviousLocation != ChassisLocations.None)
+            {
+#if CCDEBUG
+                Control.Logger.LogDebug("-- removing");
+#endif
+                MechComponentRef def_replace = DefaultFixer.GetReplaceFor(mech, CategoryID, order.PreviousLocation, state);
+                if (def_replace != null)
+                {
+#if CCDEBUG
+                    Control.Logger.LogDebug($"--- added {def_replace.ComponentDefID}");
+#endif
+                    var inv = mech.Inventory.ToList();
+                    inv.Add(def_replace);
+                    mech.SetInventory(inv.ToArray());
+                }
+            }
+
+            if (order.DesiredLocation == ChassisLocations.None)
+                return;
 
             if (!CategoryDescriptor.AutoReplace || CategoryDescriptor.MaxEquiped < 0 && CategoryDescriptor.MaxEquipedPerLocation < 0)
             {
@@ -65,13 +85,6 @@ namespace CustomComponents
                 return;
             }
 
-            if (order.DesiredLocation == ChassisLocations.None)
-            {
-#if CCDEBUG
-                Control.Logger.LogDebug("-- removing, no additional actions");
-#endif
-                return;
-            }
 
             int n1 = mech.Inventory.Count(i => i.IsCategory(CategoryID));
             int n2 = mech.Inventory.Count(i => i.MountedLocation == order.DesiredLocation && i.IsCategory(CategoryID));
@@ -130,7 +143,7 @@ namespace CustomComponents
 #if CCDEBUG
             foreach (var c in location.LocalInventory.Select(i => i.ComponentRef.Def).SelectMany(def => def.GetComponents<Category>()))
             {
-//                var c = def.GetComponent<Category>();
+                //                var c = def.GetComponent<Category>();
                 string error = c.Def.Description.Id;
                 error += $" : {c.CategoryID}, M:{c.CategoryDescriptor.MaxEquiped}, MPL: {c.CategoryDescriptor.MaxEquipedPerLocation} cd is null: {c.CategoryDescriptor.DefaultCustoms == null}";
                 Control.Logger.LogDebug($"---- {error}");
@@ -158,13 +171,13 @@ namespace CustomComponents
                         var mechlab = new MechLabHelper(location.mechLab);
                         foreach (var widget in mechlab.GetWidgets())
                         {
-                            if(widget.loadout.Location == location.widget.loadout.Location)
+                            if (widget.loadout.Location == location.widget.loadout.Location)
                                 continue;
-                           
+
                             var loc_helper = new LocationHelper(widget);
                             replace = loc_helper.LocalInventory
                                 .FirstOrDefault(i => i.ComponentRef.Def.IsCategory(CategoryID) && !i.ComponentRef.IsModuleFixed(mech));
-                            if(replace != null)
+                            if (replace != null)
                                 break;
                         }
                     }
@@ -235,12 +248,134 @@ namespace CustomComponents
 
         }
 
+        public string ReplaceValidateDrop(MechLabItemSlotElement drop_item, LocationHelper location, List<IChange> changes)
+        {
+#if CCDEBUG
+            Control.Logger.LogDebug($"-- Category {CategoryID}");
+#endif
+            if (!CategoryDescriptor.AutoReplace ||
+                CategoryDescriptor.MaxEquiped <= 0 && CategoryDescriptor.MaxEquipedPerLocation <= 0)
+            {
+#if CCDEBUG
+                Control.Logger.LogDebug($"--- no replace needed");
+#endif
+                return String.Empty;
+            }
+
+            if (changes.OfType<RemoveChange>().Select(i => i.item.ComponentRef).Any(i => i.IsCategory(CategoryID)))
+            {
+#if CCDEBUG
+                Control.Logger.LogDebug($"--- replace already found");
+#endif
+                return string.Empty;
+            }
+
+
+            var mech = location.mechLab.activeMechDef;
+
+            if (CategoryDescriptor.MaxEquiped > 0)
+            {
+#if CCDEBUG
+                Control.Logger.LogDebug($"--- MaxEquiped: {CategoryDescriptor.MaxEquiped}");
+#endif
+                var n = location.mechLab.activeMechDef.Inventory.Count(i => i.Def.IsCategory(CategoryID));
+#if CCDEBUG
+                Control.Logger.LogDebug($"--- current: {n}");
+#endif
+
+                if (n >= CategoryDescriptor.MaxEquiped)
+                {
+                    var replace = location.LocalInventory
+                        .FirstOrDefault(i => i.ComponentRef.Def.IsCategory(CategoryID) && !i.ComponentRef.IsModuleFixed(mech));
+
+                    if (CategoryDescriptor.ReplaceAnyLocation && replace == null)
+                    {
+                        var mechlab = new MechLabHelper(location.mechLab);
+                        foreach (var widget in mechlab.GetWidgets())
+                        {
+                            if (widget.loadout.Location == location.widget.loadout.Location)
+                                continue;
+
+                            var loc_helper = new LocationHelper(widget);
+                            replace = loc_helper.LocalInventory
+                                .FirstOrDefault(i => i.ComponentRef.Def.IsCategory(CategoryID) && !i.ComponentRef.IsModuleFixed(mech));
+                            if (replace != null)
+                                break;
+                        }
+                    }
+
+#if CCDEBUG
+                    Control.Logger.LogDebug($"--- replace: {(replace == null ? "none" : replace.ComponentRef.ComponentDefID)}");
+#endif
+
+                    if (replace == null)
+                    {
+#if CCDEBUG
+                        Control.Logger.LogDebug($"--- return error");
+#endif
+
+                        if (CategoryDescriptor.MaxEquiped > 1)
+                            return string.Format(CategoryDescriptor.AddMaximumReached, CategoryDescriptor.displayName,
+                                n);
+                        else
+                            return string.Format(CategoryDescriptor.AddAlreadyEquiped, CategoryDescriptor.displayName);
+                    }
+#if CCDEBUG
+                    Control.Logger.LogDebug($"--- return replace");
+#endif
+
+                    changes.Add(new RemoveChange(replace.MountedLocation, replace));
+
+                    return string.Empty;
+                }
+            }
+
+            if (CategoryDescriptor.MaxEquipedPerLocation > 0)
+            {
+#if CCDEBUG
+                Control.Logger.LogDebug($"--- MaxEquipedPerLocation: {CategoryDescriptor.MaxEquipedPerLocation}");
+#endif
+                var n = location.LocalInventory.Count(i => i.ComponentRef.Def.IsCategory(CategoryID));
+#if CCDEBUG
+                Control.Logger.LogDebug($"--- current: {n}");
+#endif
+                if (n >= CategoryDescriptor.MaxEquipedPerLocation)
+                {
+
+
+                    var replace = location.LocalInventory
+                        .FirstOrDefault(i => i.ComponentRef.Def.IsCategory(CategoryID) && !i.ComponentRef.IsModuleFixed(mech));
+#if CCDEBUG
+                    Control.Logger.LogDebug($"--- replace: {(replace == null ? "none" : replace.ComponentRef.ComponentDefID)}");
+#endif
+                    if (replace == null)
+                    {
+#if CCDEBUG
+                        Control.Logger.LogDebug($"--- return error");
+#endif
+
+                        if (CategoryDescriptor.MaxEquipedPerLocation > 1)
+                            return string.Format(CategoryDescriptor.AddMaximumLocationReached,
+                                CategoryDescriptor.displayName, n, location.LocationName);
+                        else
+                            return string.Format(CategoryDescriptor.AddAlreadyEquipedLocation,
+                                CategoryDescriptor.displayName, location.LocationName);
+                    }
+#if CCDEBUG
+                    Control.Logger.LogDebug($"--- return replace");
+#endif
+                    changes.Add(new RemoveChange(replace.MountedLocation, replace));
+                }
+            }
+            return string.Empty;
+        }
+
         public string PreValidateDrop(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab)
         {
 #if CCDEBUG
             Control.Logger.LogDebug($"-- Category {CategoryID}");
 #endif
-            
+
             if (!CategoryDescriptor.AllowMixTags && mechlab.MechLab.activeMechDef.Inventory.Any(i => i.Def.IsCategory(CategoryID, out var c) && GetTag() != c.GetTag()))
                 return string.Format(CategoryDescriptor.AddMixed, CategoryDescriptor.DisplayName);
 
@@ -260,7 +395,7 @@ namespace CustomComponents
                 Control.Logger.LogDebug($"---- {total}/{CategoryDescriptor.MaxEquiped}");
 #endif
                 if (total > CategoryDescriptor.MaxEquiped)
-                if (CategoryDescriptor.MaxEquiped > 1)
+                    if (CategoryDescriptor.MaxEquiped > 1)
                         return string.Format(CategoryDescriptor.AddMaximumReached, CategoryDescriptor.displayName, CategoryDescriptor.MaxEquiped);
                     else
                         return string.Format(CategoryDescriptor.AddAlreadyEquiped, CategoryDescriptor.displayName);
@@ -273,7 +408,7 @@ namespace CustomComponents
                     .Select(i =>
                     {
                         i.item.Def.IsCategory(CategoryID, out var component);
-                        return new {l = i.location, c = component};
+                        return new { l = i.location, c = component };
                     })
                     .GroupBy(i => i.l)
                     .FirstOrDefault(i => i.Count() > CategoryDescriptor.MaxEquipedPerLocation);
@@ -288,11 +423,6 @@ namespace CustomComponents
             }
 
             return string.Empty;
-        }
-
-        public override string ToString()
-        {
-            return "Category: " + CategoryID;
         }
 
         public string AdjustDescription(string Description)
@@ -312,6 +442,65 @@ namespace CustomComponents
             }
 
             return Description;
+        }
+
+
+        public override string ToString()
+        {
+            return "Category: " + CategoryID;
+        }
+
+        public void ClearInventory(MechDef mech, List<MechComponentRef> result, SimGameState state, MechComponentRef source)
+        {
+            var item = DefaultFixer.GetReplaceFor(mech, CategoryID, source.MountedLocation, state);
+            if(item != null)
+                result.Add(item);
+        }
+
+        public void OnItemGrabbed(IMechLabDraggableItem item, MechLabPanel mechLab, MechLabLocationWidget widget)
+        {
+            Control.Logger.LogDebug($"- Category {CategoryID}");
+            Control.Logger.LogDebug($"-- search replace for {item.ComponentRef.ComponentDefID}");
+
+            var replace = DefaultFixer.GetReplaceFor(mechLab.activeMechDef, CategoryID, widget.loadout.Location, mechLab.sim);
+
+            if (replace == null)
+            {
+                Control.Logger.LogDebug($"-- no replacement, skipping");
+                return;
+            }
+
+            DefaultHelper.AddMechLab(replace, new MechLabHelper(mechLab));
+            Control.Logger.LogDebug($"-- added {replace.ComponentDefID} to {replace.MountedLocation}");
+            mechLab.ValidateLoadout(false);
+        }
+
+        public IEnumerable<IChange> ValidateDropOnAdd(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab, List<IChange> changes)
+        {
+            yield break;
+        }
+
+        public IEnumerable<IChange> ValidateDropOnRemove(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab, List<IChange> changes)
+        {
+            var replace = DefaultFixer.GetReplaceFor(mechlab.MechLab.activeMechDef, CategoryID, item.MountedLocation, mechlab.MechLab.sim);
+            if (replace == null)
+            {
+                Control.Logger.LogDebug($"--- Category {CategoryID} - no replace, return");
+                yield break;
+            }
+
+            foreach (var addChange in changes.OfType<AddChange>())
+            {
+                if (addChange.item.ComponentRef.IsCategory(CategoryID))
+                {
+                    Control.Logger.LogDebug($"--- Category {CategoryID} - replace already added");
+                    yield break;
+                }
+            }
+
+            Control.Logger.LogDebug($"--- Category {CategoryID} - add replace {replace.ComponentDefID}");
+
+            yield return new AddChange(replace.MountedLocation, DefaultHelper.CreateSlot(replace, mechlab.MechLab));
         }
     }
 }

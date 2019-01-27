@@ -5,9 +5,8 @@ using System;
 using System.Reflection;
 using System.Collections.Generic;
 using System.IO;
-using BattleTech.UI;
 using HBS.Logging;
-using Newtonsoft.Json;
+using HBS.Util;
 
 
 namespace CustomComponents
@@ -29,23 +28,21 @@ namespace CustomComponents
             {
                 try
                 {
-                    Settings = JsonConvert.DeserializeObject<CustomComponentSettings>(settingsJSON);
+
+                    Settings = new CustomComponentSettings();
+                    JSONSerializationUtility.FromJSON(Settings, settingsJSON);
                     HBS.Logging.Logger.SetLoggerLevel(Logger.Name, Settings.LogLevel);
                 }
                 catch (Exception)
                 {
-                    Settings = new CustomComponentSettings();
+                        Settings = new CustomComponentSettings();
                 }
 
                 Settings.Complete();
 
 
                 SetupLogging(directory);
-#if CCDEBUG
-                var str = JsonConvert.SerializeObject(Settings, Formatting.Indented);
-                Logger.LogDebug(str);
 
-#endif  
                 var harmony = HarmonyInstance.Create("io.github.denadan.CustomComponents");
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
 
@@ -54,7 +51,7 @@ namespace CustomComponents
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
                 Validator.RegisterMechValidator(CategoryController.ValidateMech, CategoryController.ValidateMechCanBeFielded);
 
-                Logger.Log("Loaded CustomComponents v0.9.0.3 for bt 1.3.2");
+                Logger.Log("Loaded CustomComponents v0.9.1.0 for bt 1.3.2");
 #if CCDEBUG
                 Logger.LogDebug("Loading Categories");
 #endif  

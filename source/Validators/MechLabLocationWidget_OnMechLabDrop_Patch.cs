@@ -59,34 +59,47 @@ namespace CustomComponents
 
                 Control.Logger.LogDebug($"- replace validation");
 
-                MechLabItemSlotElement replaceItem = null;
+                List<IChange> changes = new List<IChange>();
                 foreach (var rep_validator in Validator.GetReplace(newComponentDef))
-                    if (do_cancel(rep_validator(dragItem, location_helper, ref replaceItem)))
+                    if (do_cancel(rep_validator(dragItem, location_helper, changes)))
                         return false;
 
-                if(replaceItem == null)
+                if (changes.Count == 1)
                     Control.Logger.LogDebug($"-- no replace");
                 else
-                    Control.Logger.LogDebug($"-- replace {replaceItem.ComponentRef.ComponentDefID}");
+                    foreach (var replace in changes)
+                    {
+                        if (replace is AddChange add)
+                            Control.Logger.LogDebug($"-- add {add.item.ComponentRef.ComponentDefID}");
 
+                        else if (replace is RemoveChange remove)
+                            Control.Logger.LogDebug($"-- remove {remove.item.ComponentRef.ComponentDefID}");
 
-                List<IChange> changes = new List<IChange>();
-                changes.Add(new AddChange(__instance.loadout.Location, dragItem));
-                if (replaceItem != null)
-                    changes.Add(new RemoveChange(replaceItem.MountedLocation, replaceItem));
+                    }
 
+                changes.Insert(0, new AddChange(__instance.loadout.Location, dragItem));
 
+                Control.Logger.LogDebug($"- adjusting {changes.Count} changes");
 
-                Control.Logger.LogDebug($"- adjust for drop item ");
-
-                foreach (var adj_validator in newComponentDef.GetComponents<IAdjustValidateDrop>())
-                    changes.AddRange(adj_validator.ValidateDropOnAdd(dragItem, location_helper, mechlab_helper));
-
-                if (replaceItem != null)
+                int num = changes.Count;
+                for (int i = 0; i < num; i++)
                 {
-                    Control.Logger.LogDebug($"- adjust for replaced item ");
-                    foreach (var adj_validator in replaceItem.ComponentRef.Def.GetComponents<IAdjustValidateDrop>())
-                        changes.AddRange(adj_validator.ValidateDropOnRemove(replaceItem, location_helper, mechlab_helper));
+                    if (changes[i] is AddChange add)
+                    {
+                        Control.Logger.LogDebug($"-- add: {add.item.ComponentRef.ComponentDefID}");
+
+                        foreach (var adj_validator in add.item.ComponentRef.GetComponents<IAdjustValidateDrop>())
+                            changes.AddRange(adj_validator.ValidateDropOnAdd(add.item, location_helper, mechlab_helper,
+                                changes));
+                    }
+                    else if (changes[i] is RemoveChange remove)
+                    {
+                        Control.Logger.LogDebug($"-- add: {remove.item.ComponentRef.ComponentDefID}");
+
+                        foreach (var adj_validator in remove.item.ComponentRef.GetComponents<IAdjustValidateDrop>())
+                            changes.AddRange(adj_validator.ValidateDropOnRemove(remove.item, location_helper,
+                                mechlab_helper, changes));
+                    }
                 }
 
                 List<InvItem> new_inventory = ___mechLab.activeMechInventory
@@ -95,7 +108,7 @@ namespace CustomComponents
                 new_inventory.AddRange(changes.OfType<AddChange>()
                     .Select(i => new InvItem { item = i.item.ComponentRef, location = i.location }));
 
-                foreach(var remove in changes.OfType<RemoveChange>())
+                foreach (var remove in changes.OfType<RemoveChange>())
                 {
                     new_inventory.RemoveAll(i => i.item == remove.item.ComponentRef);
                 }
@@ -103,7 +116,7 @@ namespace CustomComponents
                 Control.Logger.LogDebug($"- post validation");
 #endif
                 foreach (var pst_validator in Validator.GetPost(newComponentDef))
-                    if(do_cancel(pst_validator(dragItem, ___mechLab.activeMechDef, new_inventory, changes)))
+                    if (do_cancel(pst_validator(dragItem, ___mechLab.activeMechDef, new_inventory, changes)))
                         return false;
 
 

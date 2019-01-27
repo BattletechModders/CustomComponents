@@ -141,12 +141,17 @@ namespace CustomComponents
         }
 
 
-        private static string ValidateHardpoint(MechLabItemSlotElement drop_item, LocationHelper location, ref MechLabItemSlotElement current_replace)
+        private static string ValidateHardpoint(MechLabItemSlotElement drop_item, LocationHelper location, List<IChange> changes)
         {
 
             // if dropped item not weapon - skip check
             if (drop_item.ComponentRef.Def.ComponentType != ComponentType.Weapon)
                 return string.Empty;
+
+            if (changes == null || changes.Count == 0 || !(changes[0] is RemoveChange remove))
+                return string.Empty;
+
+            var current_replace = remove.item;
 
             // if dropped item and replacement both same type weapon - allow replace
             if (current_replace != null

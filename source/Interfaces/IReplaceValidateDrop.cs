@@ -1,4 +1,5 @@
-﻿using BattleTech.UI;
+﻿using System.Collections.Generic;
+using BattleTech.UI;
 
 namespace CustomComponents
 {
@@ -13,8 +14,8 @@ namespace CustomComponents
         /// <param name="widget">location, where check</param>
         /// <param name="element">element being dragged</param>
         /// <returns></returns>
-        string ReplaceValidateDrop(MechLabItemSlotElement drop_item, LocationHelper location, ref MechLabItemSlotElement current_replace);
+        string ReplaceValidateDrop(MechLabItemSlotElement drop_item, LocationHelper location, List<IChange> changes);
     }
 
-    public delegate string ReplaceValidateDropDelegate(MechLabItemSlotElement drop_item, LocationHelper location, ref MechLabItemSlotElement current_replace);
+    public delegate string ReplaceValidateDropDelegate(MechLabItemSlotElement drop_item, LocationHelper location, List<IChange> changes);
 }

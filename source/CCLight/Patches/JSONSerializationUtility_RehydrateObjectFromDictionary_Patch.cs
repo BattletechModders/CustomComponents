@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using BattleTech;
 using Harmony;
+using HBS.Extensions;
 using HBS.Util;
 
 namespace CustomComponents
@@ -12,7 +13,8 @@ namespace CustomComponents
     {
         public static MethodBase TargetMethod()
         {
-            return typeof(JSONSerializationUtility).GetMethod("RehydrateObjectFromDictionary", BindingFlags.NonPublic | BindingFlags.Static);
+            return typeof(JSONSerializationUtility).GetMethod("RehydrateObjectFromDictionary",
+                BindingFlags.NonPublic | BindingFlags.Static);
         }
 
         public static void Prefix(object target, Dictionary<string, object> values)
@@ -22,7 +24,7 @@ namespace CustomComponents
                 return;
             }
 
-            var baseTags = new[] { "ComponentTags", "MechTags" };
+            var baseTags = new[] {"ComponentTags", "MechTags"};
             foreach (var baseTag in baseTags)
                 if (values.TryGetValue(baseTag, out var Tags))
                 {
@@ -33,6 +35,7 @@ namespace CustomComponents
 #endif
                         continue;
                     }
+
                     if (tags.TryGetValue("items", out var Items))
                     {
                         if (!(Items is List<object> items))
@@ -66,7 +69,7 @@ namespace CustomComponents
                 if (description != "")
                 {
                     var trav = new Traverse(def.Description).Property<string>("Details");
-                    trav.Value = def.Description.Details + "\n" +  description;
+                    trav.Value = def.Description.Details + "\n" + description;
                 }
             }
         }

@@ -65,7 +65,7 @@ namespace CustomComponents
 
         public string AddMaximumLocationReached = "Mech already have {1} of {0} installed at {2}";
 
-        public string AddMixed = "Mech can have only one type of {0}";
+        public string  AddMixed = "Mech can have only one type of {0}";
 
 
         public string ValidateRequred = "MISSING {0}: This mech must mount a {1}";

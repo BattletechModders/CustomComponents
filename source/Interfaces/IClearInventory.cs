@@ -5,6 +5,6 @@ namespace CustomComponents
 {
     public interface IClearInventory
     {
-        void ClearInventory(List<MechComponentRef> result, SimGameState state, MechComponentRef source);
+        void ClearInventory(MechDef mech, List<MechComponentRef> result, SimGameState state, MechComponentRef source);
     }
 }
