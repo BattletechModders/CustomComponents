@@ -127,6 +127,11 @@ namespace CustomComponents
             for (int i =0;i<num_changed;i++)
                 Control.Logger.LogDebug($"---- {changed_deafult[i]}");
 #endif
+
+            if (Control.Settings.FixWrongDefaults)
+            {
+                CategoryController.RemoveExcessDefaults(mechDef);
+            }
         }
 
         public static MechComponentRef GetReplaceFor(MechDef mech, string categoryId, ChassisLocations location, SimGameState state)
@@ -147,6 +152,26 @@ namespace CustomComponents
                         return def.GetReplace(mech, state);
 
             return Control.Settings.Defaults != null ? Control.Settings.Defaults.Where(check_def).Select(def => def.GetReplace(mech, state)).FirstOrDefault() : null;
+        }
+
+        public static object GetDefId(MechDef mech, string categoryId, ChassisLocations location)
+        {
+            bool check_def(IDefault def)
+            {
+                return def.CategoryID == categoryId && (def.AnyLocation || location == def.Location);
+            }
+
+
+            foreach (var def in mech.Chassis.GetComponents<ChassisDefaults>())
+                if (check_def(def))
+                    return def.DefID;
+
+            if (Control.Settings.TaggedDefaults != null)
+                foreach (var def in Control.Settings.TaggedDefaults.Where(check_def))
+                    if (mech.MechTags.Contains(def.Tag) || mech.Chassis.ChassisTags.Contains(def.Tag))
+                        return def.DefID;
+
+            return Control.Settings.Defaults != null ? Control.Settings.Defaults.Where(check_def).Select(def => def.DefID).FirstOrDefault() : null;
         }
     }
 }

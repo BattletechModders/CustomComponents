@@ -233,5 +233,48 @@ namespace CustomComponents
             category = cref.GetComponents<Category>().FirstOrDefault(c => c.CategoryID == categoryid);
             return category != null;
         }
+
+        public static void RemoveExcessDefaults(MechDef mechDef)
+        {
+            var items_by_category = mechDef.Inventory
+                .Select(item => new { item, def = item.Def.GetComponents<Category>().Where(i => i.CategoryDescriptor.MaxEquiped > 0)})
+                .Where(i => i.def != null)
+                .SelectMany(@t => t.def.Select(item => new
+                {
+                    category = item.CategoryDescriptor,
+                    itemref = @t.item,
+                }))
+                .GroupBy(i => i.category)
+                .ToDictionary(i => i.Key, i => i.Select(item => item.itemref).ToList());
+
+            foreach (var pair in items_by_category)
+            {
+                if (pair.Key.MaxEquiped > 0 && pair.Value.Count > pair.Key.MaxEquiped)
+                {
+                    var replace = DefaultFixer.GetDefId(mechDef, pair.Key.Name, pair.Value[0].MountedLocation);
+                    var candidates = pair.Value.Where(i => i.IsDefault()).ToList();
+                    if (candidates.Count == 0)
+                    {
+                        Control.Logger.LogError($"Cannot remove wrong defaults from {mechDef.Name}({mechDef.Chassis.Description.Id}). {pair.Key.DisplayName} : {pair.Value.Count}/{pair.Key.MaxEquiped}. No defaults");
+                        continue;
+                    }
+
+                    if (pair.Value.Count - candidates.Count > pair.Key.MaxEquiped)
+                    {
+                        Control.Logger.LogError($"Cannot remove wrong defaults from {mechDef.Name}({mechDef.Chassis.Description.Id}). ({pair.Key.DisplayName} : {pair.Value.Count}-{candidates.Count})/{pair.Key.MaxEquiped}. Not Enough Defaults");
+                        var inventory = mechDef.Inventory.ToList();
+                        foreach (var mechComponentRef in candidates)
+                        {
+                            inventory.Remove(mechComponentRef);
+                        }
+                        mechDef.SetInventory(inventory.ToArray());
+                        continue;
+                    }
+
+
+
+                }
+            }
+        }
     }
 }

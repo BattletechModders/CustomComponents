@@ -7,6 +7,7 @@ namespace CustomComponents
         ChassisLocations Location { get; }
         string CategoryID { get; }
         bool AnyLocation { get; }
+        string DefID { get;  }
 
         MechComponentRef GetReplace(MechDef mechDef, SimGameState state);
         bool AddItems(MechDef mechDef, SimGameState state);
