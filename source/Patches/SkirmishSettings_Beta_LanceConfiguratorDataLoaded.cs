@@ -4,7 +4,7 @@ using Harmony;
 
 namespace CustomComponents.Patches
 {
-    [HarmonyPatch(typeof(SkirmishSettings_Beta), "LanceConfiguratorDataLoaded")]
+    [HarmonyPatch(typeof(SkirmishSettings_Beta), "OnLoadComplete")]
     public class SkirmishSettings_Beta_LanceConfiguratorDataLoaded
     {
         [HarmonyPrefix]

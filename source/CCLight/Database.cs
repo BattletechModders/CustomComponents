@@ -49,6 +49,12 @@ namespace CustomComponents
 
         internal static string Identifier(object target)
         {
+            if (target == null)
+            {
+                Control.Logger.LogError("Error - requested identifier for null!");
+                return string.Empty;
+            }
+
             // this is for faster access
             if (target is MechComponentDef mechComponentDef)
             {

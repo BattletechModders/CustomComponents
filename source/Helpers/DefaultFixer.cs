@@ -128,10 +128,10 @@ namespace CustomComponents
                 Control.Logger.LogDebug($"---- {changed_deafult[i]}");
 #endif
 
-            if (Control.Settings.FixWrongDefaults)
-            {
-                CategoryController.RemoveExcessDefaults(mechDef);
-            }
+            //if (Control.Settings.FixWrongDefaults)
+            //{
+            //    CategoryController.RemoveExcessDefaults(mechDef);
+            //}
         }
 
         public static MechComponentRef GetReplaceFor(MechDef mech, string categoryId, ChassisLocations location, SimGameState state)

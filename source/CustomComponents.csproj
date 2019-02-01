@@ -34,8 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>..\..\..\BattleTech_Data\Managed\0Harmony.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\ModTek\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\BattleTech_Data\Managed\Assembly-CSharp.dll</HintPath>
@@ -88,8 +87,11 @@
     <Compile Include="Components\ChassisDefaults.cs" />
     <Compile Include="Components\TagColorComponent.cs" />
     <Compile Include="DEBUGTOOLS\MechDef_RefreshInventory.cs" />
+    <Compile Include="Fixes\BTLoadUtils.cs" />
     <Compile Include="Fixes\MechDef_InsertFixedEquipmentIntoInventory.cs" />
     <Compile Include="Fixes\SimGameState_CreateComponentInstallWorkOrder.cs" />
+    <Compile Include="Fixes\SkirmishMechBayPanel_RequestResources_Patch.cs" />
+    <Compile Include="Fixes\SkirmishSettings_Beta_LoadLanceConfiguratorData_Patch.cs" />
     <Compile Include="Helpers\DefaultFixer.cs" />
     <Compile Include="Interfaces\IAdjustDescription.cs" />
     <Compile Include="Interfaces\IDefault.cs" />
