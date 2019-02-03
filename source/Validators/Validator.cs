@@ -110,7 +110,7 @@ namespace CustomComponents
                 .Select(s => new { location = s.Key, val = s.Sum(i => i.val) });
 
             Control.Logger.LogDebug($"drop_item={drop_item.ComponentRef.Def.Description.Id}");
-            foreach(var location in change_by_location)
+            foreach (var location in change_by_location)
             {
                 Control.Logger.LogDebug($"location={location.location}");
                 foreach (var item in mech.Inventory.Where(i => i.MountedLocation == location.location))
@@ -143,22 +143,17 @@ namespace CustomComponents
 
         private static string ValidateHardpoint(MechLabItemSlotElement drop_item, LocationHelper location, List<IChange> changes)
         {
-
+#if CCDEBUG
+            Control.Logger.LogDebug($"-- Hardpoints");
+#endif
             // if dropped item not weapon - skip check
             if (drop_item.ComponentRef.Def.ComponentType != ComponentType.Weapon)
+            {
+#if CCDEBUG
+                Control.Logger.LogDebug($"--- Not a weapon");
                 return string.Empty;
-
-            if (changes == null || changes.Count == 0 || !(changes[0] is RemoveChange remove))
-                return string.Empty;
-
-            var current_replace = remove.item;
-
-            // if dropped item and replacement both same type weapon - allow replace
-            if (current_replace != null
-                && current_replace.ComponentRef.Def.ComponentType == ComponentType.Weapon
-                && current_replace.weaponDef.Category == drop_item.weaponDef.Category)
-                return string.Empty;
-
+#endif                
+            }
 
             //calculate hardpoint
             int num = 0;
@@ -184,13 +179,10 @@ namespace CustomComponents
                     break;
             }
 
-            if (current_replace != null)
-            {
-                if (num >= num2)
-                    return $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.";
-            }
+            if(num2 == 0 )
+                return $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.";
 
-            else if (num == num2)
+            if (num == num2)
             {
                 var mech = location.mechLab.activeMechDef;
 
@@ -199,15 +191,17 @@ namespace CustomComponents
                     && def.Category == weaponDef.Category
                     && def.Description.Id != drop_item.ComponentRef.ComponentDefID
                     && !i.ComponentRef.IsModuleFixed(mech));
+
                 if (replace == null)
-                    return $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.";
+                    return
+                        $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.";
                 else
-                    current_replace = replace;
+                    changes.Add(new RemoveChange(location.widget.loadout.Location, replace));
             }
             else if (num > num2)
                 return $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.";
 
-            return string.Empty; 
+            return string.Empty;
         }
 
         internal static void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors,
@@ -241,9 +235,9 @@ namespace CustomComponents
             }
 
             var sizes = mechDef.Inventory.Select(cref =>
-                    new {location = cref.MountedLocation, size = cref.Def.InventorySize})
+                    new { location = cref.MountedLocation, size = cref.Def.InventorySize })
                 .GroupBy(i => i.location)
-                .Select(i => new {location = i.Key, size = i.Sum(a => a.size)}).ToList();
+                .Select(i => new { location = i.Key, size = i.Sum(a => a.size) }).ToList();
 
             foreach (var size in sizes)
             {

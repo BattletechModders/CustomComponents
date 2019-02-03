@@ -127,11 +127,21 @@ namespace CustomComponents
             for (int i =0;i<num_changed;i++)
                 Control.Logger.LogDebug($"---- {changed_deafult[i]}");
 #endif
+        }
 
-            //if (Control.Settings.FixWrongDefaults)
-            //{
-            //    CategoryController.RemoveExcessDefaults(mechDef);
-            //}
+        public static void FixSavedMech(MechDef mechDef, SimGameState state)
+        {
+            ReAddFixed(mechDef, state);
+
+            FixMech(mechDef, state);
+
+            //CategoryController.RemoveExcessDefaults(mechDef);
+        }
+
+        private static void ReAddFixed(MechDef mechDef, SimGameState state)
+        {
+            mechDef.SetInventory(mechDef.Inventory.Where(i => i.IsModuleFixed(mechDef)).ToArray());
+            mechDef.Refresh();
         }
 
         public static MechComponentRef GetReplaceFor(MechDef mech, string categoryId, ChassisLocations location, SimGameState state)

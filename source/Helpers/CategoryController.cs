@@ -234,8 +234,36 @@ namespace CustomComponents
             return category != null;
         }
 
+        private static void remove_per_location(MechDef mechDef)
+        {
+            var items_by_category = mechDef.Inventory
+                .Select(item => new { item, def = item.Def.GetComponents<Category>().Where(i => i.CategoryDescriptor.MaxEquipedPerLocation > 0) })
+                .Where(i => i.def != null)
+                .SelectMany(@t => t.def.Select(item => new
+                {
+                    category = item.CategoryDescriptor,
+                    itemref = @t.item,
+                }))
+                .GroupBy(i => i.category)
+                .ToDictionary(i => i.Key, i => i.Select(item => item.itemref).ToList());
+
+            foreach (var pair in items_by_category)
+            {
+                
+            }
+        }
+
         public static void RemoveExcessDefaults(MechDef mechDef)
         {
+            //remove location based defaults
+            remove_per_location(mechDef);
+
+
+
+
+            //remove other defaults
+
+
             var items_by_category = mechDef.Inventory
                 .Select(item => new { item, def = item.Def.GetComponents<Category>().Where(i => i.CategoryDescriptor.MaxEquiped > 0)})
                 .Where(i => i.def != null)

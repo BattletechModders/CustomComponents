@@ -86,7 +86,7 @@ namespace CustomComponents
         public List<DefaultsInfo> TaggedDefaults = new List<DefaultsInfo>();
         public List<DefaultsInfo> Defaults = new List<DefaultsInfo>();
 
-        public bool FixWrongDefaults = true;
+        public bool FixSaveGameMech = true;
         public bool TagRestrictionDropValidateRequiredTags = false;
         public bool TagRestrictionDropValidateIncompatibleTags = true;
 
