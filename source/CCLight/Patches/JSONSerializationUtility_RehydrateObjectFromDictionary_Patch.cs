@@ -60,6 +60,13 @@ namespace CustomComponents
         public static void Postfix(object target, Dictionary<string, object> values)
         {
             Registry.ProcessCustomFactories(target, values);
+            if (target == null)
+            {
+                foreach (var value in values)
+                {
+                    Control.Logger.LogDebug($"{value.Key}: {value.Value}");
+                }
+            }
 
             if (target is MechComponentDef def)
             {

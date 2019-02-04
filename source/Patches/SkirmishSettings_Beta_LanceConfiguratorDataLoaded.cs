@@ -8,6 +8,7 @@ namespace CustomComponents.Patches
     public class SkirmishSettings_Beta_LanceConfiguratorDataLoaded
     {
         [HarmonyPrefix]
+        [HarmonyPriority(Priority.High)]
         public static void Prefix(SkirmishSettings_Beta __instance, UIManager ___uiManager)
         {
             try

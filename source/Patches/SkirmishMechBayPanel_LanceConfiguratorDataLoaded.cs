@@ -11,6 +11,7 @@ namespace CustomComponents.Patches
     public static class SkirmishMechBayPanel_LanceConfiguratorDataLoaded
     {
         [HarmonyPrefix]
+        [HarmonyPriority(Priority.High)]
         public static void FixDefaults(SkirmishMechBayPanel __instance)
         {
             try

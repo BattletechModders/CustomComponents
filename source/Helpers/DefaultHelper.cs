@@ -46,13 +46,13 @@ namespace CustomComponents
 
                     if (mref.MountedLocation == item.MountedLocation && item.ComponentDefID == mref.ComponentDefID)
                     {
-#if CCDEBUG
+#if CCDEBUG1
                         Control.Logger.LogDebug($"-- true!");
 #endif
                         return true;
                     }
                 }
-#if CCDEBUG
+#if CCDEBUG1
             Control.Logger.LogError($"-- false: not really fixed");
 #endif
 

@@ -234,75 +234,30 @@ namespace CustomComponents
             return category != null;
         }
 
-        private static void remove_per_location(MechDef mechDef)
+        public static bool need_remove(MechComponentRef item, MechDef mech)
         {
-            var items_by_category = mechDef.Inventory
-                .Select(item => new { item, def = item.Def.GetComponents<Category>().Where(i => i.CategoryDescriptor.MaxEquipedPerLocation > 0) })
-                .Where(i => i.def != null)
-                .SelectMany(@t => t.def.Select(item => new
-                {
-                    category = item.CategoryDescriptor,
-                    itemref = @t.item,
-                }))
-                .GroupBy(i => i.category)
-                .ToDictionary(i => i.Key, i => i.Select(item => item.itemref).ToList());
+            if (!item.IsFixed)
+                return false;
 
-            foreach (var pair in items_by_category)
+            if (item.IsModuleFixed(mech))
+                return false;
+
+            if (!item.IsDefault())
+                return false;
+
+            if (item.Is<Category>(out var category))
             {
-                
+                if (category.CategoryDescriptor.MaxEquiped > 0 || category.CategoryDescriptor.MaxEquipedPerLocation > 0)
+                    return true;
             }
+
+            return false;
         }
 
         public static void RemoveExcessDefaults(MechDef mechDef)
         {
-            //remove location based defaults
-            remove_per_location(mechDef);
-
-
-
-
-            //remove other defaults
-
-
-            var items_by_category = mechDef.Inventory
-                .Select(item => new { item, def = item.Def.GetComponents<Category>().Where(i => i.CategoryDescriptor.MaxEquiped > 0)})
-                .Where(i => i.def != null)
-                .SelectMany(@t => t.def.Select(item => new
-                {
-                    category = item.CategoryDescriptor,
-                    itemref = @t.item,
-                }))
-                .GroupBy(i => i.category)
-                .ToDictionary(i => i.Key, i => i.Select(item => item.itemref).ToList());
-
-            foreach (var pair in items_by_category)
-            {
-                if (pair.Key.MaxEquiped > 0 && pair.Value.Count > pair.Key.MaxEquiped)
-                {
-                    var replace = DefaultFixer.GetDefId(mechDef, pair.Key.Name, pair.Value[0].MountedLocation);
-                    var candidates = pair.Value.Where(i => i.IsDefault()).ToList();
-                    if (candidates.Count == 0)
-                    {
-                        Control.Logger.LogError($"Cannot remove wrong defaults from {mechDef.Name}({mechDef.Chassis.Description.Id}). {pair.Key.DisplayName} : {pair.Value.Count}/{pair.Key.MaxEquiped}. No defaults");
-                        continue;
-                    }
-
-                    if (pair.Value.Count - candidates.Count > pair.Key.MaxEquiped)
-                    {
-                        Control.Logger.LogError($"Cannot remove wrong defaults from {mechDef.Name}({mechDef.Chassis.Description.Id}). ({pair.Key.DisplayName} : {pair.Value.Count}-{candidates.Count})/{pair.Key.MaxEquiped}. Not Enough Defaults");
-                        var inventory = mechDef.Inventory.ToList();
-                        foreach (var mechComponentRef in candidates)
-                        {
-                            inventory.Remove(mechComponentRef);
-                        }
-                        mechDef.SetInventory(inventory.ToArray());
-                        continue;
-                    }
-
-
-
-                }
-            }
+            mechDef.SetInventory(mechDef.Inventory.Where(i => !need_remove(i, mechDef)).ToArray());
+            mechDef.Refresh();
         }
     }
 }

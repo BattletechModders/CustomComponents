@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿#undef CCDEBUG
+using System.Linq;
 using BattleTech;
 using HBS.Extensions;
 
@@ -86,12 +87,17 @@ namespace CustomComponents
             if (mechDef == null)
                 return;
 
+            if(Control.Settings.FixDeletedComponents )
+                RemoveEmptyRefs(mechDef);
+
+
 #if CCDEBUG
             Control.Logger.LogDebug($"Default Fixer for {mechDef.Name}({mechDef.Description.Id})");
 #endif
             num_changed = 0;
 
 #if CCDEBUG
+
             Control.Logger.LogDebug($"-- Chassis");
 #endif
             if (mechDef.Chassis != null)
@@ -129,18 +135,38 @@ namespace CustomComponents
 #endif
         }
 
+        private static void RemoveEmptyRefs(MechDef mechDef)
+        {
+
+            if (mechDef.Inventory.Any(i => i?.Def == null))
+            {
+                Control.Logger.LogError($"Found NULL in {mechDef.Name}({mechDef.Description.Id})");
+
+                foreach (var r in mechDef.Inventory)
+                {
+                    if (r.Def == null)
+                        Control.Logger.LogError($"--- NULL --- {r.ComponentDefID}");
+                }
+                
+                mechDef.SetInventory(mechDef.Inventory.Where(i => i.Def != null).ToArray());
+            }
+        }
+
         public static void FixSavedMech(MechDef mechDef, SimGameState state)
         {
+
+            if (Control.Settings.FixDeletedComponents)
+                RemoveEmptyRefs(mechDef);
             ReAddFixed(mechDef, state);
+            CategoryController.RemoveExcessDefaults(mechDef);
 
             FixMech(mechDef, state);
 
-            //CategoryController.RemoveExcessDefaults(mechDef);
         }
 
         private static void ReAddFixed(MechDef mechDef, SimGameState state)
         {
-            mechDef.SetInventory(mechDef.Inventory.Where(i => i.IsModuleFixed(mechDef)).ToArray());
+            mechDef.SetInventory(mechDef.Inventory.Where(i => !i.IsModuleFixed(mechDef)).ToArray());
             mechDef.Refresh();
         }
 

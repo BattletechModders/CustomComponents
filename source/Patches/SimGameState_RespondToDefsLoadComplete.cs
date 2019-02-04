@@ -8,6 +8,7 @@ namespace CustomComponents
     public static class SimGameState_RespondToDefsLoadComplete
     {
         [HarmonyPrefix]
+        [HarmonyPriority(Priority.High)]
         public static void FixDefaults(SimGameState __instance)
         {
             try
