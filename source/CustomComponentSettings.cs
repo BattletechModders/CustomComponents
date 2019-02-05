@@ -86,6 +86,7 @@ namespace CustomComponents
         public List<DefaultsInfo> TaggedDefaults = new List<DefaultsInfo>();
         public List<DefaultsInfo> Defaults = new List<DefaultsInfo>();
 
+        public bool RunAutofixer = true;
         public bool FixDeletedComponents = true;
         public bool FixSaveGameMech = false;
         public bool TagRestrictionDropValidateRequiredTags = false;

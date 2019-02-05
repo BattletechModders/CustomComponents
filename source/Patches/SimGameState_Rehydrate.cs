@@ -12,6 +12,10 @@ namespace CustomComponents.Patches
         [HarmonyPostfix]
         public static void FixMechInMechbay(SimGameState __instance, StatCollection ___companyStats, Dictionary<int, MechDef> ___ActiveMechs, Dictionary<int, MechDef> ___ReadyingMechs)
         {
+            if (!Control.Settings.RunAutofixer)
+                return;
+
+
             try
             {
 

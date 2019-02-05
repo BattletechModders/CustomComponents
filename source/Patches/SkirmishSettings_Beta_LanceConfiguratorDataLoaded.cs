@@ -11,6 +11,9 @@ namespace CustomComponents.Patches
         [HarmonyPriority(Priority.High)]
         public static void Prefix(SkirmishSettings_Beta __instance, UIManager ___uiManager)
         {
+            if (!Control.Settings.RunAutofixer)
+                return;
+
             try
             {
                 foreach (var pair in ___uiManager.dataManager.MechDefs)

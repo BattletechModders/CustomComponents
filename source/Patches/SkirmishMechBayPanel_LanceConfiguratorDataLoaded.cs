@@ -14,6 +14,9 @@ namespace CustomComponents.Patches
         [HarmonyPriority(Priority.High)]
         public static void FixDefaults(SkirmishMechBayPanel __instance)
         {
+            if (!Control.Settings.RunAutofixer)
+                return;
+
             try
             {
                 foreach (var pair in __instance.dataManager.MechDefs)

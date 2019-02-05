@@ -11,11 +11,14 @@ namespace CustomComponents
         [HarmonyPriority(Priority.High)]
         public static void FixDefaults(SimGameState __instance)
         {
+            if (!Control.Settings.RunAutofixer)
+                return;
+
             try
             {
                 foreach (var pair in __instance.DataManager.MechDefs)
                 {
-                    DefaultFixer.FixMech(pair.Value, __instance);
+                    DefaultFixer.FixMech(pair.Value, null);
                 }
             }
             catch (Exception e)
