@@ -69,6 +69,7 @@ namespace CustomComponents
         public static void FinishedLoading(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
             CategoriesHandler.Shared.Setup(customResources);
+            DefaultsHandler.Shared.Setup(customResources);
             TagRestrictionsHandler.Shared.Setup(customResources);
         }
 
