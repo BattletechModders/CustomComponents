@@ -36,6 +36,7 @@ namespace CustomComponents
                 var settings = new SettingsResource<T>();
                 try
                 {
+                    Control.Logger.LogDebug($"Reading {entry.FilePath}");
                     using (var reader = new StreamReader(entry.FilePath))
                     {
                         var json = reader.ReadToEnd();

@@ -92,6 +92,7 @@
     <Compile Include="DEBUGTOOLS\MechDef_RefreshInventory.cs" />
     <Compile Include="Defaults\DefaultsHandler.cs" />
     <Compile Include="Fixes\BTLoadUtils.cs" />
+    <Compile Include="Fixes\ReflectionCache_Patch.cs" />
     <Compile Include="Fixes\MechDef_InsertFixedEquipmentIntoInventory.cs" />
     <Compile Include="Fixes\SimGameState_CreateComponentInstallWorkOrder.cs" />
     <Compile Include="Fixes\SkirmishMechBayPanel_RequestResources_Patch.cs" />
