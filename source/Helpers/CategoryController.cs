@@ -55,7 +55,7 @@ namespace CustomComponents
             //fcache.Clear();
 
             //check each "required" category
-            foreach (var category in Control.GetCategories().Where(i => i.Required))
+            foreach (var category in CategoriesHandler.Shared.GetCategories().Where(i => i.Required))
             {
                 if (!items_by_category.ContainsKey(category) || items_by_category[category].Count < category.MinEquiped)
                     if (category.MinEquiped == 1)
@@ -138,7 +138,7 @@ namespace CustomComponents
                 .ToDictionary(i => i.Key, i => i.ToList());
 
             // if all required category present
-            foreach (var category in Control.GetCategories().Where(i => i.Required))
+            foreach (var category in CategoriesHandler.Shared.GetCategories().Where(i => i.Required))
             {
 #if CCDEBUG
                 Control.Logger.LogDebug($"-- MinEquiped for {category.displayName}");

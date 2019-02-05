@@ -73,6 +73,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Categories\CategoriesHandler.cs" />
+    <Compile Include="Categories\Category.cs" />
     <Compile Include="CCLight\Factories\ChassisCusomComponent.cs" />
     <Compile Include="CCLight\IReplaceIdentifier.cs" />
     <Compile Include="CCLight\Factories\IPreProcessor.cs" />
@@ -88,12 +90,14 @@
     <Compile Include="Components\Lootable.cs" />
     <Compile Include="Components\TagColorComponent.cs" />
     <Compile Include="DEBUGTOOLS\MechDef_RefreshInventory.cs" />
+    <Compile Include="Defaults\DefaultsHandler.cs" />
     <Compile Include="Fixes\BTLoadUtils.cs" />
     <Compile Include="Fixes\MechDef_InsertFixedEquipmentIntoInventory.cs" />
     <Compile Include="Fixes\SimGameState_CreateComponentInstallWorkOrder.cs" />
     <Compile Include="Fixes\SkirmishMechBayPanel_RequestResources_Patch.cs" />
     <Compile Include="Fixes\SkirmishSettings_Beta_LoadLanceConfiguratorData_Patch.cs" />
     <Compile Include="Helpers\DefaultFixer.cs" />
+    <Compile Include="Helpers\SettingsResourceTools.cs" />
     <Compile Include="Interfaces\IAdjustDescription.cs" />
     <Compile Include="Interfaces\IDefault.cs" />
     <Compile Include="Patches\SimGameState_Rehydrate.cs" />
@@ -113,7 +117,6 @@
     <Compile Include="Interfaces\IPreValidateDrop.cs" />
     <Compile Include="Helpers\CategoryController.cs" />
     <Compile Include="Helpers\CategoryDescriptor.cs" />
-    <Compile Include="Components\Category.cs" />
     <Compile Include="CCLight\CustomComponentAttribute.cs" />
     <Compile Include="CCLight\Database.cs" />
     <Compile Include="CCLight\Extensions.cs" />
@@ -176,9 +179,6 @@
     <None Include="..\mod.json">
       <Link>mod.json</Link>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="TEST\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

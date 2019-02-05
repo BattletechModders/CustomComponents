@@ -7,6 +7,9 @@
 	"DependsOn": [],
 	"DLL": "CustomComponents.dll",
 	"DLLEntryPoint": "CustomComponents.Control.Init",
+
+	"CustomResourceTypes": ["CCCategories", "CCDefaults", "CCTagRestrictions"],
+	
 	"Settings" : {
 		"LogLevel": "Debug",
 		"Categories": [ ],
@@ -36,76 +39,19 @@
 		"TestEnableAllTags": true,
 		"OmniTechFlag": "cc_omnitech",
         "OmniTechCostBySize": false,
-        "OmniTechInstallCost": 1,
-				
-		"TaggedDefaults" : [
-			{ "Tag" : "special_replace", "CategoryID" : "Armor", "Type" : "Upgrade", "DefID" : "emod_armorslots_d_ferrosfibrous", "Location" : "CenterTorso" },		
-			{ "Tag" : "special_replace", "CategoryID" : "Structure", "Type" : "Upgrade", "DefID" : "emod_structureslots_d_endosteel", "Location" : "CenterTorso" },		
-			{ "Tag" : "special_replace", "CategoryID" : "Cockpit", "Type" : "Upgrade", "DefID" : "Gear_Cockpit_SLDF_Custom_d", "Location" : "Head" }		
-		],
-		
-		"Defaults" : [
-			{ "CategoryID" : "Armor", "Type" : "Upgrade", "DefID" : "emod_armorslots_standard", "Location" : "CenterTorso" },		
-			{ "CategoryID" : "Structure", "Type" : "Upgrade", "DefID" : "emod_structureslots_standard", "Location" : "CenterTorso" },		
-			{ "CategoryID" : "Cockpit", "Type" : "Upgrade", "DefID" : "Gear_Cockpit_Generic_Standard", "Location" : "Head" },		
-			{ "CategoryID" : "Gyro", "Type" : "Upgrade", "DefID" : "Gear_Gyro_Generic_Standard", "Location" : "CenterTorso" },		
-			{ "CategoryID" : "CatA", "Type" : "Upgrade", "DefID" : "emod_a_default", "Location" : "LeftTorso" },		
-			{ "CategoryID" : "CatB", "Type" : "Upgrade", "DefID" : "emod_b_default", "Location" : "LeftTorso" },		
-			{ "CategoryID" : "CatC", "Type" : "Upgrade", "DefID" : "emod_c_default", "Location" : "LeftTorso" },		
-			{ "CategoryID" : "TorsoActuator", "Type" : "Upgrade", "DefID" : "emod_torso_default", "Location" : "LeftTorso", "AnyLocation" : false },		
-			{ "CategoryID" : "TorsoActuator", "Type" : "Upgrade", "DefID" : "emod_torso_default", "Location" : "RightTorso", "AnyLocation" : false },		
-			{ "CategoryID" : "ArmActuator", "Type" : "Upgrade", "DefID" : "emod_arm_upper", "Location" : "LeftArm", "AnyLocation" : false, "AddIfNotPresent" : false },		
-			{ "CategoryID" : "ArmActuator", "Type" : "Upgrade", "DefID" : "emod_arm_upper", "Location" : "RightArm", "AnyLocation" : false, "AddIfNotPresent" : false },		
-			{ "CategoryID" : "EngineCore", "Type" : "HeatSink", "DefID" : "emod_engine_dummy", "Location" : "CenterTorso", "AddIfNotPresent" : false },		
-			{ "CategoryID" : "EngineHeatBlock", "Type" : "HeatSink", "DefID" : "emod_engine_cooling", "Location" : "CenterTorso", "AddIfNotPresent" : false }		
-		],
-		
-		"Categories" : [
-			{
-				"Name" : "TESTItem",
-				"MaxEquiped" : 1,
-				"ReplaceAnyLocation" : true,
-				"AutoReplace" : true,
-				"DefaultCustoms" : {
-					"Sorter" : {
-						"Order" : 10
-					},
-					"RGBColor" : { "Color" : "Teal" }
-				},
-			},
-			{
-				"Name" : "TorsoActuator",
-				"MaxEquiped" : 2,
-				"MaxEquipedPerLocation" : 1,
-				"ReplaceAnyLocation" : false,
-				"AutoReplace" : true,
-				"DefaultCustoms" : {
-					"Sorter" : {
-						"Order" : 1
-					},
-					"RGBColor" : { "Color" : "#b03a2e" }
-				},
-			},
-			{
-				"Name" : "CatA",
-				"MaxEquiped" : 1,
-				"ReplaceAnyLocation" : true,
-				"AutoReplace" : true
-			},
-			{
-				"Name" : "CatB",
-				"MaxEquiped" : 1,
-				"ReplaceAnyLocation" : true,
-				"AutoReplace" : true
-			},
-			{
-				"Name" : "CatC",
-				"MaxEquiped" : 1,
-				"ReplaceAnyLocation" : true,
-				"AutoReplace" : true
-			}
-		]
+        "OmniTechInstallCost": 1
 	},	
 		
-	"Manifest": [ ]
+	"Manifest": [
+        {
+            "Type": "CCCategories",
+            "Path": "disabled test/categories/",
+            "ShouldMergeJSON": false
+        },
+        {
+            "Type": "CCDefaults",
+            "Path": "disabled test/defaults/",
+            "ShouldMergeJSON": false
+        }
+    ]
 }

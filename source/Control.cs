@@ -5,6 +5,8 @@ using System;
 using System.Reflection;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using BattleTech;
 using HBS.Logging;
 using HBS.Util;
 
@@ -13,7 +15,6 @@ namespace CustomComponents
 {
     public static class Control
     {
-        private static readonly Dictionary<string, CategoryDescriptor> Categories = new Dictionary<string, CategoryDescriptor>();
         public static CustomComponentSettings Settings = new CustomComponentSettings();
 
         internal static ILog Logger;
@@ -52,23 +53,9 @@ namespace CustomComponents
                 Validator.RegisterMechValidator(CategoryController.ValidateMech, CategoryController.ValidateMechCanBeFielded);
 
                 Logger.Log("Loaded CustomComponents v0.9.1.3 for bt 1.4");
-#if CCDEBUG
-                Logger.LogDebug("Loading Categories");
-#endif  
-                foreach (var categoryDescriptor in Settings.Categories)
-                {
-                    AddCategory(categoryDescriptor);
-#if CCDEBUG
-                    Logger.LogDebug(categoryDescriptor.Name + " - " + categoryDescriptor.DisplayName);
-#endif  
-                }
 
                 Validator.RegisterMechValidator(TagRestrictionsHandler.Shared.ValidateMech, TagRestrictionsHandler.Shared.ValidateMechCanBeFielded);
                 Validator.RegisterDropValidator(check: TagRestrictionsHandler.Shared.ValidateDrop);
-                foreach (var restriction in Settings.TagRestrictions)
-                {
-                    TagRestrictionsHandler.Shared.Add(restriction);
-                }
 #if CCDEBUG
                 Logger.LogDebug("done");
 #endif
@@ -79,75 +66,10 @@ namespace CustomComponents
             }
         }
 
-        public static void AddTagRestrictions(TagRestrictions restrictions)
+        public static void FinishedLoading(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
-            TagRestrictionsHandler.Shared.Add(restrictions);
-        }
-
-        internal static void AddNewCategory(string category)
-        {
-#if CCDEBUG
-            Logger.LogDebug($"Create new category: {category}");
-#endif
-            if (Categories.TryGetValue(category, out _))
-            {
-#if CCDEBUG
-                Logger.LogDebug("Already exist");
-#endif
-                return;
-            }
-
-            var c = new CategoryDescriptor { Name = category };
-            Categories.Add(category, c);
-        }
-
-        public static void AddCategory(CategoryDescriptor category)
-        {
-#if CCDEBUG
-            Logger.LogDebug($"Add Category: {category.Name}");
-#endif
-            if (Categories.TryGetValue(category.Name, out var c))
-            {
-#if CCDEBUG
-                Logger.LogDebug($"Already have, apply: {category.Name}");
-#endif
-                c.Apply(category);
-            }
-            else
-            {
-#if CCDEBUG
-                Logger.LogDebug($"Adding new: {category.Name}");
-#endif
-                Categories.Add(category.Name, category);
-                category.InitDefaults();
-            }
-
-#if CCDEBUG
-            Logger.LogDebug($"Current Categories");
-            foreach (var categoryDescriptor in Categories)
-            {
-                Logger.LogDebug($" - {categoryDescriptor.Value.Name}");
-            }
-#endif
-        }
-
-        public static CategoryDescriptor GetOrCreateCategory(string name)
-        {
-            if (Categories.TryGetValue(name, out var c))
-                return c;
-            c = new CategoryDescriptor { Name = name };
-            Categories.Add(name, c);
-            return c;
-        }
-
-        public static CategoryDescriptor GetCategory(string name)
-        {
-            return Categories.TryGetValue(name, out var c) ? c : null;
-        }
-
-        public static IEnumerable<CategoryDescriptor> GetCategories()
-        {
-            return Categories.Values;
+            CategoriesHandler.Shared.Setup(customResources);
+            TagRestrictionsHandler.Shared.Setup(customResources);
         }
 
 #region LOGGING

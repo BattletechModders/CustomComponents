@@ -110,8 +110,7 @@ namespace CustomComponents
             Control.Logger.LogDebug($"-- Tagged");
 #endif
 
-            if (Control.Settings.TaggedDefaults != null)
-                foreach (var def in Control.Settings.TaggedDefaults)
+                foreach (var def in DefaultsHandler.Shared.TaggedDefaults)
                 {
                     if (mechDef.MechTags.Contains(def.Tag) || mechDef.Chassis.ChassisTags.Contains(def.Tag))
                         process_default(mechDef, def, state);
@@ -120,8 +119,7 @@ namespace CustomComponents
             Control.Logger.LogDebug($"-- Other");
 #endif
 
-            if (Control.Settings.Defaults != null)
-                foreach (var def in Control.Settings.Defaults)
+                foreach (var def in DefaultsHandler.Shared.Defaults)
                 {
                     process_default(mechDef, def, state);
                 }
@@ -182,12 +180,12 @@ namespace CustomComponents
                 if (check_def(def))
                     return def.GetReplace(mech, state);
 
-            if (Control.Settings.TaggedDefaults != null)
-                foreach (var def in Control.Settings.TaggedDefaults.Where(check_def))
+            if (DefaultsHandler.Shared.TaggedDefaults != null)
+                foreach (var def in DefaultsHandler.Shared.TaggedDefaults.Where(check_def))
                     if (mech.MechTags.Contains(def.Tag) || mech.Chassis.ChassisTags.Contains(def.Tag))
                         return def.GetReplace(mech, state);
 
-            return Control.Settings.Defaults != null ? Control.Settings.Defaults.Where(check_def).Select(def => def.GetReplace(mech, state)).FirstOrDefault() : null;
+            return DefaultsHandler.Shared.Defaults != null ? DefaultsHandler.Shared.Defaults.Where(check_def).Select(def => def.GetReplace(mech, state)).FirstOrDefault() : null;
         }
 
         public static object GetDefId(MechDef mech, string categoryId, ChassisLocations location)
@@ -202,12 +200,11 @@ namespace CustomComponents
                 if (check_def(def))
                     return def.DefID;
 
-            if (Control.Settings.TaggedDefaults != null)
-                foreach (var def in Control.Settings.TaggedDefaults.Where(check_def))
+                foreach (var def in DefaultsHandler.Shared.TaggedDefaults.Where(check_def))
                     if (mech.MechTags.Contains(def.Tag) || mech.Chassis.ChassisTags.Contains(def.Tag))
                         return def.DefID;
 
-            return Control.Settings.Defaults != null ? Control.Settings.Defaults.Where(check_def).Select(def => def.DefID).FirstOrDefault() : null;
+                return DefaultsHandler.Shared.Defaults.Where(check_def).Select(def => def.DefID).FirstOrDefault();
         }
     }
 }

@@ -1,0 +1,47 @@
+{
+	"Settings" : [
+		{
+			"Name" : "TESTItem",
+			"MaxEquiped" : 1,
+			"ReplaceAnyLocation" : true,
+			"AutoReplace" : true,
+			"DefaultCustoms" : {
+				"Sorter" : {
+					"Order" : 10
+				},
+				"RGBColor" : { "Color" : "Teal" }
+			},
+		},
+		{
+			"Name" : "TorsoActuator",
+			"MaxEquiped" : 2,
+			"MaxEquipedPerLocation" : 1,
+			"ReplaceAnyLocation" : false,
+			"AutoReplace" : true,
+			"DefaultCustoms" : {
+				"Sorter" : {
+					"Order" : 1
+				},
+				"RGBColor" : { "Color" : "#b03a2e" }
+			},
+		},
+		{
+			"Name" : "CatA",
+			"MaxEquiped" : 1,
+			"ReplaceAnyLocation" : true,
+			"AutoReplace" : true
+		},
+		{
+			"Name" : "CatB",
+			"MaxEquiped" : 1,
+			"ReplaceAnyLocation" : true,
+			"AutoReplace" : true
+		},
+		{
+			"Name" : "CatC",
+			"MaxEquiped" : 1,
+			"ReplaceAnyLocation" : true,
+			"AutoReplace" : true
+		}
+	]
+}

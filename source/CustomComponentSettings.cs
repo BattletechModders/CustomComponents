@@ -80,11 +80,7 @@ namespace CustomComponents
     public class CustomComponentSettings
     {
         public LogLevel LogLevel = LogLevel.Debug;
-        public List<CategoryDescriptor> Categories = new List<CategoryDescriptor>();
-        public List<TagRestrictions> TagRestrictions = new List<TagRestrictions>();
         public List<TagColor> ColorTags = new List<TagColor>();
-        public List<DefaultsInfo> TaggedDefaults = new List<DefaultsInfo>();
-        public List<DefaultsInfo> Defaults = new List<DefaultsInfo>();
 
         public bool RunAutofixer = true;
         public bool FixDeletedComponents = true;
