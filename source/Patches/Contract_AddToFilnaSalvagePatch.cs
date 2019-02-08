@@ -13,7 +13,7 @@ namespace CustomComponents
             if (def.MechComponentDef == null)
                 return true;
 
-            var flags = def.MechComponentDef?.GetComponent<Flags>();
+            var flags = def.MechComponentDef.GetComponent<Flags>();
 
             if (flags == null || !flags.NotSalvagable)
                 return true;

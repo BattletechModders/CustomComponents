@@ -24,6 +24,7 @@ namespace CustomComponents
         public static void Init(string directory, string settingsJSON)
         {
             Logger = HBS.Logging.Logger.GetLogger("CustomComponents", LogLevel.Debug);
+
             try
             {
                 try
@@ -155,6 +156,7 @@ namespace CustomComponents
         internal static void SetupLogging(string Directory)
         {
             var logFilePath = Path.Combine(Directory, "log.txt");
+
             try
             {
                 ShutdownLogging();
@@ -191,7 +193,6 @@ namespace CustomComponents
             try
             {
                 logAppender = new FileLogAppender(logFilePath, FileLogAppender.WriteMode.INSTANT);
-
                 HBS.Logging.Logger.AddAppender("CustomComponents", logAppender);
 
             }
