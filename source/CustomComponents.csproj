@@ -73,6 +73,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutoFixer\AutoFixer.cs" />
     <Compile Include="Categories\CategoriesExtentions.cs" />
     <Compile Include="Categories\Category.cs" />
     <Compile Include="CCLight\Factories\ChassisCusomComponent.cs" />
@@ -96,14 +97,14 @@
     <Compile Include="Fixes\SimGameState_CreateComponentInstallWorkOrder.cs" />
     <Compile Include="Fixes\SkirmishMechBayPanel_RequestResources_Patch.cs" />
     <Compile Include="Fixes\SkirmishSettings_Beta_LoadLanceConfiguratorData_Patch.cs" />
-    <Compile Include="Helpers\DefaultFixer.cs" />
+    <Compile Include="Defaults\DefaultFixer.cs" />
     <Compile Include="Helpers\SettingsResourceTools.cs" />
     <Compile Include="Interfaces\IAdjustDescription.cs" />
-    <Compile Include="Interfaces\IDefault.cs" />
-    <Compile Include="Patches\SimGameState_Rehydrate.cs" />
-    <Compile Include="Patches\SimGameState_RespondToDefsLoadComplete.cs" />
-    <Compile Include="Patches\SkirmishMechBayPanel_LanceConfiguratorDataLoaded.cs" />
-    <Compile Include="Patches\SkirmishSettings_Beta_LanceConfiguratorDataLoaded.cs" />
+    <Compile Include="Defaults\IDefault.cs" />
+    <Compile Include="AutoFixer\Patches\SimGameState_Rehydrate.cs" />
+    <Compile Include="AutoFixer\Patches\SimGameState_RespondToDefsLoadComplete.cs" />
+    <Compile Include="AutoFixer\Patches\SkirmishMechBayPanel_LanceConfiguratorDataLoaded.cs" />
+    <Compile Include="AutoFixer\Patches\SkirmishSettings_Beta_LanceConfiguratorDataLoaded.cs" />
     <Compile Include="WorkOrderCosts\Utils\Adapter.cs" />
     <Compile Include="Interfaces\IColorComponent.cs" />
     <Compile Include="Components\RGBColorComponent.cs" />
@@ -139,7 +140,7 @@
     <Compile Include="Components\AutoLinked.cs" />
     <Compile Include="Patches\MechLabLocationWidget_SetData_Patch.cs" />
     <Compile Include="Patches\MechLabLocationWidget_StripEquipment.cs" />
-    <Compile Include="Helpers\DefaultHelper.cs" />
+    <Compile Include="Defaults\DefaultHelper.cs" />
     <Compile Include="Patches\SimGameState_AddMechPart_Patch.cs" />
     <Compile Include="Patches\SimGameState_ReadyMech_Patch.cs" />
     <Compile Include="Interfaces\IMechValidate.cs" />

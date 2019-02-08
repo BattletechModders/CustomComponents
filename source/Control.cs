@@ -47,8 +47,6 @@ namespace CustomComponents
                 var harmony = HarmonyInstance.Create("io.github.denadan.CustomComponents");
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
 
-                // make sure category is always run first, as it contains default customs
-//                Registry.RegisterSimpleCustomComponents(typeof(Category));
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
                 Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);
 
@@ -56,6 +54,21 @@ namespace CustomComponents
 
                 Validator.RegisterMechValidator(TagRestrictionsHandler.Shared.ValidateMech, TagRestrictionsHandler.Shared.ValidateMechCanBeFielded);
                 Validator.RegisterDropValidator(check: TagRestrictionsHandler.Shared.ValidateDrop);
+                if (Settings.RunAutofixer)
+                {
+                    if (Settings.FixDeletedComponents)
+                        AutoFixer.Shared.RegisterMechFixer(AutoFixer.Shared.RemoveEmptyRefs);
+
+                    if (Settings.FixSaveGameMech)
+                    {
+                        AutoFixer.Shared.RegisterSaveMechFixer(AutoFixer.Shared.ReAddFixed);
+                        AutoFixer.Shared.RegisterSaveMechFixer(CategoryController.Shared.RemoveExcessDefaults);
+                    }
+
+                    if (Settings.FixDefaults)
+                        AutoFixer.Shared.RegisterMechFixer(DefaultFixer.Shared.FixMech);
+                }
+
 #if CCDEBUG
                 Logger.LogDebug("done");
 #endif

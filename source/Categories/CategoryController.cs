@@ -285,7 +285,7 @@ namespace CustomComponents
             return false;
         }
 
-        public void RemoveExcessDefaults(MechDef mechDef)
+        public void RemoveExcessDefaults(MechDef mechDef, SimGameState state)
         {
             mechDef.SetInventory(mechDef.Inventory.Where(i => !need_remove(i, mechDef)).ToArray());
             mechDef.Refresh();

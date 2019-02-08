@@ -16,6 +16,7 @@ namespace CustomComponents
 
         internal readonly List<DefaultsInfo> TaggedDefaults = new List<DefaultsInfo>();
         internal readonly List<DefaultsInfo> Defaults = new List<DefaultsInfo>();
+        internal readonly List<IDefault> CustomDefaults = new List<IDefault>();
 
         internal void Setup(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
@@ -103,14 +104,8 @@ namespace CustomComponents
             }
         }
 
-        public void FixMech(MechDef mechDef, SimGameState state)
+        internal void FixMech(MechDef mechDef, SimGameState state)
         {
-            if (mechDef == null)
-                return;
-
-            if(Control.Settings.FixDeletedComponents )
-                RemoveEmptyRefs(mechDef);
-
 
 #if CCDEBUG
             Control.Logger.LogDebug($"Default Fixer for {mechDef.Name}({mechDef.Description.Id})");
@@ -131,19 +126,19 @@ namespace CustomComponents
             Control.Logger.LogDebug($"-- Tagged");
 #endif
 
-                foreach (var def in TaggedDefaults)
-                {
-                    if (mechDef.MechTags.Contains(def.Tag) || mechDef.Chassis.ChassisTags.Contains(def.Tag))
-                        process_default(mechDef, def, state);
-                }
+            foreach (var def in TaggedDefaults)
+            {
+                if (mechDef.MechTags.Contains(def.Tag) || mechDef.Chassis.ChassisTags.Contains(def.Tag))
+                    process_default(mechDef, def, state);
+            }
 #if CCDEBUG
             Control.Logger.LogDebug($"-- Other");
 #endif
 
-                foreach (var def in Defaults)
-                {
-                    process_default(mechDef, def, state);
-                }
+            foreach (var def in Defaults)
+            {
+                process_default(mechDef, def, state);
+            }
 
 
 #if CCDEBUG
@@ -152,41 +147,6 @@ namespace CustomComponents
             for (int i =0;i<num_changed;i++)
                 Control.Logger.LogDebug($"---- {changed_deafult[i]}");
 #endif
-        }
-
-        private void RemoveEmptyRefs(MechDef mechDef)
-        {
-
-            if (mechDef.Inventory.Any(i => i?.Def == null))
-            {
-                Control.Logger.LogError($"Found NULL in {mechDef.Name}({mechDef.Description.Id})");
-
-                foreach (var r in mechDef.Inventory)
-                {
-                    if (r.Def == null)
-                        Control.Logger.LogError($"--- NULL --- {r.ComponentDefID}");
-                }
-                
-                mechDef.SetInventory(mechDef.Inventory.Where(i => i.Def != null).ToArray());
-            }
-        }
-
-        public  void FixSavedMech(MechDef mechDef, SimGameState state)
-        {
-
-            if (Control.Settings.FixDeletedComponents)
-                RemoveEmptyRefs(mechDef);
-            ReAddFixed(mechDef, state);
-            CategoryController.Shared.RemoveExcessDefaults(mechDef);
-
-            FixMech(mechDef, state);
-
-        }
-
-        private void ReAddFixed(MechDef mechDef, SimGameState state)
-        {
-            mechDef.SetInventory(mechDef.Inventory.Where(i => !i.IsModuleFixed(mechDef)).ToArray());
-            mechDef.Refresh();
         }
 
         public MechComponentRef GetReplaceFor(MechDef mech, string categoryId, ChassisLocations location, SimGameState state)
@@ -221,11 +181,11 @@ namespace CustomComponents
                 if (check_def(def))
                     return def.DefID;
 
-                foreach (var def in TaggedDefaults.Where(check_def))
-                    if (mech.MechTags.Contains(def.Tag) || mech.Chassis.ChassisTags.Contains(def.Tag))
-                        return def.DefID;
+            foreach (var def in TaggedDefaults.Where(check_def))
+                if (mech.MechTags.Contains(def.Tag) || mech.Chassis.ChassisTags.Contains(def.Tag))
+                    return def.DefID;
 
-                return Defaults.Where(check_def).Select(def => def.DefID).FirstOrDefault();
+            return Defaults.Where(check_def).Select(def => def.DefID).FirstOrDefault();
         }
     }
 }

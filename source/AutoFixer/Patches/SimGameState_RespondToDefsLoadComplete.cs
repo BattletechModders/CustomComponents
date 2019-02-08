@@ -18,7 +18,7 @@ namespace CustomComponents
             {
                 foreach (var pair in __instance.DataManager.MechDefs)
                 {
-                    DefaultFixer.Shared.FixMech(pair.Value, null);
+                    AutoFixer.Shared.FixMechDef(pair.Value, null);
                 }
             }
             catch (Exception e)
