@@ -261,7 +261,7 @@ namespace CustomComponents
         private static string NameForTag(string tag)
         {
             {
-                var categoryDescriptor = CategoriesHandler.Shared.GetCategory(tag);
+                var categoryDescriptor = CategoryController.Shared.GetCategory(tag);
                 if (categoryDescriptor != null)
                 {
                     return categoryDescriptor.DisplayName;

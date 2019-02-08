@@ -43,7 +43,7 @@ namespace CustomComponents
 
         public void OnLoaded(Dictionary<string, object> values)
         {
-            CategoryDescriptor = CategoriesHandler.Shared.GetOrCreateCategory(CategoryID);
+            CategoryDescriptor = CategoryController.Shared.GetOrCreateCategory(CategoryID);
 
             if (CategoryDescriptor.Defaults == null)
             {

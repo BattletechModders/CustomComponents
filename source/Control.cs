@@ -50,7 +50,7 @@ namespace CustomComponents
                 // make sure category is always run first, as it contains default customs
 //                Registry.RegisterSimpleCustomComponents(typeof(Category));
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
-                Validator.RegisterMechValidator(CategoryController.ValidateMech, CategoryController.ValidateMechCanBeFielded);
+                Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);
 
                 Logger.Log("Loaded CustomComponents v0.9.2.0 for bt 1.4");
 
@@ -68,7 +68,7 @@ namespace CustomComponents
 
         public static void FinishedLoading(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
-            CategoriesHandler.Shared.Setup(customResources);
+            CategoryController.Shared.Setup(customResources);
             DefaultFixer.Shared.Setup(customResources);
             TagRestrictionsHandler.Shared.Setup(customResources);
         }

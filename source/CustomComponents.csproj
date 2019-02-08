@@ -73,7 +73,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Categories\CategoriesHandler.cs" />
+    <Compile Include="Categories\CategoriesExtentions.cs" />
     <Compile Include="Categories\Category.cs" />
     <Compile Include="CCLight\Factories\ChassisCusomComponent.cs" />
     <Compile Include="CCLight\IReplaceIdentifier.cs" />
@@ -115,8 +115,8 @@
     <Compile Include="DropResults\IChange.cs" />
     <Compile Include="DropResults\InvItem.cs" />
     <Compile Include="Interfaces\IPreValidateDrop.cs" />
-    <Compile Include="Helpers\CategoryController.cs" />
-    <Compile Include="Helpers\CategoryDescriptor.cs" />
+    <Compile Include="Categories\CategoryController.cs" />
+    <Compile Include="Categories\CategoryDescriptor.cs" />
     <Compile Include="CCLight\CustomComponentAttribute.cs" />
     <Compile Include="CCLight\Database.cs" />
     <Compile Include="CCLight\Extensions.cs" />
@@ -180,8 +180,6 @@
       <Link>mod.json</Link>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Defaults\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

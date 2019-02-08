@@ -177,7 +177,7 @@ namespace CustomComponents
             if (Control.Settings.FixDeletedComponents)
                 RemoveEmptyRefs(mechDef);
             ReAddFixed(mechDef, state);
-            CategoryController.RemoveExcessDefaults(mechDef);
+            CategoryController.Shared.RemoveExcessDefaults(mechDef);
 
             FixMech(mechDef, state);
 
