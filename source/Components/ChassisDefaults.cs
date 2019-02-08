@@ -11,7 +11,7 @@ namespace CustomComponents
         public ComponentType Type { get; set; }
         public bool AnyLocation { get; set; } = true;
 
-        public string ReplaceID => DefaultFixer.GetID(this);
+        public string ReplaceID => DefaultFixer.Shared.GetID(this);
 
         public MechComponentRef GetReplace(MechDef mechDef, SimGameState state)
         {

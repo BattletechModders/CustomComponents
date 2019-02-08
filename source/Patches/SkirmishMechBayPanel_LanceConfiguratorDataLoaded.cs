@@ -21,7 +21,7 @@ namespace CustomComponents.Patches
             {
                 foreach (var pair in __instance.dataManager.MechDefs)
                 {
-                    DefaultFixer.FixMech(pair.Value, null);
+                    DefaultFixer.Shared.FixMech(pair.Value, null);
                 }
             }
             catch (Exception e)

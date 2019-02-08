@@ -22,16 +22,16 @@ namespace CustomComponents.Patches
                 if (Control.Settings.FixSaveGameMech)
                 {
                     foreach (var pair in ___ActiveMechs)
-                        DefaultFixer.FixSavedMech(pair.Value, __instance);
+                        DefaultFixer.Shared.FixSavedMech(pair.Value, __instance);
                     foreach (var pair in ___ReadyingMechs)
-                        DefaultFixer.FixSavedMech(pair.Value, __instance);
+                        DefaultFixer.Shared.FixSavedMech(pair.Value, __instance);
                 }
                 else
                 {
                     foreach (var pair in ___ActiveMechs)
-                        DefaultFixer.FixMech(pair.Value, __instance);
+                        DefaultFixer.Shared.FixMech(pair.Value, __instance);
                     foreach (var pair in ___ReadyingMechs)
-                        DefaultFixer.FixMech(pair.Value, __instance);
+                        DefaultFixer.Shared.FixMech(pair.Value, __instance);
                 }
 
             }
