@@ -91,7 +91,7 @@
     <Compile Include="Components\ChassisDefaults.cs" />
     <Compile Include="Components\Lootable.cs" />
     <Compile Include="Components\TagColorComponent.cs" />
-    <Compile Include="DEBUGTOOLS\MechDef_RefreshInventory.cs" />
+    <Compile Include="Defaults\DefaultFixer.cs" />
     <Compile Include="Fixes\BTLoadUtils.cs" />
     <Compile Include="Fixes\ReflectionCache_Patch.cs" />
     <Compile Include="Fixes\MechDef_InsertFixedEquipmentIntoInventory.cs" />

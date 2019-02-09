@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BattleTech;
 using BattleTech.UI;
 using HBS.Logging;
@@ -77,15 +78,20 @@ namespace CustomComponents
         }
     }
 
-    public enum DType { SalvageProccess, EffectNull, ShowConfig }
+    [Flags]
+
+    public enum DType
+    {
+        NONE = 0,
+        SalvageProccess = 1,
+        EffectNull = 1 << 1,
+        ShowConfig = 1 << 2
+     }
 
 
     public class CustomComponentSettings
     {
-        public List<DType> DebugInfo = new List<DType>()
-        {
-            DType.SalvageProccess, DType.EffectNull, DType.ShowConfig
-        };
+        public DType DebugInfo = DType.EffectNull | DType.SalvageProccess;
 
         public LogLevel LogLevel = LogLevel.Debug;
         public List<TagColor> ColorTags = new List<TagColor>();

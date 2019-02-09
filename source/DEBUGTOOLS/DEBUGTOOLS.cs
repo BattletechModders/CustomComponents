@@ -1,4 +1,5 @@
-﻿using BattleTech;
+﻿using System.Diagnostics;
+using BattleTech;
 
 namespace CustomComponents
 {
@@ -6,9 +7,9 @@ namespace CustomComponents
     {
         public static bool NEEDTOSHOW = false;
 
+        [Conditional("CCDEBUG")]
         public static void ShowInventory(MechDef mech)
         {
-
             Control.Logger.LogDebug($"SHOW INVENTORY FOR {mech.Name}");
             foreach (var comp in mech.Inventory)
             {
