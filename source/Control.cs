@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using fastJSON;
+using BattleTech;
 using HBS.Logging;
 using HBS.Util;
 
@@ -13,7 +14,6 @@ namespace CustomComponents
 {
     public static class Control
     {
-        private static readonly Dictionary<string, CategoryDescriptor> Categories = new Dictionary<string, CategoryDescriptor>();
         public static CustomComponentSettings Settings = new CustomComponentSettings();
 
         internal static ILog Logger;
@@ -49,23 +49,27 @@ namespace CustomComponents
                 var harmony = HarmonyInstance.Create("io.github.denadan.CustomComponents");
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
 
-                // make sure category is always run first, as it contains default customs
-                //                Registry.RegisterSimpleCustomComponents(typeof(Category));
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
-                Validator.RegisterMechValidator(CategoryController.ValidateMech, CategoryController.ValidateMechCanBeFielded);
+                Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);
 
-                Logger.Log("Loading CustomComponents v0.9.1.5 for bt 1.4");
-                foreach (var categoryDescriptor in Settings.Categories)
-                {
-                    AddCategory(categoryDescriptor);
-
-                }
+                Logger.Log("Loaded CustomComponents v0.9.2.0 for bt 1.4");
 
                 Validator.RegisterMechValidator(TagRestrictionsHandler.Shared.ValidateMech, TagRestrictionsHandler.Shared.ValidateMechCanBeFielded);
                 Validator.RegisterDropValidator(check: TagRestrictionsHandler.Shared.ValidateDrop);
-                foreach (var restriction in Settings.TagRestrictions)
+
+                if (Settings.RunAutofixer)
                 {
-                    TagRestrictionsHandler.Shared.Add(restriction);
+                    if (Settings.FixDeletedComponents)
+                        AutoFixer.Shared.RegisterMechFixer(AutoFixer.Shared.RemoveEmptyRefs);
+
+                    if (Settings.FixSaveGameMech)
+                    {
+                        AutoFixer.Shared.RegisterSaveMechFixer(AutoFixer.Shared.ReAddFixed);
+                        AutoFixer.Shared.RegisterSaveMechFixer(CategoryController.Shared.RemoveExcessDefaults);
+                    }
+
+                    if (Settings.FixDefaults)
+                        AutoFixer.Shared.RegisterMechFixer(DefaultFixer.Shared.FixMechs);
                 }
                 Logger.LogDebug("done");
             }
@@ -75,52 +79,11 @@ namespace CustomComponents
             }
         }
 
-        public static void AddTagRestrictions(TagRestrictions restrictions)
+        public static void FinishedLoading(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
-            TagRestrictionsHandler.Shared.Add(restrictions);
-        }
-
-        internal static void AddNewCategory(string category)
-        {
-            if (Categories.TryGetValue(category, out _))
-            {
-                   return;
-            }
-
-            var c = new CategoryDescriptor { Name = category };
-            Categories.Add(category, c);
-        }
-
-        public static void AddCategory(CategoryDescriptor category)
-        {
-            if (Categories.TryGetValue(category.Name, out var c))
-            {
-                c.Apply(category);
-            }
-            else
-            {
-                Categories.Add(category.Name, category);
-                category.InitDefaults();
-            }
-        }
-
-        public static CategoryDescriptor GetOrCreateCategory(string name)
-        {
-            if (Categories.TryGetValue(name, out var c))
-                return c;
-            c = new CategoryDescriptor { Name = name };
-            Categories.Add(name, c);
-            return c;
-        }
-
-        public static CategoryDescriptor GetCategory(string name)
-        {
-            return Categories.TryGetValue(name, out var c) ? c : null;
-        }
-
-        public static IEnumerable<CategoryDescriptor> GetCategories()
-        {
-            return Categories.Values;
+            CategoryController.Shared.Setup(customResources);
+            DefaultFixer.Shared.Setup(customResources);
+            TagRestrictionsHandler.Shared.Setup(customResources);
         }
 
         #region LOGGING

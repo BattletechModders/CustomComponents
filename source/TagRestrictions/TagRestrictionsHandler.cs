@@ -11,11 +11,12 @@ namespace CustomComponents
     {
         internal static TagRestrictionsHandler Shared = new TagRestrictionsHandler();
 
-        private Dictionary<string, TagRestrictions> Restrictions { get; } = new Dictionary<string, TagRestrictions>();
+        private Dictionary<string, TagRestrictions> Restrictions { get; set;  }
 
-        internal void Add(TagRestrictions restrictions)
+        internal void Setup(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
-            Restrictions.Add(restrictions.Tag, restrictions);
+            Restrictions = SettingsResourcesTools.Enumerate<TagRestrictions>("CCTagRestrictions", customResources)
+                .ToDictionary(entry => entry.Tag);
         }
 
         internal bool ValidateMechCanBeFielded(MechDef mechDef)
@@ -260,7 +261,7 @@ namespace CustomComponents
         private static string NameForTag(string tag)
         {
             {
-                var categoryDescriptor = Control.GetCategory(tag);
+                var categoryDescriptor = CategoryController.Shared.GetCategory(tag);
                 if (categoryDescriptor != null)
                 {
                     return categoryDescriptor.DisplayName;

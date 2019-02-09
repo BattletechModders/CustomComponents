@@ -10,22 +10,81 @@ namespace CustomComponents
     /// <summary>
     /// error for category check
     /// </summary>
-    internal enum CategoryError
-    {
-        None,
-        AreadyEquiped,
-        MaximumReached,
-        AlreadyEquipedLocation,
-        MaximumReachedLocation,
-        AllowMix
-    }
+    //internal enum CategoryError
+    //{
+    //    None,
+    //    AreadyEquiped,
+    //    MaximumReached,
+    //    AlreadyEquipedLocation,
+    //    MaximumReachedLocation,
+    //    AllowMix
+    //}
 
     /// <summary>
     /// class to handle category interaction
     /// </summary>
-    public static class CategoryController
+    public class CategoryController
     {
-        //private static List<string> fcache = new List<string>();
+        internal static CategoryController Shared = new CategoryController();
+
+        private readonly Dictionary<string, CategoryDescriptor> Categories = new Dictionary<string, CategoryDescriptor>();
+
+        internal void Setup(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
+        {
+            foreach (var category in SettingsResourcesTools.Enumerate<CategoryDescriptor>("CCCategories", customResources))
+            {
+                AddCategory(category);
+            }
+        }
+
+        private void AddCategory(CategoryDescriptor category)
+        {
+#if CCDEBUG
+            Control.Logger.LogDebug($"Add Category: {category.Name}");
+#endif
+            if (Categories.TryGetValue(category.Name, out var c))
+            {
+#if CCDEBUG
+                Control.Logger.LogDebug($"Already have, apply: {category.Name}");
+#endif
+                c.Apply(category);
+            }
+            else
+            {
+#if CCDEBUG
+                Control.Logger.LogDebug($"Adding new: {category.Name}");
+#endif
+                Categories.Add(category.Name, category);
+                category.InitDefaults();
+            }
+
+#if CCDEBUG
+            Control.Logger.LogDebug($"Current Categories");
+            foreach (var categoryDescriptor in Categories)
+            {
+                Control.Logger.LogDebug($" - {categoryDescriptor.Value.Name}");
+            }
+#endif
+        }
+
+        internal CategoryDescriptor GetOrCreateCategory(string name)
+        {
+            if (Categories.TryGetValue(name, out var c))
+                return c;
+            c = new CategoryDescriptor { Name = name };
+            Categories.Add(name, c);
+            return c;
+        }
+
+        internal CategoryDescriptor GetCategory(string name)
+        {
+            return Categories.TryGetValue(name, out var c) ? c : null;
+        }
+
+        internal IEnumerable<CategoryDescriptor> GetCategories()
+        {
+            return Categories.Values;
+        }
 
 
         /// <summary>
@@ -34,7 +93,7 @@ namespace CustomComponents
         /// <param name="errors">errors by category</param>
         /// <param name="validationLevel"></param>
         /// <param name="mechDef">mech to validate</param>
-        internal static void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors,
+        internal void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors,
             MechValidationLevel validationLevel, MechDef mechDef)
         {
 
@@ -55,7 +114,7 @@ namespace CustomComponents
             //fcache.Clear();
 
             //check each "required" category
-            foreach (var category in Control.GetCategories().Where(i => i.Required))
+            foreach (var category in GetCategories().Where(i => i.Required))
             {
                 if (!items_by_category.ContainsKey(category) || items_by_category[category].Count < category.MinEquiped)
                     if (category.MinEquiped == 1)
@@ -108,7 +167,7 @@ namespace CustomComponents
         /// </summary>
         /// <param name="mechDef"></param>
         /// <returns></returns>
-        internal static bool ValidateMechCanBeFielded(MechDef mechDef)
+        internal bool ValidateMechCanBeFielded(MechDef mechDef)
         {
 #if CCDEBUG
             Control.Logger.LogDebug($"- Category");
@@ -138,7 +197,7 @@ namespace CustomComponents
                 .ToDictionary(i => i.Key, i => i.ToList());
 
             // if all required category present
-            foreach (var category in Control.GetCategories().Where(i => i.Required))
+            foreach (var category in GetCategories().Where(i => i.Required))
             {
 #if CCDEBUG
                 Control.Logger.LogDebug($"-- MinEquiped for {category.displayName}");
@@ -206,35 +265,7 @@ namespace CustomComponents
             return true;
         }
 
-        public static bool IsCategory(this MechComponentDef cdef, string category)
-        {
-            return cdef.GetComponents<Category>().Any(c => c.CategoryID == category);
-
-            // Is<Category>
-            // GetComponent<Category>
-        }
-
-        public static bool IsCategory(this MechComponentRef cref, string category)
-        {
-            return cref.GetComponents<Category>().Any(c => c.CategoryID == category);
-        }
-
-
-        public static bool IsCategory(this MechComponentDef cdef, string categoryid, out Category category)
-        {
-            category = cdef.GetComponents<Category>().FirstOrDefault(c => c.CategoryID == categoryid);
-            return category != null;
-            // Is<Category>
-            // GetComponent<Category>
-        }
-
-        public static bool IsCategory(this MechComponentRef cref, string categoryid, out Category category)
-        {
-            category = cref.GetComponents<Category>().FirstOrDefault(c => c.CategoryID == categoryid);
-            return category != null;
-        }
-
-        public static bool need_remove(MechComponentRef item, MechDef mech)
+        public bool need_remove(MechComponentRef item, MechDef mech)
         {
             if (!item.IsFixed)
                 return false;
@@ -254,10 +285,13 @@ namespace CustomComponents
             return false;
         }
 
-        public static void RemoveExcessDefaults(MechDef mechDef)
+        public void RemoveExcessDefaults(List<MechDef> mechDefs, SimGameState state)
         {
-            mechDef.SetInventory(mechDef.Inventory.Where(i => !need_remove(i, mechDef)).ToArray());
-            mechDef.Refresh();
+            foreach (var mechDef in mechDefs)
+            {
+                mechDef.SetInventory(mechDef.Inventory.Where(i => !need_remove(i, mechDef)).ToArray());
+                mechDef.Refresh();
+            }
         }
     }
 }

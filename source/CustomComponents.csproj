@@ -73,6 +73,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutoFixer\AutoFixer.cs" />
+    <Compile Include="AutoFixer\Patches\SimGameState_InitCompanyStats_Patch.cs" />
+    <Compile Include="Categories\CategoriesExtentions.cs" />
+    <Compile Include="Categories\Category.cs" />
     <Compile Include="CCLight\Factories\ChassisCusomComponent.cs" />
     <Compile Include="CCLight\IReplaceIdentifier.cs" />
     <Compile Include="CCLight\Factories\IPreProcessor.cs" />
@@ -89,20 +93,21 @@
     <Compile Include="Components\TagColorComponent.cs" />
     <Compile Include="DEBUGTOOLS\MechDef_RefreshInventory.cs" />
     <Compile Include="Fixes\BTLoadUtils.cs" />
+    <Compile Include="Fixes\ReflectionCache_Patch.cs" />
     <Compile Include="Fixes\MechDef_InsertFixedEquipmentIntoInventory.cs" />
     <Compile Include="Fixes\SimGameState_CreateComponentInstallWorkOrder.cs" />
     <Compile Include="Fixes\SkirmishMechBayPanel_RequestResources_Patch.cs" />
     <Compile Include="Fixes\SkirmishSettings_Beta_LoadLanceConfiguratorData_Patch.cs" />
     <Compile Include="Helpers\ContractHelper.cs" />
-    <Compile Include="Helpers\DefaultFixer.cs" />
+    <Compile Include="Helpers\SettingsResourceTools.cs" />
     <Compile Include="Interfaces\IAdjustDescription.cs" />
-    <Compile Include="Interfaces\IDefault.cs" />
+    <Compile Include="Defaults\IDefault.cs" />
     <Compile Include="Patches\Contract_AddMechComponentToSalvage.cs" />
     <Compile Include="Patches\Contract_GenerateSalvage.cs" />
-    <Compile Include="Patches\SimGameState_Rehydrate.cs" />
-    <Compile Include="Patches\SimGameState_RespondToDefsLoadComplete.cs" />
-    <Compile Include="Patches\SkirmishMechBayPanel_LanceConfiguratorDataLoaded.cs" />
-    <Compile Include="Patches\SkirmishSettings_Beta_LanceConfiguratorDataLoaded.cs" />
+    <Compile Include="AutoFixer\Patches\SimGameState_Rehydrate.cs" />
+    <Compile Include="AutoFixer\Patches\SimGameState_RespondToDefsLoadComplete.cs" />
+    <Compile Include="AutoFixer\Patches\SkirmishMechBayPanel_LanceConfiguratorDataLoaded.cs" />
+    <Compile Include="AutoFixer\Patches\SkirmishSettings_Beta_LanceConfiguratorDataLoaded.cs" />
     <Compile Include="WorkOrderCosts\Utils\Adapter.cs" />
     <Compile Include="Interfaces\IColorComponent.cs" />
     <Compile Include="Components\RGBColorComponent.cs" />
@@ -114,9 +119,8 @@
     <Compile Include="DropResults\IChange.cs" />
     <Compile Include="DropResults\InvItem.cs" />
     <Compile Include="Interfaces\IPreValidateDrop.cs" />
-    <Compile Include="Helpers\CategoryController.cs" />
-    <Compile Include="Helpers\CategoryDescriptor.cs" />
-    <Compile Include="Components\Category.cs" />
+    <Compile Include="Categories\CategoryController.cs" />
+    <Compile Include="Categories\CategoryDescriptor.cs" />
     <Compile Include="CCLight\CustomComponentAttribute.cs" />
     <Compile Include="CCLight\Database.cs" />
     <Compile Include="CCLight\Extensions.cs" />
@@ -139,7 +143,7 @@
     <Compile Include="Components\AutoLinked.cs" />
     <Compile Include="Patches\MechLabLocationWidget_SetData_Patch.cs" />
     <Compile Include="Patches\MechLabLocationWidget_StripEquipment.cs" />
-    <Compile Include="Helpers\DefaultHelper.cs" />
+    <Compile Include="Defaults\DefaultHelper.cs" />
     <Compile Include="Patches\SimGameState_AddMechPart_Patch.cs" />
     <Compile Include="Patches\SimGameState_ReadyMech_Patch.cs" />
     <Compile Include="Interfaces\IMechValidate.cs" />
@@ -180,8 +184,6 @@
       <Link>mod.json</Link>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="TEST\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

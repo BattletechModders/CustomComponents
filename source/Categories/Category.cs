@@ -43,7 +43,7 @@ namespace CustomComponents
 
         public void OnLoaded(Dictionary<string, object> values)
         {
-            CategoryDescriptor = Control.GetOrCreateCategory(CategoryID);
+            CategoryDescriptor = CategoryController.Shared.GetOrCreateCategory(CategoryID);
 
             if (CategoryDescriptor.Defaults == null)
             {
@@ -61,7 +61,7 @@ namespace CustomComponents
 #if CCDEBUG
                 Control.Logger.LogDebug("-- removing");
 #endif
-                MechComponentRef def_replace = DefaultFixer.GetReplaceFor(mech, CategoryID, order.PreviousLocation, state);
+                MechComponentRef def_replace = DefaultFixer.Shared.GetReplaceFor(mech, CategoryID, order.PreviousLocation, state);
                 if (def_replace != null)
                 {
 #if CCDEBUG
@@ -452,7 +452,7 @@ namespace CustomComponents
 
         public void ClearInventory(MechDef mech, List<MechComponentRef> result, SimGameState state, MechComponentRef source)
         {
-            var item = DefaultFixer.GetReplaceFor(mech, CategoryID, source.MountedLocation, state);
+            var item = DefaultFixer.Shared.GetReplaceFor(mech, CategoryID, source.MountedLocation, state);
             if(item != null)
                 result.Add(item);
         }
@@ -462,7 +462,7 @@ namespace CustomComponents
             Control.Logger.LogDebug($"- Category {CategoryID}");
             Control.Logger.LogDebug($"-- search replace for {item.ComponentRef.ComponentDefID}");
 
-            var replace = DefaultFixer.GetReplaceFor(mechLab.activeMechDef, CategoryID, widget.loadout.Location, mechLab.sim);
+            var replace = DefaultFixer.Shared.GetReplaceFor(mechLab.activeMechDef, CategoryID, widget.loadout.Location, mechLab.sim);
 
             if (replace == null)
             {
@@ -482,7 +482,7 @@ namespace CustomComponents
 
         public IEnumerable<IChange> ValidateDropOnRemove(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab, List<IChange> changes)
         {
-            var replace = DefaultFixer.GetReplaceFor(mechlab.MechLab.activeMechDef, CategoryID, item.MountedLocation, mechlab.MechLab.sim);
+            var replace = DefaultFixer.Shared.GetReplaceFor(mechlab.MechLab.activeMechDef, CategoryID, item.MountedLocation, mechlab.MechLab.sim);
             if (replace == null)
             {
                 Control.Logger.LogDebug($"--- Category {CategoryID} - no replace, return");

@@ -1,16 +1,38 @@
 ﻿#undef CCDEBUG
+using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 using HBS.Extensions;
 
 namespace CustomComponents
 {
-    public static class DefaultFixer
+    public class DefaultFixer
     {
         public static string[] changed_deafult = new string[100];
         public static int num_changed = 0;
 
-        public static string GetID(IDefault item)
+
+        internal static DefaultFixer Shared = new DefaultFixer();
+
+        internal readonly List<DefaultsInfo> TaggedDefaults = new List<DefaultsInfo>();
+        internal readonly List<DefaultsInfo> Defaults = new List<DefaultsInfo>();
+        internal readonly List<IDefault> CustomDefaults = new List<IDefault>();
+
+        internal void Setup(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
+        {
+            foreach (var entry in SettingsResourcesTools.Enumerate<DefaultsInfo>("CCDefaults", customResources))
+            {
+                if (string.IsNullOrEmpty(entry.Tag))
+                {
+                    Defaults.Add(entry);
+                }
+                else
+                {
+                    TaggedDefaults.Add(entry);
+                }
+            }
+        }
+        public string GetID(IDefault item)
         {
             return item.AnyLocation ? item.CategoryID : item.CategoryID + "_" + item.Location;
         }
@@ -21,7 +43,7 @@ namespace CustomComponents
             num_changed += 1;
         }
 
-        static void process_default(MechDef mechDef, IDefault def, SimGameState state)
+        void process_default(MechDef mechDef, IDefault def, SimGameState state)
         {
             string id = GetID(def);
             for (int i = 0; i < num_changed; i++)
@@ -82,14 +104,16 @@ namespace CustomComponents
             }
         }
 
-        public static void FixMech(MechDef mechDef, SimGameState state)
+        internal void FixMechs(List<MechDef> mechDefs, SimGameState state)
         {
-            if (mechDef == null)
-                return;
+            foreach (var mechDef in mechDefs)
+            {
+                FixMech(mechDef, state);
+            }
+        }
 
-            if(Control.Settings.FixDeletedComponents )
-                RemoveEmptyRefs(mechDef);
-
+        internal void FixMech(MechDef mechDef, SimGameState state)
+        {
 
 #if CCDEBUG
             Control.Logger.LogDebug($"Default Fixer for {mechDef.Name}({mechDef.Description.Id})");
@@ -110,21 +134,19 @@ namespace CustomComponents
             Control.Logger.LogDebug($"-- Tagged");
 #endif
 
-            if (Control.Settings.TaggedDefaults != null)
-                foreach (var def in Control.Settings.TaggedDefaults)
-                {
-                    if (mechDef.MechTags.Contains(def.Tag) || mechDef.Chassis.ChassisTags.Contains(def.Tag))
-                        process_default(mechDef, def, state);
-                }
+            foreach (var def in TaggedDefaults)
+            {
+                if (mechDef.MechTags.Contains(def.Tag) || mechDef.Chassis.ChassisTags.Contains(def.Tag))
+                    process_default(mechDef, def, state);
+            }
 #if CCDEBUG
             Control.Logger.LogDebug($"-- Other");
 #endif
 
-            if (Control.Settings.Defaults != null)
-                foreach (var def in Control.Settings.Defaults)
-                {
-                    process_default(mechDef, def, state);
-                }
+            foreach (var def in Defaults)
+            {
+                process_default(mechDef, def, state);
+            }
 
 
 #if CCDEBUG
@@ -135,42 +157,7 @@ namespace CustomComponents
 #endif
         }
 
-        private static void RemoveEmptyRefs(MechDef mechDef)
-        {
-
-            if (mechDef.Inventory.Any(i => i?.Def == null))
-            {
-                Control.Logger.LogError($"Found NULL in {mechDef.Name}({mechDef.Description.Id})");
-
-                foreach (var r in mechDef.Inventory)
-                {
-                    if (r.Def == null)
-                        Control.Logger.LogError($"--- NULL --- {r.ComponentDefID}");
-                }
-                
-                mechDef.SetInventory(mechDef.Inventory.Where(i => i.Def != null).ToArray());
-            }
-        }
-
-        public static void FixSavedMech(MechDef mechDef, SimGameState state)
-        {
-
-            if (Control.Settings.FixDeletedComponents)
-                RemoveEmptyRefs(mechDef);
-            ReAddFixed(mechDef, state);
-            CategoryController.RemoveExcessDefaults(mechDef);
-
-            FixMech(mechDef, state);
-
-        }
-
-        private static void ReAddFixed(MechDef mechDef, SimGameState state)
-        {
-            mechDef.SetInventory(mechDef.Inventory.Where(i => !i.IsModuleFixed(mechDef)).ToArray());
-            mechDef.Refresh();
-        }
-
-        public static MechComponentRef GetReplaceFor(MechDef mech, string categoryId, ChassisLocations location, SimGameState state)
+        public MechComponentRef GetReplaceFor(MechDef mech, string categoryId, ChassisLocations location, SimGameState state)
         {
             bool check_def(IDefault def)
             {
@@ -182,15 +169,15 @@ namespace CustomComponents
                 if (check_def(def))
                     return def.GetReplace(mech, state);
 
-            if (Control.Settings.TaggedDefaults != null)
-                foreach (var def in Control.Settings.TaggedDefaults.Where(check_def))
+            if (TaggedDefaults != null)
+                foreach (var def in TaggedDefaults.Where(check_def))
                     if (mech.MechTags.Contains(def.Tag) || mech.Chassis.ChassisTags.Contains(def.Tag))
                         return def.GetReplace(mech, state);
 
-            return Control.Settings.Defaults != null ? Control.Settings.Defaults.Where(check_def).Select(def => def.GetReplace(mech, state)).FirstOrDefault() : null;
+            return Defaults != null ? Defaults.Where(check_def).Select(def => def.GetReplace(mech, state)).FirstOrDefault() : null;
         }
 
-        public static object GetDefId(MechDef mech, string categoryId, ChassisLocations location)
+        public object GetDefId(MechDef mech, string categoryId, ChassisLocations location)
         {
             bool check_def(IDefault def)
             {
@@ -202,12 +189,11 @@ namespace CustomComponents
                 if (check_def(def))
                     return def.DefID;
 
-            if (Control.Settings.TaggedDefaults != null)
-                foreach (var def in Control.Settings.TaggedDefaults.Where(check_def))
-                    if (mech.MechTags.Contains(def.Tag) || mech.Chassis.ChassisTags.Contains(def.Tag))
-                        return def.DefID;
+            foreach (var def in TaggedDefaults.Where(check_def))
+                if (mech.MechTags.Contains(def.Tag) || mech.Chassis.ChassisTags.Contains(def.Tag))
+                    return def.DefID;
 
-            return Control.Settings.Defaults != null ? Control.Settings.Defaults.Where(check_def).Select(def => def.DefID).FirstOrDefault() : null;
+            return Defaults.Where(check_def).Select(def => def.DefID).FirstOrDefault();
         }
     }
 }
