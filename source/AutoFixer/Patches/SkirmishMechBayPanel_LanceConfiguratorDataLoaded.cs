@@ -14,15 +14,10 @@ namespace CustomComponents.Patches
         [HarmonyPriority(Priority.High)]
         public static void FixDefaults(SkirmishMechBayPanel __instance)
         {
-            if (!Control.Settings.RunAutofixer)
-                return;
-
             try
             {
-                foreach (var pair in __instance.dataManager.MechDefs)
-                {
-                    AutoFixer.Shared.FixMechDef(pair.Value, null);
-                }
+                var mechDefs = __instance.dataManager.MechDefs.Select(pair => pair.Value).ToList();
+                AutoFixer.Shared.FixMechDef(mechDefs);
             }
             catch (Exception e)
             {

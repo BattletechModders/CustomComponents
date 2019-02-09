@@ -5,7 +5,7 @@ using BattleTech;
 
 namespace CustomComponents
 {
-    public delegate void AutoFixerDelegate(MechDef mechDef, SimGameState simgame);
+    public delegate void AutoFixerDelegate(List<MechDef> mechDefs, SimGameState simgame);
 
 
     public class AutoFixer
@@ -15,61 +15,66 @@ namespace CustomComponents
         private List<AutoFixerDelegate> fixers = new List<AutoFixerDelegate>();
         private List<AutoFixerDelegate> savegamefixers = new List<AutoFixerDelegate>();
 
-
-        internal void FixMechDef(MechDef mechDef, SimGameState state)
+        internal void FixMechDef(List<MechDef> mechDefs)
         {
-            if(mechDef != null)
-                foreach (var autoFixerDelegate in fixers)
+            if (!Control.Settings.RunAutofixer)
+            {
+                return;
+            }
+
+            foreach (var autoFixerDelegate in fixers)
+            {
+                try
                 {
-                    try
-                    {
-                        autoFixerDelegate(mechDef, null);
-                    }
-                    catch (Exception e)
-                    {
-                        Control.Logger.LogError($"Exception in Autofixer {autoFixerDelegate.Method.Name}", e);
-                    }
+                    autoFixerDelegate(mechDefs, null);
                 }
+                catch (Exception e)
+                {
+                    Control.Logger.LogError($"Exception in Autofixer {autoFixerDelegate.Method.Name}", e);
+                }
+            }
         }
 
-        internal void FixSavedMech(MechDef mechDef, SimGameState state)
+        internal void FixSavedMech(List<MechDef> mechDefs, SimGameState state)
         {
-            if (mechDef != null)
-                foreach (var autoFixerDelegate in savegamefixers)
+            if (!Control.Settings.RunAutofixer || !Control.Settings.FixSaveGameMech)
+            {
+                return;
+            }
+
+            foreach (var autoFixerDelegate in savegamefixers)
+            {
+                try
                 {
-                    try
-                    {
-                        autoFixerDelegate(mechDef, state);
-                    }
-                    catch (Exception e)
-                    {
-                        Control.Logger.LogError($"Exception in Autofixer {autoFixerDelegate.Method.Name}", e);
-                    }
+                    autoFixerDelegate(mechDefs, state);
                 }
+                catch (Exception e)
+                {
+                    Control.Logger.LogError($"Exception in Autofixer {autoFixerDelegate.Method.Name}", e);
+                }
+            }
         }
 
         public void RegisterMechFixer(AutoFixerDelegate fixer)
         {
-            if (fixer != null)
-            {
-                fixers.Add(fixer);
-                savegamefixers.Add(fixer);
-            }
+            fixers.Add(fixer);
+            savegamefixers.Add(fixer);
         }
 
         public void RegisterSaveMechFixer(AutoFixerDelegate fixer)
         {
-            if (fixer != null)
-            {
-                savegamefixers.Add(fixer);
-            }
+            savegamefixers.Add(fixer);
         }
 
-        internal void RemoveEmptyRefs(MechDef mechDef, SimGameState state)
+        internal void RemoveEmptyRefs(List<MechDef> mechDefs, SimGameState state)
         {
-
-            if (mechDef.Inventory.Any(i => i?.Def == null))
+            foreach (var mechDef in mechDefs)
             {
+                if (mechDef.Inventory.All(i => i?.Def != null))
+                {
+                    continue;
+                }
+            
                 Control.Logger.LogError($"Found NULL in {mechDef.Name}({mechDef.Description.Id})");
 
                 foreach (var r in mechDef.Inventory)
@@ -83,11 +88,13 @@ namespace CustomComponents
         }
 
 
-        internal void ReAddFixed(MechDef mechDef, SimGameState state)
+        internal void ReAddFixed(List<MechDef> mechDefs, SimGameState state)
         {
-            mechDef.SetInventory(mechDef.Inventory.Where(i => !i.IsModuleFixed(mechDef)).ToArray());
-            mechDef.Refresh();
+            foreach (var mechDef in mechDefs)
+            {
+                mechDef.SetInventory(mechDef.Inventory.Where(i => !i.IsModuleFixed(mechDef)).ToArray());
+                mechDef.Refresh();
+            }
         }
-
     }
 }

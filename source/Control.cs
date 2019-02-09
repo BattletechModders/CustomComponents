@@ -54,6 +54,7 @@ namespace CustomComponents
 
                 Validator.RegisterMechValidator(TagRestrictionsHandler.Shared.ValidateMech, TagRestrictionsHandler.Shared.ValidateMechCanBeFielded);
                 Validator.RegisterDropValidator(check: TagRestrictionsHandler.Shared.ValidateDrop);
+
                 if (Settings.RunAutofixer)
                 {
                     if (Settings.FixDeletedComponents)
@@ -66,7 +67,7 @@ namespace CustomComponents
                     }
 
                     if (Settings.FixDefaults)
-                        AutoFixer.Shared.RegisterMechFixer(DefaultFixer.Shared.FixMech);
+                        AutoFixer.Shared.RegisterMechFixer(DefaultFixer.Shared.FixMechs);
                 }
 
 #if CCDEBUG

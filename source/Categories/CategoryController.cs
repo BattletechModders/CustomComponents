@@ -285,10 +285,13 @@ namespace CustomComponents
             return false;
         }
 
-        public void RemoveExcessDefaults(MechDef mechDef, SimGameState state)
+        public void RemoveExcessDefaults(List<MechDef> mechDefs, SimGameState state)
         {
-            mechDef.SetInventory(mechDef.Inventory.Where(i => !need_remove(i, mechDef)).ToArray());
-            mechDef.Refresh();
+            foreach (var mechDef in mechDefs)
+            {
+                mechDef.SetInventory(mechDef.Inventory.Where(i => !need_remove(i, mechDef)).ToArray());
+                mechDef.Refresh();
+            }
         }
     }
 }

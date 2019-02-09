@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using BattleTech;
 using Harmony;
 
@@ -11,15 +12,10 @@ namespace CustomComponents
         [HarmonyPriority(Priority.High)]
         public static void FixDefaults(SimGameState __instance)
         {
-            if (!Control.Settings.RunAutofixer)
-                return;
-
             try
             {
-                foreach (var pair in __instance.DataManager.MechDefs)
-                {
-                    AutoFixer.Shared.FixMechDef(pair.Value, null);
-                }
+                var mechDefs = __instance.DataManager.MechDefs.Select(pair => pair.Value).ToList();
+                AutoFixer.Shared.FixMechDef(mechDefs);
             }
             catch (Exception e)
             {
