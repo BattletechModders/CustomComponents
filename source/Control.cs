@@ -1,12 +1,12 @@
-﻿#undef CCDEBUG
-
-using Harmony;
+﻿using Harmony;
 using System;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
+using fastJSON;
 using BattleTech;
+using HBS.Extensions;
 using HBS.Logging;
 using HBS.Util;
 
@@ -25,6 +25,7 @@ namespace CustomComponents
         public static void Init(string directory, string settingsJSON)
         {
             Logger = HBS.Logging.Logger.GetLogger("CustomComponents", LogLevel.Debug);
+
             try
             {
                 try
@@ -36,13 +37,15 @@ namespace CustomComponents
                 }
                 catch (Exception)
                 {
-                        Settings = new CustomComponentSettings();
+                    Settings = new CustomComponentSettings();
                 }
 
+
                 Settings.Complete();
-
-
                 SetupLogging(directory);
+
+                LogDebug(DType.ShowConfig, JSONSerializationUtility.ToJSON(Settings));
+
 
                 var harmony = HarmonyInstance.Create("io.github.denadan.CustomComponents");
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
@@ -50,7 +53,7 @@ namespace CustomComponents
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
                 Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);
 
-                Logger.Log("Loaded CustomComponents v0.9.2.0 for bt 1.4");
+                Logger.Log("Loaded CustomComponents v0.9.2.1 for bt 1.4");
 
                 Validator.RegisterMechValidator(TagRestrictionsHandler.Shared.ValidateMech, TagRestrictionsHandler.Shared.ValidateMechCanBeFielded);
                 Validator.RegisterDropValidator(check: TagRestrictionsHandler.Shared.ValidateDrop);
@@ -69,10 +72,7 @@ namespace CustomComponents
                     if (Settings.FixDefaults)
                         AutoFixer.Shared.RegisterMechFixer(DefaultFixer.Shared.FixMechs);
                 }
-
-#if CCDEBUG
                 Logger.LogDebug("done");
-#endif
             }
             catch (Exception e)
             {
@@ -87,11 +87,24 @@ namespace CustomComponents
             TagRestrictionsHandler.Shared.Setup(customResources);
         }
 
-#region LOGGING
+        #region LOGGING
+        [Conditional("CCDEBUG")]
+        public static void LogDebug(DType type, string message)
+        {
+            if (Settings.DebugInfo.HasFlag(type))
+                Logger.LogDebug(message);
+        }
+        [Conditional("CCDEBUG")]
+        public static void LogDebug(DType type, string message, Exception e = null)
+        {
+            if (Settings.DebugInfo.HasFlag(type))
+                Logger.LogDebug(message, e);
+        }
 
         internal static void SetupLogging(string Directory)
         {
             var logFilePath = Path.Combine(Directory, "log.txt");
+
             try
             {
                 ShutdownLogging();
@@ -128,7 +141,6 @@ namespace CustomComponents
             try
             {
                 logAppender = new FileLogAppender(logFilePath, FileLogAppender.WriteMode.INSTANT);
-
                 HBS.Logging.Logger.AddAppender("CustomComponents", logAppender);
 
             }
@@ -138,6 +150,6 @@ namespace CustomComponents
             }
         }
 
-#endregion
+        #endregion
     }
 }

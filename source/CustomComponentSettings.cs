@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BattleTech;
 using BattleTech.UI;
 using HBS.Logging;
@@ -77,10 +78,41 @@ namespace CustomComponents
         }
     }
 
+    [Flags]
+
+    public enum DType
+    {
+        NONE = 0,
+        SalvageProccess = 1,
+        EffectNull = 1 << 1,
+        ShowConfig = 1 << 2
+     }
+
+
     public class CustomComponentSettings
     {
+        public DType DebugInfo = DType.EffectNull | DType.SalvageProccess;
+
         public LogLevel LogLevel = LogLevel.Debug;
         public List<TagColor> ColorTags = new List<TagColor>();
+
+        public bool OverrideSalvageGeneration = true;
+        public bool NoLootCTDestroyed = false;
+
+        public bool OverrideRecoveryChance = true;
+        public bool SalvageUnrecoveredMech = true;
+        public float BaseRecoveryChance = 0.6f;
+        public float LimbRecoveryPenalty = 0.05f;
+        public float TorsoRecoveryPenalty = 0.1f;
+        public float HeadRecoveryPenaly = 0;
+        public float EjectRecoveryBonus = 0.25f;
+
+        public bool OverrideMechPartCalculation = true;
+        public int CenterTorsoDestroyedParts = 1;
+        public float SalvageArmWeight = 0.75f;
+        public float SalvageLegWeight = 0.75f;
+        public float SalvageTorsoWeight = 1f;
+        public float SalvageHeadWeight = 0.5f;
 
         public bool RunAutofixer = true;
         public bool FixDeletedComponents = true;
