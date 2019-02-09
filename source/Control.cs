@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using fastJSON;
 using HBS.Logging;
 using HBS.Util;
 
@@ -38,10 +39,12 @@ namespace CustomComponents
                     Settings = new CustomComponentSettings();
                 }
 
+
                 Settings.Complete();
-
-
                 SetupLogging(directory);
+
+                LogDebug(DType.ShowConfig, JSONSerializationUtility.ToJSON(Settings));
+
 
                 var harmony = HarmonyInstance.Create("io.github.denadan.CustomComponents");
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
@@ -51,7 +54,7 @@ namespace CustomComponents
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
                 Validator.RegisterMechValidator(CategoryController.ValidateMech, CategoryController.ValidateMechCanBeFielded);
 
-                Logger.Log("Loading CustomComponents v0.9.1.4 for bt 1.4");
+                Logger.Log("Loading CustomComponents v0.9.1.5 for bt 1.4");
                 foreach (var categoryDescriptor in Settings.Categories)
                 {
                     AddCategory(categoryDescriptor);

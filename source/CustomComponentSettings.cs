@@ -77,14 +77,14 @@ namespace CustomComponents
         }
     }
 
-    public enum DType { SalvageProccess, EffectNull }
+    public enum DType { SalvageProccess, EffectNull, ShowConfig }
 
 
     public class CustomComponentSettings
     {
         public List<DType> DebugInfo = new List<DType>()
         {
-            DType.SalvageProccess, DType.EffectNull
+            DType.SalvageProccess, DType.EffectNull, DType.ShowConfig
         };
 
         public LogLevel LogLevel = LogLevel.Debug;
@@ -95,6 +95,8 @@ namespace CustomComponents
         public List<DefaultsInfo> Defaults = new List<DefaultsInfo>();
 
         public bool OverrideSalvageGeneration = true;
+        public bool NoLootCTDestroyed = false;
+
         public bool OverrideRecoveryChance = true;
         public bool SalvageUnrecoveredMech = true;
         public float BaseRecoveryChance = 0.6f;
@@ -102,6 +104,7 @@ namespace CustomComponents
         public float TorsoRecoveryPenalty = 0.1f;
         public float HeadRecoveryPenaly = 0;
         public float EjectRecoveryBonus = 0.25f;
+
         public bool OverrideMechPartCalculation = true;
         public int CenterTorsoDestroyedParts = 1;
         public float SalvageArmWeight = 0.75f;

@@ -76,7 +76,7 @@ namespace CustomComponents.Patches
                             ? Control.Settings.LimbRecoveryPenalty
                             : 0;
 
-                        chance += lostUnits[i].pilot.HasEjected 
+                        chance += lostUnits[i].pilot.HasEjected
                             ? Control.Settings.EjectRecoveryBonus
                             : 0;
 
@@ -162,7 +162,6 @@ namespace CustomComponents.Patches
                 Control.LogDebug(DType.SalvageProccess, $"- Enemy Mechs {__instance.Name}");
                 foreach (var unit in enemyMechs)
                 {
-                    Control.LogDebug(DType.SalvageProccess, $"-- Salvaging {unit.mech.Name}");
                     if (unit.pilot.IsIncapacitated || unit.mech.IsDestroyed || unit.mech.Inventory.Any(cref =>
                             cref.Def != null && cref.Def.CriticalComponent &&
                             cref.DamageLevel == ComponentDamageLevel.Destroyed))
@@ -171,6 +170,7 @@ namespace CustomComponents.Patches
                     }
                     else
                     {
+                        Control.LogDebug(DType.SalvageProccess, $"-- Salvaging {unit.mech.Name}");
                         Control.LogDebug(DType.SalvageProccess, "--- not destroyed - skipped");
                     }
                 }
@@ -227,7 +227,7 @@ namespace CustomComponents.Patches
             return false;
         }
 
-        private static void AddMechToSalvage(MechDef mech, ContractHelper contract,SimGameState simgame, SimGameConstants constants, List<SalvageDef> salvage)
+        private static void AddMechToSalvage(MechDef mech, ContractHelper contract, SimGameState simgame, SimGameConstants constants, List<SalvageDef> salvage)
         {
             Control.LogDebug(DType.SalvageProccess, $"-- Salvaging {mech.Name}");
 
@@ -259,7 +259,7 @@ namespace CustomComponents.Patches
                     val -= mech.IsLocationDestroyed(ChassisLocations.LeftArm) ? Control.Settings.SalvageArmWeight : 0;
                     val -= mech.IsLocationDestroyed(ChassisLocations.LeftLeg) ? Control.Settings.SalvageArmWeight : 0;
 
-                    numparts = (int) (constants.Story.DefaultMechPartMax * val / total + 0.5f);
+                    numparts = (int)(constants.Story.DefaultMechPartMax * val / total + 0.5f);
                     if (numparts <= 0)
                         numparts = 1;
                     if (numparts > constants.Story.DefaultMechPartMax)
@@ -288,14 +288,19 @@ namespace CustomComponents.Patches
 
             try
             {
-                foreach (var component in mech.Inventory.Where(item =>
-                    !mech.IsLocationDestroyed(item.MountedLocation) &&
-                    item.DamageLevel != ComponentDamageLevel.Destroyed))
+                if (Control.Settings.NoLootCTDestroyed && mech.IsLocationDestroyed(ChassisLocations.CenterTorso))
                 {
-                    Control.LogDebug(DType.SalvageProccess, $"--- Adding {component.ComponentDefID}");
-                    contract.AddMechComponentToSalvage(salvage, component.Def, ComponentDamageLevel.Functional, false,
-                        constants, simgame.NetworkRandom, true);
+                    Control.LogDebug(DType.SalvageProccess, $"--- CT Destroyed - no component loot");
                 }
+                else
+                    foreach (var component in mech.Inventory.Where(item =>
+                        !mech.IsLocationDestroyed(item.MountedLocation) &&
+                        item.DamageLevel != ComponentDamageLevel.Destroyed))
+                    {
+                        Control.LogDebug(DType.SalvageProccess, $"--- Adding {component.ComponentDefID}");
+                        contract.AddMechComponentToSalvage(salvage, component.Def, ComponentDamageLevel.Functional, false,
+                            constants, simgame.NetworkRandom, true);
+                    }
             }
             catch (Exception e)
             {
