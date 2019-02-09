@@ -1,34 +1,41 @@
-﻿using System;
-using BattleTech;
+﻿using BattleTech;
 using Harmony;
-using HBS.Logging;
 
-namespace CustomComponents
-{ 
-//    [HarmonyPatch(typeof(Contract), "AddToFinalSalvage")]
-    internal static class Contract_AddToFilnaSalvagePatch
+namespace CustomComponents.Patches
+{
+    [HarmonyPatch(typeof(Contract),"AddMechComponentToSalvage")]
+    public static class Contract_AddMechComponentToSalvage
     {
-        public static bool Prefix(ref SalvageDef def)
+        [HarmonyPrefix]
+        public static bool CheckDefaults(ref MechComponentDef def)
         {
-            if (def.MechComponentDef == null)
-                return true;
+            if (def == null)
+            {
+                Control.Logger.LogError("Get NULL component in salvage!");
+                return false;
+            }
 
-            var flags = def.MechComponentDef.GetComponent<Flags>();
+
+            var flags = def.GetComponent<Flags>();
 
             if (flags == null || !flags.NotSalvagable)
                 return true;
 
-            var lootable = def.MechComponentDef.GetComponent<LootableDefault>();
+            var lootable = def.GetComponent<LootableDefault>();
 
             if (lootable == null)
+            {
+                Control.LogDebug(DType.SalvageProccess, $"---- default, no lootable - skipped");
+
                 return false;
+            }
 
             MechComponentDef component = null;
 
             switch (def.ComponentType)
             {
                 case ComponentType.AmmunitionBox:
-                    if(UnityGameInstance.BattleTechGame.DataManager.AmmoBoxDefs.Exists(lootable.ItemID))
+                    if (UnityGameInstance.BattleTechGame.DataManager.AmmoBoxDefs.Exists(lootable.ItemID))
                         component = UnityGameInstance.BattleTechGame.DataManager.AmmoBoxDefs.Get(lootable.ItemID);
                     break;
 
@@ -53,19 +60,13 @@ namespace CustomComponents
             }
 
             if (component == null || (component.Is<Flags>(out flags) && flags.NotSalvagable))
+            {
+                Control.LogDebug(DType.SalvageProccess, $"---- default, lootable {lootable.ItemID} not found or notsalvagable - skipped");
                 return false;
+            }
+            Control.LogDebug(DType.SalvageProccess, $"---- default, lootable {lootable.ItemID} replaced");
 
-            SalvageDef salvageDef = new SalvageDef();
-            salvageDef.MechComponentDef = component;
-            salvageDef.Description = new DescriptionDef(component.Description);
-            salvageDef.RewardID = def.RewardID;
-            salvageDef.Type = SalvageDef.SalvageType.COMPONENT;
-            salvageDef.ComponentType = def.ComponentType;
-            salvageDef.Damaged = false;
-            salvageDef.Weight = def.Weight;
-            salvageDef.Count = 1;
-
-            def = salvageDef;
+            def = component;
 
             return true;
         }

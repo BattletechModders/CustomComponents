@@ -1,9 +1,8 @@
-﻿#undef CCDEBUG
-
-using Harmony;
+﻿using Harmony;
 using System;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using HBS.Logging;
 using HBS.Util;
@@ -36,7 +35,7 @@ namespace CustomComponents
                 }
                 catch (Exception)
                 {
-                        Settings = new CustomComponentSettings();
+                    Settings = new CustomComponentSettings();
                 }
 
                 Settings.Complete();
@@ -48,20 +47,15 @@ namespace CustomComponents
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
 
                 // make sure category is always run first, as it contains default customs
-//                Registry.RegisterSimpleCustomComponents(typeof(Category));
+                //                Registry.RegisterSimpleCustomComponents(typeof(Category));
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
                 Validator.RegisterMechValidator(CategoryController.ValidateMech, CategoryController.ValidateMechCanBeFielded);
 
-                Logger.Log("Loaded CustomComponents v0.9.1.3 for bt 1.4");
-#if CCDEBUG
-                Logger.LogDebug("Loading Categories");
-#endif  
+                Logger.Log("Loading CustomComponents v0.9.1.4 for bt 1.4");
                 foreach (var categoryDescriptor in Settings.Categories)
                 {
                     AddCategory(categoryDescriptor);
-#if CCDEBUG
-                    Logger.LogDebug(categoryDescriptor.Name + " - " + categoryDescriptor.DisplayName);
-#endif  
+
                 }
 
                 Validator.RegisterMechValidator(TagRestrictionsHandler.Shared.ValidateMech, TagRestrictionsHandler.Shared.ValidateMechCanBeFielded);
@@ -70,9 +64,7 @@ namespace CustomComponents
                 {
                     TagRestrictionsHandler.Shared.Add(restriction);
                 }
-#if CCDEBUG
                 Logger.LogDebug("done");
-#endif
             }
             catch (Exception e)
             {
@@ -87,15 +79,9 @@ namespace CustomComponents
 
         internal static void AddNewCategory(string category)
         {
-#if CCDEBUG
-            Logger.LogDebug($"Create new category: {category}");
-#endif
             if (Categories.TryGetValue(category, out _))
             {
-#if CCDEBUG
-                Logger.LogDebug("Already exist");
-#endif
-                return;
+                   return;
             }
 
             var c = new CategoryDescriptor { Name = category };
@@ -104,32 +90,15 @@ namespace CustomComponents
 
         public static void AddCategory(CategoryDescriptor category)
         {
-#if CCDEBUG
-            Logger.LogDebug($"Add Category: {category.Name}");
-#endif
             if (Categories.TryGetValue(category.Name, out var c))
             {
-#if CCDEBUG
-                Logger.LogDebug($"Already have, apply: {category.Name}");
-#endif
                 c.Apply(category);
             }
             else
             {
-#if CCDEBUG
-                Logger.LogDebug($"Adding new: {category.Name}");
-#endif
                 Categories.Add(category.Name, category);
                 category.InitDefaults();
             }
-
-#if CCDEBUG
-            Logger.LogDebug($"Current Categories");
-            foreach (var categoryDescriptor in Categories)
-            {
-                Logger.LogDebug($" - {categoryDescriptor.Value.Name}");
-            }
-#endif
         }
 
         public static CategoryDescriptor GetOrCreateCategory(string name)
@@ -151,7 +120,19 @@ namespace CustomComponents
             return Categories.Values;
         }
 
-#region LOGGING
+        #region LOGGING
+        [Conditional("CCDEBUG")]
+        public static void LogDebug(DType type, string message)
+        {
+            if (Settings.DebugInfo.Contains(type))
+                Logger.LogDebug(message);
+        }
+        [Conditional("CCDEBUG")]
+        public static void LogDebug(DType type, string message, Exception e = null)
+        {
+            if (Settings.DebugInfo.Contains(type))
+                Logger.LogDebug(message, e);
+        }
 
         internal static void SetupLogging(string Directory)
         {
@@ -202,6 +183,6 @@ namespace CustomComponents
             }
         }
 
-#endregion
+        #endregion
     }
 }

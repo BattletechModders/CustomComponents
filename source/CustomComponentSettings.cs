@@ -77,14 +77,37 @@ namespace CustomComponents
         }
     }
 
+    public enum DType { SalvageProccess, EffectNull }
+
+
     public class CustomComponentSettings
     {
+        public List<DType> DebugInfo = new List<DType>()
+        {
+            DType.SalvageProccess, DType.EffectNull
+        };
+
         public LogLevel LogLevel = LogLevel.Debug;
         public List<CategoryDescriptor> Categories = new List<CategoryDescriptor>();
         public List<TagRestrictions> TagRestrictions = new List<TagRestrictions>();
         public List<TagColor> ColorTags = new List<TagColor>();
         public List<DefaultsInfo> TaggedDefaults = new List<DefaultsInfo>();
         public List<DefaultsInfo> Defaults = new List<DefaultsInfo>();
+
+        public bool OverrideSalvageGeneration = true;
+        public bool OverrideRecoveryChance = true;
+        public bool SalvageUnrecoveredMech = true;
+        public float BaseRecoveryChance = 0.6f;
+        public float LimbRecoveryPenalty = 0.05f;
+        public float TorsoRecoveryPenalty = 0.1f;
+        public float HeadRecoveryPenaly = 0;
+        public float EjectRecoveryBonus = 0.25f;
+        public bool OverrideMechPartCalculation = true;
+        public int CenterTorsoDestroyedParts = 1;
+        public float SalvageArmWeight = 0.75f;
+        public float SalvageLegWeight = 0.75f;
+        public float SalvageTorsoWeight = 1f;
+        public float SalvageHeadWeight = 0.5f;
 
         public bool RunAutofixer = true;
         public bool FixDeletedComponents = true;
