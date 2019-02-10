@@ -14,7 +14,6 @@ namespace CustomComponents
     [CustomComponent("Linked")]
     public class AutoLinked : SimpleCustomComponent, IOnItemGrabbed, IMechValidate, IOnInstalled, IAdjustValidateDrop, IClearInventory
     {
-
         public Link[] Links { get; set; }
 
         public void OnItemGrabbed(IMechLabDraggableItem item, MechLabPanel mechLab, MechLabLocationWidget w)
@@ -30,23 +29,32 @@ namespace CustomComponents
             var helper = new MechLabHelper(mechLab);
             foreach (var r_link in Links)
             {
+<<<<<<< HEAD
                 Control.LogDebug(DType.ComponentInstall, $"{r_link.ComponentDefId} from {r_link.Location}");
+=======
+                Control.Logger.LogDebug($"{r_link.ComponentDefId} from {r_link.Location}");
+>>>>>>> 1e08dc5bf057d35d653da8490ae945a396efa9fe
                 DefaultHelper.RemoveMechLab(r_link.ComponentDefId, Def.ComponentType, helper, r_link.Location);
             }
         }
 
+        private bool ValidateMech(MechDef mechDef)
+        {
+            return Links == null || Links.All(link => mechDef.Inventory.Any(i => i.MountedLocation == link.Location && i.ComponentDefID == link.ComponentDefId));
+        }
+
         public void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
         {
-            if (Links?.Any(link => !mechDef.Inventory.Any(i =>
-                    i.MountedLocation == link.Location && i.ComponentDefID == link.ComponentDefId)) == true)
+            if (ValidateMech(mechDef))
             {
-                errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text($"{Def.Description.Name} have critical errors, reinstall it to fix"));
+                return;
             }
+            errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text($"{Def.Description.Name} have critical errors, reinstall it to fix"));
         }
 
         public bool ValidateMechCanBeFielded(MechDef mechDef, MechComponentRef componentRef)
         {
-            return Links == null || Links.All(link => mechDef.Inventory.Any(i => i.MountedLocation == link.Location && i.ComponentDefID == link.ComponentDefId));
+            return ValidateMech(mechDef);
         }
 
         public void OnInstalled(WorkOrderEntry_InstallComponent order, SimGameState state, MechDef mech)
@@ -69,7 +77,7 @@ namespace CustomComponents
 
         }
 
-        public IEnumerable<IChange> ValidateDropOnAdd(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab , List<IChange> changes)
+        public IEnumerable<IChange> ValidateDropOnAdd(MechLabItemSlotElement item, LocationHelper locationHelper, MechLabHelper mechlab , List<IChange> changes)
         {
             Control.LogDebug(DType.ComponentInstall, "--- AutoLinked Add");
 
@@ -92,7 +100,7 @@ namespace CustomComponents
 
         }
 
-        public IEnumerable<IChange> ValidateDropOnRemove(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab, List<IChange> changes)
+        public IEnumerable<IChange> ValidateDropOnRemove(MechLabItemSlotElement item, LocationHelper locationHelper, MechLabHelper mechlab, List<IChange> changes)
         {
             Control.LogDebug(DType.ComponentInstall, "--- AutoLinked Remove");
 
@@ -102,8 +110,9 @@ namespace CustomComponents
             foreach (var link in Links)
             {
                 var widget = mechlab.GetLocationWidget(link.Location);
-                if (widget != null)
+                if (widget == null)
                 {
+<<<<<<< HEAD
                     Control.LogDebug(DType.ComponentInstall, $"---- {link.ComponentDefId} from {link.Location}");
                     var remove = new LocationHelper(widget).LocalInventory.FirstOrDefault(e =>
                         e?.ComponentRef?.ComponentDefID == link.ComponentDefId);
@@ -115,15 +124,30 @@ namespace CustomComponents
                     }
                     else
                         Control.LogDebug(DType.ComponentInstall, $"----- not found");
+=======
+                    continue;
+>>>>>>> 1e08dc5bf057d35d653da8490ae945a396efa9fe
                 }
+
+                Control.Logger.LogDebug($"---- {link.ComponentDefId} from {link.Location}");
+                var remove = new LocationHelper(widget).LocalInventory.FirstOrDefault(e =>
+                    e?.ComponentRef?.ComponentDefID == link.ComponentDefId);
+                if (remove != null)
+                {
+                    Control.Logger.LogDebug($"----- removed");
+                    yield return new RemoveChange(link.Location, remove);
+
+                }
+                else
+                    Control.Logger.LogDebug($"----- not found");
             }
         }
 
         public void ClearInventory(MechDef mech, List<MechComponentRef> result, SimGameState state, MechComponentRef source)
         {
-            foreach (var l in Links)
+            foreach (var link in Links)
             {
-                result.RemoveAll(item => item.ComponentDefID == l.ComponentDefId && item.MountedLocation == l.Location);
+                result.RemoveAll(item => item.ComponentDefID == link.ComponentDefId && item.MountedLocation == link.Location);
             }
         }
     }
