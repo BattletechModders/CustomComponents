@@ -11,7 +11,7 @@ namespace CustomComponents
     {
         public static void Postfix(IMechLabDraggableItem item, List<MechLabItemSlotElement> ___localInventory)
         {
-            if (item.ComponentRef?.Def == null || !item.ComponentRef.Def.Is<Sorter>())
+            if (item.ComponentRef?.Def == null || !item.ComponentRef.Def.Is<ISorter>())
             {
                 return;
             }

@@ -105,6 +105,7 @@
     <Compile Include="Helpers\SettingsResourceTools.cs" />
     <Compile Include="Interfaces\IAdjustDescription.cs" />
     <Compile Include="Defaults\IDefault.cs" />
+    <Compile Include="Interfaces\ISorter.cs" />
     <Compile Include="Patches\Contract_AddMechComponentToSalvage.cs" />
     <Compile Include="Patches\Contract_GenerateSalvage.cs" />
     <Compile Include="AutoFixer\Patches\SimGameState_Rehydrate.cs" />

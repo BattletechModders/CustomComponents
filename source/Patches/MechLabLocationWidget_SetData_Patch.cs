@@ -20,7 +20,7 @@ namespace CustomComponents
     {
         private static int Order(MechLabItemSlotElement element)
         {
-            return element.ComponentRef.Def.GetComponent<Sorter>()?.Order ?? 100;
+            return element.ComponentRef.Def.GetComponent<ISorter>()?.Order ?? 100;
         }
 
         public int Compare(MechLabItemSlotElement x, MechLabItemSlotElement y)
