@@ -322,6 +322,11 @@ namespace CustomComponents
                 }
             }
 
+            foreach (var clearInventoryDelegate in Validator.clear_inventory)
+            {
+                clearInventoryDelegate(source, result_list, state);
+            }
+
             foreach (var item in result_list)
             {
                 if(string.IsNullOrEmpty(item.SimGameUID))

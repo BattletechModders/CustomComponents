@@ -265,7 +265,7 @@ namespace CustomComponents
             if (CategoryDescriptor.AddCategoryToDescription)
             {
                 var color_start = $"<b><color={Control.Settings.CategoryDescriptionColor}>[";
-                var color_end = "]</color><b>";
+                var color_end = "]</color></b>";
                 if (Description.Contains(color_start))
                 {
                     int pos = Description.IndexOf(color_start, 0) + color_start.Length;

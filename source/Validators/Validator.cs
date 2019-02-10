@@ -19,6 +19,7 @@ namespace CustomComponents
         public static List<ValidateMechDelegate> mech_validators = new List<ValidateMechDelegate>();
         private static List<ValidateMechCanBeFieldedDelegate> field_validators =
             new List<ValidateMechCanBeFieldedDelegate>();
+        internal static List<ClearInventoryDelegate> clear_inventory = new List<ClearInventoryDelegate>();
 
         /// <summary>
         /// register new AddValidator
@@ -47,6 +48,11 @@ namespace CustomComponents
         {
             if (mechvalidator != null) mech_validators.Add(mechvalidator);
             if (fieldvalidator != null) field_validators.Add(fieldvalidator);
+        }
+
+        public static void RegisterClearInventory(ClearInventoryDelegate clear)
+        {
+            if (clear != null) clear_inventory.Add(clear);
         }
 
         internal static IEnumerable<PreValidateDropDelegate> GetPre(MechComponentDef component)
