@@ -10,6 +10,7 @@ namespace CustomComponents
         private static MechLabItemSlotElement search_item(MechLabHelper mechlab,
             Predicate<MechComponentDef> SearchTerms)
         {
+            Control.LogDebug(DType.ComponentInstall, $"- bin search");
             if (mechlab.MechLab.sim != null)
             {
                 foreach (var slot in mechlab.DismountWidget.localInventory)
@@ -19,12 +20,18 @@ namespace CustomComponents
 
                     if (SearchTerms(slot.ComponentRef.Def))
                     {
+                        Control.LogDebug(DType.ComponentInstall, $"-- found {slot.ComponentRef.ComponentDefID}");
                         slot.RemoveFromParent();
                         return slot;
                     }
                 }
             }
+            else
+            {
+                Control.LogDebug(DType.ComponentInstall, $"-- not sim game, skipped");
+            }
 
+            Control.LogDebug(DType.ComponentInstall, $"- inventory search");
             foreach (var inventoryItem in mechlab.InventoryWidget.localInventory)
             {
                 if(inventoryItem.ComponentRef?.Def == null)
@@ -35,9 +42,12 @@ namespace CustomComponents
                     inventoryItem.RemoveFromParent();
                     var slot = mechlab.MechLab.CreateMechComponentItem(inventoryItem.ComponentRef, true,
                         inventoryItem.MountedLocation, inventoryItem.DropParent, inventoryItem);
+                    Control.LogDebug(DType.ComponentInstall, $"-- found {slot.ComponentRef.ComponentDefID}");
                     return slot;
                 }
             }
+
+            Control.LogDebug(DType.ComponentInstall, $"- not found");
 
             return null;
         }
@@ -45,6 +55,7 @@ namespace CustomComponents
         public static AddFromInventoryChange FoundInInventory(ChassisLocations location, MechLabHelper mechlab,
             Predicate<MechComponentDef> SearchTerms, Predicate<MechComponentDef> PrioritySeatch)
         {
+            Control.LogDebug(DType.ComponentInstall, $"AddFromInventoryChange.Create() double search");
             var item = search_item(mechlab, PrioritySeatch);
             if (item == null)
                 item = search_item(mechlab, SearchTerms);
@@ -54,6 +65,7 @@ namespace CustomComponents
 
         public static AddFromInventoryChange FoundInInventory(ChassisLocations location, MechLabHelper mechlab, Predicate<MechComponentDef> SearchTerms)
         {
+            Control.LogDebug(DType.ComponentInstall, $"AddFromInventoryChange.Create() one search");
             var item = search_item(mechlab, SearchTerms);
             return item == null ? null : new AddFromInventoryChange(location, item);
         }
