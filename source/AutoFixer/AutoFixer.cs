@@ -12,8 +12,8 @@ namespace CustomComponents
     {
         public static AutoFixer Shared = new AutoFixer();
 
-        private List<AutoFixerDelegate> fixers = new List<AutoFixerDelegate>();
-        private List<AutoFixerDelegate> savegamefixers = new List<AutoFixerDelegate>();
+        private readonly List<AutoFixerDelegate> fixers = new List<AutoFixerDelegate>();
+        private readonly List<AutoFixerDelegate> savegamefixers = new List<AutoFixerDelegate>();
 
         internal void FixMechDef(List<MechDef> mechDefs)
         {
@@ -30,7 +30,7 @@ namespace CustomComponents
                 }
                 catch (Exception e)
                 {
-                    Control.Logger.LogError($"Exception in Autofixer {autoFixerDelegate.Method.Name}", e);
+                    Control.LogError($"Exception in Autofixer {autoFixerDelegate.Method.Name}", e);
                 }
             }
         }
@@ -50,7 +50,7 @@ namespace CustomComponents
                 }
                 catch (Exception e)
                 {
-                    Control.Logger.LogError($"Exception in Autofixer {autoFixerDelegate.Method.Name}", e);
+                    Control.LogError($"Exception in Autofixer {autoFixerDelegate.Method.Name}", e);
                 }
             }
         }
@@ -75,12 +75,12 @@ namespace CustomComponents
                     continue;
                 }
             
-                Control.Logger.LogError($"Found NULL in {mechDef.Name}({mechDef.Description.Id})");
+                Control.LogError($"Found NULL in {mechDef.Name}({mechDef.Description.Id})");
 
                 foreach (var r in mechDef.Inventory)
                 {
                     if (r.Def == null)
-                        Control.Logger.LogError($"--- NULL --- {r.ComponentDefID}");
+                        Control.LogError($"--- NULL --- {r.ComponentDefID}");
                 }
 
                 mechDef.SetInventory(mechDef.Inventory.Where(i => i.Def != null).ToArray());

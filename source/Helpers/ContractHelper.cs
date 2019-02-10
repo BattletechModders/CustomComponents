@@ -59,13 +59,13 @@ namespace CustomComponents
             filter_salvage = contract.GetType().GetMethod("FilterPotentialSalvage", BindingFlags.NonPublic | BindingFlags.Instance);
 
             if (create_mech_part == null)
-                Control.Logger.LogError("create_mech_part = null");
+                Control.LogError("create_mech_part = null");
 
             if (create_component == null)
-                Control.Logger.LogError("create_component = null");
+                Control.LogError("create_component = null");
 
             if (filter_salvage == null)
-                Control.Logger.LogError("filter_salvage = null");
+                Control.LogError("filter_salvage = null");
 
         }
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using BattleTech;
 using BattleTech.UI;
 using Harmony;
+using HBS.Extensions;
 using Localize;
 using UnityEngine.EventSystems;
 
@@ -20,18 +21,6 @@ namespace CustomComponents
         {
             try
             {
-                bool do_cancel(string error)
-                {
-                    if (string.IsNullOrEmpty(error))
-                        return false;
-
-                    Control.Logger.LogDebug($"- Canceled: {error}");
-
-                    ___mechLab.ShowDropErrorMessage(new Text(error));
-                    ___mechLab.OnDrop(eventData);
-                    return true;
-                }
-
                 var dragItem = ___mechLab.DragItem as MechLabItemSlotElement;
 
 
@@ -46,47 +35,78 @@ namespace CustomComponents
                     return false;
                 }
 
-                Control.Logger.LogDebug($"OnMechLabDrop: Adding {newComponentDef.Description.Id}");
+                Control.LogDebug(DType.ComponentInstall, $"OnMechLabDrop: Adding {newComponentDef.Description.Id}");
 
                 var location_helper = new LocationHelper(__instance);
                 var mechlab_helper = new MechLabHelper(___mechLab);
 
-                Control.Logger.LogDebug($"- pre validation");
-
-                foreach (var pre_validator in Validator.GetPre(newComponentDef))
-                    if (do_cancel(pre_validator(dragItem, location_helper, mechlab_helper)))
+                bool do_cancel(string error, List<IChange> allchanges)
+                {
+                    if (string.IsNullOrEmpty(error))
                         return false;
 
-                Control.Logger.LogDebug($"- replace validation");
+                    Control.LogDebug(DType.ComponentInstall, $"- Canceled: {error}");
 
-                List<IChange> changes = new List<IChange>();
-                foreach (var rep_validator in Validator.GetReplace(newComponentDef))
-                    if (do_cancel(rep_validator(dragItem, location_helper, changes)))
-                        return false;
-
-                if (changes.Count == 1)
-                    Control.Logger.LogDebug($"-- no replace");
-                else
-                    foreach (var replace in changes)
+                    if (allchanges == null)
                     {
-                        if (replace is AddChange add)
-                            Control.Logger.LogDebug($"-- add {add.item.ComponentRef.ComponentDefID}");
-
-                        else if (replace is RemoveChange remove)
-                            Control.Logger.LogDebug($"-- remove {remove.item.ComponentRef.ComponentDefID}");
-
+                        ___mechLab.ShowDropErrorMessage(new Text(error));
+                    }
+                    else
+                    {
+                        foreach (var change in allchanges)
+                        {
+                            change.CancelChange(mechlab_helper, location_helper);
+                        }
                     }
 
-                changes.Insert(0, new AddChange(__instance.loadout.Location, dragItem));
+                    ___mechLab.OnDrop(eventData);
+                    return true;
+                }
 
-                Control.Logger.LogDebug($"- adjusting {changes.Count} changes");
+                Control.LogDebug(DType.ComponentInstall, $"- pre validation");
+
+                foreach (var pre_validator in Validator.GetPre(newComponentDef))
+                    if (do_cancel(pre_validator(dragItem, location_helper, mechlab_helper), null))
+                        return false;
+
+                Control.LogDebug(DType.ComponentInstall, $"- replace validation");
+
+                List<IChange> changes = new List<IChange>();
+                changes.Add(new AddFromInventoryChange(__instance.loadout.Location, dragItem));
+
+                foreach (var rep_validator in Validator.GetReplace(newComponentDef))
+                    if (do_cancel(rep_validator(dragItem, location_helper, changes), changes))
+                        return false;
+
+#if CCDEBUG
+                if (Control.Settings.DebugInfo.HasFlag(DType.ComponentInstall))
+                {
+                    if (changes.Count == 1)
+                        Control.LogDebug(DType.ComponentInstall, $"-- no replace");
+                    else
+                        foreach (var replace in changes)
+                        {
+                            if (replace is AddChange add)
+                                Control.LogDebug(DType.ComponentInstall,
+                                    $"-- add {add.item.ComponentRef.ComponentDefID}");
+
+                            else if (replace is RemoveChange remove)
+                                Control.LogDebug(DType.ComponentInstall,
+                                    $"-- remove {remove.item.ComponentRef.ComponentDefID}");
+
+                        }
+                }
+#endif
+
+
+                Control.LogDebug(DType.ComponentInstall, $"- adjusting {changes.Count} changes");
 
                 int num = changes.Count;
                 for (int i = 0; i < num; i++)
                 {
                     if (changes[i] is AddChange add)
                     {
-                        Control.Logger.LogDebug($"-- add: {add.item.ComponentRef.ComponentDefID}");
+                        Control.LogDebug(DType.ComponentInstall, $"-- add: {add.item.ComponentRef.ComponentDefID}");
 
                         foreach (var adj_validator in add.item.ComponentRef.GetComponents<IAdjustValidateDrop>())
                             changes.AddRange(adj_validator.ValidateDropOnAdd(add.item, location_helper, mechlab_helper,
@@ -94,7 +114,7 @@ namespace CustomComponents
                     }
                     else if (changes[i] is RemoveChange remove)
                     {
-                        Control.Logger.LogDebug($"-- add: {remove.item.ComponentRef.ComponentDefID}");
+                        Control.LogDebug(DType.ComponentInstall, $"-- add: {remove.item.ComponentRef.ComponentDefID}");
 
                         foreach (var adj_validator in remove.item.ComponentRef.GetComponents<IAdjustValidateDrop>())
                             changes.AddRange(adj_validator.ValidateDropOnRemove(remove.item, location_helper,
@@ -112,17 +132,14 @@ namespace CustomComponents
                 {
                     new_inventory.RemoveAll(i => i.item == remove.item.ComponentRef);
                 }
-#if CCDEBUG
-                Control.Logger.LogDebug($"- post validation");
-#endif
+                Control.LogDebug(DType.ComponentInstall, $"- post validation");
+
                 foreach (var pst_validator in Validator.GetPost(newComponentDef))
-                    if (do_cancel(pst_validator(dragItem, ___mechLab.activeMechDef, new_inventory, changes)))
+                    if (do_cancel(pst_validator(dragItem, ___mechLab.activeMechDef, new_inventory, changes), changes))
                         return false;
 
+                Control.LogDebug(DType.ComponentInstall, $"- apply changes");
 
-#if CCDEBUG
-                Control.Logger.LogDebug($"- apply changes");
-#endif
                 foreach (var change in changes)
                 {
                     change.DoChange(mechlab_helper, location_helper);
@@ -136,7 +153,7 @@ namespace CustomComponents
             }
             catch (Exception e)
             {
-                Control.Logger.LogError(e);
+                Control.LogError(e);
             }
 
             return true;

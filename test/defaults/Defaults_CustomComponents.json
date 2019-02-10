@@ -3,6 +3,7 @@
 		{ "Tag" : "special_replace", "CategoryID" : "Armor", "Type" : "Upgrade", "DefID" : "emod_armorslots_d_ferrosfibrous", "Location" : "CenterTorso" },
 		{ "Tag" : "special_replace", "CategoryID" : "Structure", "Type" : "Upgrade", "DefID" : "emod_structureslots_d_endosteel", "Location" : "CenterTorso" },
 		{ "Tag" : "special_replace", "CategoryID" : "Cockpit", "Type" : "Upgrade", "DefID" : "Gear_Cockpit_SLDF_Custom_d", "Location" : "Head" },
+		
 		{ "CategoryID" : "Armor", "Type" : "Upgrade", "DefID" : "emod_armorslots_standard", "Location" : "CenterTorso" },
 		{ "CategoryID" : "Structure", "Type" : "Upgrade", "DefID" : "emod_structureslots_standard", "Location" : "CenterTorso" },
 		{ "CategoryID" : "Cockpit", "Type" : "Upgrade", "DefID" : "Gear_Cockpit_Generic_Standard", "Location" : "Head" },
@@ -12,8 +13,6 @@
 		{ "CategoryID" : "CatC", "Type" : "Upgrade", "DefID" : "emod_c_default", "Location" : "LeftTorso" },
 		{ "CategoryID" : "TorsoActuator", "Type" : "Upgrade", "DefID" : "emod_torso_default", "Location" : "LeftTorso", "AnyLocation" : false },
 		{ "CategoryID" : "TorsoActuator", "Type" : "Upgrade", "DefID" : "emod_torso_default", "Location" : "RightTorso", "AnyLocation" : false },
-		{ "CategoryID" : "ArmActuator", "Type" : "Upgrade", "DefID" : "emod_arm_upper", "Location" : "LeftArm", "AnyLocation" : false, "AddIfNotPresent" : false },
-		{ "CategoryID" : "ArmActuator", "Type" : "Upgrade", "DefID" : "emod_arm_upper", "Location" : "RightArm", "AnyLocation" : false, "AddIfNotPresent" : false },
 		{ "CategoryID" : "EngineCore", "Type" : "HeatSink", "DefID" : "emod_engine_dummy", "Location" : "CenterTorso", "AddIfNotPresent" : false },
 		{ "CategoryID" : "EngineHeatBlock", "Type" : "HeatSink", "DefID" : "emod_engine_cooling", "Location" : "CenterTorso", "AddIfNotPresent" : false }
 	]

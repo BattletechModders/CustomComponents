@@ -33,7 +33,7 @@ namespace CustomComponents.Patches
                 var simgame = __instance.BattleTechGame.Simulation;
                 if (simgame == null)
                 {
-                    Control.Logger.LogError("No simgame - cancel salvage");
+                    Control.LogError("No simgame - cancel salvage");
                     return false;
                 }
 
@@ -43,6 +43,16 @@ namespace CustomComponents.Patches
                 for (int i = 0; i < lostUnits.Count; i++)
                 {
                     var mech = lostUnits[i].mech;
+
+                    if (!lostUnits[i].pilot.IsIncapacitated && !mech.IsDestroyed && !mech.Inventory.Any(cref =>
+                            cref.Def != null && cref.Def.CriticalComponent &&
+                            cref.DamageLevel == ComponentDamageLevel.Destroyed))
+                    {
+                        Control.LogDebug(DType.SalvageProccess, $"-- Salvaging {mech.Name}");
+                        Control.LogDebug(DType.SalvageProccess, "--- not destroyed - skipped");
+                        lostUnits[i].mechLost = false;
+                        continue;
+                    }
 
                     if (Control.Settings.OverrideRecoveryChance)
                     {
@@ -221,7 +231,7 @@ namespace CustomComponents.Patches
             }
             catch (Exception e)
             {
-                Control.Logger.LogError("Unhandled error in salvage", e);
+                Control.LogError("Unhandled error in salvage", e);
             }
 
             return false;
@@ -283,7 +293,7 @@ namespace CustomComponents.Patches
             }
             catch (Exception e)
             {
-                Control.Logger.LogError("Error in adding parts", e);
+                Control.LogError("Error in adding parts", e);
             }
 
             try
@@ -304,7 +314,7 @@ namespace CustomComponents.Patches
             }
             catch (Exception e)
             {
-                Control.Logger.LogError("Error in adding component", e);
+                Control.LogError("Error in adding component", e);
             }
         }
     }

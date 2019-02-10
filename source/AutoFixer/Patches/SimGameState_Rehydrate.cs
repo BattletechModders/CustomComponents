@@ -20,7 +20,7 @@ namespace CustomComponents.Patches
             }
             catch (Exception e)
             {
-                Control.Logger.LogError(e);
+                Control.LogError(e);
             }
         }
     }

@@ -1,5 +1,4 @@
-﻿#undef CCDEBUG
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 using BattleTech.Data;
@@ -51,7 +50,7 @@ namespace CustomComponents
         {
             if (target == null)
             {
-                Control.Logger.LogError("Error - requested identifier for null!");
+                Control.LogError("Error - requested identifier for null!");
                 return string.Empty;
             }
 
@@ -86,9 +85,7 @@ namespace CustomComponents
 
         private bool SetCustomInternal(string key, ICustom cc, bool replace)
         {
-#if CCDEBUG
-            Control.Logger.LogDebug($"SetCustomInternal key={key} cc={cc}");
-#endif
+            Control.LogDebug(DType.CCLoading, $"SetCustomInternal key={key} cc={cc}");
 
             if (!customs.TryGetValue(key, out var ccs))
             {
@@ -118,10 +115,8 @@ namespace CustomComponents
                     if (custom is IReplaceIdentifier cci2 &&
                         cci1.ReplaceID == cci2.ReplaceID)
                     {
-#if CCDEBUG
-                        Control.Logger.LogDebug($"--find replace: add:{attribute.Name} fnd:{attribute2.Name} grp:{attribute.Group} rid:{cci1.ReplaceID} Replace: {replace}");
-                        Control.Logger.LogDebug($"--replace: from:{custom} to:{cc}");
-#endif
+                        Control.LogDebug(DType.CCLoading, $"--find replace: add:{attribute.Name} fnd:{attribute2.Name} grp:{attribute.Group} rid:{cci1.ReplaceID} Replace: {replace}");
+                        Control.LogDebug(DType.CCLoading, $"--replace: from:{custom} to:{cc}");
                         if (replace)
                         {
                             ccs[i] = cc;
@@ -133,10 +128,8 @@ namespace CustomComponents
                 }
                 else
                 {
-#if CCDEBUG
-                    Control.Logger.LogDebug($"--find replace: add:{attribute.Name} fnd:{attribute2.Name} grp:{attribute.Group} Replace: {replace}");
-                    Control.Logger.LogDebug($"--replace: from:{custom} to:{cc}");
-#endif
+                    Control.LogDebug(DType.CCLoading, $"--find replace: add:{attribute.Name} fnd:{attribute2.Name} grp:{attribute.Group} Replace: {replace}");
+                    Control.LogDebug(DType.CCLoading, $"--replace: from:{custom} to:{cc}");
                     if (replace)
                     {
                         ccs[i] = cc;
@@ -145,10 +138,7 @@ namespace CustomComponents
                     return false;
                 }
             }
-
-#if CCDEBUG
-            Control.Logger.LogDebug($"--added");
-#endif
+            Control.LogDebug(DType.CCLoading, $"--added");
             ccs.Add(cc);
             return true;
         }

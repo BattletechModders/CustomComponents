@@ -21,13 +21,13 @@ namespace CustomComponents
         {
             if (customResources == null)
             {
-                Control.Logger.Log($"customResources not found");
+                Control.LogDebug(DType.CustomResource, $"customResources not found");
                 yield break;
             }
 
             if (!customResources.TryGetValue(resourceType, out var entries))
             {
-                Control.Logger.Log($"{resourceType} not found");
+                Control.LogDebug(DType.CustomResource, $"{resourceType} not found");
                 yield break;
             }
 
@@ -36,7 +36,7 @@ namespace CustomComponents
                 var settings = new SettingsResource<T>();
                 try
                 {
-                    Control.Logger.LogDebug($"Reading {entry.FilePath}");
+                    Control.LogDebug(DType.CustomResource, $"Reading {entry.FilePath}");
                     using (var reader = new StreamReader(entry.FilePath))
                     {
                         var json = reader.ReadToEnd();
@@ -45,12 +45,12 @@ namespace CustomComponents
                 }
                 catch (Exception e)
                 {
-                    Control.Logger.LogError($"Couldn't read {entry.FilePath}", e);
+                    Control.LogDebug(DType.CustomResource, $"Couldn't read {entry.FilePath}", e);
                 }
 
                 if (settings.Settings == null)
                 {
-                    Control.Logger.LogWarning($"Settings is null in {entry.FilePath}");
+                    Control.LogDebug(DType.CustomResource, $"Settings is null in {entry.FilePath}");
                     continue;
                 }
 

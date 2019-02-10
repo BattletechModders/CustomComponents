@@ -30,7 +30,7 @@ namespace CustomComponents
             }
             catch (Exception e)
             {
-                Control.Logger.LogError(e);
+                Control.LogError(e);
             }
 
         }

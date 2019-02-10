@@ -17,7 +17,7 @@ namespace CustomComponents
     {
         public static CustomComponentSettings Settings = new CustomComponentSettings();
 
-        internal static ILog Logger;
+        private static ILog Logger;
         private static FileLogAppender logAppender;
 
         internal const string CustomSectionName = "Custom";
@@ -95,11 +95,31 @@ namespace CustomComponents
                 Logger.LogDebug(message);
         }
         [Conditional("CCDEBUG")]
-        public static void LogDebug(DType type, string message, Exception e = null)
+        public static void LogDebug(DType type, string message, Exception e)
         {
             if (Settings.DebugInfo.HasFlag(type))
                 Logger.LogDebug(message, e);
         }
+
+        public static void LogError(string message)
+        {
+            Logger.LogError(message);
+        }
+        public static void LogError(string message, Exception e)
+        {
+                Logger.LogError(message, e);
+        }
+        public static void LogError(Exception e)
+        {
+            Logger.LogError(e);
+        }
+
+        public static void Log(string message)
+        {
+            Logger.Log(message);
+        }
+
+
 
         internal static void SetupLogging(string Directory)
         {

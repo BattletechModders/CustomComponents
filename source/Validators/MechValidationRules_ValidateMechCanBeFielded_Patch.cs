@@ -1,11 +1,7 @@
-﻿#undef CCDEBUG
-
-using System;
+﻿using System;
 using System.Linq;
 using BattleTech;
 using Harmony;
-
-
 
 namespace CustomComponents
 {
@@ -18,65 +14,47 @@ namespace CustomComponents
             {
                 if (mechDef == null)
                 {
-#if CCDEBUG
-                    Control.Logger.LogDebug($"Mech validation for NULL return");
-#endif
+                    Control.LogDebug(DType.MechValidation, $"Mech validation for NULL return");
                     return;
                 }
 
-#if CCDEBUG
-                Control.Logger.LogDebug($"Mech validation for {mechDef.Name} starter current resutl {__result}");
-#endif
+                Control.LogDebug(DType.MechValidation, $"Mech validation for {mechDef.Name} start from {__result}");
 
                 if (!__result)
                 {
-#if CCDEBUG
-                    Control.Logger.LogDebug($"- ended at base validation");
-#endif
+                    Control.LogDebug(DType.MechValidation, $"- failed base validation");
                     return;
                 }
 
-#if CCDEBUG
-                Control.Logger.LogDebug($"- statrted fixed validation");
-#endif
+                Control.LogDebug(DType.MechValidation, $"- fixed validation");
                 if (!Validator.ValidateMechCanBeFielded(mechDef))
                 {
                     __result = false;
-#if CCDEBUG
-                    Control.Logger.LogDebug($"- ended at fixed validation");
-#endif
+                    Control.LogDebug(DType.MechValidation, $"- failed fixed validation");
                     return;
                 }
-#if CCDEBUG
-                Control.Logger.LogDebug($"- statrted component validation");
-#endif
+                Control.LogDebug(DType.MechValidation, $"- component validation");
                 foreach (var component in mechDef.Inventory)
                 {
                     foreach (var mechValidate in component.GetComponents<IMechValidate>())
                     {
 
-#if CCDEBUG
-                        Control.Logger.LogDebug($"-- {mechValidate.GetType()}");
-#endif
+                        Control.LogDebug(DType.MechValidation, $"-- {mechValidate.GetType()}");
                         if (!mechValidate.ValidateMechCanBeFielded(mechDef, component))
                         {
                             __result = false;
-#if CCDEBUG
-                            Control.Logger.LogDebug($"- ended at component validation");
-#endif
+                            Control.LogDebug(DType.MechValidation, $"- failed component validation");
                             return;
                         }
                     }
                 }
 
-#if CCDEBUG
-                Control.Logger.LogDebug($"- and done");
-#endif
+                Control.LogDebug(DType.MechValidation, $"- validation passed");
             }
 
             catch (Exception e)
             {
-                Control.Logger.LogError(e);
+                Control.LogError(e);
             }
         }
     }

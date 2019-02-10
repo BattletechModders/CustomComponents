@@ -10,12 +10,12 @@ namespace CustomComponents
         [Conditional("CCDEBUG")]
         public static void ShowInventory(MechDef mech)
         {
-            Control.Logger.LogDebug($"SHOW INVENTORY FOR {mech.Name}");
+            Control.Log($"SHOW INVENTORY FOR {mech.Name}");
             foreach (var comp in mech.Inventory)
             {
-                Control.Logger.LogDebug($" -- {comp.MountedLocation} -- {comp.ComponentDefID} -- {comp.SimGameUID}");
+                Control.Log($" -- {comp.MountedLocation} -- {comp.ComponentDefID} -- {comp.SimGameUID}");
             }
-            Control.Logger.LogDebug($"========== done ============");
+            Control.Log($"========== done ============");
         }
     }
 }

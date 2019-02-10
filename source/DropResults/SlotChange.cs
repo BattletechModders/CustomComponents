@@ -9,5 +9,10 @@ namespace CustomComponents
         public MechLabItemSlotElement item;
 
         public abstract void DoChange(MechLabHelper mechLab, LocationHelper loc);
+
+        public virtual void CancelChange(MechLabHelper mechLab, LocationHelper loc)
+        {
+        }
+
     }
 }

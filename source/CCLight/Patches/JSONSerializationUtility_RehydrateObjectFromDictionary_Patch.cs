@@ -30,9 +30,6 @@ namespace CustomComponents
                 {
                     if (!(Tags is Dictionary<string, object> tags))
                     {
-#if CCDEBUG
-                        Control.Logger.LogDebug("Tags="+Tags.GetType());
-#endif
                         continue;
                     }
 
@@ -40,9 +37,6 @@ namespace CustomComponents
                     {
                         if (!(Items is List<object> items))
                         {
-#if CCDEBUG
-                        Control.Logger.LogDebug("items="+Items.GetType());
-#endif
                             continue;
                         }
 
@@ -62,9 +56,10 @@ namespace CustomComponents
             Registry.ProcessCustomFactories(target, values);
             if (target == null)
             {
+                Control.LogError($"NULL item loaded");
                 foreach (var value in values)
                 {
-                    Control.Logger.LogDebug($"{value.Key}: {value.Value}");
+                    Control.LogError($"- {value.Key}: {value.Value}");
                 }
             }
 

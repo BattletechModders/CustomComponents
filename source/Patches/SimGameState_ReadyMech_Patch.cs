@@ -38,7 +38,7 @@ namespace CustomComponents
 
         public static MechDef CreateMech(ChassisDef chassis, string simuid, MechDef original)
         {
-            Control.Logger.LogDebug($"Createing Mech {chassis.Description.Id} - {original.Description.Id}");
+            Control.LogDebug(DType.ClearInventory, $"Createing Mech {chassis.Description.Id} - {original.Description.Id}");
             var result = new MechDef(chassis, simuid, original);
             DEBUGTOOLS.ShowInventory(result);
             result.SetInventory(DefaultHelper.ClearInventory(original, state));

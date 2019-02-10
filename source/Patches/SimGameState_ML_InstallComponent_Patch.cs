@@ -11,7 +11,7 @@ namespace CustomComponents
     {
         public static void Postfix(WorkOrderEntry_InstallComponent order, SimGameState __instance)
         {
-            Control.Logger.LogDebug($"ML_InstallComponent {order.MechComponentRef.ComponentDefID} - {order.MechComponentRef.Def == null}");
+            Control.LogDebug(DType.ComponentInstall, $"ML_InstallComponent {order.MechComponentRef.ComponentDefID} - {order.MechComponentRef.Def == null}");
             if (!order.IsMechLabComplete)
                 return;
 
@@ -23,7 +23,7 @@ namespace CustomComponents
             {
                 handler.OnInstalled(order, __instance, mech);
             }
-            Control.Logger.LogDebug($"ML_InstallComponent complete");
+            Control.LogDebug(DType.ComponentInstall, $"ML_InstallComponent complete");
         }
 
     }

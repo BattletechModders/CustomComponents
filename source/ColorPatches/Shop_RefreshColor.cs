@@ -16,7 +16,7 @@ namespace CustomComponents
             }
             catch (Exception ex)
             {
-                Control.Logger.LogError(ex);
+                Control.LogError(ex);
             }
             return false;
         }
@@ -34,7 +34,7 @@ namespace CustomComponents
             }
             catch (Exception ex)
             {
-                Control.Logger.LogError(ex);
+                Control.LogError(ex);
             }
             return false;
         }

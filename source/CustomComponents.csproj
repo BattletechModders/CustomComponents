@@ -35,6 +35,7 @@
   <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>..\..\ModTek\0Harmony.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\BattleTech_Data\Managed\Assembly-CSharp.dll</HintPath>
@@ -92,6 +93,8 @@
     <Compile Include="Components\Lootable.cs" />
     <Compile Include="Components\TagColorComponent.cs" />
     <Compile Include="Defaults\DefaultFixer.cs" />
+    <Compile Include="DropResults\AddDefaultChange.cs" />
+    <Compile Include="DropResults\AddFromInventoryChange.cs" />
     <Compile Include="Fixes\BTLoadUtils.cs" />
     <Compile Include="Fixes\ReflectionCache_Patch.cs" />
     <Compile Include="Fixes\MechDef_InsertFixedEquipmentIntoInventory.cs" />

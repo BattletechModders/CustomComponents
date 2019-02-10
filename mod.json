@@ -17,7 +17,6 @@
 		"Categories": [ ],
 		"TagRestrictions": [ ],
 		"ColorTags" : [ ],
-		"DebugInfo" : [ ],
 		
 		"TagRestrictionDropValidateRequiredTags":  false,
 		"TagRestrictionDropValidateIncompatibleTags":  true,
@@ -66,12 +65,12 @@
 	"Manifest": [
         {
             "Type": "CCCategories",
-            "Path": "disabled test/categories/",
+            "Path": "test/categories/",
             "ShouldMergeJSON": false
         },
         {
             "Type": "CCDefaults",
-            "Path": "disabled test/defaults/",
+            "Path": "test/defaults/",
             "ShouldMergeJSON": false
         }
     ]

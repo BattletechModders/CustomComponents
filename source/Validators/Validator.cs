@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Harmony;
+using HBS.Extensions;
 
 namespace CustomComponents
 {
@@ -109,21 +110,25 @@ namespace CustomComponents
                 .GroupBy(s => s.location)
                 .Select(s => new { location = s.Key, val = s.Sum(i => i.val) });
 
-            Control.Logger.LogDebug($"drop_item={drop_item.ComponentRef.Def.Description.Id}");
+            Control.LogDebug(DType.ComponentInstall, $"drop_item={drop_item.ComponentRef.Def.Description.Id}");
+
             foreach (var location in change_by_location)
             {
-                Control.Logger.LogDebug($"location={location.location}");
+#if CCDEBUG
+                if(Control.Settings.DebugInfo.HasFlag(DType.ComponentInstall))
+                Control.LogDebug(DType.ComponentInstall, $"location={location.location}");
                 foreach (var item in mech.Inventory.Where(i => i.MountedLocation == location.location))
                 {
-                    Control.Logger.LogDebug($" mech.Inventory item={item.Def.Description.Id} size={item.Def.InventorySize}");
+                    Control.LogDebug(DType.ComponentInstall, $" mech.Inventory item={item.Def.Description.Id} size={item.Def.InventorySize}");
                 }
                 foreach (var item in new_inventory.Where(i => i.location == location.location))
                 {
-                    Control.Logger.LogDebug($" new_inventory  item={item.item.Def.Description.Id} size={item.item.Def.InventorySize}");
+                    Control.LogDebug(DType.ComponentInstall, $" new_inventory  item={item.item.Def.Description.Id} size={item.item.Def.InventorySize}");
                 }
+#endif
                 int used = mech.Inventory.Where(i => i.MountedLocation == location.location).Sum(i => i.Def.InventorySize);
                 int max = mech.GetChassisLocationDef(location.location).InventorySlots;
-                Control.Logger.LogDebug($" used={used} location.val={location.val} max={max}");
+                Control.LogDebug(DType.ComponentInstall, $" used={used} location.val={location.val} max={max}");
 
                 if (used + location.val > max)
                     return $"Cannot add {drop_item.ComponentRef.Def.Description.Name}: Not enough free slots.";
@@ -143,16 +148,12 @@ namespace CustomComponents
 
         private static string ValidateHardpoint(MechLabItemSlotElement drop_item, LocationHelper location, List<IChange> changes)
         {
-#if CCDEBUG
-            Control.Logger.LogDebug($"-- Hardpoints");
-#endif
+            Control.LogDebug(DType.ComponentInstall,$"-- Hardpoints");
             // if dropped item not weapon - skip check
             if (drop_item.ComponentRef.Def.ComponentType != ComponentType.Weapon)
             {
-#if CCDEBUG
-                Control.Logger.LogDebug($"--- Not a weapon");
+                Control.LogDebug(DType.ComponentInstall, $"--- Not a weapon");
                 return string.Empty;
-#endif                
             }
 
             //calculate hardpoint

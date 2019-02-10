@@ -11,7 +11,7 @@ namespace CustomComponents.Patches
         {
             if (def == null)
             {
-                Control.Logger.LogError("Get NULL component in salvage!");
+                Control.LogError("Get NULL component in salvage!");
                 return false;
             }
 

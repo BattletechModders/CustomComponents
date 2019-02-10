@@ -85,13 +85,22 @@ namespace CustomComponents
         NONE = 0,
         SalvageProccess = 1,
         EffectNull = 1 << 1,
-        ShowConfig = 1 << 2
-     }
+        ShowConfig = 1 << 2,
+        ComponentInstall = 1 << 3,
+        MechValidation = 1 << 4,
+        CCLoading = 1 << 5,
+        CCLoadingSummary = 1 << 6,
+        InstallCost = 1 << 7,
+        FixedCheck = 1 << 8,
+        DefaultHandle = 1 << 9,
+        ClearInventory = 1 << 10,
+        CustomResource = 1 << 11,
+    }
 
 
     public class CustomComponentSettings
     {
-        public DType DebugInfo = DType.EffectNull | DType.SalvageProccess;
+        public DType DebugInfo = DType.EffectNull | DType.SalvageProccess | DType.ComponentInstall;
 
         public LogLevel LogLevel = LogLevel.Debug;
         public List<TagColor> ColorTags = new List<TagColor>();

@@ -14,7 +14,7 @@ namespace CustomComponents
     {
         public static bool Prefix(IMechLabDraggableItem item, ref bool __result, MechLabPanel ___mechLab, ref MechComponentRef __state)
         {
-            Control.Logger.LogDebug($"OnItemGrab.Prefix {item.ComponentRef.ComponentDefID}");
+            Control.LogDebug(DType.ComponentInstall, $"OnItemGrab.Prefix {item.ComponentRef.ComponentDefID}");
 
             foreach(var grab_handler in item.ComponentRef.Def.GetComponents<IOnItemGrab>())
             {

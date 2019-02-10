@@ -20,9 +20,6 @@ namespace CustomComponents
         {
             if (ColorUtility.TryParseHtmlString(Color, out var color))
             {
-#if CCDEBUG
-                Control.Logger.LogDebug($"RGBCOLOR: {Color} -> {color}");
-#endif
                 RGBColor = color;
             }
             else

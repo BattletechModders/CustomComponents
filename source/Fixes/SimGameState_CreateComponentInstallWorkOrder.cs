@@ -16,15 +16,13 @@ namespace CustomComponents.Fixes
             string mechSimGameUID,
             WorkOrderEntry_InstallComponent __result)
         {
-#if CCDEBUG
-            Control.Logger.LogDebug($"SimGameState_CreateComponentInstallWorkOrder: for {mechComponent.ComponentDefID}");
-            Control.Logger.LogDebug($"-- from {previousLocation} to {newLocation}");
-            Control.Logger.LogDebug($"-- order {__result?.GetType().ToString() ?? "null"}");
+            Control.LogDebug(DType.InstallCost, $"SimGameState_CreateComponentInstallWorkOrder: for {mechComponent.ComponentDefID}");
+            Control.LogDebug(DType.InstallCost, $"-- from {previousLocation} to {newLocation}");
+            Control.LogDebug(DType.InstallCost, $"-- order {__result?.GetType().ToString() ?? "null"}");
 
-#endif
             if (__result == null)
             {
-                Control.Logger.LogError("-- No order");
+                Control.LogDebug(DType.InstallCost, "-- No order");
                 return;
 
             }
@@ -41,22 +39,18 @@ namespace CustomComponents.Fixes
 
                 if (tr == null)
                 {
-                    Control.Logger.LogDebug("SimGameState_CreateComponentInstallWorkOrder: traverce not created!");
+                    Control.LogDebug(DType.InstallCost, "SimGameState_CreateComponentInstallWorkOrder: traverce not created!");
                     return;
 
                 }
                 MechDef mechByID = __instance.GetMechByID(mechSimGameUID);
 #if CCDEBUG
                 if (mechByID == null)
-                    Control.Logger.LogDebug("-- no mech found!");
+                    Control.LogDebug(DType.InstallCost, "-- no mech found!");
 #endif
                 if (mechByID != null && mechByID.Chassis.ChassisTags.Contains(Control.Settings.OmniTechFlag))
                 {
-#if CCDEBUG
-                    if (mechByID == null)
-                        Control.Logger.LogDebug("-- mech is omni!");
-#endif
-
+                    Control.LogDebug(DType.InstallCost, "-- mech is omni!");
                     tr.Value = (Control.Settings.OmniTechCostBySize ? mechComponent.Def.InventorySize / 2 : 1) * Control.Settings.OmniTechInstallCost;
                 }
 

@@ -30,9 +30,7 @@ namespace CustomComponents
             var helper = new MechLabHelper(mechLab);
             foreach (var r_link in Links)
             {
-#if  CCDEBUG
-                Control.Logger.LogDebug($"{r_link.ComponentDefId} from {r_link.Location}");
-#endif
+                Control.LogDebug(DType.ComponentInstall, $"{r_link.ComponentDefId} from {r_link.Location}");
                 DefaultHelper.RemoveMechLab(r_link.ComponentDefId, Def.ComponentType, helper, r_link.Location);
             }
         }
@@ -53,19 +51,19 @@ namespace CustomComponents
 
         public void OnInstalled(WorkOrderEntry_InstallComponent order, SimGameState state, MechDef mech)
         {
-            Control.Logger.LogDebug($"- AutoLinked");
+            Control.LogDebug(DType.ComponentInstall, $"- AutoLinked");
 
             if (order.PreviousLocation != ChassisLocations.None)
                 foreach (var link in Links)
                 {
-                    Control.Logger.LogDebug($"-- removing {link.ComponentDefId} from {link.Location}");
+                    Control.LogDebug(DType.ComponentInstall, $"-- removing {link.ComponentDefId} from {link.Location}");
                     DefaultHelper.RemoveInventory(link.ComponentDefId, mech, link.Location, Def.ComponentType);
                 }
 
             if (order.DesiredLocation != ChassisLocations.None)
                 foreach (var link in Links)
                 {
-                    Control.Logger.LogDebug($"-- adding {link.ComponentDefId} to {link.Location}");
+                    Control.LogDebug(DType.ComponentInstall, $"-- adding {link.ComponentDefId} to {link.Location}");
                     DefaultHelper.AddInventory(link.ComponentDefId, mech, link.Location, Def.ComponentType, state);
                 }
 
@@ -73,30 +71,30 @@ namespace CustomComponents
 
         public IEnumerable<IChange> ValidateDropOnAdd(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab , List<IChange> changes)
         {
-            Control.Logger.LogDebug("--- AutoLinked Add");
+            Control.LogDebug(DType.ComponentInstall, "--- AutoLinked Add");
 
             if (Links == null || Links.Length == 0)
                 yield break;
 
             foreach (var link in Links)
             {
-                Control.Logger.LogDebug($"---- {link.ComponentDefId} to {link.Location}");
+                Control.LogDebug(DType.ComponentInstall, $"---- {link.ComponentDefId} to {link.Location}");
                 var slot = DefaultHelper.CreateSlot(link.ComponentDefId, Def.ComponentType, mechlab.MechLab);
 
                 if (slot != null)
                 {
-                    Control.Logger.LogDebug($"----- added");
-                    yield return new AddChange(link.Location, slot);
+                    Control.LogDebug(DType.ComponentInstall, $"----- added");
+                    yield return new AddDefaultChange(link.Location, slot);
                 }
                 else
-                    Control.Logger.LogDebug($"----- not found");
+                    Control.LogDebug(DType.ComponentInstall, $"----- not found");
             }
 
         }
 
         public IEnumerable<IChange> ValidateDropOnRemove(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab, List<IChange> changes)
         {
-            Control.Logger.LogDebug("--- AutoLinked Remove");
+            Control.LogDebug(DType.ComponentInstall, "--- AutoLinked Remove");
 
             if (Links == null || Links.Length == 0)
                 yield break;
@@ -106,17 +104,17 @@ namespace CustomComponents
                 var widget = mechlab.GetLocationWidget(link.Location);
                 if (widget != null)
                 {
-                    Control.Logger.LogDebug($"---- {link.ComponentDefId} from {link.Location}");
+                    Control.LogDebug(DType.ComponentInstall, $"---- {link.ComponentDefId} from {link.Location}");
                     var remove = new LocationHelper(widget).LocalInventory.FirstOrDefault(e =>
                         e?.ComponentRef?.ComponentDefID == link.ComponentDefId);
                     if (remove != null)
                     {
-                        Control.Logger.LogDebug($"----- removed");
+                        Control.LogDebug(DType.ComponentInstall, $"----- removed");
                         yield return new RemoveChange(link.Location, remove);
 
                     }
                     else
-                        Control.Logger.LogDebug($"----- not found");
+                        Control.LogDebug(DType.ComponentInstall, $"----- not found");
                 }
             }
         }
