@@ -12,6 +12,9 @@ namespace CustomComponents
 
         private Traverse main;
         private Traverse drag_item;
+        private Traverse<MechLabInventoryWidget> inventory;
+        private Traverse<MechLabDismountWidget> bin;
+
 
         public IEnumerable<MechLabLocationWidget> GetWidgets()
         {
@@ -49,6 +52,26 @@ namespace CustomComponents
             }
 
             return null;
+        }
+
+        public MechLabInventoryWidget InventoryWidget
+        {
+            get
+            {
+                if (inventory == null)
+                    inventory = main.Field<MechLabInventoryWidget>("inventoryWidget");
+                return inventory.Value;
+            }
+        }
+
+        public MechLabDismountWidget DismountWidget
+        {
+            get
+            {
+                if (bin == null)
+                    bin = main.Field<MechLabDismountWidget>("dismountWidget");
+                return bin.Value;
+            }
         }
 
         public MechLabHelper(MechLabPanel mechLab)

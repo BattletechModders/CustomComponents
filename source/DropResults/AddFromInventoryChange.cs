@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using BattleTech;
 using BattleTech.UI;
 
@@ -6,13 +7,60 @@ namespace CustomComponents
 {
     public class AddFromInventoryChange : AddChange
     {
-        public static AddFromInventoryChange FoundInInventory(ChassisLocations location, Predicate<MechComponentDef> SearchTerms)
+        private static MechLabItemSlotElement search_item(MechLabHelper mechlab,
+            Predicate<MechComponentDef> SearchTerms)
         {
+            if (mechlab.MechLab.sim != null)
+            {
+                foreach (var slot in mechlab.DismountWidget.localInventory)
+                {
+                    if (slot.ComponentRef?.Def == null)
+                        continue;
+
+                    if (SearchTerms(slot.ComponentRef.Def))
+                    {
+                        slot.RemoveFromParent();
+                        return slot;
+                    }
+                }
+            }
+
+            foreach (var inventoryItem in mechlab.InventoryWidget.localInventory)
+            {
+                if(inventoryItem.ComponentRef?.Def == null)
+                    continue;
+
+                if (SearchTerms(inventoryItem.ComponentRef.Def))
+                {
+                    inventoryItem.RemoveFromParent();
+                    var slot = mechlab.MechLab.CreateMechComponentItem(inventoryItem.ComponentRef, true,
+                        inventoryItem.MountedLocation, inventoryItem.DropParent, inventoryItem);
+                    return slot;
+                }
+            }
+
             return null;
+        }
+
+        public static AddFromInventoryChange FoundInInventory(ChassisLocations location, MechLabHelper mechlab,
+            Predicate<MechComponentDef> SearchTerms, Predicate<MechComponentDef> PrioritySeatch)
+        {
+            var item = search_item(mechlab, PrioritySeatch);
+            if (item == null)
+                item = search_item(mechlab, SearchTerms);
+
+            return item == null ? null : new AddFromInventoryChange(location, item);
+        }
+
+        public static AddFromInventoryChange FoundInInventory(ChassisLocations location, MechLabHelper mechlab, Predicate<MechComponentDef> SearchTerms)
+        {
+            var item = search_item(mechlab, SearchTerms);
+            return item == null ? null : new AddFromInventoryChange(location, item);
         }
 
         public AddFromInventoryChange(ChassisLocations location, MechLabItemSlotElement item) : base(location, item)
         {
+
         }
 
         public override void DoChange(MechLabHelper mechLab, LocationHelper loc)
