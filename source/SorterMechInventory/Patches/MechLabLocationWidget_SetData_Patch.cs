@@ -18,14 +18,11 @@ namespace CustomComponents
 
     public class MechLabItemSlotElementSorter : IComparer<MechLabItemSlotElement>
     {
-        private static int Order(MechLabItemSlotElement element)
-        {
-            return element.ComponentRef.Def.GetComponent<ISorter>()?.Order ?? 100;
-        }
+        private readonly SorterComparer comparer = new SorterComparer();
 
         public int Compare(MechLabItemSlotElement x, MechLabItemSlotElement y)
         {
-            return Order(x) - Order(y);
+            return comparer.Compare(x.ComponentRef.Def, y.ComponentRef.Def);
         }
 
         public void SortWidgetInventory(List<MechLabItemSlotElement> inventory)
