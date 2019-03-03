@@ -12,7 +12,7 @@
 	
 	"Settings" : {
 		"LogLevel": "Debug",
-		"DebugInfo" : "ClearInventory | DefaultHandle | ComponentInstall",
+		"DebugInfo" : "NONE",
 
 		"Categories": [ ],
 		"TagRestrictions": [ ],

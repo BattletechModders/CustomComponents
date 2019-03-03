@@ -25,7 +25,8 @@ namespace CustomComponents
         public static void Init(string directory, string settingsJSON)
         {
             Logger = HBS.Logging.Logger.GetLogger("CustomComponents", LogLevel.Debug);
-
+            SetupLogging(directory);
+            
             try
             {
                 try
@@ -35,14 +36,15 @@ namespace CustomComponents
                     JSONSerializationUtility.FromJSON(Settings, settingsJSON);
                     HBS.Logging.Logger.SetLoggerLevel(Logger.Name, Settings.LogLevel);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Logger.LogError("Couldn't load settings", e);
                     Settings = new CustomComponentSettings();
                 }
+                Logger.LogError($"{Settings.TestEnableAllTags}");
 
 
                 Settings.Complete();
-                SetupLogging(directory);
 
                 LogDebug(DType.ShowConfig, JSONSerializationUtility.ToJSON(Settings));
 
