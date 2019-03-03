@@ -295,6 +295,35 @@ namespace CustomComponents
         public void OnItemGrabbed(IMechLabDraggableItem item, MechLabPanel mechLab, MechLabLocationWidget widget)
         {
             Control.LogDebug(DType.ComponentInstall, $"- Category {CategoryID}");
+            Control.LogDebug(DType.ComponentInstall, $"-- MaxEquiped: {CategoryDescriptor.MaxEquiped}");
+            Control.LogDebug(DType.ComponentInstall, $"-- MaxEquipedPerLocation: {CategoryDescriptor.MaxEquipedPerLocation}");
+            Control.LogDebug(DType.ComponentInstall, $"-- search replace for {item.ComponentRef.ComponentDefID}");
+
+            if (CategoryDescriptor.MaxEquiped > 0)
+            {
+                var countTotal = mechLab.activeMechDef.Inventory.Count(i => i.Def.IsCategory(CategoryID));
+                Control.LogDebug(DType.ComponentInstall, $"-- countTotal: {countTotal}");
+
+                if (countTotal >= CategoryDescriptor.MaxEquiped)
+                {
+                    Control.LogDebug(DType.ComponentInstall, $"-- no replacement, would exceed MaxEquiped");
+                    return;
+                }
+            }
+
+            if (CategoryDescriptor.MaxEquipedPerLocation > 0)
+            {
+                var countLocation = new LocationHelper(widget).LocalInventory.Count(i => i.ComponentRef.Def.IsCategory(CategoryID));
+                Control.LogDebug(DType.ComponentInstall, $"-- countLocation: {countLocation}");
+
+                if (countLocation >= CategoryDescriptor.MaxEquipedPerLocation)
+                {
+                    Control.LogDebug(DType.ComponentInstall, $"-- no replacement, would exceed MaxEquipedPerLocation");
+                    return;
+                }
+            }
+
+            Control.LogDebug(DType.ComponentInstall, $"- Category {CategoryID}");
             Control.LogDebug(DType.ComponentInstall, $"-- search replace for {item.ComponentRef.ComponentDefID}");
 
             var replace = DefaultFixer.Shared.GetReplaceFor(mechLab.activeMechDef, CategoryID, widget.loadout.Location, mechLab.sim);
