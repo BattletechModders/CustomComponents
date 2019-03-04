@@ -2,7 +2,7 @@
 
 namespace CustomComponents
 {
-    public class ChassisCustom : SimpleCustom<ChassisDef>
+    public class SimpleCustomChassis : SimpleCustom<ChassisDef>
     {
         
     }

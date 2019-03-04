@@ -3,7 +3,7 @@
 namespace CustomComponents
 {
     [CustomComponent("ChassisDefaults", true)]
-    public class ChassisDefaults : ChassisCustom, IDefault, IReplaceIdentifier
+    public class ChassisDefaults : SimpleCustomChassis, IDefault, IReplaceIdentifier
     {
         public ChassisLocations Location { get; set; }
         public string CategoryID { get; set; }
