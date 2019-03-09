@@ -9,6 +9,7 @@ namespace CustomComponents
     {
         public ChassisLocations Location;
         public string ComponentDefId;
+        public ComponentType? ComponentType = null;
     }
 
     [CustomComponent("Linked")]
@@ -31,7 +32,7 @@ namespace CustomComponents
             foreach (var r_link in Links)
             {
                 Control.LogDebug(DType.ComponentInstall, $"{r_link.ComponentDefId} from {r_link.Location}");
-                DefaultHelper.RemoveMechLab(r_link.ComponentDefId, Def.ComponentType, helper, r_link.Location);
+                DefaultHelper.RemoveMechLab(r_link.ComponentDefId, r_link.ComponentType ?? Def.ComponentType, helper, r_link.Location);
             }
         }
 
@@ -57,14 +58,14 @@ namespace CustomComponents
                 foreach (var link in Links)
                 {
                     Control.LogDebug(DType.ComponentInstall, $"-- removing {link.ComponentDefId} from {link.Location}");
-                    DefaultHelper.RemoveInventory(link.ComponentDefId, mech, link.Location, Def.ComponentType);
+                    DefaultHelper.RemoveInventory(link.ComponentDefId, mech, link.Location, link.ComponentType ?? Def.ComponentType);
                 }
 
             if (order.DesiredLocation != ChassisLocations.None)
                 foreach (var link in Links)
                 {
                     Control.LogDebug(DType.ComponentInstall, $"-- adding {link.ComponentDefId} to {link.Location}");
-                    DefaultHelper.AddInventory(link.ComponentDefId, mech, link.Location, Def.ComponentType, state);
+                    DefaultHelper.AddInventory(link.ComponentDefId, mech, link.Location, link.ComponentType ?? Def.ComponentType, state);
                 }
 
         }
@@ -79,7 +80,7 @@ namespace CustomComponents
             foreach (var link in Links)
             {
                 Control.LogDebug(DType.ComponentInstall, $"---- {link.ComponentDefId} to {link.Location}");
-                var slot = DefaultHelper.CreateSlot(link.ComponentDefId, Def.ComponentType, mechlab.MechLab);
+                var slot = DefaultHelper.CreateSlot(link.ComponentDefId,  link.ComponentType ?? Def.ComponentType, mechlab.MechLab);
 
                 if (slot != null)
                 {
