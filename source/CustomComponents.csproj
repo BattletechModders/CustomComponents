@@ -34,42 +34,42 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>..\..\Mods\ModTek\0Harmony.dll</HintPath>
+      <HintPath>..\..\..\Mods\ModTek\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\BattleTech_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\BattleTech_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\BattleTech_Data\Managed\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\BattleTech_Data\Managed\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
-      <HintPath>..\..\..\BattleTech_Data\Managed\System.Core.dll</HintPath>
+      <HintPath>..\..\BattleTech_Data\Managed\System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Serialization">
-      <HintPath>..\..\..\BattleTech_Data\Managed\System.Runtime.Serialization.dll</HintPath>
+      <HintPath>..\..\BattleTech_Data\Managed\System.Runtime.Serialization.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq">
-      <HintPath>..\..\..\BattleTech_Data\Managed\System.Xml.Linq.dll</HintPath>
+      <HintPath>..\..\BattleTech_Data\Managed\System.Xml.Linq.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\BattleTech_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\BattleTech_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.Networking">
-      <HintPath>..\..\BattleTech_Data\Managed\UnityEngine.Networking.dll</HintPath>
+      <HintPath>..\..\..\BattleTech_Data\Managed\UnityEngine.Networking.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>..\..\BattleTech_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <HintPath>..\..\..\BattleTech_Data\Managed\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>

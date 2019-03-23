@@ -55,7 +55,7 @@ namespace CustomComponents
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
                 Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);
 
-                Logger.Log("Loaded CustomComponents v0.9.3 for bt 1.5");
+                Logger.Log("Loaded CustomComponents v0.9.4 for bt 1.5.1");
 
                 Validator.RegisterMechValidator(TagRestrictionsHandler.Shared.ValidateMech, TagRestrictionsHandler.Shared.ValidateMechCanBeFielded);
                 Validator.RegisterDropValidator(check: TagRestrictionsHandler.Shared.ValidateDrop);
