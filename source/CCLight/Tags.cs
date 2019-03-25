@@ -42,23 +42,23 @@ namespace CustomComponents {
       return GUID;
     }
     private static TagSet prepareTags(MechComponent target) {
-      Control.Log($"Prepating tags for "+target.defId);
+      //Control.Log($"Prepating tags for "+target.defId);
       string GUID = target.getCCGUID();
       TagSet tags = null;
       if (CustomCombatTagsHelper.tagsCache.ContainsKey(GUID) == false) {
-        Control.Log($" not in cache");
+        //Control.Log($" not in cache");
         if (CustomCombatTagsHelper.checkExistance(target.StatCollection, CustomCombatTagsHelper.CCComponentTagsStatName) == false) {
-          Control.Log($" have no statistic value:"+ CustomCombatTagsHelper.CCComponentTagsStatName);
+          //Control.Log($" have no statistic value:"+ CustomCombatTagsHelper.CCComponentTagsStatName);
           tags = new TagSet();
           tags.AddRange(target.componentDef.ComponentTags);
         } else {
           string tags_string = target.StatCollection.GetStatistic(CustomCombatTagsHelper.CCComponentTagsStatName).Value<string>();
           tags = TagSet.Parse(tags_string);
-          Control.Log($" have statistic value:" + CustomCombatTagsHelper.CCComponentTagsStatName+":"+tags_string);
+          //Control.Log($" have statistic value:" + CustomCombatTagsHelper.CCComponentTagsStatName+":"+tags_string);
         }
         CustomCombatTagsHelper.tagsCache[GUID] = tags;
       } else {
-        Control.Log($" in cache");
+        //Control.Log($" in cache");
         tags = CustomCombatTagsHelper.tagsCache[GUID];
       }
       return tags;
