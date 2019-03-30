@@ -17,6 +17,10 @@ namespace CustomComponents
         {
             return cref.GetComponents<Category>().Any(c => c.CategoryID == category);
         }
+        public static bool IsCategory(this BaseComponentRef cref, string category)
+        {
+            return cref.GetComponents<Category>().Any(c => c.CategoryID == category);
+        }
 
 
         public static bool IsCategory(this MechComponentDef cdef, string categoryid, out Category category)
@@ -28,6 +32,12 @@ namespace CustomComponents
         }
 
         public static bool IsCategory(this MechComponentRef cref, string categoryid, out Category category)
+        {
+            category = cref.GetComponents<Category>().FirstOrDefault(c => c.CategoryID == categoryid);
+            return category != null;
+        }
+
+        public static bool IsCategory(this BaseComponentRef cref, string categoryid, out Category category)
         {
             category = cref.GetComponents<Category>().FirstOrDefault(c => c.CategoryID == categoryid);
             return category != null;

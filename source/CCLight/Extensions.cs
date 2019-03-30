@@ -116,6 +116,31 @@ namespace CustomComponents
                 target.RefreshComponentDef();
             }
         }
+
+
+        public static T GetComponent<T>(this MechComponentRef target)
+        {
+            RefreshDef(target);
+            return target.Def.GetComponent<T>();
+        }
+
+        public static IEnumerable<T> GetComponents<T>(this MechComponentRef target)
+        {
+            RefreshDef(target);
+            return target.Def.GetComponents<T>();
+        }
+
+        public static bool Is<T>(this MechComponentRef target, out T res)
+        {
+            RefreshDef(target);
+            return target.Def.Is(out res);
+        }
+
+        public static bool Is<T>(this MechComponentRef target)
+        {
+            RefreshDef(target);
+            return target.Def.Is<T>();
+        }
     }
 
     #endregion

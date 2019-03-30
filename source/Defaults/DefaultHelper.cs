@@ -22,6 +22,10 @@ namespace CustomComponents
         {
             return cref.Is<Flags>(out var f) && f.Default;
         }
+        public static bool IsDefault(this BaseComponentRef cref)
+        {
+            return cref.Is<Flags>(out var f) && f.Default;
+        }
 
         public static bool IsModuleFixed(this MechComponentRef item, MechDef mech)
         {
