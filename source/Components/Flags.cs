@@ -158,22 +158,12 @@ namespace CustomComponents
 
         public override string ToString()
         {
-
             return flags.Aggregate("Flags: [", (current, flag) => current + flag + " ") + "]";
         }
-        public bool IsMechDestroyed(MechComponentRef item, Mech mech)
-        {
-            return IsVital && item.DamageLevel == ComponentDamageLevel.Destroyed;
-        }
 
-        public bool IsVechicleDestroyed(VehicleComponentRef item, Vehicle mech)
+        public bool IsActorDestroyed(MechComponent component, AbstractActor actor)
         {
-            return IsVital && item.DamageLevel == ComponentDamageLevel.Destroyed;
-        }
-
-        public bool IsTurretDestroyed(TurretComponentRef item, Turret mech)
-        {
-            return IsVital && item.DamageLevel == ComponentDamageLevel.Destroyed;
+            return IsVital && component.DamageLevel == ComponentDamageLevel.Destroyed;
         }
     }
 }

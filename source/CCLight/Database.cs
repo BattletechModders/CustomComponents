@@ -10,7 +10,7 @@ namespace CustomComponents
     {
         #region internal
 
-        internal static bool  SetCustomWithIdentifier(string identifier, ICustom cc, bool replace)
+        internal static bool SetCustomWithIdentifier(string identifier, ICustom cc, bool replace)
         {
             return Shared.SetCustomInternal(identifier, cc, replace);
         }

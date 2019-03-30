@@ -81,31 +81,31 @@ namespace CustomComponents
 
     public static class MechComponentRefExtensions
     {
-        public static T GetComponent<T>(this MechComponentRef target)
+        public static T GetComponent<T>(this BaseComponentRef target)
         {
             RefreshDef(target);
             return target.Def.GetComponent<T>();
         }
 
-        public static IEnumerable<T> GetComponents<T>(this MechComponentRef target)
+        public static IEnumerable<T> GetComponents<T>(this BaseComponentRef target)
         {
             RefreshDef(target);
             return target.Def.GetComponents<T>();
         }
 
-        public static bool Is<T>(this MechComponentRef target, out T res)
+        public static bool Is<T>(this BaseComponentRef target, out T res)
         {
             RefreshDef(target);
             return target.Def.Is(out res);
         }
 
-        public static bool Is<T>(this MechComponentRef target)
+        public static bool Is<T>(this BaseComponentRef target)
         {
             RefreshDef(target);
             return target.Def.Is<T>();
         }
 
-        private static void RefreshDef(MechComponentRef target)
+        private static void RefreshDef(BaseComponentRef target)
         {
             if (target.Def == null)
             {

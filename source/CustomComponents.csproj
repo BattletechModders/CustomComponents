@@ -107,9 +107,10 @@
     <Compile Include="Interfaces\IAdjustDescription.cs" />
     <Compile Include="Defaults\IDefault.cs" />
     <Compile Include="Interfaces\ICheckIsDead.cs" />
-    <Compile Include="Patches\Turret_IsDead.cs" />
-    <Compile Include="Patches\Vehicle_IsDead.cs" />
-    <Compile Include="Patches\Mech_IsDead.cs" />
+    <Compile Include="IsDestroyed\IsDestroyed.cs" />
+    <Compile Include="IsDestroyed\Patches\Turret_IsDead.cs" />
+    <Compile Include="IsDestroyed\Patches\Vehicle_IsDead.cs" />
+    <Compile Include="IsDestroyed\Patches\Mech_IsDead.cs" />
     <Compile Include="SorterLabInventory\InventorySorter.cs" />
     <Compile Include="SorterLabInventory\InventorySorterComparer.cs" />
     <Compile Include="SorterLabInventory\InventorySorterListComparer.cs" />
