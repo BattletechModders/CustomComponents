@@ -106,6 +106,10 @@
     <Compile Include="Helpers\SettingsResourceTools.cs" />
     <Compile Include="Interfaces\IAdjustDescription.cs" />
     <Compile Include="Defaults\IDefault.cs" />
+    <Compile Include="Interfaces\ICheckIsDead.cs" />
+    <Compile Include="Patches\Turret_IsDead.cs" />
+    <Compile Include="Patches\Vehicle_IsDead.cs" />
+    <Compile Include="Patches\Mech_IsDead.cs" />
     <Compile Include="SorterLabInventory\InventorySorter.cs" />
     <Compile Include="SorterLabInventory\InventorySorterComparer.cs" />
     <Compile Include="SorterLabInventory\InventorySorterListComparer.cs" />

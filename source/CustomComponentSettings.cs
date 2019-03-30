@@ -95,6 +95,7 @@ namespace CustomComponents
         DefaultHandle = 1 << 9,
         ClearInventory = 1 << 10,
         CustomResource = 1 << 11,
+        IsDestroyed = 1 << 12,
     }
 
 
@@ -129,6 +130,7 @@ namespace CustomComponents
         public bool FixSaveGameMech = false;
         public bool TagRestrictionDropValidateRequiredTags = false;
         public bool TagRestrictionDropValidateIncompatibleTags = true;
+        public bool CheckCriticalComponent = true;
 
         public bool UseDefaultFixedColor = false;
         public UIColor DefaultFlagBackgroundColor = UIColor.UpgradeColor;

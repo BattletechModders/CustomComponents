@@ -7,7 +7,7 @@ using BattleTech;
 namespace CustomComponents
 {
     [CustomComponent("Flags")]
-    public class Flags : SimpleCustomComponent, IAfterLoad, IMechLabFilter, IMechValidate
+    public class Flags : SimpleCustomComponent, IAfterLoad, IMechLabFilter, IMechValidate, ICheckIsDead
     {
         public List<string> flags;
 
@@ -34,7 +34,8 @@ namespace CustomComponents
         public bool Invalid { get; private set; }
         [JsonIgnore]
         public bool DontShowMessage { get; private set; }
-
+        [JsonIgnore]
+        public bool IsVital { get; private set; }
 
 
         public string ErrorCannotRemove { get; set; }
@@ -63,6 +64,7 @@ namespace CustomComponents
             NotDestroyed = false;
             Invalid = false;
             DontShowMessage = false;
+            IsVital = false;
 
             if (flags == null)
             {
@@ -111,6 +113,9 @@ namespace CustomComponents
                     case "hide_remove_message":
                         DontShowMessage = true;
                         break;
+                    case "vital":
+                        IsVital = true;
+                        break;
                 }
             }
 
@@ -155,6 +160,20 @@ namespace CustomComponents
         {
 
             return flags.Aggregate("Flags: [", (current, flag) => current + flag + " ") + "]";
+        }
+        public bool IsMechDestroyed(MechComponentRef item, Mech mech)
+        {
+            return IsVital && item.DamageLevel == ComponentDamageLevel.Destroyed;
+        }
+
+        public bool IsVechicleDestroyed(VehicleComponentRef item, Vehicle mech)
+        {
+            return IsVital && item.DamageLevel == ComponentDamageLevel.Destroyed;
+        }
+
+        public bool IsTurretDestroyed(TurretComponentRef item, Turret mech)
+        {
+            return IsVital && item.DamageLevel == ComponentDamageLevel.Destroyed;
         }
     }
 }
