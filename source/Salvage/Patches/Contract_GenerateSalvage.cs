@@ -5,7 +5,7 @@ using BattleTech;
 using Harmony;
 using UnityEngine;
 
-namespace CustomComponents.Patches
+namespace CustomComponents
 {
     [HarmonyPatch(typeof(Contract), "GenerateSalvage")]
     public static class Contract_GenerateSalvage

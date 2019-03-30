@@ -10,6 +10,20 @@ namespace CustomComponents
     {
         public static bool Prefix(ref SalvageDef def)
         {
+            try
+            {
+                return AddToFinalSalvage(ref def);
+            }
+            catch (Exception e)
+            {
+                Control.LogError(e);
+            }
+
+            return true;
+        }
+
+        public static bool AddToFinalSalvage(ref SalvageDef def)
+        {
             if (def.MechComponentDef == null)
                 return true;
 
