@@ -47,11 +47,7 @@ namespace CustomComponents
 
                     Control.LogDebug(DType.ComponentInstall, $"- Canceled: {error}");
 
-                    if (allchanges == null)
-                    {
-                        ___mechLab.ShowDropErrorMessage(new Text(error));
-                    }
-                    else
+                    if (allchanges != null)
                     {
                         foreach (var change in allchanges)
                         {
@@ -60,6 +56,7 @@ namespace CustomComponents
                     }
 
                     ___mechLab.OnDrop(eventData);
+                    ___mechLab.ShowDropErrorMessage(new Text(error));
                     return true;
                 }
 
