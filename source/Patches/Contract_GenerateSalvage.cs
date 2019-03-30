@@ -44,15 +44,6 @@ namespace CustomComponents.Patches
                 {
                     var mech = lostUnits[i].mech;
 
-                    if (!lostUnits[i].pilot.IsIncapacitated && !mech.IsDestroyed && !mech.Inventory.Any(cref =>
-                            cref.Def != null && cref.Def.CriticalComponent &&
-                            cref.DamageLevel == ComponentDamageLevel.Destroyed))
-                    {
-                        Control.LogDebug(DType.SalvageProccess, $"-- Salvaging {mech.Name}");
-                        Control.LogDebug(DType.SalvageProccess, "--- not destroyed - skipped");
-                        lostUnits[i].mechLost = false;
-                        continue;
-                    }
 
                     if (Control.Settings.OverrideRecoveryChance)
                     {
@@ -172,17 +163,7 @@ namespace CustomComponents.Patches
                 Control.LogDebug(DType.SalvageProccess, $"- Enemy Mechs {__instance.Name}");
                 foreach (var unit in enemyMechs)
                 {
-                    if (unit.pilot.IsIncapacitated || unit.mech.IsDestroyed || unit.mech.Inventory.Any(cref =>
-                            cref.Def != null && cref.Def.CriticalComponent &&
-                            cref.DamageLevel == ComponentDamageLevel.Destroyed))
-                    {
-                        AddMechToSalvage(unit.mech, Contract, simgame, Constants, ___finalPotentialSalvage);
-                    }
-                    else
-                    {
-                        Control.LogDebug(DType.SalvageProccess, $"-- Salvaging {unit.mech.Name}");
-                        Control.LogDebug(DType.SalvageProccess, "--- not destroyed - skipped");
-                    }
+                    AddMechToSalvage(unit.mech, Contract, simgame, Constants, ___finalPotentialSalvage);
                 }
 
                 Control.LogDebug(DType.SalvageProccess, $"- Enemy Vechicle {__instance.Name}");
