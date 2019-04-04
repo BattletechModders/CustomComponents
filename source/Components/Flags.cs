@@ -7,7 +7,7 @@ using BattleTech;
 namespace CustomComponents
 {
     [CustomComponent("Flags")]
-    public class Flags : SimpleCustomComponent, IAfterLoad, IMechLabFilter, IMechValidate, ICheckIsDead
+    public class Flags : SimpleCustomComponent, IAfterLoad, IMechLabFilter, IMechValidate, IIsDestroyed
     {
         public List<string> flags;
 
@@ -161,7 +161,7 @@ namespace CustomComponents
             return flags.Aggregate("Flags: [", (current, flag) => current + flag + " ") + "]";
         }
 
-        public bool IsActorDestroyed(MechComponent component, AbstractActor actor)
+        public bool IsMechDestroyed(MechComponentRef component, MechDef mech)
         {
             return IsVital && component.DamageLevel == ComponentDamageLevel.Destroyed;
         }

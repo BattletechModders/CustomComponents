@@ -10,6 +10,18 @@ namespace CustomComponents
     [HarmonyPatch(typeof(Contract), "GenerateSalvage")]
     public static class Contract_GenerateSalvage
     {
+        private static bool IsDestroyed(MechDef mech)
+        {
+            if (mech.IsDestroyed)
+                return true;
+
+            if (Control.Settings.CheckCriticalComponent && mech.Inventory.Any(i =>
+                    i.Def.CriticalComponent && i.DamageLevel == ComponentDamageLevel.Destroyed))
+                return true;
+
+            return mech.Inventory.Any(item => item.GetComponents<IIsDestroyed>().Any(isDestroyed => isDestroyed.IsMechDestroyed(item, mech)));
+        }
+
         [HarmonyPrefix]
         public static bool GenerateSalvage(List<UnitResult> enemyMechs, List<VehicleDef> enemyVehicles,
             List<UnitResult> lostUnits, bool logResults,
@@ -44,12 +56,20 @@ namespace CustomComponents
                 {
                     var mech = lostUnits[i].mech;
 
+                    if (!IsDestroyed(mech))
+                    {
+                        Control.LogDebug(DType.SalvageProccess, $"-- {mech.Name} not destroyed, skiping");
+                        continue;
+                        
+                    }
+
 
                     if (Control.Settings.OverrideRecoveryChance)
                     {
                         Control.LogDebug(DType.SalvageProccess, $"-- Recovery {mech.Name} CC method");
 
                         float chance = Control.Settings.BaseRecoveryChance;
+
                         chance -= mech.IsLocationDamaged(ChassisLocations.Head)
                             ? Control.Settings.HeadRecoveryPenaly
                             : 0;
