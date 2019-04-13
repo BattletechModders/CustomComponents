@@ -22,6 +22,19 @@ namespace CustomComponents
                 return;
             }
 
+            foreach (var mechDef in mechDefs)
+            {
+                if(mechDef.ChassisID == null)
+                    mechDef.Refresh();
+
+                if (mechDef.ChassisID == null)
+                {
+                    Control.LogError($"AutoFixer: {mechDef.Description.Id} chassis {mechDef.ChassisID} not found, remove from autofixing");
+                }
+            }
+
+            mechDefs = mechDefs.Where(i => i.Chassis != null).ToList();
+
             foreach (var autoFixerDelegate in fixers)
             {
                 try
@@ -41,6 +54,19 @@ namespace CustomComponents
             {
                 return;
             }
+
+            foreach (var mechDef in mechDefs)
+            {
+                if (mechDef.ChassisID == null)
+                    mechDef.Refresh();
+
+                if (mechDef.ChassisID == null)
+                {
+                    Control.LogError($"AutoFixer: {mechDef.Description.Id} chassis {mechDef.ChassisID} not found, remove from autofixing");
+                }
+            }
+
+            mechDefs = mechDefs.Where(i => i.Chassis != null).ToList();
 
             foreach (var autoFixerDelegate in savegamefixers)
             {

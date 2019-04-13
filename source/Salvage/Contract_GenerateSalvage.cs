@@ -68,7 +68,7 @@ namespace CustomComponents
                     {
                         Control.LogDebug(DType.SalvageProccess, $"-- Recovery {mech.Name} CC method");
 
-                        float chance = Control.Settings.BaseRecoveryChance;
+                        float chance = Constants.Salvage.DestroyedMechRecoveryChance;
 
                         chance -= mech.IsLocationDamaged(ChassisLocations.Head)
                             ? Control.Settings.HeadRecoveryPenaly

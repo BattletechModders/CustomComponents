@@ -96,6 +96,7 @@ namespace CustomComponents
         ClearInventory = 1 << 10,
         CustomResource = 1 << 11,
         IsDestroyed = 1 << 12,
+        AutoFix = 1 << 13
     }
 
 
@@ -111,7 +112,6 @@ namespace CustomComponents
 
         public bool OverrideRecoveryChance = true;
         public bool SalvageUnrecoveredMech = true;
-        public float BaseRecoveryChance = 0.6f;
         public float LimbRecoveryPenalty = 0.05f;
         public float TorsoRecoveryPenalty = 0.1f;
         public float HeadRecoveryPenaly = 0;

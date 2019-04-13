@@ -1,4 +1,4 @@
-﻿#undef CCDEBUG
+﻿//undef CCDEBUG
 using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
@@ -50,7 +50,7 @@ namespace CustomComponents
                 if (changed_deafult[i] == id)
                 {
 #if CCDEBUG
-                    Control.Logger.LogDebug($"---- {def.CategoryID}: already changed");
+                    Control.LogDebug(DType.AutoFix, $"---- {def.CategoryID}: already changed");
 #endif
                     return;
                 }
@@ -67,19 +67,19 @@ namespace CustomComponents
                 if (!component.IsDefault())
                 {
 #if CCDEBUG
-                    Control.Logger.LogDebug($"---- {def.CategoryID}: Found not default {component.ComponentDefID}, skiped");
+                    Control.LogDebug(DType.AutoFix, $"---- {def.CategoryID}: Found not default {component.ComponentDefID}, skiped");
 #endif
                 }
                 else if (component.IsModuleFixed(mechDef))
                 {
 #if CCDEBUG
-                    Control.Logger.LogDebug($"---- {def.CategoryID}: Found fixed {component.ComponentDefID}, skiped");
+                    Control.LogDebug(DType.AutoFix, $"---- {def.CategoryID}: Found fixed {component.ComponentDefID}, skiped");
 #endif
                 }
                 else if (def.NeedReplaceExistDefault(mechDef, component))
                 {
 #if CCDEBUG
-                    Control.Logger.LogDebug($"---- {def.CategoryID}: Found wrong default {component.ComponentDefID}, replacing with {def}");
+                    Control.LogDebug(DType.AutoFix, $"---- {def.CategoryID}: Found wrong default {component.ComponentDefID}, replacing with {def}");
 #endif
                     var inventory = mechDef.Inventory.ToList();
                     inventory.Remove(component);
@@ -89,7 +89,7 @@ namespace CustomComponents
                 else
                 {
 #if CCDEBUG
-                    Control.Logger.LogDebug($"---- {def.CategoryID}: Found exist default {component.ComponentDefID}, marks as installed");
+                    Control.LogDebug(DType.AutoFix, $"---- {def.CategoryID}: Found exist default {component.ComponentDefID}, marks as installed");
 #endif                   
                 }
                 set_changed(id);
@@ -97,7 +97,7 @@ namespace CustomComponents
             else
             {
 #if CCDEBUG
-                Control.Logger.LogDebug($"---- {def.CategoryID}: not found, adding {def} to {def.Location}");
+                Control.LogDebug(DType.AutoFix, $"---- {def.CategoryID}: not found, adding {def} to {def.Location}");
 #endif
                 if (def.AddItems(mechDef, state))
                     set_changed(id);
@@ -116,13 +116,13 @@ namespace CustomComponents
         {
 
 #if CCDEBUG
-            Control.Logger.LogDebug($"Default Fixer for {mechDef.Name}({mechDef.Description.Id})");
+            Control.LogDebug(DType.AutoFix, $"Default Fixer for {mechDef.Name}({mechDef.Description.Id})");
 #endif
             num_changed = 0;
 
 #if CCDEBUG
 
-            Control.Logger.LogDebug($"-- Chassis");
+            Control.LogDebug(DType.AutoFix, $"-- Chassis");
 #endif
             if (mechDef.Chassis != null)
                 foreach (var def in mechDef.Chassis.GetComponents<ChassisDefaults>())
@@ -131,16 +131,22 @@ namespace CustomComponents
                 }
 
 #if CCDEBUG
-            Control.Logger.LogDebug($"-- Tagged");
+            Control.LogDebug(DType.AutoFix, $"-- Tagged");
 #endif
 
             foreach (var def in TaggedDefaults)
             {
-                if (mechDef.MechTags.Contains(def.Tag) || mechDef.Chassis.ChassisTags.Contains(def.Tag))
+                if (mechDef.Chassis == null)
+                {
+                    Control.LogError($"{mechDef.Name}({mechDef.Description.Id}) - Chassis {mechDef.ChassisID} still null!!");
+                    break;
+                }
+
+                if (mechDef.Chassis.ChassisTags.Contains(def.Tag))
                     process_default(mechDef, def, state);
             }
 #if CCDEBUG
-            Control.Logger.LogDebug($"-- Other");
+            Control.LogDebug(DType.AutoFix, $"-- Other");
 #endif
 
             foreach (var def in Defaults)
@@ -150,10 +156,10 @@ namespace CustomComponents
 
 
 #if CCDEBUG
-            Control.Logger.LogDebug($"-- Changes");
+            Control.LogDebug(DType.AutoFix, $"-- Changes");
 
             for (int i =0;i<num_changed;i++)
-                Control.Logger.LogDebug($"---- {changed_deafult[i]}");
+                Control.LogDebug(DType.AutoFix, $"---- {changed_deafult[i]}");
 #endif
         }
 
