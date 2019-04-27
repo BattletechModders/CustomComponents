@@ -21,24 +21,32 @@ namespace CustomComponents
 
         internal bool ValidateMechCanBeFielded(MechDef mechDef)
         {
-            return ValidateMech(out var error, mechDef);
+            return ValidateMech(out var error, mechDef, ChassisLocations.None);
         }
 
         internal void ValidateMech(Dictionary<MechValidationType, List<Text>> errors, MechValidationLevel validationLevel, MechDef mechDef)
         {
-            ValidateMech(out var error, mechDef, errors: errors);
+            ValidateMech(out var error, mechDef, ChassisLocations.None, errors: errors);
         }
 
-        internal string ValidateDrop(MechLabItemSlotElement drop_item, MechDef mech, List<InvItem> new_inventory, List<IChange> changes)
+        //internal string ValidateDrop(MechLabItemSlotElement drop_item, MechDef mech, List<InvItem> new_inventory, List<IChange> changes)
+        //{
+        //    ValidateMech(out var error, mech, drop_item.ComponentRef.Def);
+        //    return error;
+        //}
+
+
+        public string ValidateDrop(MechLabItemSlotElement drop_item, LocationHelper location, MechLabHelper mechlab)
         {
-            ValidateMech(out var error, mech, drop_item.ComponentRef.Def);
+            ValidateMech(out var error, mechlab.MechLab.activeMechDef, location.widget.loadout.Location, drop_item.ComponentRef);
             return error;
         }
 
         internal bool ValidateMech(
             out string error,
             MechDef mechDef,
-            MechComponentDef droppedComponent = null,
+            ChassisLocations dropLocation,
+            MechComponentRef droppedComponent = null,
             Dictionary<MechValidationType, List<Text>> errors = null)
         {
             error = null;
@@ -59,20 +67,20 @@ namespace CustomComponents
                 tagsOnMech.Add(identifier);
             }
 
-            void ProcessComponent(MechComponentDef def, HashSet<string> tagsForComponent)
+            void ProcessComponent(MechComponentRef item, HashSet<string> tagsForComponent, string location)
             {
                 // tags
-                if (def.ComponentTags != null)
+                if (item.Def.ComponentTags != null)
                 {
-                    tagsForComponent.UnionWith(def.ComponentTags);
+                    tagsForComponent.UnionWith(item.Def.ComponentTags.Select(i => i.Replace("{location}", location)));
                 }
 
                 // id
-                var identifier = def.Description.Id;
+                var identifier = item.ComponentDefID;
                 tagsForComponent.Add(identifier);
 
                 // category for component
-                foreach (var component in def.GetComponents<Category>())
+                foreach (var component in item.GetComponents<Category>())
                 {
                     tagsForComponent.Add(component.CategoryID);
                     if (!string.IsNullOrEmpty(component.Tag))
@@ -81,16 +89,16 @@ namespace CustomComponents
             }
 
             // components
-            foreach (var def in mechDef.Inventory.Select(r => r.Def))
+            foreach (var def in mechDef.Inventory)
             {
-                ProcessComponent(def, tagsOnMech);
+                ProcessComponent(def, tagsOnMech, def.MountedLocation.ToString());
             }
 
             HashSet<string> tagsForDropped = null;
             if (droppedComponent != null)
             {
                 tagsForDropped = new HashSet<string>();
-                ProcessComponent(droppedComponent, tagsForDropped);
+                ProcessComponent(droppedComponent, tagsForDropped, dropLocation.ToString());
                 tagsOnMech.UnionWith(tagsForDropped); // used for incompatible check
             }
 
@@ -308,5 +316,6 @@ namespace CustomComponents
 
             return tag;
         }
+
     }
 }
