@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using BattleTech;
 using Harmony;
+using HBS.Collections;
 using HBS.Extensions;
 using HBS.Util;
 
@@ -51,6 +52,7 @@ namespace CustomComponents
                 }
         }
 
+
         public static void Postfix(object target, Dictionary<string, object> values)
         {
             Registry.ProcessCustomFactories(target, values);
@@ -73,7 +75,13 @@ namespace CustomComponents
                     var trav = new Traverse(def.Description).Property<string>("Details");
                     trav.Value = def.Description.Details + "\n" + description;
                 }
+
+                TagRestrictionsHandler.Shared.ProcessDescription(def.ComponentTags, def.Description);
             }
+            else if(target is MechDef mdef)
+                TagRestrictionsHandler.Shared.ProcessDescription(mdef.MechTags, mdef.Description);
+            else if (target is ChassisDef cdef)
+                TagRestrictionsHandler.Shared.ProcessDescription(cdef.ChassisTags, cdef.Description);
         }
     }
 }

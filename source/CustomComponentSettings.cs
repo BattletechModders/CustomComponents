@@ -123,6 +123,7 @@ namespace CustomComponents
         public float SalvageLegWeight = 0.75f;
         public float SalvageTorsoWeight = 1f;
         public float SalvageHeadWeight = 0.5f;
+        
 
         public bool RunAutofixer = true;
         public bool FixDeletedComponents = true;
@@ -131,6 +132,7 @@ namespace CustomComponents
         public bool TagRestrictionDropValidateRequiredTags = false;
         public bool TagRestrictionDropValidateIncompatibleTags = true;
         public bool CheckCriticalComponent = true;
+        public bool AddTagsToDescription = true;
 
         public bool UseDefaultFixedColor = false;
         public UIColor DefaultFlagBackgroundColor = UIColor.UpgradeColor;
@@ -139,6 +141,7 @@ namespace CustomComponents
         public CCColor PreinstalledOverlayCColor = new CCColor() { A = 12, R = 255, B = 180, G = 180 };
         public CCColor DefaultFlagOverlayCColor = new CCColor() { A = 12, R = 180, B = 180, G = 255 };
         public string CategoryDescriptionColor = "#008000";
+        public string ShortTagsColor = "#008000";
 
         [JsonIgnore] public Color PreinstalledOverlayColor;
         [JsonIgnore] public Color DefaultFlagOverlayColor;

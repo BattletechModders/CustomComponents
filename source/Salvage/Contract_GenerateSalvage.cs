@@ -10,7 +10,7 @@ namespace CustomComponents
     [HarmonyPatch(typeof(Contract), "GenerateSalvage")]
     public static class Contract_GenerateSalvage
     {
-        private static bool IsDestroyed(MechDef mech)
+        public static bool IsDestroyed(MechDef mech)
         {
             if (mech.IsDestroyed)
                 return true;
@@ -23,6 +23,7 @@ namespace CustomComponents
         }
 
         [HarmonyPrefix]
+        [HarmonyPriority(Priority.Low)]
         public static bool GenerateSalvage(List<UnitResult> enemyMechs, List<VehicleDef> enemyVehicles,
             List<UnitResult> lostUnits, bool logResults,
             Contract __instance, ref List<SalvageDef> ___finalPotentialSalvage)

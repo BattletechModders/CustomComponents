@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 using BattleTech.UI;
+using Harmony;
+using HBS.Collections;
 using Localize;
 
 namespace CustomComponents
@@ -317,5 +319,41 @@ namespace CustomComponents
             return tag;
         }
 
+        public void ProcessDescription(TagSet tags, DescriptionDef description)
+        {
+            string fulltags = "";
+            string shorttags = "";
+
+            foreach (var tag in Restrictions.Values)
+            {
+                if (tags.Contains(tag.Tag))
+                {
+                    if (!string.IsNullOrEmpty(tag.ShortText))
+                        shorttags += tag.ShortText + ", ";
+                    if (!string.IsNullOrEmpty(tag.FullText))
+                        fulltags += "\n" + tag.FullText;
+                }
+            }
+
+            if (shorttags != "" || fulltags != "")
+            {
+                var trav = new Traverse(description).Property<string>("Details");
+
+                if (shorttags != "")
+                {
+                    shorttags = shorttags.Substring(0, shorttags.Length - 2);
+                    shorttags = "\n<b><color=" + Control.Settings.ShortTagsColor + ">[" + shorttags + "]</b></color>";
+                    trav.Value = description.Details + shorttags;
+                    ;
+
+                }
+
+                if (fulltags != "")
+                {
+                    trav.Value = description.Details + fulltags;
+                }
+            }
+
+        }
     }
 }
