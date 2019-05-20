@@ -38,7 +38,7 @@
 		
 		"CategoryDescriptionColor" : "#008000", 
 		 
-		"TestEnableAllTags": true,
+		"TestEnableAllTags": false,
 		"OmniTechFlag": "cc_omnitech",
         "OmniTechCostBySize": false,
         "OmniTechInstallCost": 1,
