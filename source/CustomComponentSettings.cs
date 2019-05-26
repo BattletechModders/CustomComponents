@@ -104,6 +104,9 @@ namespace CustomComponents
     {
         public DType DebugInfo = DType.EffectNull | DType.SalvageProccess | DType.ComponentInstall;
 
+        public bool DEBUG_DumpMechDefs = false;
+        public string DEBUG_MechDefsDir = "D:/MechDefs";
+
         public LogLevel LogLevel = LogLevel.Debug;
         public List<TagColor> ColorTags = new List<TagColor>();
 

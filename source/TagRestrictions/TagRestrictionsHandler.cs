@@ -318,7 +318,7 @@ namespace CustomComponents
 
             return tag;
         }
-
+        /*
         public void ProcessDescription(TagSet tags, DescriptionDef description)
         {
             try
@@ -366,5 +366,6 @@ namespace CustomComponents
             }
 
         }
+        */
     }
 }

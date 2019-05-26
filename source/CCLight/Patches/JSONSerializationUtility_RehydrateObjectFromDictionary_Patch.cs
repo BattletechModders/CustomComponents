@@ -76,12 +76,12 @@ namespace CustomComponents
                     trav.Value = def.Description.Details + "\n" + description;
                 }
 
-                TagRestrictionsHandler.Shared.ProcessDescription(def.ComponentTags, def.Description);
+                //TagRestrictionsHandler.Shared.ProcessDescription(def.ComponentTags, def.Description);
             }
-            else if(target is MechDef mdef)
-                TagRestrictionsHandler.Shared.ProcessDescription(mdef.MechTags, mdef.Description);
-            else if (target is ChassisDef cdef)
-                TagRestrictionsHandler.Shared.ProcessDescription(cdef.ChassisTags, cdef.Description);
+            //else if(target is MechDef mdef)
+            //    TagRestrictionsHandler.Shared.ProcessDescription(mdef.MechTags, mdef.Description);
+            //else if (target is ChassisDef cdef)
+            //    TagRestrictionsHandler.Shared.ProcessDescription(cdef.ChassisTags, cdef.Description);
         }
     }
 }
