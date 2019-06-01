@@ -96,6 +96,7 @@
     <Compile Include="Defaults\DefaultFixer.cs" />
     <Compile Include="DropResults\AddDefaultChange.cs" />
     <Compile Include="DropResults\AddFromInventoryChange.cs" />
+    <Compile Include="Fixes\AbstractActor_InitEffectsStats.cs" />
     <Compile Include="Fixes\BTLoadUtils.cs" />
     <Compile Include="Fixes\ReflectionCache_Patch.cs" />
     <Compile Include="Fixes\MechDef_InsertFixedEquipmentIntoInventory.cs" />

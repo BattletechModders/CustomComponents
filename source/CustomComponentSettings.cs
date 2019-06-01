@@ -96,7 +96,9 @@ namespace CustomComponents
         ClearInventory = 1 << 10,
         CustomResource = 1 << 11,
         IsDestroyed = 1 << 12,
-        AutoFix = 1 << 13
+        AutoFix = 1 << 13,
+
+        FULL = 0xffffff
     }
 
 
@@ -112,6 +114,7 @@ namespace CustomComponents
 
         public bool OverrideSalvageGeneration = true;
         public bool NoLootCTDestroyed = false;
+        public bool BaseECMValidation = true;
 
         public bool OverrideRecoveryChance = true;
         public bool SalvageUnrecoveredMech = true;
