@@ -184,7 +184,13 @@ namespace CustomComponents
                 Control.LogDebug(DType.SalvageProccess, $"- Enemy Mechs {__instance.Name}");
                 foreach (var unit in enemyMechs)
                 {
-                    AddMechToSalvage(unit.mech, Contract, simgame, Constants, ___finalPotentialSalvage);
+                    if (unit.pilot.IsIncapacitated || IsDestroyed(unit.mech) || unit.pilot.HasEjected)
+                        AddMechToSalvage(unit.mech, Contract, simgame, Constants, ___finalPotentialSalvage);
+                    else
+                    {
+                        Control.LogDebug(DType.SalvageProccess, $"-- Salvaging {unit.mech.Name}");
+                        Control.LogDebug(DType.SalvageProccess, $"--- not destroyed, skipping");
+                    }
                 }
 
                 Control.LogDebug(DType.SalvageProccess, $"- Enemy Vechicle {__instance.Name}");
