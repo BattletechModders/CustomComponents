@@ -97,6 +97,7 @@ namespace CustomComponents
         CustomResource = 1 << 11,
         IsDestroyed = 1 << 12,
         AutoFix = 1 << 13,
+        Filter = 1 << 14,
 
         FULL = 0xffffff
     }
@@ -157,6 +158,7 @@ namespace CustomComponents
         public string OmniTechFlag = "cc_omnitech";
         public bool OmniTechCostBySize = false;
         public int OmniTechInstallCost = 1;
+        public bool DontUseFilter = false;
 
         public void Complete()
         {
