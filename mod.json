@@ -3,7 +3,7 @@
 	"Author": "Denadan",
 	"Website": "https://github.com/Denadan/CustomComponents",
 
-	"Enabled": true,
+	"Enabled": false,
 	"DependsOn": [],
 	"DLL": "CustomComponents.dll",
 	"DLLEntryPoint": "CustomComponents.Control.Init",
@@ -12,7 +12,7 @@
 	
 	"Settings" : {
 		"LogLevel": "Debug",
-		"DebugInfo" : "ClearInventory, DefaultHandle, ComponentInstall, IsDestroyed, ShowConfig",
+		"DebugInfo" : "FULL",
 
 		"Categories": [ ],
 		"TagRestrictions": [ ],

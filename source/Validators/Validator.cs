@@ -58,6 +58,8 @@ namespace CustomComponents
         internal static IEnumerable<PreValidateDropDelegate> GetPre(MechComponentDef component)
         {
             yield return ValidateBase;
+            if(Control.Settings.BaseECMValidation)
+                yield return ValidateECM;
 
             foreach (var validator in component.GetComponents<IPreValidateDrop>())
                 yield return validator.PreValidateDrop;
@@ -65,6 +67,7 @@ namespace CustomComponents
             foreach (var validator in pre_drop_validators)
                 yield return validator;
         }
+
 
 
         internal static IEnumerable<ReplaceValidateDropDelegate> GetReplace(MechComponentDef component)
@@ -91,6 +94,28 @@ namespace CustomComponents
 
             foreach (var validator in chk_drop_validators)
                 yield return validator;
+        }
+
+
+        private static string ValidateECM(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab)
+        {
+            var def = item.ComponentRef.Def;
+
+            if (def.ComponentSubType < MechComponentType.Prototype_Generic &&
+                def.ComponentSubType != MechComponentType.ElectronicWarfare)
+                return string.Empty;
+
+            int count = mechlab.MechLab.activeMechDef.Inventory.Count(cref => cref.Def.ComponentSubType == def.ComponentSubType);
+
+            if (count > 0)
+                    if (def.ComponentSubType == MechComponentType.ElectronicWarfare || def.ComponentSubType == MechComponentType.Prototype_ElectronicWarfare)
+                        return
+                            "ELECTRONIC WARFARE COMPONENT LIMIT: You can only equip one Electronic Warfare component on this 'Mech.";
+                    else
+                        return
+                            $"PROTOTYPE COMPONENT LIMIT: You can only equip one {def.ComponentSubType} component on this 'Mech";
+
+            return string.Empty;
         }
 
         private static string ValidateBase(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab)
@@ -121,8 +146,8 @@ namespace CustomComponents
             foreach (var location in change_by_location)
             {
 #if CCDEBUG
-                if(Control.Settings.DebugInfo.HasFlag(DType.ComponentInstall))
-                Control.LogDebug(DType.ComponentInstall, $"location={location.location}");
+                if (Control.Settings.DebugInfo.HasFlag(DType.ComponentInstall))
+                    Control.LogDebug(DType.ComponentInstall, $"location={location.location}");
                 foreach (var item in mech.Inventory.Where(i => i.MountedLocation == location.location))
                 {
                     Control.LogDebug(DType.ComponentInstall, $" mech.Inventory item={item.Def.Description.Id} size={item.Def.InventorySize}");
@@ -154,7 +179,7 @@ namespace CustomComponents
 
         private static string ValidateHardpoint(MechLabItemSlotElement drop_item, LocationHelper location, List<IChange> changes)
         {
-            Control.LogDebug(DType.ComponentInstall,$"-- Hardpoints");
+            Control.LogDebug(DType.ComponentInstall, $"-- Hardpoints");
             // if dropped item not weapon - skip check
             if (drop_item.ComponentRef.Def.ComponentType != ComponentType.Weapon)
             {
@@ -186,7 +211,7 @@ namespace CustomComponents
                     break;
             }
 
-            if(num2 == 0 )
+            if (num2 == 0)
                 return $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.";
 
             if (num == num2)
