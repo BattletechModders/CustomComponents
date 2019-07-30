@@ -8,7 +8,7 @@ using Harmony;
 namespace CustomComponents.Patches
 {
     [HarmonyPatch(typeof(SkirmishSettings_Beta), "OnLoadComplete")]
-    public class SkirmishSettings_Beta_LanceConfiguratorDataLoaded
+    public class SkirmishSettings_Beta_OnLoadComplete_Patch
     {
         [HarmonyPrefix]
         [HarmonyPriority(Priority.High)]

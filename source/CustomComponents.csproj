@@ -75,7 +75,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoFixer\AutoFixer.cs" />
+    <Compile Include="AutoFixerPreloader\AutoFixPreloader.cs" />
     <Compile Include="AutoFixer\Patches\SimGameState_InitCompanyStats_Patch.cs" />
+    <Compile Include="AutoFixerPreloader\Patches\SimGameState_RequestDataManagerResources_Patch.cs" />
+    <Compile Include="AutoFixerPreloader\Patches\SkirmishMechBayPanel_RequestResources_Patch.cs" />
+    <Compile Include="AutoFixerPreloader\Patches\SkirmishSettings_Beta_LoadLanceConfiguratorData_Patch.cs" />
     <Compile Include="Categories\CategoriesExtentions.cs" />
     <Compile Include="Categories\Category.cs" />
     <Compile Include="CCLight\Factories\SimpleCustomChassis.cs" />
@@ -119,10 +123,10 @@
     <Compile Include="SorterMechInventory\ISorter.cs" />
     <Compile Include="Salvage\Contract_AddMechComponentToSalvage.cs" />
     <Compile Include="Salvage\Contract_GenerateSalvage.cs" />
-    <Compile Include="AutoFixer\Patches\SimGameState_Rehydrate.cs" />
-    <Compile Include="AutoFixer\Patches\SimGameState_RespondToDefsLoadComplete.cs" />
-    <Compile Include="AutoFixer\Patches\SkirmishMechBayPanel_LanceConfiguratorDataLoaded.cs" />
-    <Compile Include="AutoFixer\Patches\SkirmishSettings_Beta_LanceConfiguratorDataLoaded.cs" />
+    <Compile Include="AutoFixer\Patches\SimGameState_Rehydrate_Patch.cs" />
+    <Compile Include="AutoFixer\Patches\SimGameState_RespondToDefsLoadComplete_Patch.cs" />
+    <Compile Include="AutoFixer\Patches\SkirmishMechBayPanel_LanceConfiguratorDataLoaded_Patch.cs" />
+    <Compile Include="AutoFixer\Patches\SkirmishSettings_Beta_OnLoadComplete_Patch.cs" />
     <Compile Include="SorterMechInventory\SorterComparer.cs" />
     <Compile Include="WorkOrderCosts\Utils\Adapter.cs" />
     <Compile Include="Interfaces\IColorComponent.cs" />
