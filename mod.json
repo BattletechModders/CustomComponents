@@ -3,7 +3,7 @@
 	"Author": "Denadan",
 	"Website": "https://github.com/Denadan/CustomComponents",
 
-	"Enabled": false,
+	"Enabled": true,
 	"DependsOn": [],
 	"DLL": "CustomComponents.dll",
 	"DLLEntryPoint": "CustomComponents.Control.Init",
@@ -38,7 +38,7 @@
 		
 		"CategoryDescriptionColor" : "#008000", 
 		 
-		"TestEnableAllTags": false,
+		"TestEnableAllTags": true,
 		"OmniTechFlag": "cc_omnitech",
         "OmniTechCostBySize": false,
         "OmniTechInstallCost": 1,
