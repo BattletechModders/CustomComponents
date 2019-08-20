@@ -6,7 +6,7 @@ using Harmony;
 namespace CustomComponents
 {
     [HarmonyPatch(typeof(SimGameState), "RespondToDefsLoadComplete")]
-    public static class SimGameState_RespondToDefsLoadComplete
+    public static class SimGameState_RespondToDefsLoadComplete_Patch
     {
         [HarmonyPrefix]
         [HarmonyPriority(Priority.High)]
