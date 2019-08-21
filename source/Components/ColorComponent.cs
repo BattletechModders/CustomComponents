@@ -34,6 +34,7 @@ namespace CustomComponents
         [JsonIgnore]
         public Color RGBColor => Color.white;
 
-        public bool Icon { get; set; } = true;
+        public bool SkipIcon { get; set; } = false;
+        public bool SkipText { get; set; } = false;
     }
 }

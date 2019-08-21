@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BattleTech;
 using BattleTech.UI;
+using UnityEngine;
 
 namespace CustomComponents
 {
@@ -15,13 +16,16 @@ namespace CustomComponents
             {
                 Control.LogDebug(DType.Color, $"-- color found set to {color.UIColor}/{color.RGBColor}");
 
-                color_text.SetCustomColor(color.UIColor, color.RGBColor);
+                if(color.SkipText)
+                    color_text.SetUIColor(UIColor.White);
+                else
+                    color_text.SetCustomColor(color.UIColor, color.RGBColor);
                 if (color_icon != null)
-                    if (color.Icon)
-                        color_icon.SetCustomColor(color.UIColor, color.RGBColor);
-                    else
+                    if (color.SkipIcon)
                         color_icon.SetUIColor(UIColor.White);
-            }
+                    else
+                         color_icon.SetCustomColor(color.UIColor, color.RGBColor);
+           }
             else
             {
                 Control.LogDebug(DType.Color, $"-- no color set to white");
@@ -35,12 +39,15 @@ namespace CustomComponents
         {
             if (cdef.Is<ITColorComponent>(out var color))
             {
-                color_text.SetCustomColor(color.UIColor, color.RGBColor);
+                if (color.SkipText)
+                    color_text.SetUIColor(UIColor.White);
+                else
+                    color_text.SetCustomColor(color.UIColor, color.RGBColor);
                 if (color_icon != null)
-                    if (color.Icon)
-                        color_icon.SetCustomColor(color.UIColor, color.RGBColor);
-                    else
+                    if (color.SkipIcon)
                         color_icon.SetUIColor(UIColor.White);
+                    else
+                        color_icon.SetCustomColor(color.UIColor, color.RGBColor);
             }
             else
             {
@@ -54,12 +61,15 @@ namespace CustomComponents
         {
             if (cref.Is<ITColorComponent>(out var color))
             {
-                color_text.SetCustomColor(color.UIColor, color.RGBColor);
+                if (color.SkipText)
+                    color_text.SetCustomColor(UIColor.White, Color.white);
+                else
+                    color_text.SetCustomColor(color.UIColor, color.RGBColor);
                 if (color_icon != null)
-                    if (color.Icon)
-                        color_icon.SetCustomColor(color.UIColor, color.RGBColor);
-                    else
+                    if (color.SkipIcon)
                         color_icon.SetUIColor(UIColor.White);
+                    else
+                        color_icon.SetCustomColor(color.UIColor, color.RGBColor);
             }
             else
             {
@@ -74,12 +84,15 @@ namespace CustomComponents
         {
             if (cdef.Is<ITColorComponent>(out var color))
             {
-                color_text.SetCustomColor(color.UIColor, color.RGBColor);
+                if (color.SkipText)
+                    color_text.SetCustomColor(UIColor.White, Color.white);
+                else
+                    color_text.SetCustomColor(color.UIColor, color.RGBColor);
                 if (color_icon != null)
-                    if (color.Icon)
-                        color_icon.SetCustomColor(color.UIColor, color.RGBColor);
-                    else
+                    if (color.SkipIcon)
                         color_icon.SetUIColor(UIColor.White);
+                    else
+                        color_icon.SetCustomColor(color.UIColor, color.RGBColor);
             }
             else
             {
@@ -101,14 +114,15 @@ namespace CustomComponents
 
             if (cdef.Is<ITColorComponent>(out var color))
             {
-                color_text.SetCustomColor(color.UIColor, color.RGBColor);
-
-
+                if (color.SkipText)
+                    color_text.SetCustomColor(UIColor.White, Color.white);
+                else
+                    color_text.SetCustomColor(color.UIColor, color.RGBColor);
                 if (color_icon != null)
-                    if (color.Icon)
-                        color_icon.SetCustomColor(color.UIColor, color.RGBColor);
-                    else
+                    if (color.SkipIcon)
                         color_icon.SetUIColor(UIColor.White);
+                    else
+                        color_icon.SetCustomColor(color.UIColor, color.RGBColor);
             }
             else
             {
@@ -128,14 +142,15 @@ namespace CustomComponents
 
             if (cdef.Is<ITColorComponent>(out var color))
             {
-                color_text.SetCustomColor(color.UIColor, color.RGBColor);
-
-
+                if (color.SkipText)
+                    color_text.SetCustomColor(UIColor.White, Color.white);
+                else
+                    color_text.SetCustomColor(color.UIColor, color.RGBColor);
                 if (color_icon != null)
-                    if (color.Icon)
-                        color_icon.SetCustomColor(color.UIColor, color.RGBColor);
-                    else
+                    if (color.SkipIcon)
                         color_icon.SetUIColor(UIColor.White);
+                    else
+                        color_icon.SetCustomColor(color.UIColor, color.RGBColor);
             }
             else
             {

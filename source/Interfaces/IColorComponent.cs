@@ -13,6 +13,7 @@ namespace CustomComponents
     {
         UIColor UIColor { get; }
         Color RGBColor { get; }
-        bool Icon { get; }
+        bool SkipIcon { get; }
+        bool SkipText { get; }
     }
 }
