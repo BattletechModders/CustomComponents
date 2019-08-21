@@ -18,4 +18,22 @@ namespace CustomComponents
         [JsonIgnore]
         public Color RGBColor => Color.black;
     }
+
+
+    /// <summary>
+    /// component has specific color
+    /// </summary>
+    [CustomComponent("TColor", group: "TColorType")]
+    public class TColorComponent : SimpleCustomComponent, ITColorComponent
+    {
+        /// <summary>
+        /// color of component
+        /// </summary>
+        public UIColor UIColor { get; set; }
+
+        [JsonIgnore]
+        public Color RGBColor => Color.white;
+
+        public bool Icon { get; set; } = true;
+    }
 }

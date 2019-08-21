@@ -41,6 +41,9 @@
       <HintPath>..\..\..\BattleTech_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\..\BattleTech_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\..\BattleTech_Data\Managed\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
@@ -87,6 +90,7 @@
     <Compile Include="CCLight\Factories\IPreProcessor.cs" />
     <Compile Include="CCLight\Factories\SimpleCustom.cs" />
     <Compile Include="CCLight\Tags.cs" />
+    <Compile Include="ColorPatches\TColorExtentions.cs" />
     <Compile Include="ColorPatches\ColorExtentions.cs" />
     <Compile Include="ColorPatches\Inventory_RefreshColor.cs" />
     <Compile Include="ColorPatches\LanceMechEquipmentListItem_SetTooltipData.cs" />

@@ -8,4 +8,11 @@ namespace CustomComponents
         UIColor UIColor { get; }
         Color RGBColor { get; }
     }
+
+    public interface ITColorComponent
+    {
+        UIColor UIColor { get; }
+        Color RGBColor { get; }
+        bool Icon { get; }
+    }
 }

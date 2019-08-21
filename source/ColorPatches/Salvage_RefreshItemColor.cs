@@ -15,7 +15,9 @@ namespace CustomComponents
                 if (__instance.componentDef == null)
                     return true;
 
-                theWidget.iconBGColors.SetColor(__instance.componentDef);
+                ColorExtentions.ChangeBackColor(__instance.componentDef, theWidget);
+                TColorExtentions.ChangeTextIconColor(__instance.componentDef, theWidget);
+
                 return false;
 
             }
@@ -38,7 +40,8 @@ namespace CustomComponents
                 if (__instance.componentDef == null)
                     return true;
 
-                theWidget.iconBGColors.SetColor(__instance.componentDef);
+                ColorExtentions.ChangeBackColor(__instance.componentDef, theWidget);
+                TColorExtentions.ChangeTextIconColor(__instance.componentDef, theWidget);
 
                 return false;
 
@@ -63,7 +66,8 @@ namespace CustomComponents
                 if (__instance.componentDef == null)
                     return true;
 
-                theWidget.iconBGColors.SetColor(__instance.componentDef);
+                ColorExtentions.ChangeBackColor(__instance.componentDef, theWidget);
+                TColorExtentions.ChangeTextIconColor(__instance.componentDef, theWidget);
                 return false;
 
             }
@@ -86,7 +90,8 @@ namespace CustomComponents
             {
                 if (__instance.componentDef == null)
                     return true;
-                theWidget.iconBGColors.SetColor(__instance.componentDef);
+                ColorExtentions.ChangeBackColor(__instance.componentDef, theWidget);
+                TColorExtentions.ChangeTextIconColor(__instance.componentDef, theWidget);
 
                 return false;
             }

@@ -5,6 +5,7 @@ using System.Text;
 using BattleTech;
 using BattleTech.UI;
 using Harmony;
+using SVGImporter;
 using UnityEngine;
 
 namespace CustomComponents
@@ -14,11 +15,29 @@ namespace CustomComponents
     {
         [HarmonyPrefix]
         public static bool ChangeColor(MechLabItemSlotElement __instance, UIColorRefTracker ___backgroundColor,
-            GameObject ___fixedEquipmentOverlay, IMechLabDropTarget ___dropParent)
+            GameObject ___fixedEquipmentOverlay, IMechLabDropTarget ___dropParent,
+            UIColorRefTracker ___nameTextColor, UIColorRefTracker ___iconColor, SVGImage ___icon)
         {
 
             ___backgroundColor.SetColor(__instance.ComponentRef);
 
+            if (__instance.ComponentRef.DamageLevel == ComponentDamageLevel.Functional)
+                ___nameTextColor.SetTColor(___iconColor, __instance.ComponentRef);
+            else
+            {
+                ___iconColor.SetUIColor(UIColor.White);
+            }
+
+            if (___icon.vectorGraphics == null && Control.Settings.FixIcons && !string.IsNullOrEmpty(__instance.ComponentRef.Def.Description.Icon))
+            {
+                var loadrequest =
+                    UnityGameInstance.BattleTechGame.DataManager.CreateLoadRequest();
+                loadrequest.AddLoadRequest<SVGAsset>(BattleTechResourceType.SVGAsset, __instance.ComponentRef.Def.Description.Icon,
+                    (id, icon) =>
+                    {
+                        if (icon != null) ___icon.vectorGraphics = icon;
+                    });
+            }
 
 
             if (__instance.ComponentRef != null && __instance.ComponentRef.IsFixed)

@@ -12,7 +12,8 @@ namespace CustomComponents
         {
             try
             {
-                theWidget.iconBGColors.SetColor(__instance.weaponDef);
+                ColorExtentions.ChangeBackColor(__instance.componentDef, theWidget);
+                TColorExtentions.ChangeTextIconColor(__instance.componentDef, theWidget);
             }
             catch (Exception ex)
             {
@@ -30,7 +31,8 @@ namespace CustomComponents
         {
             try
             {
-                theWidget.iconBGColors.SetColor(__instance.componentDef);
+                ColorExtentions.ChangeBackColor(__instance.componentDef, theWidget);
+                TColorExtentions.ChangeTextIconColor(__instance.componentDef, theWidget);
             }
             catch (Exception ex)
             {

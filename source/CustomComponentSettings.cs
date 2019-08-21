@@ -98,6 +98,7 @@ namespace CustomComponents
         IsDestroyed = 1 << 12,
         AutoFix = 1 << 13,
         Filter = 1 << 14,
+        Color = 1 << 15,
 
         FULL = 0xffffff
     }
@@ -105,7 +106,7 @@ namespace CustomComponents
 
     public class CustomComponentSettings
     {
-        public DType DebugInfo = DType.EffectNull | DType.SalvageProccess | DType.ComponentInstall;
+        public DType DebugInfo = DType.Color;
 
         public bool DEBUG_DumpMechDefs = false;
         public string DEBUG_MechDefsDir = "D:/MechDefs";
@@ -159,6 +160,7 @@ namespace CustomComponents
         public bool OmniTechCostBySize = false;
         public int OmniTechInstallCost = 1;
         public bool DontUseFilter = false;
+        public bool FixIcons = true;
 
         public void Complete()
         {

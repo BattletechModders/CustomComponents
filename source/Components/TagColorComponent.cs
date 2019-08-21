@@ -22,4 +22,25 @@ namespace CustomComponents
                 RGBColor = Color.magenta;
         }
     }
+
+
+    [CustomComponent("TColorTag", group: "TColorType")]
+    public class TTagColorComponent : SimpleCustomComponent, ITColorComponent, IAfterLoad
+    {
+        [JsonIgnore] public UIColor UIColor => UIColor.Custom;
+        [JsonIgnore]
+        public Color RGBColor { get; private set; }
+
+        public bool Icon { get; set; } = true;
+
+        public string Tag { get; set; }
+
+        public void OnLoaded(Dictionary<string, object> values)
+        {
+            if (Control.Settings.ColorTagsDictionary.TryGetValue(Tag, out var color))
+                RGBColor = color;
+            else
+                RGBColor = Color.white;
+        }
+    }
 }

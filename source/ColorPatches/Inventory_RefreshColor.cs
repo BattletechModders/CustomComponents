@@ -11,14 +11,9 @@ namespace CustomComponents
         [HarmonyPrefix]
         public static bool ChangeColor(InventoryDataObject_InventoryGear __instance, InventoryItemElement theWidget)
         {
-            try
-            {
-                theWidget.iconBGColors.SetColor(__instance.componentRef);
-            }
-            catch (Exception ex)
-            {
-                Control.LogError(ex);
-            }
+            ColorExtentions.ChangeBackColor(__instance.componentRef.Def, theWidget);
+            TColorExtentions.ChangeTextIconColor(__instance.componentRef.Def, theWidget);
+
             return false;
         }
     }
@@ -29,14 +24,8 @@ namespace CustomComponents
         [HarmonyPrefix]
         public static bool ChangeColor(InventoryDataObject_InventoryWeapon __instance, InventoryItemElement theWidget)
         {
-            try
-            {
-                theWidget.iconBGColors.SetColor(__instance.componentRef);
-            }
-            catch (Exception ex)
-            {
-                Control.LogError(ex);
-            }
+            ColorExtentions.ChangeBackColor(__instance.componentRef.Def, theWidget);
+            TColorExtentions.ChangeTextIconColor(__instance.componentRef.Def, theWidget);
             return false;
         }
     }
@@ -47,14 +36,9 @@ namespace CustomComponents
         [HarmonyPrefix]
         public static bool ChangeColor(InventoryItemElement __instance, MechComponentRef ___componentRef)
         {
-            try
-            {
-                __instance.iconBGColors.SetColor(___componentRef);
-            }
-            catch (Exception ex)
-            {
-                Control.LogError(ex);
-            }
+            ColorExtentions.ChangeBackColor(___componentRef.Def, __instance);
+            TColorExtentions.ChangeTextIconColor(___componentRef.Def, __instance);
+
             return false;
         }
     }
@@ -65,14 +49,8 @@ namespace CustomComponents
         [HarmonyPrefix]
         public static bool ChangeColor(InventoryItemElement_NotListView __instance, MechComponentRef ___componentRef)
         {
-            try
-            {
-                __instance.iconBGColors.SetColor(___componentRef);
-            }
-            catch (Exception ex)
-            {
-                Control.LogError(ex);
-            }
+            ColorExtentions.ChangeBackColor(___componentRef.Def, __instance);
+            TColorExtentions.ChangeTextIconColor(___componentRef.Def, __instance);
             return false;
         }
     }
@@ -84,14 +62,8 @@ namespace CustomComponents
         [HarmonyPrefix]
         public static bool ChangeColor(ListElementController_InventoryGear_NotListView __instance, InventoryItemElement_NotListView theWidget)
         {
-            try
-            {
-                theWidget.iconBGColors.SetColor(__instance.componentRef);
-            }
-            catch (Exception ex)
-            {
-                Control.LogError(ex);
-            }
+            ColorExtentions.ChangeBackColor(__instance.componentRef.Def, theWidget);
+            TColorExtentions.ChangeTextIconColor(__instance.componentRef.Def, theWidget);
             return false;
         }
     }
@@ -102,14 +74,8 @@ namespace CustomComponents
         [HarmonyPrefix]
         public static bool ChangeColor(ListElementController_InventoryWeapon_NotListView __instance, InventoryItemElement_NotListView theWidget)
         {
-            try
-            {
-                theWidget.iconBGColors.SetColor(__instance.componentRef);
-            }
-            catch (Exception ex)
-            {
-                Control.LogError(ex);
-            }
+            ColorExtentions.ChangeBackColor(__instance.componentRef.Def, theWidget);
+            TColorExtentions.ChangeTextIconColor(__instance.componentRef.Def, theWidget);
             return false;
         }
     }

@@ -26,4 +26,27 @@ namespace CustomComponents
                 RGBColor = UnityEngine.Color.magenta;
         }
     }
+
+    [CustomComponent("TRGBColor", group: "TColorType")]
+    public class TRGBColorComponent : SimpleCustomComponent, ITColorComponent, IAfterLoad
+    {
+        [JsonIgnore]
+        public UIColor UIColor => UIColor.Custom;
+        [JsonIgnore]
+        public Color RGBColor { get; set; }
+
+        public bool Icon { get; set; } = true;
+
+        public string Color { get; set; }
+
+        public void OnLoaded(Dictionary<string, object> values)
+        {
+            if (ColorUtility.TryParseHtmlString(Color, out var color))
+            {
+                RGBColor = color;
+            }
+            else
+                RGBColor = UnityEngine.Color.magenta;
+        }
+    }
 }

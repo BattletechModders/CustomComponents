@@ -21,6 +21,22 @@ namespace CustomComponents
 
         public bool CheckFilter(MechLabPanel panel)
         {
+            if (panel == null)
+            {
+                Control.LogError("TonnageLimited.CheckFilter: MechLab is null");
+                return true;
+            }
+            if (panel.activeMechDef == null)
+            {
+                Control.LogError("TonnageLimited.CheckFilter: MechDef is null");
+                return true;
+            }
+            if (panel.activeMechDef.Chassis == null)
+            {
+                Control.LogError("TonnageLimited.CheckFilter: MechDef.Chassis is null");
+                return true;
+            }
+
             var tonnage = panel.activeMechDef.Chassis.Tonnage;
             return tonnage >= Min && tonnage <= Max;
         }
