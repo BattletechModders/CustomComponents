@@ -30,7 +30,7 @@ namespace CustomComponents
     }
 
     [HarmonyPatch(typeof(InventoryDataObject_SalvageWeapon), "RefreshItemColor")]
-    public static class InInventoryDataObject_SalvageWeapon_RefreshItemColor
+    public static class InventoryDataObject_SalvageWeapon_RefreshItemColor
     {
         [HarmonyPrefix]
         public static bool ChangeColor(InventoryDataObject_SalvageWeapon __instance, InventoryItemElement theWidget)
@@ -40,8 +40,8 @@ namespace CustomComponents
                 if (__instance.componentDef == null)
                     return true;
 
-                ColorExtentions.ChangeBackColor(__instance.componentDef, theWidget);
-                TColorExtentions.ChangeTextIconColor(__instance.componentDef, theWidget);
+                ColorExtentions.ChangeBackColor(__instance.weaponDef ?? __instance.componentDef, theWidget);
+                TColorExtentions.ChangeTextIconColor(__instance.weaponDef ?? __instance.componentDef, theWidget);
 
                 return false;
 
@@ -90,8 +90,8 @@ namespace CustomComponents
             {
                 if (__instance.componentDef == null)
                     return true;
-                ColorExtentions.ChangeBackColor(__instance.componentDef, theWidget);
-                TColorExtentions.ChangeTextIconColor(__instance.componentDef, theWidget);
+                ColorExtentions.ChangeBackColor(__instance.weaponDef ?? __instance.componentDef, theWidget);
+                TColorExtentions.ChangeTextIconColor(__instance.weaponDef ?? __instance.componentDef, theWidget);
 
                 return false;
             }
@@ -102,4 +102,48 @@ namespace CustomComponents
             }
         }
     }
+
+
+    [HarmonyPatch(typeof(InventoryDataObject_SalvageFullMech), "RefreshItemColor")]
+    public static class InInventoryDataObject_SalvageFullMech_RefreshItemColor
+    {
+        [HarmonyPrefix]
+        public static void ChangeColor(InventoryDataObject_SalvageFullMech __instance, InventoryItemElement theWidget)
+        {
+            TColorExtentions.ResetTextIconColor(theWidget);
+        }
+    }
+
+    [HarmonyPatch(typeof(ListElementController_SalvageFullMech_NotListView), "RefreshItemColor")]
+    public static class ListElementController_SalvageFullMech_NotListView_RefreshItemColor
+    {
+        [HarmonyPrefix]
+        public static void ChangeColor(ListElementController_SalvageFullMech_NotListView __instance,
+            InventoryItemElement_NotListView theWidget)
+        {
+            TColorExtentions.ResetTextIconColor(theWidget);
+        }
+    }
+
+    [HarmonyPatch(typeof(InventoryDataObject_SalvageMechPart), "RefreshItemColor")]
+    public static class InInventoryDataObject_SalvageMechPart_RefreshItemColor
+    {
+        [HarmonyPrefix]
+        public static void ChangeColor(InventoryDataObject_SalvageMechPart __instance, InventoryItemElement theWidget)
+        {
+            TColorExtentions.ResetTextIconColor(theWidget);
+        }
+    }
+
+    [HarmonyPatch(typeof(ListElementController_SalvageMechPart_NotListView), "RefreshItemColor")]
+    public static class ListElementController_SalvageMechPart_NotListView_RefreshItemColor
+    {
+        [HarmonyPrefix]
+        public static void ChangeColor(ListElementController_SalvageMechPart_NotListView __instance,
+            InventoryItemElement_NotListView theWidget)
+        {
+            TColorExtentions.ResetTextIconColor(theWidget);
+        }
+    }
+
 }

@@ -12,8 +12,8 @@ namespace CustomComponents
         {
             try
             {
-                ColorExtentions.ChangeBackColor(__instance.componentDef, theWidget);
-                TColorExtentions.ChangeTextIconColor(__instance.componentDef, theWidget);
+                ColorExtentions.ChangeBackColor(__instance.weaponDef, theWidget);
+                TColorExtentions.ChangeTextIconColor(__instance.weaponDef, theWidget);
             }
             catch (Exception ex)
             {

@@ -131,6 +131,7 @@ namespace CustomComponents
             }
         }
 
+
         public static void ChangeTextIconColor(MechComponentDef cdef, InventoryItemElement theWidget)
         {
             var color_text = theWidget.itemName.GetComponent<UIColorRefTracker>();
@@ -158,5 +159,28 @@ namespace CustomComponents
                 color_icon.SetUIColor(UIColor.White);
             }
         }
+
+        public static void ResetTextIconColor(InventoryItemElement theWidget)
+        {
+            var color_text = theWidget.itemName.GetComponent<UIColorRefTracker>();
+            var color_icon = theWidget.icon.GetComponent<UIColorRefTracker>();
+            if (color_icon != null)
+            {
+                color_icon.SetUIColor(UIColor.White);
+            }
+            color_text.SetUIColor(UIColor.White);
+        }
+
+        internal static void ResetTextIconColor(InventoryItemElement_NotListView theWidget)
+        {
+            var color_text = theWidget.itemName.GetComponent<UIColorRefTracker>();
+            var color_icon = theWidget.icon.GetComponent<UIColorRefTracker>();
+            if (color_icon != null)
+            {
+                color_icon.SetUIColor(UIColor.White);
+            }
+            color_text.SetUIColor(UIColor.White);
+        }
+
     }
 }
