@@ -78,11 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoFixer\AutoFixer.cs" />
-    <Compile Include="AutoFixerPreloader\AutoFixPreloader.cs" />
     <Compile Include="AutoFixer\Patches\SimGameState_InitCompanyStats_Patch.cs" />
-    <Compile Include="AutoFixerPreloader\Patches\SimGameState_RequestDataManagerResources_Patch.cs" />
-    <Compile Include="AutoFixerPreloader\Patches\SkirmishMechBayPanel_RequestResources_Patch.cs" />
-    <Compile Include="AutoFixerPreloader\Patches\SkirmishSettings_Beta_LoadLanceConfiguratorData_Patch.cs" />
     <Compile Include="Categories\CategoriesExtentions.cs" />
     <Compile Include="Categories\Category.cs" />
     <Compile Include="CCLight\Factories\SimpleCustomChassis.cs" />

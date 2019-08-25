@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using BattleTech;
 using BattleTech.UI;
+using GraphCoroutines;
 using Harmony;
 using SVGImporter;
 using UnityEngine;
@@ -19,51 +20,64 @@ namespace CustomComponents
             UIColorRefTracker ___nameTextColor, UIColorRefTracker ___iconColor, SVGImage ___icon)
         {
 
-            ___backgroundColor.SetColor(__instance.ComponentRef);
-
-            if (__instance.ComponentRef.DamageLevel == ComponentDamageLevel.Functional)
-                ___nameTextColor.SetTColor(___iconColor, __instance.ComponentRef);
-            else
+            try
             {
-                ___iconColor.SetUIColor(UIColor.White);
-            }
+                ___backgroundColor.SetColor(__instance.ComponentRef);
 
-            if (___icon.vectorGraphics == null && Control.Settings.FixIcons && !string.IsNullOrEmpty(__instance.ComponentRef.Def.Description.Icon))
-            {
-                var loadrequest =
-                    UnityGameInstance.BattleTechGame.DataManager.CreateLoadRequest();
-                loadrequest.AddLoadRequest<SVGAsset>(BattleTechResourceType.SVGAsset, __instance.ComponentRef.Def.Description.Icon,
-                    (id, icon) =>
-                    {
-                        if (icon != null) ___icon.vectorGraphics = icon;
-                    });
-            }
-
-
-            if (__instance.ComponentRef != null && __instance.ComponentRef.IsFixed)
-            {
-                var preinstalled = false;
-                if (___dropParent is MechLabLocationWidget widget)
+                if (__instance.ComponentRef.DamageLevel == ComponentDamageLevel.Functional)
+                    ___nameTextColor.SetTColor(___iconColor, __instance.ComponentRef);
+                else
                 {
-                    var helper = new LocationHelper(widget);
-                    preinstalled = __instance.ComponentRef.IsModuleFixed(helper.mechLab.activeMechDef);
+                    ___iconColor.SetUIColor(UIColor.White);
+                }
+
+                if (___icon.vectorGraphics == null && Control.Settings.FixIcons &&
+                    !string.IsNullOrEmpty(__instance.ComponentRef.Def.Description.Icon))
+                {
+                    var loadrequest =
+                        UnityGameInstance.BattleTechGame.DataManager.CreateLoadRequest();
+                    loadrequest.AddLoadRequest<SVGAsset>(BattleTechResourceType.SVGAsset,
+                        __instance.ComponentRef.Def.Description.Icon,
+                        (id, icon) =>
+                        {
+                            if (icon != null) ___icon.vectorGraphics = icon;
+                        });
+                    loadrequest.ProcessRequests();
                 }
 
 
-                if (!Control.Settings.UseDefaultFixedColor)
+                if (__instance.ComponentRef != null && __instance.ComponentRef.IsFixed)
                 {
-                    ___fixedEquipmentOverlay.SetActive(true);
-                    var color_tracker = ___fixedEquipmentOverlay.GetComponent<UIColorRefTracker>();
-                    color_tracker.colorRef.UIColor = UIColor.Custom;
-                    color_tracker.colorRef.color = preinstalled ? Control.Settings.PreinstalledOverlayColor : Control.Settings.DefaultFlagOverlayColor;
-                    color_tracker.RefreshUIColors();
+                    var preinstalled = false;
+                    if (___dropParent is MechLabLocationWidget widget)
+                    {
+                        var helper = new LocationHelper(widget);
+                        preinstalled = __instance.ComponentRef.IsModuleFixed(helper.mechLab.activeMechDef);
+                    }
+
+
+                    if (!Control.Settings.UseDefaultFixedColor)
+                    {
+                        ___fixedEquipmentOverlay.SetActive(true);
+                        var color_tracker = ___fixedEquipmentOverlay.GetComponent<UIColorRefTracker>();
+                        color_tracker.colorRef.UIColor = UIColor.Custom;
+                        color_tracker.colorRef.color = preinstalled
+                            ? Control.Settings.PreinstalledOverlayColor
+                            : Control.Settings.DefaultFlagOverlayColor;
+                        color_tracker.RefreshUIColors();
+                    }
+                    else
+                        ___fixedEquipmentOverlay.SetActive(preinstalled);
                 }
                 else
-                    ___fixedEquipmentOverlay.SetActive(preinstalled);
+                {
+                    ___fixedEquipmentOverlay.SetActive(false);
+                }
             }
-            else
+            catch (Exception e)
             {
-                ___fixedEquipmentOverlay.SetActive(false);
+                Control.LogError(e);
+                return true;
             }
 
             return false;

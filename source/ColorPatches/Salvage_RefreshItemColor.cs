@@ -110,7 +110,14 @@ namespace CustomComponents
         [HarmonyPrefix]
         public static void ChangeColor(InventoryDataObject_SalvageFullMech __instance, InventoryItemElement theWidget)
         {
-            TColorExtentions.ResetTextIconColor(theWidget);
+            try
+            {
+                TColorExtentions.ResetTextIconColor(theWidget);
+            }
+            catch (Exception e)
+            {
+                Control.LogError(e);
+            }
         }
     }
 
@@ -121,7 +128,14 @@ namespace CustomComponents
         public static void ChangeColor(ListElementController_SalvageFullMech_NotListView __instance,
             InventoryItemElement_NotListView theWidget)
         {
-            TColorExtentions.ResetTextIconColor(theWidget);
+            try
+            {
+                TColorExtentions.ResetTextIconColor(theWidget);
+            }
+            catch (Exception e)
+            {
+                Control.LogError(e);
+            }
         }
     }
 
@@ -131,7 +145,14 @@ namespace CustomComponents
         [HarmonyPrefix]
         public static void ChangeColor(InventoryDataObject_SalvageMechPart __instance, InventoryItemElement theWidget)
         {
-            TColorExtentions.ResetTextIconColor(theWidget);
+            try
+            {
+                TColorExtentions.ResetTextIconColor(theWidget);
+            }
+            catch (Exception e)
+            {
+                Control.LogError(e);
+            }
         }
     }
 
@@ -142,7 +163,14 @@ namespace CustomComponents
         public static void ChangeColor(ListElementController_SalvageMechPart_NotListView __instance,
             InventoryItemElement_NotListView theWidget)
         {
-            TColorExtentions.ResetTextIconColor(theWidget);
+            try
+            {
+                TColorExtentions.ResetTextIconColor(theWidget);
+            }
+            catch (Exception e)
+            {
+                Control.LogError(e);
+            }
         }
     }
 

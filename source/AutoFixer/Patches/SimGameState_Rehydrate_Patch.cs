@@ -17,15 +17,6 @@ namespace CustomComponents.Patches
             {
                 var mechDefs = ___ActiveMechs.Values.Union(___ReadyingMechs.Values).ToList();
                 AutoFixer.Shared.FixSavedMech(mechDefs, __instance);
-
-                foreach (var mechDef in mechDefs)
-                {
-                    string value = $"{mechDef.Description.Id}({mechDef.Description.UIName}) [";
-                    if(mechDef.MechTags != null && !mechDef.MechTags.IsEmpty)
-                        foreach (var mechDefMechTag in mechDef.MechTags)
-                            value += mechDefMechTag + " ";
-                    Control.LogError(value);
-                }
             }
             catch (Exception e)
             {

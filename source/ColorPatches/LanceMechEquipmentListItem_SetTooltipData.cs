@@ -1,4 +1,5 @@
-﻿using BattleTech;
+﻿using System;
+using BattleTech;
 using BattleTech.UI;
 using Harmony;
 
@@ -24,9 +25,16 @@ namespace CustomComponents
         public static void SetColor(LanceMechEquipmentListItem __instance,
             MechComponentDef MechDef, UIColorRefTracker ___backgroundColor, UIColorRefTracker ___itemTextColor)
         {
-            ___backgroundColor.SetColor(MechDef);
-            if(LanceMechEquipmentListItem_SetData.DamageLevel == ComponentDamageLevel.Functional)
-                ___itemTextColor.SetTColor(null, MechDef);
+            try
+            {
+                ___backgroundColor.SetColor(MechDef);
+                if (LanceMechEquipmentListItem_SetData.DamageLevel == ComponentDamageLevel.Functional)
+                    ___itemTextColor.SetTColor(null, MechDef);
+            }
+            catch (Exception e)
+            {
+                Control.LogError(e);
+            }
         }
     }
 }
