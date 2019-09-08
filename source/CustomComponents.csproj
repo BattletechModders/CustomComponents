@@ -15,7 +15,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>embedded</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\</OutputPath>
     <DefineConstants>TRACE;DEBUG;CCDEBUG</DefineConstants>
@@ -24,7 +24,7 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -43,22 +43,32 @@
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\..\..\BattleTech_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\..\BattleTech_Data\Managed\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="System" />
+    <Reference Include="System">
+      <HintPath>..\..\BattleTech_Data\Managed\System.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System.Core">
       <HintPath>..\..\BattleTech_Data\Managed\System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="System.Data" />
+    <Reference Include="System.Data" >
+      <HintPath>..\..\BattleTech_Data\Managed\System.Data.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System.Runtime.Serialization">
       <HintPath>..\..\BattleTech_Data\Managed\System.Runtime.Serialization.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml" >
+      <HintPath>..\..\BattleTech_Data\Managed\System.Xml.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq">
       <HintPath>..\..\BattleTech_Data\Managed\System.Xml.Linq.dll</HintPath>
       <Private>False</Private>
