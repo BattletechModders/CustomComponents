@@ -41,6 +41,7 @@ namespace CustomComponents
             Control.LogDebug(DType.ClearInventory, $"Createing Mech {chassis.Description.Id} - {original.Description.Id}");
             var result = new MechDef(chassis, simuid, original);
             DEBUGTOOLS.ShowInventory(result);
+            DEBUGTOOLS.ShowInventory(original);
             result.SetInventory(DefaultHelper.ClearInventory(original, state));
             DEBUGTOOLS.ShowInventory(result);
             return result;

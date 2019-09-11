@@ -298,12 +298,26 @@ namespace CustomComponents
 
         public static MechComponentRef[] ClearInventory(MechDef source, SimGameState state)
         {
+
             Control.LogDebug(DType.ClearInventory, "Clearing Inventory");
 
             var list = source.Inventory.ToList();
+            var result_list = source.Inventory
+                .Where(i => i.IsFixed || i.IsDefault() ||
+                            (i.SimGameUID != null && i.SimGameUID.StartsWith("FixedEquipment")))
+                .Select(i =>
+                    {
+                        var result = new MechComponentRef(i, i.SimGameUID);
+                        result.DataManager = i.DataManager;
+                        result.RefreshComponentDef();
+                        if(i.IsFixed || i.IsDefault() ||
+                           i.SimGameUID != null && i.SimGameUID.StartsWith("FixedEquipment"))
+                            result.SetData(i.HardpointSlot, ComponentDamageLevel.Functional, true);
+                        return result;
+                    }
+                    ).ToList();
 
-            var result_list = list.Where(i => i.IsFixed).ToList();
-
+            
             for (int i = list.Count - 1; i >= 0; i--)
             {
                 Control.LogDebug(DType.ClearInventory, $"- {list[i].ComponentDefID} - {(list[i].Def == null ? "NULL" : list[i].SimGameUID)}");
@@ -314,7 +328,7 @@ namespace CustomComponents
                     list[i].SetSimGameUID(state.GenerateSimGameUID());
                 }
 
-                if (list[i].IsFixed)
+                if (list[i].IsFixed || list[i].IsDefault() || list[i].SimGameUID != null && list[i].SimGameUID.StartsWith("FixedEquipment"))
                 {
                     Control.LogDebug(DType.ClearInventory, "-- fixed - skipping");
                     continue;
@@ -331,15 +345,18 @@ namespace CustomComponents
                 clearInventoryDelegate(source, result_list, state);
             }
 
+            Control.LogDebug(DType.ClearInventory, $"- setting guids");
             foreach (var item in result_list)
             {
                 if(string.IsNullOrEmpty(item.SimGameUID))
                     item.SetSimGameUID(state.GenerateSimGameUID());
-                Control.LogDebug(DType.ClearInventory, $"- {item.ComponentDefID} - {item.SimGameUID}");
+                Control.LogDebug(DType.ClearInventory, $"-- {item.ComponentDefID} - {item.SimGameUID}");
             }
 
             return result_list.ToArray();
         }
+
+
         #endregion
 
     }

@@ -15,6 +15,7 @@ namespace CustomComponents
             loadRequest.AddAllOfTypeLoadRequest<UpgradeDef>(BattleTechResourceType.UpgradeDef, null);
             loadRequest.AddAllOfTypeLoadRequest<WeaponDef>(BattleTechResourceType.WeaponDef, null);
             loadRequest.AddAllOfTypeLoadRequest<AmmunitionBoxDef>(BattleTechResourceType.AmmunitionBoxDef, null);
+            loadRequest.AddAllOfTypeLoadRequest<JumpJetDef>(BattleTechResourceType.AmmunitionBoxDef, null);
             loadRequest.ProcessRequests();
         }
     }

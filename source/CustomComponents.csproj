@@ -105,6 +105,7 @@
     <Compile Include="Fixes\ReflectionCache_Patch.cs" />
     <Compile Include="Fixes\MechDef_InsertFixedEquipmentIntoInventory.cs" />
     <Compile Include="Fixes\SimGameState_CreateComponentInstallWorkOrder.cs" />
+    <Compile Include="Fixes\SimGameState_RequestDataManagerResources_Patch.cs" />
     <Compile Include="Fixes\SkirmishMechBayPanel_RequestResources_Patch.cs" />
     <Compile Include="Fixes\SkirmishSettings_Beta_LoadLanceConfiguratorData_Patch.cs" />
     <Compile Include="Helpers\ContractHelper.cs" />

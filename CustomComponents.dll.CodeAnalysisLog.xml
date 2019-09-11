@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="c:\program files (x86)\microsoft visual studio\2017\community\team tools\static analysis tools\fxcop\Xml\CodeAnalysisReport.xsl"?>
+<FxCopReport Version="15.0">
+ <Targets>
+  <Target Name="z:\Steam\steamapps\common\BATTLETECH\ModsCC\CustomComponents\CustomComponents.dll">
+   <Modules>
+    <Module Name="customcomponents.dll">
+     <Namespaces>
+      <Namespace Name="CustomComponents">
+       <Types>
+        <Type Name="FormulaEvaluator" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Messages>
+          <Message TypeName="TypesThatOwnDisposableFieldsShouldBeDisposable" Category="Microsoft.Design" CheckId="CA1001" Status="Active" Created="2019-09-09 15:13:45Z" FixCategory="DependsOnFix">
+           <Issue Name="DependsOnFix" Certainty="95" Level="CriticalError">Реализуйте IDisposable для 'FormulaEvaluator', поскольку он создает члены следующих типов IDisposable: 'DataTable'. Если 'FormulaEvaluator' ранее был доставлен, добавление в данный тип новых членов, реализующих IDisposable, считается критическим изменением для существующих потребителей.</Issue>
+          </Message>
+         </Messages>
+        </Type>
+       </Types>
+      </Namespace>
+      <Namespace Name="CustomComponents.Patches">
+       <Types>
+        <Type Name="SkirmishMechBayPanel_LanceConfiguratorDataLoaded_Patch" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Members>
+          <Member Name="#FixDefaults(BattleTech.UI.SkirmishMechBayPanel)" Kind="Method" Static="True" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="Не ликвидировать объекты несколько раз" Category="Microsoft.Usage" CheckId="CA2202" Status="Active" Created="2019-09-09 15:13:45Z" FixCategory="DependsOnFix">
+             <Issue Certainty="75" Level="Warning" Path="z:\Steam\steamapps\common\BATTLETECH\ModsCC\CustomComponents\source\AutoFixer\Patches" File="SkirmishMechBayPanel_LanceConfiguratorDataLoaded_Patch.cs" Line="33">Объект "'fs'" можно удалять более одного раза в методе 'SkirmishMechBayPanel_LanceConfiguratorDataLoaded_Patch.FixDefaults(SkirmishMechBayPanel)'. Чтобы избежать исключения System.ObjectDisposedException, следует вызывать метод "Dispose" для объекта только один раз.: Lines: 33</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+       </Types>
+      </Namespace>
+     </Namespaces>
+    </Module>
+   </Modules>
+  </Target>
+ </Targets>
+ <Rules>
+  <Rule TypeName="TypesThatOwnDisposableFieldsShouldBeDisposable" Category="Microsoft.Design" CheckId="CA1001">
+   <Name>Типы, которым принадлежат освобождаемые поля, должны быть освобождаемыми</Name>
+   <Description>Типы, объявляющие освобождаемые члены, также должны реализовывать IDisposable. Если типу не принадлежат какие-либо неуправляемые ресурсы, нет необходимости реализовывать для него метод завершения.</Description>
+   <Resolution Name="DependsOnFix">Реализуйте IDisposable для {0}, поскольку он создает члены следующих типов IDisposable: {1}. Если {0} ранее был доставлен, добавление в данный тип новых членов, реализующих IDisposable, считается критическим изменением для существующих потребителей.</Resolution>
+   <Owner />
+   <Url>http://msdn.microsoft.com/library/ms182172.aspx</Url>
+   <Email>[none]</Email>
+   <MessageLevel Certainty="95">CriticalError</MessageLevel>
+   <File Name="designrules.dll" Version="15.0.0.0" />
+  </Rule>
+  <Rule TypeName="Не ликвидировать объекты несколько раз" Category="Microsoft.Usage" CheckId="CA2202">
+   <Name>Не ликвидировать объекты несколько раз</Name>
+   <Description>Правильно реализованный метод Dispose может вызываться неоднократно без создания исключения. Однако такой гарантии нет, и чтобы предотвратить создание System.ObjectDisposedException, не следует вызывать метод Dispose для объекта более одного раза.</Description>
+   <Resolution Name="Default">Объект "{0}" можно удалять более одного раза в методе {1}. Чтобы избежать исключения System.ObjectDisposedException, следует вызывать метод "Dispose" для объекта только один раз.: Lines: 33</Resolution>
+   <Owner>RuleOwner</Owner>
+   <Url>http://msdn.microsoft.com/library/ms182334.aspx</Url>
+   <Email />
+   <MessageLevel Certainty="75">Warning</MessageLevel>
+   <File Name="dataflowrules.dll" Version="15.0.0.0" />
+  </Rule>
+ </Rules>
+ <Localized>
+  <String Key="Category">Категория</String>
+  <String Key="Certainty">Достоверность</String>
+  <String Key="CollapseAll">Свернуть все</String>
+  <String Key="CheckId">ИД проверки</String>
+  <String Key="Error">Ошибка</String>
+  <String Key="Errors">ошибки</String>
+  <String Key="ExpandAll">Развернуть все</String>
+  <String Key="Help">Справка</String>
+  <String Key="Line">Строка</String>
+  <String Key="Messages">сообщения</String>
+  <String Key="LocationNotStoredInPdb">[расположение не сохранено в PDB]</String>
+  <String Key="Project">Проект</String>
+  <String Key="Resolution">Разрешение</String>
+  <String Key="Rule">Правило</String>
+  <String Key="RuleFile">Файл правил</String>
+  <String Key="RuleDescription">Описание правила</String>
+  <String Key="Source">Источник</String>
+  <String Key="Status">Состояние</String>
+  <String Key="Target">Цель</String>
+  <String Key="Warning">Предупреждение</String>
+  <String Key="Warnings">предупреждения</String>
+  <String Key="ReportTitle">Отчет по анализу кода</String>
+ </Localized>
+</FxCopReport>
