@@ -59,6 +59,10 @@ namespace CustomComponents
             {
                 return mechComponentDef.Description.Id;
             }
+            else if (target is ChassisDef chassisDef)
+            {
+                return chassisDef.Description.Id;
+            }
 
             var descriptionProperty = target.GetType().GetProperty(nameof(MechComponentDef.Description), typeof(DescriptionDef));
             var description = descriptionProperty?.GetValue(target, null) as DescriptionDef;

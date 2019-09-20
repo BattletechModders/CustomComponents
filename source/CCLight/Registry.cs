@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-
 namespace CustomComponents
 {
     public static class Registry
@@ -13,7 +12,6 @@ namespace CustomComponents
         private static readonly HashSet<string> SimpleIdentifiers = new HashSet<string>();
 
         private static Dictionary<Type, CustomComponentAttribute> attributes = new Dictionary<Type, CustomComponentAttribute>() ;
-
 
         public static CustomComponentAttribute GetAttributeByType(Type type)
         {
@@ -98,7 +96,17 @@ namespace CustomComponents
 
         internal static void ProcessCustomFactories(object target, Dictionary<string, object> values, bool replace = true)
         {
+            if (target == null)
+            {
+                Control.LogError($"NULL item loaded");
+                foreach (var value in values)
+                {
+                    Control.LogError($"- {value.Key}: {value.Value}");
+                }
+            }
+
             var identifier = Database.Identifier(target);
+
             if (identifier == null)
             {
                 return;
@@ -107,18 +115,20 @@ namespace CustomComponents
             Control.LogDebug(DType.CCLoading, $"ProcessCustomCompontentFactories for {target.GetType()} ({target.GetHashCode()})");
             Control.LogDebug(DType.CCLoading, $"- {identifier}");
 
-            if(replace)
-            foreach (var preProcessor in PreProcessors)
+            if (replace)
             {
-                preProcessor.PreProcess(target, values);
+                foreach (var preProcessor in PreProcessors)
+                {
+                    preProcessor.PreProcess(target, values);
+                }
             }
 
 #if CCDEBUG
             bool loaded = false;
 #endif
             foreach (var factory in Factories)
+            {
                 foreach (var component in factory.Create(target, values))
-
                 {
 #if CCDEBUG
                     loaded = true;
@@ -136,6 +146,7 @@ namespace CustomComponents
                         load.OnLoaded(values);
                     }
                 }
+            }
 
 #if CCDEBUG
             if (loaded)

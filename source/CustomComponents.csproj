@@ -101,6 +101,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdjustDescription\AdjustDescriptionPreProcessor.cs" />
     <Compile Include="AutoFixer\AutoFixer.cs" />
     <Compile Include="AutoFixer\Patches\SimGameState_InitCompanyStats_Patch.cs" />
     <Compile Include="Categories\CategoriesExtentions.cs" />
@@ -109,7 +110,8 @@
     <Compile Include="CCLight\IReplaceIdentifier.cs" />
     <Compile Include="CCLight\Factories\IPreProcessor.cs" />
     <Compile Include="CCLight\Factories\SimpleCustom.cs" />
-    <Compile Include="CCLight\Tags.cs" />
+    <Compile Include="Tags\Tags.cs" />
+    <Compile Include="Cheats\Patches\JSONSerializationUtility_RehydrateObjectFromDictionary_Patch2.cs" />
     <Compile Include="ColorPatches\TColorExtentions.cs" />
     <Compile Include="ColorPatches\ColorExtentions.cs" />
     <Compile Include="ColorPatches\Inventory_RefreshColor.cs" />
@@ -134,7 +136,7 @@
     <Compile Include="Fixes\SkirmishSettings_Beta_LoadLanceConfiguratorData_Patch.cs" />
     <Compile Include="Helpers\ContractHelper.cs" />
     <Compile Include="Helpers\SettingsResourceTools.cs" />
-    <Compile Include="Interfaces\IAdjustDescription.cs" />
+    <Compile Include="AdjustDescription\IAdjustDescription.cs" />
     <Compile Include="Defaults\IDefault.cs" />
     <Compile Include="Interfaces\IIsDestroyed.cs" />
     <Compile Include="SorterLabInventory\InventorySorter.cs" />
