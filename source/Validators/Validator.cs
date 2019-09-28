@@ -191,47 +191,53 @@ namespace CustomComponents
             int num = 0;
             int num2 = 0;
             WeaponDef weaponDef = drop_item.ComponentRef.Def as WeaponDef;
-            switch (weaponDef.Category)
+            if (weaponDef.WeaponCategoryValue.IsBallistic)
             {
-                case WeaponCategory.Ballistic:
-                    num = location.currentBallisticCount;
-                    num2 = location.totalBallisticHardpoints;
-                    break;
-                case WeaponCategory.Energy:
-                    num = location.currentEnergyCount;
-                    num2 = location.totalEnergyHardpoints;
-                    break;
-                case WeaponCategory.Missile:
-                    num = location.currentMissileCount;
-                    num2 = location.totalMissileHardpoints;
-                    break;
-                case WeaponCategory.AntiPersonnel:
-                    num = location.currentSmallCount;
-                    num2 = location.totalSmallHardpoints;
-                    break;
+                num = location.currentBallisticCount;
+                num2 = location.totalBallisticHardpoints;
+            }
+            else if (weaponDef.WeaponCategoryValue.IsEnergy)
+            {
+                num = location.currentEnergyCount;
+                num2 = location.totalEnergyHardpoints;
+            }
+            else if (weaponDef.WeaponCategoryValue.IsMissile)
+            {
+                num = location.currentMissileCount;
+                num2 = location.totalMissileHardpoints;
+            }
+            else if (weaponDef.WeaponCategoryValue.IsSupport)
+            {
+                num = location.currentSmallCount;
+                num2 = location.totalSmallHardpoints;
             }
 
-            if (num2 == 0)
-                return $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.";
-
-            if (num == num2)
+            if (num2 == 0 || num == num2 || num > num2)
             {
-                var mech = location.mechLab.activeMechDef;
-
-                var replace = location.LocalInventory.FirstOrDefault(i =>
-                    (i?.ComponentRef?.Def is WeaponDef def)
-                    && def.Category == weaponDef.Category
-                    && def.Description.Id != drop_item.ComponentRef.ComponentDefID
-                    && !i.ComponentRef.IsModuleFixed(mech));
-
-                if (replace == null)
-                    return
-                        $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.";
-                else
-                    changes.Add(new RemoveChange(location.widget.loadout.Location, replace));
+                return $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available hardpoints.";
             }
-            else if (num > num2)
-                return $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.";
+
+            //if (num2 == 0)
+            //    return $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.";
+
+            //if (num == num2)
+            //{
+            //    var mech = location.mechLab.activeMechDef;
+
+            //    var replace = location.LocalInventory.FirstOrDefault(i =>
+            //        (i?.ComponentRef?.Def is WeaponDef def)
+            //        && def.Category == weaponDef.Category
+            //        && def.Description.Id != drop_item.ComponentRef.ComponentDefID
+            //        && !i.ComponentRef.IsModuleFixed(mech));
+
+            //    if (replace == null)
+            //        return
+            //            $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.";
+            //    else
+            //        changes.Add(new RemoveChange(location.widget.loadout.Location, replace));
+            //}
+            //else if (num > num2)
+            //    return $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.";
 
             return string.Empty;
         }
