@@ -58,7 +58,7 @@ namespace CustomComponents
         internal static IEnumerable<PreValidateDropDelegate> GetPre(MechComponentDef component)
         {
             yield return ValidateBase;
-            if(Control.Settings.BaseECMValidation)
+            if (Control.Settings.BaseECMValidation)
                 yield return ValidateECM;
 
             foreach (var validator in component.GetComponents<IPreValidateDrop>())
@@ -108,12 +108,12 @@ namespace CustomComponents
             int count = mechlab.MechLab.activeMechDef.Inventory.Count(cref => cref.Def.ComponentSubType == def.ComponentSubType);
 
             if (count > 0)
-                    if (def.ComponentSubType == MechComponentType.ElectronicWarfare || def.ComponentSubType == MechComponentType.Prototype_ElectronicWarfare)
-                        return
-                            "ELECTRONIC WARFARE COMPONENT LIMIT: You can only equip one Electronic Warfare component on this 'Mech.";
-                    else
-                        return
-                            $"PROTOTYPE COMPONENT LIMIT: You can only equip one {def.ComponentSubType} component on this 'Mech";
+                if (def.ComponentSubType == MechComponentType.ElectronicWarfare || def.ComponentSubType == MechComponentType.Prototype_ElectronicWarfare)
+                    return
+                        "ELECTRONIC WARFARE COMPONENT LIMIT: You can only equip one Electronic Warfare component on this 'Mech.";
+                else
+                    return
+                        $"PROTOTYPE COMPONENT LIMIT: You can only equip one {def.ComponentSubType} component on this 'Mech";
 
             return string.Empty;
         }
@@ -191,25 +191,48 @@ namespace CustomComponents
             int num = 0;
             int num2 = 0;
             WeaponDef weaponDef = drop_item.ComponentRef.Def as WeaponDef;
+            MechLabItemSlotElement replace = null;
+            var mech = location.mechLab.activeMechDef;
+
             if (weaponDef.WeaponCategoryValue.IsBallistic)
             {
                 num = location.currentBallisticCount;
                 num2 = location.totalBallisticHardpoints;
+                replace = location.LocalInventory.FirstOrDefault(i =>
+                        (i?.ComponentRef?.Def is WeaponDef def)
+                        && def.WeaponCategoryValue.IsBallistic
+                        && def.Description.Id != drop_item.ComponentRef.ComponentDefID
+                        && !i.ComponentRef.IsModuleFixed(mech));
             }
             else if (weaponDef.WeaponCategoryValue.IsEnergy)
             {
                 num = location.currentEnergyCount;
                 num2 = location.totalEnergyHardpoints;
+                replace = location.LocalInventory.FirstOrDefault(i =>
+                        (i?.ComponentRef?.Def is WeaponDef def)
+                        && def.WeaponCategoryValue.IsEnergy
+                        && def.Description.Id != drop_item.ComponentRef.ComponentDefID
+                        && !i.ComponentRef.IsModuleFixed(mech));
             }
             else if (weaponDef.WeaponCategoryValue.IsMissile)
             {
                 num = location.currentMissileCount;
                 num2 = location.totalMissileHardpoints;
+                replace = location.LocalInventory.FirstOrDefault(i =>
+                        (i?.ComponentRef?.Def is WeaponDef def)
+                        && def.WeaponCategoryValue.IsMissile
+                        && def.Description.Id != drop_item.ComponentRef.ComponentDefID
+                        && !i.ComponentRef.IsModuleFixed(mech));
             }
             else if (weaponDef.WeaponCategoryValue.IsSupport)
             {
                 num = location.currentSmallCount;
                 num2 = location.totalSmallHardpoints;
+                replace = location.LocalInventory.FirstOrDefault(i =>
+                        (i?.ComponentRef?.Def is WeaponDef def)
+                        && def.WeaponCategoryValue.IsSupport
+                        && def.Description.Id != drop_item.ComponentRef.ComponentDefID
+                        && !i.ComponentRef.IsModuleFixed(mech));
             }
 
             if (num2 == 0 || num == num2 || num > num2)
@@ -217,27 +240,19 @@ namespace CustomComponents
                 return $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available hardpoints.";
             }
 
-            //if (num2 == 0)
-            //    return $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.";
+            if (num2 == 0)
+                return $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available hardpoints.";
+            if (num > num2)
+                return $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available hardpoints.";
 
-            //if (num == num2)
-            //{
-            //    var mech = location.mechLab.activeMechDef;
-
-            //    var replace = location.LocalInventory.FirstOrDefault(i =>
-            //        (i?.ComponentRef?.Def is WeaponDef def)
-            //        && def.Category == weaponDef.Category
-            //        && def.Description.Id != drop_item.ComponentRef.ComponentDefID
-            //        && !i.ComponentRef.IsModuleFixed(mech));
-
-            //    if (replace == null)
-            //        return
-            //            $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.";
-            //    else
-            //        changes.Add(new RemoveChange(location.widget.loadout.Location, replace));
-            //}
-            //else if (num > num2)
-            //    return $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available {weaponDef.Category.ToString()} hardpoints.";
+            if (num == num2)
+            {
+                if (replace == null)
+                    return
+                        $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available hardpoints.";
+                else
+                    changes.Add(new RemoveChange(location.widget.loadout.Location, replace));
+            }
 
             return string.Empty;
         }
