@@ -191,53 +191,36 @@ namespace CustomComponents
             int num = 0;
             int num2 = 0;
             WeaponDef weaponDef = drop_item.ComponentRef.Def as WeaponDef;
-            MechLabItemSlotElement replace = null;
+
             var mech = location.mechLab.activeMechDef;
+            var replace_list = location.LocalInventory.Where(i =>
+                        (i?.ComponentRef?.Def is WeaponDef def)
+                        && def.Description.Id != drop_item.ComponentRef.ComponentDefID
+                        && !i.ComponentRef.IsModuleFixed(mech));
 
             if (weaponDef.WeaponCategoryValue.IsBallistic)
             {
                 num = location.currentBallisticCount;
                 num2 = location.totalBallisticHardpoints;
-                replace = location.LocalInventory.FirstOrDefault(i =>
-                        (i?.ComponentRef?.Def is WeaponDef def)
-                        && def.WeaponCategoryValue.IsBallistic
-                        && def.Description.Id != drop_item.ComponentRef.ComponentDefID
-                        && !i.ComponentRef.IsModuleFixed(mech));
+                replace_list = replace_list.Where(i => i.weaponDef.WeaponCategoryValue.IsBallistic);
             }
             else if (weaponDef.WeaponCategoryValue.IsEnergy)
             {
                 num = location.currentEnergyCount;
                 num2 = location.totalEnergyHardpoints;
-                replace = location.LocalInventory.FirstOrDefault(i =>
-                        (i?.ComponentRef?.Def is WeaponDef def)
-                        && def.WeaponCategoryValue.IsEnergy
-                        && def.Description.Id != drop_item.ComponentRef.ComponentDefID
-                        && !i.ComponentRef.IsModuleFixed(mech));
+                replace_list = replace_list.Where(i => i.weaponDef.WeaponCategoryValue.IsEnergy);
             }
             else if (weaponDef.WeaponCategoryValue.IsMissile)
             {
                 num = location.currentMissileCount;
                 num2 = location.totalMissileHardpoints;
-                replace = location.LocalInventory.FirstOrDefault(i =>
-                        (i?.ComponentRef?.Def is WeaponDef def)
-                        && def.WeaponCategoryValue.IsMissile
-                        && def.Description.Id != drop_item.ComponentRef.ComponentDefID
-                        && !i.ComponentRef.IsModuleFixed(mech));
+                replace_list = replace_list.Where(i => i.weaponDef.WeaponCategoryValue.IsMissile);
             }
             else if (weaponDef.WeaponCategoryValue.IsSupport)
             {
                 num = location.currentSmallCount;
                 num2 = location.totalSmallHardpoints;
-                replace = location.LocalInventory.FirstOrDefault(i =>
-                        (i?.ComponentRef?.Def is WeaponDef def)
-                        && def.WeaponCategoryValue.IsSupport
-                        && def.Description.Id != drop_item.ComponentRef.ComponentDefID
-                        && !i.ComponentRef.IsModuleFixed(mech));
-            }
-
-            if (num2 == 0 || num == num2 || num > num2)
-            {
-                return $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available hardpoints.";
+                replace_list = replace_list.Where(i => i.weaponDef.WeaponCategoryValue.IsSupport);
             }
 
             if (num2 == 0)
@@ -247,6 +230,7 @@ namespace CustomComponents
 
             if (num == num2)
             {
+                var replace = replace_list.FirstOrDefault();
                 if (replace == null)
                     return
                         $"Cannot add {weaponDef.Description.Name} to {location.LocationName}: There are no available hardpoints.";
