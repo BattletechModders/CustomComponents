@@ -9,7 +9,11 @@ namespace CustomComponents
 
         public override string ToString()
         {
-            return $"{GetType()} id={Database.Identifier(this)} type={Def.GetType()} code={Def.GetHashCode()}";
+            if (Def == null) // can happen if a custom class was initialized outside CC
+            {
+                return base.ToString();
+            }
+            return $"{GetType()} id={Database.Identifier(Def)} type={Def.GetType()} code={Def.GetHashCode()}";
         }
     }
 }
