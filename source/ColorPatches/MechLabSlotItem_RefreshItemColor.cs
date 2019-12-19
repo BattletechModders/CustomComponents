@@ -45,10 +45,10 @@ namespace CustomComponents
                         });
                     loadrequest.ProcessRequests();
                 }
-                
-                ___fixedEquipmentOverlay.GetComponent<Image>().enabled = false; // bugfix for semi-transparent image popping up
+
                 var color_tracker = ___fixedEquipmentOverlay.GetComponent<UIColorRefTracker>();
-                color_tracker.colorRef.UIColor = UIColor.DarkGrayEighth; // reset colors in case its a pooled old-fixed item
+                // reset colors in case its a pooled item that was previously fixed
+                color_tracker.SetUIColor(Control.Settings.DefaultOverlayColor);
 
                 if (__instance.ComponentRef != null && __instance.ComponentRef.IsFixed)
                 {
@@ -62,7 +62,7 @@ namespace CustomComponents
                     if (!Control.Settings.UseDefaultFixedColor)
                     {
                         ___fixedEquipmentOverlay.SetActive(true);
-                        color_tracker.colorRef.UIColor = UIColor.Custom; 
+                        color_tracker.colorRef.UIColor = UIColor.Custom;
                         color_tracker.colorRef.color = preinstalled
                             ? Control.Settings.PreinstalledOverlayColor
                             : Control.Settings.DefaultFlagOverlayColor;
@@ -76,7 +76,6 @@ namespace CustomComponents
                 {
                     ___fixedEquipmentOverlay.SetActive(false);
                 }
-
                 color_tracker.RefreshUIColors();
             }
             catch (Exception e)

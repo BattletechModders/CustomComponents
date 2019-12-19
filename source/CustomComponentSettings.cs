@@ -141,11 +141,12 @@ namespace CustomComponents
         public bool TagRestrictionDropValidateIncompatibleTags = true;
         public bool CheckCriticalComponent = true;
         public bool AddTagsToDescription = true;
-
         public bool UseDefaultFixedColor = false;
+
         public UIColor DefaultFlagBackgroundColor = UIColor.UpgradeColor;
         public UIColor InvalidFlagBackgroundColor = UIColor.Red;
 
+        public UIColor DefaultOverlayColor = UIColor.DarkGrayEighth;
         public CCColor PreinstalledOverlayCColor = new CCColor() { A = 12, R = 255, B = 180, G = 180 };
         public CCColor DefaultFlagOverlayCColor = new CCColor() { A = 12, R = 180, B = 180, G = 255 };
         public string CategoryDescriptionColor = "#008000";

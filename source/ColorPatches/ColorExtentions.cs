@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BattleTech;
 using BattleTech.UI;
+using HBS;
 using UnityEngine;
 
 namespace CustomComponents
@@ -25,7 +26,11 @@ namespace CustomComponents
             }
         }
 
-
+        public static void SetUIColor(this UIColorRefTracker color_tracker, UIColor uicolor)
+        {
+            color_tracker.colorRef.UIColor = uicolor;
+            color_tracker.colorRef.color = LazySingletonBehavior<UIManager>.Instance.UIColorRefs.GetUIColor(uicolor);
+        }
 
         public static void SetColor(this UIColorRefTracker color_tracker, MechComponentRef cref)
         {
