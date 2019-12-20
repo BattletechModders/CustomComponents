@@ -163,6 +163,10 @@ namespace CustomComponents
         public bool DontUseFilter = false;
         public bool FixIcons = true;
 
+        public bool CheckWeaponCount = false;
+        public int MaxWeaponCount = 14;
+        public string WrongWeaponCountMessage = "Cannot equip more then {0} weapons";
+
         public void Complete()
         {
             PreinstalledOverlayColor = PreinstalledOverlayCColor.ToColor();

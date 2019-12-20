@@ -57,10 +57,14 @@ namespace CustomComponents
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
                 Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);
 
-                Logger.Log("Loaded CustomComponents v0.10.0 for bt 1.7");
+                Logger.Log("Loaded CustomComponents v0.10.1 for bt 1.7");
 
                 Validator.RegisterMechValidator(TagRestrictionsHandler.Shared.ValidateMech, TagRestrictionsHandler.Shared.ValidateMechCanBeFielded);
                 Validator.RegisterDropValidator(pre: TagRestrictionsHandler.Shared.ValidateDrop);
+                if(Control.Settings.CheckWeaponCount)
+                {
+                    Validator.RegisterMechValidator(WeaponsCountFix.CheckWeapons, WeaponsCountFix.CheckWeaponsFielded);
+                }
 
                 if (Settings.RunAutofixer)
                 {

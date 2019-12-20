@@ -110,6 +110,7 @@
     <Compile Include="CCLight\IReplaceIdentifier.cs" />
     <Compile Include="CCLight\Factories\IPreProcessor.cs" />
     <Compile Include="CCLight\Factories\SimpleCustom.cs" />
+    <Compile Include="Fixes\WeaponsCountFix.cs" />
     <Compile Include="Tags\Tags.cs" />
     <Compile Include="Cheats\Patches\JSONSerializationUtility_RehydrateObjectFromDictionary_Patch2.cs" />
     <Compile Include="ColorPatches\TColorExtentions.cs" />
