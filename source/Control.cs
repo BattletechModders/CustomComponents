@@ -57,7 +57,7 @@ namespace CustomComponents
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
                 Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);
 
-                Logger.Log("Loaded CustomComponents v0.10.1 for bt 1.7");
+                Logger.Log("Loaded CustomComponents v0.11 for bt 1.8");
 
                 Validator.RegisterMechValidator(TagRestrictionsHandler.Shared.ValidateMech, TagRestrictionsHandler.Shared.ValidateMechCanBeFielded);
                 Validator.RegisterDropValidator(pre: TagRestrictionsHandler.Shared.ValidateDrop);
@@ -93,6 +93,8 @@ namespace CustomComponents
             CategoryController.Shared.Setup(customResources);
             DefaultFixer.Shared.Setup(customResources);
             TagRestrictionsHandler.Shared.Setup(customResources);
+            if (customResources.TryGetValue("CustomSVGIcon", out var icons))
+                IconController.LoadIcons(icons);
         }
 
         #region LOGGING

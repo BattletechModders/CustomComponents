@@ -99,6 +99,7 @@ namespace CustomComponents
         AutoFix = 1 << 13,
         Filter = 1 << 14,
         Color = 1 << 15,
+        Icons = 1 << 16,
 
         FULL = 0xffffff
     }

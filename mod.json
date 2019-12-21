@@ -8,11 +8,11 @@
 	"DLL": "CustomComponents.dll",
 	"DLLEntryPoint": "CustomComponents.Control.Init",
 
-	"CustomResourceTypes": ["CCCategories", "CCDefaults", "CCTagRestrictions"],
+	"CustomResourceTypes": ["CCCategories", "CCDefaults", "CCTagRestrictions", "CustomSVGIcon"],
 	
 	"Settings" : {
 		"LogLevel": "Debug",
-		"DebugInfo" : "Color",
+		"DebugInfo" : "Icons",
 
 		"Categories": [ ],
 		"TagRestrictions": [ ],
@@ -71,6 +71,11 @@
         {
             "Type": "CCDefaults",
             "Path": "test/defaults/",
+            "ShouldMergeJSON": false
+        },
+        {
+            "Type": "CustomSVGIcon",
+            "Path": "test/icons/",
             "ShouldMergeJSON": false
         }
     ]
