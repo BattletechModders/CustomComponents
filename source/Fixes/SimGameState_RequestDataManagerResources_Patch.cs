@@ -1,27 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using BattleTech;
+﻿using BattleTech;
+using BattleTech.Data;
 using Harmony;
+using System.Collections.Generic;
 
 namespace CustomComponents.Fixes
 {
     [HarmonyPatch(typeof(SimGameState), "RequestDataManagerResources")]
     public static class SimGameState_RequestDataManagerResources_Patch
     {
-        [HarmonyPrefix]
-        public static void Preload(SimGameState __instance)
+        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-            try
-            {
-                BTLoadUtils.PreloadComponents(__instance.DataManager);
-            }
-            catch (Exception e)
-            {
-                Control.LogError(e);
-            }
-
+            return instructions
+                .MethodReplacer(
+                    AccessTools.Method(typeof(DataManager), nameof(DataManager.CreateLoadRequest)),
+                    AccessTools.Method(typeof(BTLoadUtils), nameof(BTLoadUtils.CreateLoadRequest))
+                );
         }
     }
 }

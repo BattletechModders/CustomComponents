@@ -1,22 +1,20 @@
-﻿using System;
+﻿using BattleTech.Data;
 using BattleTech.UI;
 using Harmony;
+using System.Collections.Generic;
 
 namespace CustomComponents
 {
     [HarmonyPatch(typeof(SkirmishMechBayPanel), "RequestResources")]
     public static class SkirmishMechBayPanel_RequestResources_Patch
     {
-        public static void Prefix(SkirmishMechBayPanel __instance)
+        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-            try
-            {
-                BTLoadUtils.PreloadComponents(__instance.dataManager);
-            }
-            catch (Exception e)
-            {
-                Control.LogError(e);
-            }
+            return instructions
+                .MethodReplacer(
+                    AccessTools.Method(typeof(DataManager), nameof(DataManager.CreateLoadRequest)),
+                    AccessTools.Method(typeof(BTLoadUtils), nameof(BTLoadUtils.CreateLoadRequest))
+                );
         }
     }
 }
