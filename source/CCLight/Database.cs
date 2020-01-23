@@ -46,6 +46,13 @@ namespace CustomComponents
             return GetCustom<T>(target) != null;
         }
 
+        internal static void AddCustom(object target, ICustom cc)
+        {
+            var key = Identifier(target);
+            var ccs = Shared.GetOrCreateCustomsList(key);
+            ccs.Add(cc);
+        }
+
         internal static string Identifier(object target)
         {
             if (target == null)
@@ -87,15 +94,21 @@ namespace CustomComponents
             return ccs.OfType<T>();
         }
 
-        private bool SetCustomInternal(string key, ICustom cc, bool replace)
+        private List<ICustom> GetOrCreateCustomsList(string key)
         {
-            Control.LogDebug(DType.CCLoading, $"SetCustomInternal key={key} cc={cc}");
-
             if (!customs.TryGetValue(key, out var ccs))
             {
                 ccs = new List<ICustom>();
                 customs[key] = ccs;
             }
+            return ccs;
+        }
+
+        private bool SetCustomInternal(string key, ICustom cc, bool replace)
+        {
+            Control.LogDebug(DType.CCLoading, $"SetCustomInternal key={key} cc={cc}");
+
+            var ccs = GetOrCreateCustomsList(key);
 
             var attribute = Registry.GetAttributeByType(cc.GetType());
 

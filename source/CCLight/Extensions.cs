@@ -26,6 +26,11 @@ namespace CustomComponents
         {
             return Database.Is<T>(target);
         }
+
+        public static void AddComponent(this MechComponentDef target, ICustom component)
+        {
+            Database.AddCustom(target, component);
+        }
     }
 
     public static class MechDefExtentions
