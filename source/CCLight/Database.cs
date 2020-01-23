@@ -46,12 +46,11 @@ namespace CustomComponents
             return GetCustom<T>(target) != null;
         }
 
-        internal static ICustom AddCustom(object target, ICustom cc)
+        internal static void AddCustom(object target, ICustom cc)
         {
             var key = Identifier(target);
             var ccs = Shared.GetOrCreateCustomsList(key);
             ccs.Add(cc);
-            return cc;
         }
 
         internal static string Identifier(object target)

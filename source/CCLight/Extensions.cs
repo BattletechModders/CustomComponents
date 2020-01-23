@@ -27,9 +27,10 @@ namespace CustomComponents
             return Database.Is<T>(target);
         }
 
-        public static void AddComponent(this MechComponentDef target, ICustom component)
+        public static T AddComponent<T>(this MechComponentDef target, T component) where T : ICustom
         {
             Database.AddCustom(target, component);
+            return component;
         }
     }
 
