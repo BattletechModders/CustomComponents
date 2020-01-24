@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Harmony;
 using HBS.Util;
@@ -16,7 +17,14 @@ namespace CustomComponents
 
         public static void Postfix(object target, Dictionary<string, object> values)
         {
-            Registry.ProcessCustomFactories(target, values);
+            try
+            {
+                Registry.ProcessCustomFactories(target, values);
+            }
+            catch (Exception e)
+            {
+                Control.LogError($"Error loading item", e);
+            }
         }
     }
 }

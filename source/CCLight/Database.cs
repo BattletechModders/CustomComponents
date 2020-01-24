@@ -112,10 +112,14 @@ namespace CustomComponents
 
             var attribute = Registry.GetAttributeByType(cc.GetType());
 
+            if (attribute != null)
             for (int i = 0; i < ccs.Count; i++)
             {
                 var custom = ccs[i];
                 var attribute2 = Registry.GetAttributeByType(custom.GetType());
+                    
+                if (attribute2 == null)
+                    continue;
 
                 bool same_type = string.IsNullOrEmpty(attribute.Group)
                     ? attribute.Name == attribute2.Name
