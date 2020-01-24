@@ -110,6 +110,7 @@
     <Compile Include="CCLight\IReplaceIdentifier.cs" />
     <Compile Include="CCLight\Factories\IPreProcessor.cs" />
     <Compile Include="CCLight\Factories\SimpleCustom.cs" />
+    <Compile Include="ExtendedDetails\ExtendedDetails.cs" />
     <Compile Include="Fixes\WeaponsCountFix.cs" />
     <Compile Include="Icons\IconController.cs" />
     <Compile Include="Icons\SVGCache_GetAsset.cs" />
