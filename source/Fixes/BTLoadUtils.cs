@@ -9,11 +9,11 @@ namespace CustomComponents
         internal static LoadRequest CreateLoadRequest(DataManager dataManager, Action<LoadRequest> loadCompleteCallback, bool filterByOwnership)
         {
             var loadRequest = dataManager.CreateLoadRequest(loadCompleteCallback, filterByOwnership);
-            loadRequest.AddAllOfTypeLoadRequest<HeatSinkDef>(BattleTechResourceType.HeatSinkDef, null);
-            loadRequest.AddAllOfTypeLoadRequest<UpgradeDef>(BattleTechResourceType.UpgradeDef, null);
-            loadRequest.AddAllOfTypeLoadRequest<WeaponDef>(BattleTechResourceType.WeaponDef, null);
-            loadRequest.AddAllOfTypeLoadRequest<AmmunitionBoxDef>(BattleTechResourceType.AmmunitionBoxDef, null);
-            loadRequest.AddAllOfTypeLoadRequest<JumpJetDef>(BattleTechResourceType.AmmunitionBoxDef, null);
+            loadRequest.AddAllOfTypeBlindLoadRequest(BattleTechResourceType.HeatSinkDef, true);
+            loadRequest.AddAllOfTypeBlindLoadRequest(BattleTechResourceType.UpgradeDef, true);
+            loadRequest.AddAllOfTypeBlindLoadRequest(BattleTechResourceType.WeaponDef, true);
+            loadRequest.AddAllOfTypeBlindLoadRequest(BattleTechResourceType.AmmunitionBoxDef, true);
+            loadRequest.AddAllOfTypeBlindLoadRequest(BattleTechResourceType.JumpJetDef, true);
             return loadRequest;
         }
     }
