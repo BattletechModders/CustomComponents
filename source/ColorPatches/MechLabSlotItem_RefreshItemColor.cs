@@ -37,7 +37,7 @@ namespace CustomComponents
                 {
                     var loadrequest =
                         UnityGameInstance.BattleTechGame.DataManager.CreateLoadRequest();
-                    loadrequest.AddLoadRequest<SVGAsset>(BattleTechResourceType.SVGAsset,
+                    loadrequest.AddLoadRequest<SVGAsset>(BTLoadUtils.GetResourceType(nameof(BattleTechResourceType.SVGAsset)),
                         __instance.ComponentRef.Def.Description.Icon,
                         (id, icon) =>
                         {
