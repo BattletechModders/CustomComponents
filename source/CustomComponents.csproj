@@ -113,6 +113,7 @@
     <Compile Include="ExtendedDetails\ExtendedDetails.cs" />
     <Compile Include="Fixes\WeaponsCountFix.cs" />
     <Compile Include="Icons\IconController.cs" />
+    <Compile Include="Icons\SVGAssets_Contains.cs" />
     <Compile Include="Icons\SVGCache_GetAsset.cs" />
     <Compile Include="Tags\Tags.cs" />
     <Compile Include="Cheats\Patches\JSONSerializationUtility_RehydrateObjectFromDictionary_Patch2.cs" />

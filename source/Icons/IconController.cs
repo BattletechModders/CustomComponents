@@ -15,6 +15,8 @@ namespace CustomComponents
 
         internal static SVGAsset Get(string resourceId) => icons.TryGetValue(resourceId, out var icon) ? icon : null;
 
+        internal static bool Contains(string ressourceId) => icons.ContainsKey(ressourceId);
+
         internal static void LoadIcons(Dictionary<string, VersionManifestEntry> icons_ressourses)
         {
             Control.LogDebug(DType.Icons, $"Get data:");
