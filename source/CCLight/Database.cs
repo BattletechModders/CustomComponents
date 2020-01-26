@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 using BattleTech.Data;
@@ -178,9 +179,16 @@ namespace CustomComponents
         {
             public static void Prefix(bool defs)
             {
-                if (defs)
+                try
                 {
-                    Shared.Clear();
+                    if (defs)
+                    {
+                        Shared.Clear();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Control.LogError(e);
                 }
             }
         }

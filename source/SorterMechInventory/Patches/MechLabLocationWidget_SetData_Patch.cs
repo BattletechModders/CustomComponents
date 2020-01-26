@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BattleTech.UI;
 using Harmony;
@@ -10,7 +11,14 @@ namespace CustomComponents
     {
         public static void Postfix(List<MechLabItemSlotElement> ___localInventory)
         {
-            Sorter.SortWidgetInventory(___localInventory);
+            try
+            {
+                Sorter.SortWidgetInventory(___localInventory);
+            }
+            catch (Exception e)
+            {
+                Control.LogError(e);
+            }
         }
 
         public static readonly MechLabItemSlotElementSorter Sorter = new MechLabItemSlotElementSorter();

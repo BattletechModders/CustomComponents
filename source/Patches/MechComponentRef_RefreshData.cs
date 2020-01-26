@@ -1,5 +1,6 @@
 ﻿using BattleTech;
 using Harmony;
+using System;
 
 namespace CustomComponents
 {
@@ -9,12 +10,19 @@ namespace CustomComponents
         [HarmonyPostfix]
         public static void SetFixed(BaseComponentRef __instance)
         {
-            if (__instance.Def == null)
-                return;
-            if (__instance.Def.IsDefault())
+            try
             {
-                var trav = Traverse.Create(__instance).Property<bool>("IsFixed");
-                trav.Value = true;
+                if (__instance.Def == null)
+                    return;
+                if (__instance.Def.IsDefault())
+                {
+                    var trav = Traverse.Create(__instance).Property<bool>("IsFixed");
+                    trav.Value = true;
+                }
+            }
+            catch (Exception e)
+            {
+                Control.LogError(e);
             }
         }
     }

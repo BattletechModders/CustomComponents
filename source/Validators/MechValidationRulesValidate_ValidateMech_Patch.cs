@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 using Harmony;
@@ -12,13 +13,20 @@ namespace CustomComponents
         public static void Postfix(Dictionary<MechValidationType, List<Text>> __result,
             MechValidationLevel validationLevel, MechDef mechDef)
         {
-            Validator.ValidateMech(__result, validationLevel, mechDef);
-            foreach (var component in mechDef.Inventory)
+            try
             {
-                foreach (var validator in component.GetComponents<IMechValidate>())
+                Validator.ValidateMech(__result, validationLevel, mechDef);
+                foreach (var component in mechDef.Inventory)
                 {
-                    validator.ValidateMech(__result, validationLevel, mechDef, component);
+                    foreach (var validator in component.GetComponents<IMechValidate>())
+                    {
+                        validator.ValidateMech(__result, validationLevel, mechDef, component);
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                Control.LogError(e);
             }
         }
     }

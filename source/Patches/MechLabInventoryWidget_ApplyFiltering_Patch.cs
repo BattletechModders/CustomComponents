@@ -16,59 +16,65 @@ namespace CustomComponents
         internal static void Postfix(MechLabInventoryWidget __instance, float ___mechTonnage,
             List<InventoryItemElement_NotListView> ___localInventory)
         {
-            if (Control.Settings.DontUseFilter)
-                return;
-
-
-            Control.LogDebug(DType.Filter, "StartFilter");
-            int empty_item = 0;
-            foreach (var item in ___localInventory)
+            try
             {
-                if (item == null)
+                if (Control.Settings.DontUseFilter)
+                    return;
+
+                Control.LogDebug(DType.Filter, "StartFilter");
+                int empty_item = 0;
+                foreach (var item in ___localInventory)
                 {
-                    empty_item += 1;
-                    continue;
-                    
-                }
-
-                Control.LogDebug(DType.Filter, $"-- item: {item.ItemType}. ref: {(item.ComponentRef == null ? "NULL!" : item.ComponentRef.ComponentDefID )}");
-
-
-                //if item already hidden - skip
-                if (!item.GameObject.activeSelf)
-                    continue;
-
-                var mechlab = __instance.ParentDropTarget as MechLabPanel;
-                if(item.ComponentRef != null)
-                    foreach (var filter in item.ComponentRef.GetComponents<IMechLabFilter>())
+                    if (item == null)
                     {
-                        try
+                        empty_item += 1;
+                        continue;
+
+                    }
+
+                    Control.LogDebug(DType.Filter, $"-- item: {item.ItemType}. ref: {(item.ComponentRef == null ? "NULL!" : item.ComponentRef.ComponentDefID)}");
+
+
+                    //if item already hidden - skip
+                    if (!item.GameObject.activeSelf)
+                        continue;
+
+                    var mechlab = __instance.ParentDropTarget as MechLabPanel;
+                    if (item.ComponentRef != null)
+                        foreach (var filter in item.ComponentRef.GetComponents<IMechLabFilter>())
                         {
-                            Control.LogDebug(DType.Filter, $"--- {filter.GetType()}");
-                            if (!filter.CheckFilter(mechlab))
+                            try
                             {
-                                item.gameObject.SetActive(false);
-                                Control.LogDebug(DType.Filter, $"---- filterd, stoped");
-                                break;
+                                Control.LogDebug(DType.Filter, $"--- {filter.GetType()}");
+                                if (!filter.CheckFilter(mechlab))
+                                {
+                                    item.gameObject.SetActive(false);
+                                    Control.LogDebug(DType.Filter, $"---- filterd, stoped");
+                                    break;
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                Control.LogError("Error in filter", e);
                             }
                         }
-                        catch (Exception e)
-                        {
-                            Control.LogError("Error in filter", e);
-                        }
-                    }
-                else
-                    Control.LogDebug(DType.Filter, $"-- ITEM IS NULL!");
+                    else
+                        Control.LogDebug(DType.Filter, $"-- ITEM IS NULL!");
+
+                }
+
+                if (empty_item > 0)
+                {
+                    Control.LogError($"found {empty_item} broken items, trying to clear");
+                    ___localInventory.RemoveAll(o => o == null);
+                }
+                Control.LogDebug(DType.Filter, "EndFilter");
 
             }
-
-            if (empty_item > 0)
+            catch (Exception e)
             {
-                Control.LogError($"found {empty_item} broken items, trying to clear");
-                ___localInventory.RemoveAll(o => o == null);
+                Control.LogError(e);
             }
-            Control.LogDebug(DType.Filter, "EndFilter");
-
         }
     }
 }

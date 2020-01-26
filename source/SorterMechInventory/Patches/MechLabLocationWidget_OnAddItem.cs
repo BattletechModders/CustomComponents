@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BattleTech;
 using BattleTech.UI;
 using Harmony;
@@ -11,12 +12,19 @@ namespace CustomComponents
     {
         public static void Postfix(IMechLabDraggableItem item, List<MechLabItemSlotElement> ___localInventory)
         {
-            if (item.ComponentRef?.Def == null || !item.ComponentRef.Def.Is<ISorter>())
+            try
             {
-                return;
-            }
+                if (item.ComponentRef?.Def == null || !item.ComponentRef.Def.Is<ISorter>())
+                {
+                    return;
+                }
 
-            MechLabLocationWidget_SetData_Patch.Sorter.SortWidgetInventory(___localInventory);
+                MechLabLocationWidget_SetData_Patch.Sorter.SortWidgetInventory(___localInventory);
+            }
+            catch (Exception e)
+            {
+                Control.LogError(e);
+            }
         }
     }
 }

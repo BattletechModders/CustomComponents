@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Harmony;
 using HBS.Util;
@@ -16,36 +17,44 @@ namespace CustomComponents
 
         public static void Prefix(object target, Dictionary<string, object> values)
         {
-            if (!Control.Settings.TestEnableAllTags)
+            try
             {
-                return;
-            }
-
-            var baseTags = new[] {"ComponentTags", "MechTags"};
-            foreach (var baseTag in baseTags)
-                if (values.TryGetValue(baseTag, out var Tags))
+                if (!Control.Settings.TestEnableAllTags)
                 {
-                    if (!(Tags is Dictionary<string, object> tags))
-                    {
-                        continue;
-                    }
+                    return;
+                }
 
-                    if (tags.TryGetValue("items", out var Items))
+                var baseTags = new[] { "ComponentTags", "MechTags" };
+                foreach (var baseTag in baseTags)
+                    if (values.TryGetValue(baseTag, out var Tags))
                     {
-                        if (!(Items is List<object> items))
+                        if (!(Tags is Dictionary<string, object> tags))
                         {
                             continue;
                         }
 
-                        items.Remove("BLACKLISTED");
-                        items.Remove("component_type_debug");
-                        items.Remove("component_type_lostech");
-                        items.Add("component_type_stock");
+                        if (tags.TryGetValue("items", out var Items))
+                        {
+                            if (!(Items is List<object> items))
+                            {
+                                continue;
+                            }
 
-                        //items.Remove("unit_custom");
-                        items.Add("unit_release");
+                            items.Remove("BLACKLISTED");
+                            items.Remove("component_type_debug");
+                            items.Remove("component_type_lostech");
+                            items.Add("component_type_stock");
+
+                            //items.Remove("unit_custom");
+                            items.Add("unit_release");
+                        }
                     }
-                }
+
+            }
+            catch (Exception e)
+            {
+                Control.LogError(e);
+            }
         }
     }
 }

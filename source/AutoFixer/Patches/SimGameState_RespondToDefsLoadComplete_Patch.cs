@@ -14,7 +14,6 @@ namespace CustomComponents
         {
             try
             {
-
                 var mechDefs = __instance.DataManager.MechDefs.Select(pair => pair.Value).ToList();
                 AutoFixer.Shared.FixMechDef(mechDefs);
             }

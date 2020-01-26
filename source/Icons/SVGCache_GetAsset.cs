@@ -16,15 +16,23 @@ namespace CustomComponents.Icons
         [HarmonyPrefix]
         public static bool GetAsset(string id, ref SVGAsset __result)
         {
-            if (string.IsNullOrEmpty(id) || id[0] != '@')
-                return true;
-
-            __result = IconController.Get(id) ;
-            if (__result == null)
+            try
             {
-                Control.LogError($"Custom icon {id} not found!");
+                if (string.IsNullOrEmpty(id) || id[0] != '@')
+                    return true;
+
+                __result = IconController.Get(id);
+                if (__result == null)
+                {
+                    Control.LogError($"Custom icon {id} not found!");
+                }
+                return false;
             }
-            return false;
+            catch (Exception e)
+            {
+                Control.LogError(e);
+            }
+            return true;
         }
     }
 }

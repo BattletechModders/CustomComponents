@@ -77,14 +77,14 @@ namespace CustomComponents
                     ___fixedEquipmentOverlay.SetActive(false);
                 }
                 color_tracker.RefreshUIColors();
+
+                return false;
             }
             catch (Exception e)
             {
                 Control.LogError(e);
                 return true;
             }
-
-            return false;
         }
     }
 }
