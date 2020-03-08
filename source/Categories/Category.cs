@@ -140,7 +140,7 @@ namespace CustomComponents
             if (CategoryDescriptor.MaxEquiped > 0)
             {
                 var n = location.mechLab.activeMechDef.Inventory.Count(i => i.Def.IsCategory(CategoryID));
-                Control.LogDebug(DType.ComponentInstall, $"--- MaxEquiped: {n}/{CategoryDescriptor.MaxEquiped}");
+                Control.LogDebug(DType.ComponentInstall, $"--- MaxEquiped: {n}/{CategoryDescriptor.MaxEquiped} ReplaceAny:{CategoryDescriptor.ReplaceAnyLocation}");
 
                 if (n >= CategoryDescriptor.MaxEquiped)
                 {
@@ -159,9 +159,15 @@ namespace CustomComponents
                             replace = loc_helper.LocalInventory
                                 .FirstOrDefault(i => i.ComponentRef.Def.IsCategory(CategoryID) && !i.ComponentRef.IsModuleFixed(mech));
                             if (replace != null)
+                            {
+                                Control.LogDebug(DType.ComponentInstall, "---- found in " + loc_helper.LocationName);
                                 break;
+                            }
                         }
                     }
+                    else
+                        Control.LogDebug(DType.ComponentInstall, "---- found in same location");
+
                     Control.LogDebug(DType.ComponentInstall, $"--- replace: {(replace == null ? "none" : replace.ComponentRef.ComponentDefID)}");
 
                     if (replace == null)

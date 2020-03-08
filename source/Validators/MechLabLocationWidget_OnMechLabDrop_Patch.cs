@@ -111,7 +111,7 @@ namespace CustomComponents
                     }
                     else if (changes[i] is RemoveChange remove)
                     {
-                        Control.LogDebug(DType.ComponentInstall, $"-- add: {remove.item.ComponentRef.ComponentDefID}");
+                        Control.LogDebug(DType.ComponentInstall, $"-- remove: {remove.item.ComponentRef.ComponentDefID}");
 
                         foreach (var adj_validator in remove.item.ComponentRef.GetComponents<IAdjustValidateDrop>())
                             changes.AddRange(adj_validator.ValidateDropOnRemove(remove.item, location_helper,

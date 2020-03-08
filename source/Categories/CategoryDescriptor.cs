@@ -129,7 +129,7 @@ namespace CustomComponents
             AddMixed = category.AddMixed;
             DefaultCustoms = category.DefaultCustoms;
 
-
+            ReplaceAnyLocation = category.ReplaceAnyLocation;
 
             ValidateRequred = category.ValidateRequred;
             ValidateMinimum = category.ValidateMinimum;
