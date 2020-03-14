@@ -1,4 +1,5 @@
 ﻿using BattleTech;
+using System;
 using System.Collections.Generic;
 
 namespace CustomComponents
@@ -31,6 +32,11 @@ namespace CustomComponents
         {
             Database.AddCustom(target, component);
             return component;
+        }
+
+        public static T GetOrCreate<T>(this MechComponentDef target, Func<T> factory) where T : ICustom
+        {
+            return target.GetComponent<T>() ?? target.AddComponent(factory.Invoke());
         }
     }
 
@@ -78,6 +84,17 @@ namespace CustomComponents
         public static bool Is<T>(this ChassisDef target)
         {
             return Database.Is<T>(target);
+        }
+
+        public static T AddComponent<T>(this ChassisDef target, T component) where T : ICustom
+        {
+            Database.AddCustom(target, component);
+            return component;
+        }
+
+        public static T GetOrCreate<T>(this ChassisDef target, Func<T> factory) where T : ICustom
+        {
+            return target.GetComponent<T>() ?? target.AddComponent(factory.Invoke());
         }
     }
 
