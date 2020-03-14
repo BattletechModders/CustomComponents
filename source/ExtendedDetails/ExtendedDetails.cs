@@ -4,8 +4,6 @@ using Harmony;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CustomComponents.ExtendedDetails
 {
@@ -17,12 +15,17 @@ namespace CustomComponents.ExtendedDetails
         [JsonIgnore]
         private readonly SortedSet<ExtendedDetail> Details = new SortedSet<ExtendedDetail>();
 
-        public MechComponentDef Def { get; private set; }
+        private readonly DescriptionDef Def;
 
-        public ExtendedDetails(MechComponentDef def)
+        [Obsolete]
+        public ExtendedDetails(MechComponentDef def) : this(def.Description)
+        {
+        }
+        
+        public ExtendedDetails(DescriptionDef def)
         {
             Def = def;
-            OriginalDetails = Def.Description.Details;
+            OriginalDetails = Def.Details;
             var original = new ExtendedDetail {
                 UnitType = UnitType.UNDEFINED,
                 Index = 0,
@@ -40,7 +43,7 @@ namespace CustomComponents.ExtendedDetails
         private void SetDescriptionDetails()
         {
             var details = Details.Join(x => x.Text, "");
-            Traverse.Create(Def.Description).Property<string>(nameof(DescriptionDef.Details)).Value = details;
+            Traverse.Create(Def).Property<string>(nameof(DescriptionDef.Details)).Value = details;
         }
 
         // this method should be used when wanting custom behavior of showing details
