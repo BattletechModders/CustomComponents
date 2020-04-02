@@ -17,6 +17,8 @@ namespace CustomComponents
 
         internal void FixMechDef(List<MechDef> mechDefs)
         {
+
+           
             if (!Control.Settings.RunAutofixer)
             {
                 return;
@@ -33,7 +35,7 @@ namespace CustomComponents
                 }
             }
 
-            mechDefs = mechDefs.Where(i => i.Chassis != null).ToList();
+            mechDefs = mechDefs.Where(i => i.Chassis != null).Where(i => !i.MechTags.Contains(Control.Settings.IgnoreAutofixTag) && !i.Chassis.ChassisTags.Contains(Control.Settings.IgnoreAutofixTag)).ToList();
 
             foreach (var autoFixerDelegate in fixers)
             {
