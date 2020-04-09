@@ -163,6 +163,7 @@ namespace CustomComponents
         public int OmniTechInstallCost = 1;
         public bool DontUseFilter = false;
         public bool FixIcons = true;
+        public string IgnoreAutofixTag = "ignore_autofix"; 
 
         public bool CheckWeaponCount = false;
         public int MaxWeaponCount = 14;
