@@ -1,7 +1,7 @@
 {
 	"Name": "CustomComponents",
 	"Author": "Denadan",
-	"Website": "https://github.com/Denadan/CustomComponents",
+	"Website": "https://github.com/BattletechModders/CustomComponents",
 
 	"Enabled": true,
 	"DependsOn": [],
@@ -31,7 +31,7 @@
 		},
 		"DefaultFlagOverlayCColor": {
 			"R": 180,
-			"G": 255,
+			"G": 180,
 			"B": 180,
 			"A": 40
 		},
@@ -60,23 +60,5 @@
 		"SalvageLegWeight" : 0.75,
 		"SalvageTorsoWeight" : 1,
 		"SalvageHeadWeight" : 0.5,
-	},	
-		
-	"Manifest": [
-        {
-            "Type": "CCCategories",
-            "Path": "test/categories/",
-            "ShouldMergeJSON": false
-        },
-        {
-            "Type": "CCDefaults",
-            "Path": "test/defaults/",
-            "ShouldMergeJSON": false
-        },
-        {
-            "Type": "CustomSVGIcon",
-            "Path": "test/icons/",
-            "ShouldMergeJSON": false
-        }
-    ]
+	}
 }
