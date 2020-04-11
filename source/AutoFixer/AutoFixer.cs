@@ -68,7 +68,7 @@ namespace CustomComponents
                 }
             }
 
-            mechDefs = mechDefs.Where(i => i.Chassis != null).ToList();
+            mechDefs = mechDefs.Where(i => i.Chassis != null).Where(i => !i.IgnoreAutofix()).ToList();
 
             foreach (var autoFixerDelegate in savegamefixers)
             {
