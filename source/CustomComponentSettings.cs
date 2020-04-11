@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BattleTech;
 using BattleTech.UI;
+using HBS.Collections;
 using HBS.Logging;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -163,11 +164,12 @@ namespace CustomComponents
         public int OmniTechInstallCost = 1;
         public bool DontUseFilter = false;
         public bool FixIcons = true;
-        public string IgnoreAutofixTag = "ignore_autofix"; 
+        public string[] IgnoreAutofixTags = { "ignore_autofix" }; 
 
         public bool CheckWeaponCount = false;
         public int MaxWeaponCount = 14;
         public string WrongWeaponCountMessage = "Cannot equip more then {0} weapons";
+        internal TagSet ignoreAutofixTags;
 
         public void Complete()
         {
@@ -181,6 +183,8 @@ namespace CustomComponents
                     if (!ColorTagsDictionary.ContainsKey(colorTag.Tag))
                         ColorTagsDictionary.Add(colorTag.Tag, colorTag.ToColor());
                 }
+
+            ignoreAutofixTags = new TagSet(IgnoreAutofixTags);
         }
     }
 }

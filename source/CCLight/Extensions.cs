@@ -110,7 +110,7 @@ namespace CustomComponents
     {
         public static bool IgnoreAutofix(this TagSet set)
         {
-            return set.Contains(Control.Settings.IgnoreAutofixTag);
+            return set.ContainsAny(Control.Settings.ignoreAutofixTags);
         }
     }
 
