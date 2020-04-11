@@ -1,11 +1,10 @@
 ﻿using BattleTech;
+using HBS.Collections;
 using System;
 using System.Collections.Generic;
 
 namespace CustomComponents
 {
-    #region main helpers
-
     public static class MechComponentDefExtensions
     {
         public static T GetComponent<T>(this MechComponentDef target)
@@ -40,7 +39,7 @@ namespace CustomComponents
         }
     }
 
-    public static class MechDefExtentions
+    public static class MechDefExtensions
     {
         public static T GetComponent<T>(this MechDef target)
         {
@@ -52,7 +51,6 @@ namespace CustomComponents
             return Database.GetCustoms<T>(target);
         }
 
-
         public static bool Is<T>(this MechDef target, out T res)
         {
             return Database.Is(target, out res);
@@ -61,6 +59,11 @@ namespace CustomComponents
         public static bool Is<T>(this MechDef target)
         {
             return Database.Is<T>(target);
+        }
+
+        public static bool IgnoreAutofix(this MechDef def)
+        {
+            return def.MechTags.IgnoreAutofix() || def.Chassis.IgnoreAutofix();
         }
     }
 
@@ -96,11 +99,20 @@ namespace CustomComponents
         {
             return target.GetComponent<T>() ?? target.AddComponent(factory.Invoke());
         }
+
+        public static bool IgnoreAutofix(this ChassisDef def)
+        {
+            return def.ChassisTags.IgnoreAutofix();
+        }
     }
 
-    #endregion
-
-    #region additional helpers
+    public static class TagSetExtensions
+    {
+        public static bool IgnoreAutofix(this TagSet set)
+        {
+            return set.Contains(Control.Settings.IgnoreAutofixTag);
+        }
+    }
 
     public static class MechComponentRefExtensions
     {
@@ -140,7 +152,6 @@ namespace CustomComponents
             }
         }
 
-
         public static T GetComponent<T>(this MechComponentRef target)
         {
             RefreshDef(target);
@@ -165,6 +176,4 @@ namespace CustomComponents
             return target.Def.Is<T>();
         }
     }
-
-    #endregion
 }

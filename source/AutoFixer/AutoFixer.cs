@@ -35,7 +35,7 @@ namespace CustomComponents
                 }
             }
 
-            mechDefs = mechDefs.Where(i => i.Chassis != null).Where(i => !i.MechTags.Contains(Control.Settings.IgnoreAutofixTag) && !i.Chassis.ChassisTags.Contains(Control.Settings.IgnoreAutofixTag)).ToList();
+            mechDefs = mechDefs.Where(i => i.Chassis != null).Where(i => !i.IgnoreAutofix()).ToList();
 
             foreach (var autoFixerDelegate in fixers)
             {
