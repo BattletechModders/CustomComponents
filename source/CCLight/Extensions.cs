@@ -29,6 +29,10 @@ namespace CustomComponents
 
         public static T AddComponent<T>(this MechComponentDef target, T component) where T : ICustom
         {
+            if (component is SimpleCustom<MechComponentDef> simple)
+            {
+                simple.Def = target;
+            }
             Database.AddCustom(target, component);
             return component;
         }
@@ -91,6 +95,10 @@ namespace CustomComponents
 
         public static T AddComponent<T>(this ChassisDef target, T component) where T : ICustom
         {
+            if (component is SimpleCustom<ChassisDef> simple)
+            {
+                simple.Def = target;
+            }
             Database.AddCustom(target, component);
             return component;
         }
