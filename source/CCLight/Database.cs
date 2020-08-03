@@ -102,8 +102,7 @@ namespace CustomComponents
             {
                 for (var index = 0; index < ccs.Count; index++)
                 {
-                    var cs = ccs[index];
-                    if (cs is T csT)
+                    if (ccs[index] is T csT)
                     {
                         return csT;
                     }
