@@ -16,7 +16,7 @@ namespace CustomComponents
             return Shared.SetCustomInternal(identifier, cc, replace);
         }
 
-        internal static IEnumerable<T> GetCustomsFromIdentifier<T>(string identifier)
+        private static IEnumerable<T> GetCustomsFromIdentifier<T>(string identifier)
         {
             if (identifier == null)
             {
@@ -33,7 +33,8 @@ namespace CustomComponents
 
         internal static T GetCustom<T>(object target)
         {
-            return GetCustoms<T>(target).FirstOrDefault();
+            var identifier = Identifier(target);
+            return Shared.GetCustomFast<T>(identifier);
         }
 
         internal static bool Is<T>(object target, out T value)
@@ -93,6 +94,22 @@ namespace CustomComponents
             }
 
             return ccs.OfType<T>();
+        }
+
+        private T GetCustomFast<T>(string key)
+        {
+            if (customs.TryGetValue(key, out var ccs))
+            {
+                for (var index = 0; index < ccs.Count; index++)
+                {
+                    var cs = ccs[index];
+                    if (cs is T csT)
+                    {
+                        return csT;
+                    }
+                }
+            }
+            return default;
         }
 
         private List<ICustom> GetOrCreateCustomsList(string key)
