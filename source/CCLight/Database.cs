@@ -16,25 +16,16 @@ namespace CustomComponents
             return Shared.SetCustomInternal(identifier, cc, replace);
         }
 
-        private static IEnumerable<T> GetCustomsFromIdentifier<T>(string identifier)
-        {
-            if (identifier == null)
-            {
-                return Enumerable.Empty<T>();
-            }
-            return Shared.GetCustomsInternal<T>(identifier);
-        }
-
         internal static IEnumerable<T> GetCustoms<T>(object target)
         {
             var identifier = Identifier(target);
-            return GetCustomsFromIdentifier<T>(identifier);
+            return Shared.GetCustomsInternal<T>(identifier);
         }
 
         internal static T GetCustom<T>(object target)
         {
             var identifier = Identifier(target);
-            return Shared.GetCustomFast<T>(identifier);
+            return Shared.GetCustomInternalFast<T>(identifier);
         }
 
         internal static bool Is<T>(object target, out T value)
@@ -50,8 +41,8 @@ namespace CustomComponents
 
         internal static void AddCustom(object target, ICustom cc)
         {
-            var key = Identifier(target);
-            var ccs = Shared.GetOrCreateCustomsList(key);
+            var identifier = Identifier(target);
+            var ccs = Shared.GetOrCreateCustomsList(identifier);
             ccs.Add(cc);
         }
 
@@ -88,7 +79,7 @@ namespace CustomComponents
 
         private IEnumerable<T> GetCustomsInternal<T>(string key)
         {
-            if (!customs.TryGetValue(key, out var ccs))
+            if (key == null || !customs.TryGetValue(key, out var ccs))
             {
                 return Enumerable.Empty<T>();
             }
@@ -96,9 +87,9 @@ namespace CustomComponents
             return ccs.OfType<T>();
         }
 
-        private T GetCustomFast<T>(string key)
+        private T GetCustomInternalFast<T>(string key)
         {
-            if (customs.TryGetValue(key, out var ccs))
+            if (key != null && customs.TryGetValue(key, out var ccs))
             {
                 for (var index = 0; index < ccs.Count; index++)
                 {
