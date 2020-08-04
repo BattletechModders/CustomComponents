@@ -57,7 +57,7 @@ namespace CustomComponents
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
                 Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);
 
-                Logger.Log("Loaded CustomComponents v0.11 for bt 1.8");
+                Logger.Log("Loaded CustomComponents v0.11.1 for bt 1.9");
 
                 Validator.RegisterMechValidator(TagRestrictionsHandler.Shared.ValidateMech, TagRestrictionsHandler.Shared.ValidateMechCanBeFielded);
                 Validator.RegisterDropValidator(pre: TagRestrictionsHandler.Shared.ValidateDrop);
@@ -79,6 +79,9 @@ namespace CustomComponents
 
                     if (Settings.FixDefaults)
                         AutoFixer.Shared.RegisterMechFixer(DefaultFixer.Shared.FixMechs);
+
+                    if (Settings.DebugInfo.HasFlag(DType.AutoFixFAKE))
+                        AutoFixer.Shared.RegisterMechFixer(DEBUGTOOLS.SHOWTAGS);
                 }
                 Logger.LogDebug("done");
             }

@@ -1,0 +1,13 @@
+        "LogLevel" : "Debug",
+		"DebugInfo" : "NONE",
+
+		"OverrideSalvageGeneration" : false,
+
+		"RunAutofixer" : false,
+		"TagRestrictionDropValidateRequiredTags" : false,
+		"TagRestrictionDropValidateIncompatibleTags = true,
+		"CheckCriticalComponent" : false;
+		"AddTagsToDescription" : false,
+		"UseDefaultFixedColor" : false,
+
+        "TestEnableAllTags" :false

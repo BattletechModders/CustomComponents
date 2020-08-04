@@ -101,6 +101,7 @@ namespace CustomComponents
         Filter = 1 << 14,
         Color = 1 << 15,
         Icons = 1 << 16,
+        AutoFixFAKE = 1 << 17,
 
         FULL = 0xffffff
     }

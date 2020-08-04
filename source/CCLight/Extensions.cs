@@ -63,7 +63,54 @@ namespace CustomComponents
 
         public static bool IgnoreAutofix(this MechDef def)
         {
-            return def.MechTags.IgnoreAutofix() || def.Chassis.IgnoreAutofix();
+            //Control.LogError("start check");
+            try
+            {
+
+                //Control.LogError("1.mech");
+                if (def == null)
+                {
+                    Control.LogError("MECHDEF IS NULL!");
+                    return true;
+                }
+                //Control.LogError("2.chassis");
+                if (def.Chassis == null)
+                {
+                    Control.LogError($"Chassis of {def.Description.Id} IS NULL!");
+                    return true;
+                }
+                //Control.LogError("3.mech tags");
+                if (def.MechTags == null)
+                {
+                    Control.LogError($"Mechtags of {def.Description.Id} IS NULL!");
+                    return true;
+                }
+                //Control.LogError("4.chassis tags");
+                if (def.Chassis.ChassisTags == null)
+                {
+                    Control.LogError($"Chassistags of {def.Description.Id} IS NULL!");
+                    return true;
+                }
+
+                try
+                {
+                    return def.MechTags.IgnoreAutofix() || def.Chassis.IgnoreAutofix();
+                }
+                catch
+                {
+                    //Control.LogError("5.got error");
+                    //Control.LogError($"got error. try to show {def}");
+                    //Control.LogError($"Tags of {def.ChassisID} not null but null. WTF???  IS NULL!");
+                    return true;
+                }
+
+            }
+            catch
+            {
+                Control.LogError("5.GOT NRE!!!!");
+                Control.LogError($"{def}");
+                return false;
+            }
         }
     }
 
@@ -110,6 +157,15 @@ namespace CustomComponents
     {
         public static bool IgnoreAutofix(this TagSet set)
         {
+            if (set == null)
+            {
+                Control.LogError("Found empty tagset! disabling autofixer");
+                throw new NullReferenceException();
+            }
+
+            if (Control.Settings.ignoreAutofixTags == null)
+                return false;
+
             return set.ContainsAny(Control.Settings.ignoreAutofixTags);
         }
     }
