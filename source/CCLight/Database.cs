@@ -16,24 +16,16 @@ namespace CustomComponents
             return Shared.SetCustomInternal(identifier, cc, replace);
         }
 
-        internal static IEnumerable<T> GetCustomsFromIdentifier<T>(string identifier)
-        {
-            if (identifier == null)
-            {
-                return Enumerable.Empty<T>();
-            }
-            return Shared.GetCustomsInternal<T>(identifier);
-        }
-
         internal static IEnumerable<T> GetCustoms<T>(object target)
         {
             var identifier = Identifier(target);
-            return GetCustomsFromIdentifier<T>(identifier);
+            return Shared.GetCustomsInternal<T>(identifier);
         }
 
         internal static T GetCustom<T>(object target)
         {
-            return GetCustoms<T>(target).FirstOrDefault();
+            var identifier = Identifier(target);
+            return Shared.GetCustomInternalFast<T>(identifier);
         }
 
         internal static bool Is<T>(object target, out T value)
@@ -49,8 +41,8 @@ namespace CustomComponents
 
         internal static void AddCustom(object target, ICustom cc)
         {
-            var key = Identifier(target);
-            var ccs = Shared.GetOrCreateCustomsList(key);
+            var identifier = Identifier(target);
+            var ccs = Shared.GetOrCreateCustomsList(identifier);
             ccs.Add(cc);
         }
 
@@ -87,12 +79,27 @@ namespace CustomComponents
 
         private IEnumerable<T> GetCustomsInternal<T>(string key)
         {
-            if (!customs.TryGetValue(key, out var ccs))
+            if (key == null || !customs.TryGetValue(key, out var ccs))
             {
                 return Enumerable.Empty<T>();
             }
 
             return ccs.OfType<T>();
+        }
+
+        private T GetCustomInternalFast<T>(string key)
+        {
+            if (key != null && customs.TryGetValue(key, out var ccs))
+            {
+                for (var index = 0; index < ccs.Count; index++)
+                {
+                    if (ccs[index] is T csT)
+                    {
+                        return csT;
+                    }
+                }
+            }
+            return default;
         }
 
         private List<ICustom> GetOrCreateCustomsList(string key)

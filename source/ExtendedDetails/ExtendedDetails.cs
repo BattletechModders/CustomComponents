@@ -17,11 +17,22 @@ namespace CustomComponents.ExtendedDetails
 
         private readonly DescriptionDef Def;
 
-        [Obsolete]
+        public static ExtendedDetails GetOrCreate(MechComponentDef def)
+        {
+            return def.GetOrCreate(() => new ExtendedDetails(def.Description));
+        }
+
+        public static ExtendedDetails GetOrCreate(ChassisDef def)
+        {
+            return def.GetOrCreate(() => new ExtendedDetails(def.Description));
+        }
+
+        [Obsolete] // remove
         public ExtendedDetails(MechComponentDef def) : this(def.Description)
         {
         }
-        
+
+        [Obsolete] // make private
         public ExtendedDetails(DescriptionDef def)
         {
             Def = def;
