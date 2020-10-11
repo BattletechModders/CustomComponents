@@ -15,7 +15,7 @@ namespace CustomComponents
         private readonly List<AutoFixerDelegate> fixers = new List<AutoFixerDelegate>();
         private readonly List<AutoFixerDelegate> savegamefixers = new List<AutoFixerDelegate>();
 
-        internal void FixMechDef(List<MechDef> mechDefs)
+        public void FixMechDef(List<MechDef> mechDefs)
         {
 
            

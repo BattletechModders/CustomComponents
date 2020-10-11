@@ -104,7 +104,7 @@ namespace CustomComponents
             }
         }
 
-        internal void FixMechs(List<MechDef> mechDefs, SimGameState state)
+        public void FixMechs(List<MechDef> mechDefs, SimGameState state)
         {
             foreach (var mechDef in mechDefs)
             {
@@ -112,7 +112,7 @@ namespace CustomComponents
             }
         }
 
-        internal void FixMech(MechDef mechDef, SimGameState state)
+        public void FixMech(MechDef mechDef, SimGameState state)
         {
 
 #if CCDEBUG
