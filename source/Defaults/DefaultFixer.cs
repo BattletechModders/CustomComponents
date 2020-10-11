@@ -12,7 +12,7 @@ namespace CustomComponents
         public static int num_changed = 0;
 
 
-        internal static DefaultFixer Shared = new DefaultFixer();
+        public static DefaultFixer Shared = new DefaultFixer();
 
         internal readonly List<DefaultsInfo> TaggedDefaults = new List<DefaultsInfo>();
         internal readonly List<DefaultsInfo> Defaults = new List<DefaultsInfo>();
