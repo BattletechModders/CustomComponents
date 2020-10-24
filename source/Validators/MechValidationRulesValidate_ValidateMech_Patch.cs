@@ -15,6 +15,24 @@ namespace CustomComponents
         {
             try
             {
+                if(mechDef == null)
+                    return;
+                if (Control.Settings.IgnoreValidationTags != null && Control.Settings.IgnoreValidationTags.Length > 0)
+                    foreach (var tag in Control.Settings.IgnoreValidationTags)
+                    {
+                        if ((mechDef.Chassis.ChassisTags != null && mechDef.Chassis.ChassisTags.Contains(tag)) ||
+                        (mechDef.MechTags!= null && mechDef.MechTags.Contains(tag)))
+                        {
+                            Control.LogDebug(DType.MechValidation, $"Validation {mechDef.Description.Id} Ignored by {tag}");
+                            foreach (var pair in __result)
+                            {
+                                pair.Value.Clear();
+                            }
+                            return;
+                        }
+                    }
+
+
                 Validator.ValidateMech(__result, validationLevel, mechDef);
                 foreach (var component in mechDef.Inventory)
                 {

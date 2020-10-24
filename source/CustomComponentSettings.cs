@@ -171,6 +171,7 @@ namespace CustomComponents
         public int MaxWeaponCount = 14;
         public string WrongWeaponCountMessage = "Cannot equip more then {0} weapons";
         internal TagSet ignoreAutofixTags;
+        public string[] IgnoreValidationTags = null;
 
         public void Complete()
         {

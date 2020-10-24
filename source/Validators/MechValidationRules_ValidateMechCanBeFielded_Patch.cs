@@ -20,6 +20,18 @@ namespace CustomComponents
 
                 Control.LogDebug(DType.MechValidation, $"Mech validation for {mechDef.Name} start from {__result}");
 
+                if(Control.Settings.IgnoreValidationTags != null && Control.Settings.IgnoreValidationTags.Length > 0)
+                    foreach (var tag in Control.Settings.IgnoreValidationTags)
+                    {
+                        if ((mechDef.Chassis.ChassisTags != null && mechDef.Chassis.ChassisTags.Contains(tag)) ||
+                            (mechDef.MechTags != null && mechDef.MechTags.Contains(tag)))
+                        {
+                            Control.LogDebug(DType.MechValidation, $"- Ignored by {tag}");
+                            __result = true;
+                            return;
+                        }
+                    }
+                
                 if (!__result)
                 {
                     Control.LogDebug(DType.MechValidation, $"- failed base validation");
