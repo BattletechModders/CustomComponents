@@ -21,6 +21,7 @@ namespace CustomComponents
         private static FileLogAppender logAppender;
 
         internal const string CustomSectionName = "Custom";
+        internal static string LogPrefix = "[CC]";
 
         public static void Init(string directory, string settingsJSON)
         {
@@ -57,7 +58,7 @@ namespace CustomComponents
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
                 Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);
 
-                Logger.Log("Loaded CustomComponents v0.11.1 for bt 1.9");
+                Logger.Log("Loaded CustomComponents v0.12 for bt 1.9");
 
                 Validator.RegisterMechValidator(TagRestrictionsHandler.Shared.ValidateMech, TagRestrictionsHandler.Shared.ValidateMechCanBeFielded);
                 Validator.RegisterDropValidator(pre: TagRestrictionsHandler.Shared.ValidateDrop);
@@ -82,6 +83,10 @@ namespace CustomComponents
 
                     if (Settings.DebugInfo.HasFlag(DType.AutoFixFAKE))
                         AutoFixer.Shared.RegisterMechFixer(DEBUGTOOLS.SHOWTAGS);
+
+                    if(Settings.ignoreAutofixTags != null && Settings.ignoreAutofixTags.Count > 0)
+                        foreach (var tag in Settings.ignoreAutofixTags)
+                            AutoFixer.Shared.RegisterMechFixer(AutoFixer.Shared.EmptyFixer, tag);
                 }
                 Logger.LogDebug("done");
             }
@@ -93,11 +98,14 @@ namespace CustomComponents
 
         public static void FinishedLoading(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
+            Control.LogDebug(DType.CustomResource, "Custom Resource Load started");
             CategoryController.Shared.Setup(customResources);
             DefaultFixer.Shared.Setup(customResources);
             TagRestrictionsHandler.Shared.Setup(customResources);
             if (customResources.TryGetValue("CustomSVGIcon", out var icons))
                 IconController.LoadIcons(icons);
+            Control.LogDebug(DType.CustomResource, " - done");
+
         }
 
         #region LOGGING
@@ -105,31 +113,31 @@ namespace CustomComponents
         public static void LogDebug(DType type, string message)
         {
             if (Settings.DebugInfo.HasFlag(type))
-                Logger.LogDebug(message);
+                Logger.LogDebug(LogPrefix + message);
         }
         [Conditional("CCDEBUG")]
         public static void LogDebug(DType type, string message, Exception e)
         {
             if (Settings.DebugInfo.HasFlag(type))
-                Logger.LogDebug(message, e);
+                Logger.LogDebug(LogPrefix + message, e);
         }
 
         public static void LogError(string message)
         {
-            Logger.LogError(message);
+            Logger.LogError(LogPrefix + message);
         }
         public static void LogError(string message, Exception e)
         {
-                Logger.LogError(message, e);
+                Logger.LogError(LogPrefix + message, e);
         }
         public static void LogError(Exception e)
         {
-            Logger.LogError(e);
+            Logger.LogError(LogPrefix, e);
         }
 
         public static void Log(string message)
         {
-            Logger.Log(message);
+            Logger.Log(LogPrefix + message);
         }
 
 

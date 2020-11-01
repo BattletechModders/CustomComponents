@@ -12,7 +12,7 @@
 	
 	"Settings" : {
 		"LogLevel": "Debug",
-		"DebugInfo" : "Icons",
+		"DebugInfo" : "Icons, ComponentInstall, MechValidation",
 
 		"Categories": [ ],
 		"TagRestrictions": [ ],
@@ -60,5 +60,16 @@
 		"SalvageLegWeight" : 0.75,
 		"SalvageTorsoWeight" : 1,
 		"SalvageHeadWeight" : 0.5,
-	}
+	},
+	
+	"Manifest": [
+		{
+			"Type" : "CCTagRestrictions",
+			"Path" : "CCTestMod/test/TagRestriction"
+		},
+		{
+			"Type" : "UpgradeDef",
+			"Path" : "CCTestMod/test/items"
+		}
+	]
 }

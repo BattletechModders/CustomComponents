@@ -17,8 +17,17 @@ namespace CustomComponents
 
         internal void Setup(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
+            Control.LogDebug(DType.CustomResource, " - TagRestriction");
             Restrictions = SettingsResourcesTools.Enumerate<TagRestrictions>("CCTagRestrictions", customResources)
                 .ToDictionary(entry => entry.Tag);
+
+            if (Control.Settings.DebugInfo.HasFlag(DType.CustomResource))
+            {
+                foreach (var pair in Restrictions)
+                {
+                    Control.LogDebug(DType.CustomResource, $" -- {pair.Key}");
+                }
+            }
         }
 
         internal bool ValidateMechCanBeFielded(MechDef mechDef)
@@ -103,6 +112,8 @@ namespace CustomComponents
                 ProcessComponent(droppedComponent, tagsForDropped, dropLocation.ToString());
                 tagsOnMech.UnionWith(tagsForDropped); // used for incompatible check
             }
+
+            
 
             var checkRequiresForTags = tagsOnMech;
             if (tagsForDropped != null)

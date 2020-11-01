@@ -1,0 +1,16 @@
+{
+    "Settings" : [
+		{
+            "Tag" : "test2",
+			"RequiredTags": [
+				"test1"
+			]
+        },
+		{
+			"Tag": "test1",
+			"IncompatibleTags": [
+				"test3"
+			]
+		}
+	]
+}

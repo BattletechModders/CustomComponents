@@ -102,7 +102,8 @@ namespace CustomComponents
         Color = 1 << 15,
         Icons = 1 << 16,
         AutoFixFAKE = 1 << 17,
-
+        AutoFixBase = 1 << 18,
+        DetailTagValidation = 1 << 19,
         FULL = 0xffffff
     }
 
