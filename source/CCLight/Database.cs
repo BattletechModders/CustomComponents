@@ -7,7 +7,7 @@ using Harmony;
 
 namespace CustomComponents
 {
-    internal class Database
+    public class Database
     {
         #region internal
 
@@ -16,13 +16,13 @@ namespace CustomComponents
             return Shared.SetCustomInternal(identifier, cc, replace);
         }
 
-        internal static IEnumerable<T> GetCustoms<T>(object target)
+        public static IEnumerable<T> GetCustoms<T>(object target)
         {
             var identifier = Identifier(target);
             return Shared.GetCustomsInternal<T>(identifier);
         }
 
-        internal static T GetCustom<T>(object target)
+        public static T GetCustom<T>(object target)
         {
             var identifier = Identifier(target);
             return Shared.GetCustomInternalFast<T>(identifier);
@@ -63,6 +63,8 @@ namespace CustomComponents
             {
                 return chassisDef.Description.Id;
             }
+            else if (target is VehicleChassisDef vcd)
+                return vcd.Description.Id;
 
             var descriptionProperty = target.GetType().GetProperty(nameof(MechComponentDef.Description), typeof(DescriptionDef));
             var description = descriptionProperty?.GetValue(target, null) as DescriptionDef;

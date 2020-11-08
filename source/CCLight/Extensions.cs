@@ -43,6 +43,29 @@ namespace CustomComponents
         }
     }
 
+    public static class VehicleExtentions
+    {
+        public static T GetComponent<T>(this VehicleChassisDef target)
+        {
+            return Database.GetCustom<T>(target);
+        }
+
+        public static IEnumerable<T> GetComponents<T>(this VehicleChassisDef target)
+        {
+            return Database.GetCustoms<T>(target);
+        }
+
+        public static bool Is<T>(this VehicleChassisDef target, out T res)
+        {
+            return Database.Is(target, out res);
+        }
+
+        public static bool Is<T>(this VehicleChassisDef target)
+        {
+            return Database.Is<T>(target);
+        }
+    }
+
     public static class MechDefExtensions
     {
         public static T GetComponent<T>(this MechDef target)
