@@ -97,7 +97,8 @@ namespace CustomComponents
                     Control.LogError($"Exception in default Autofixer {autoFixerDelegate.Method.Name}", e);
                 }
             }
-
+            if (Control.Settings.DEBUG_ValidateMechDefs)
+                DEBUG_ValidateAll.Validate(temp_work_list);
             Control.LogDebug(DType.AutoFixBase, $"-- done");
 
         }

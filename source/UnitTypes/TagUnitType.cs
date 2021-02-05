@@ -1,7 +1,7 @@
 ﻿using BattleTech;
 using HBS.Collections;
 
-namespace CustomComponents.UnitTypes
+namespace CustomComponents
 {
     public class TagUnitType : IUnitType
     {

@@ -1,4 +1,4 @@
-﻿namespace CustomComponents.UnitTypes
+﻿namespace CustomComponents
 {
     [CustomComponent("UnitTYpe")]
     public class UnitTypeCustom : SimpleCustomChassis

@@ -2,7 +2,7 @@
 using System.Linq;
 using BattleTech;
 
-namespace CustomComponents.UnitTypes
+namespace CustomComponents
 {
     public class UnitTypeDatabase
     {

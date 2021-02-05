@@ -104,6 +104,7 @@ namespace CustomComponents
         AutoFixFAKE = 1 << 17,
         AutoFixBase = 1 << 18,
         DetailTagValidation = 1 << 19,
+        AutofixValidate = 1 << 20,
         FULL = 0xffffff
     }
 
@@ -114,6 +115,8 @@ namespace CustomComponents
 
         public bool DEBUG_DumpMechDefs = false;
         public string DEBUG_MechDefsDir = "D:/MechDefs";
+        public bool DEBUG_ValidateMechDefs = false;
+        public bool DEBUG_ShowOnlyErrors = false;
 
         public LogLevel LogLevel = LogLevel.Debug;
         public List<TagColor> ColorTags = new List<TagColor>();
