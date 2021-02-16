@@ -63,8 +63,11 @@ namespace CustomComponents
                 Control.LogDebug(DType.ComponentInstall, $"- pre validation");
 
                 foreach (var pre_validator in Validator.GetPre(newComponentDef))
+                {
+                    
                     if (do_cancel(pre_validator(dragItem, location_helper, mechlab_helper), null))
                         return false;
+                }
 
                 Control.LogDebug(DType.ComponentInstall, $"- replace validation");
 
@@ -119,22 +122,16 @@ namespace CustomComponents
                     }
                 }
 
-                List<InvItem> new_inventory = ___mechLab.activeMechInventory
-                    .Select(i => new InvItem { item = i, location = i.MountedLocation }).ToList();
-
-                new_inventory.AddRange(changes.OfType<AddChange>()
-                    .Select(i => new InvItem { item = i.item.ComponentRef, location = i.location }));
-
-                foreach (var remove in changes.OfType<RemoveChange>())
-                {
-                    new_inventory.RemoveAll(i => i.item == remove.item.ComponentRef);
-                }
+                List<InvItem> new_inventory = GetInventory(___mechLab, changes);
                 Control.LogDebug(DType.ComponentInstall, $"- post validation");
-
                 foreach (var pst_validator in Validator.GetPost(newComponentDef))
+                {
+                    int n = changes.Count;
                     if (do_cancel(pst_validator(dragItem, ___mechLab.activeMechDef, new_inventory, changes), changes))
                         return false;
-
+                    if (changes.Count != n)
+                        new_inventory = GetInventory(___mechLab, changes);
+                }
                 Control.LogDebug(DType.ComponentInstall, $"- apply changes");
 
                 foreach (var change in changes)
@@ -154,6 +151,20 @@ namespace CustomComponents
             }
 
             return true;
+        }
+
+        private static List<InvItem> GetInventory(MechLabPanel ___mechLab, List<IChange> changes)
+        {
+            List<InvItem> new_inventory = ___mechLab.activeMechInventory
+                .Select(i => new InvItem { item = i, location = i.MountedLocation }).ToList();
+
+            new_inventory.AddRange(changes.OfType<AddChange>()
+                .Select(i => new InvItem { item = i.item.ComponentRef, location = i.location }));
+
+            foreach (var remove in changes.OfType<RemoveChange>())
+                new_inventory.RemoveAll(i => i.item == remove.item.ComponentRef);
+
+            return new_inventory;
         }
     }
 }

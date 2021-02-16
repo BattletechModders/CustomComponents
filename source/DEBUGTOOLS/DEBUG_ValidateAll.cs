@@ -62,6 +62,7 @@ namespace CustomComponents
                             validator.ValidateMech(error, MechValidationLevel.MechLab, mechDef, component);
                         }
                     }
+
                     bool bad_mech = false;
                     foreach (var pair in error)
                     {
