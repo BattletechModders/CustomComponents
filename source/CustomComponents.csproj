@@ -112,6 +112,7 @@
     <Compile Include="CCLight\Factories\SimpleCustom.cs" />
     <Compile Include="DEBUGTOOLS\DEBUG_ValidateAll.cs" />
     <Compile Include="DEBUGTOOLS\SimGameState_GetMechComponentRefForUID.cs" />
+    <Compile Include="Defaults\IDefaultComponent.cs" />
     <Compile Include="ExtendedDetails\ExtendedDetails.cs" />
     <Compile Include="Fixes\WeaponsCountFix.cs" />
     <Compile Include="Icons\IconController.cs" />

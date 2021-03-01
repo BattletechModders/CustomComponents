@@ -88,6 +88,7 @@ namespace CustomComponents
                         new_flags.Add("no_remove");
                         new_flags.Add("hide");
                         new_flags.Add("no_salvage");
+                        DefaultHelper.SetDefault(Def.Description.Id);
                         break;
                     case "autorepair":
                         AutoRepair = true;

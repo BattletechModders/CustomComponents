@@ -14,17 +14,44 @@ namespace CustomComponents
     {
         #region EXTENSIONS
 
+        private static Dictionary<string, bool> defaults = new Dictionary<string, bool>();
+
         public static bool IsDefault(this MechComponentDef cdef)
         {
-            return cdef.Is<Flags>(out var f) && f.Default;
+            if (cdef == null)
+                return false;
+
+            if (defaults.TryGetValue(cdef.Description.Id, out var result))
+                return result;
+
+            result = cdef.Is<IDefault>() || cdef.Is<Flags>(out var f) && f.Default;
+            defaults[cdef.Description.Id] = result;
+            return result;
+
         }
         public static bool IsDefault(this MechComponentRef cref)
         {
-            return cref.Is<Flags>(out var f) && f.Default;
+            if (defaults.TryGetValue(cref.ComponentDefID, out var result))
+                return result;
+
+            result = cref.Is<IDefault>() || cref.Is<Flags>(out var f) && f.Default;
+            defaults[cref.ComponentDefID] = result;
+            return result;
         }
+
         public static bool IsDefault(this BaseComponentRef cref)
         {
-            return cref.Is<Flags>(out var f) && f.Default;
+            if (defaults.TryGetValue(cref.ComponentDefID, out var result))
+                return result;
+
+            result = cref.Is<IDefault>() || cref.Is<Flags>(out var f) && f.Default;
+            defaults[cref.ComponentDefID] = result;
+            return result;
+        }
+
+        internal static void SetDefault(string id)
+        {
+            defaults[id] = true;
         }
 
         public static bool IsModuleFixed(this MechComponentRef item, MechDef mech)
