@@ -86,14 +86,15 @@ namespace CustomComponents
 
         internal static IEnumerable<PostValidateDropDelegate> GetPost(MechComponentDef component)
         {
-            yield return ValidateSize;
-            yield return ValidateJumpJets;
 
             foreach (var validator in component.GetComponents<IPostValidateDrop>())
                 yield return validator.PostValidateDrop;
 
             foreach (var validator in chk_drop_validators)
                 yield return validator;
+            
+            yield return ValidateSize;
+            yield return ValidateJumpJets;
         }
 
 
