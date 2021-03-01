@@ -233,7 +233,7 @@ namespace CustomComponents
             repair_state = true;
             repair_widget = widget;
 
-            if (component.Is<Flags>(out var f) && f.AutoRepair)
+            if (component.IsDefault() || component.Is<Flags>(out var f) && f.AutoRepair)
             {
                 Control.LogDebug(DType.DefaultHandle, $"AutoRepair: {component.Description.Id} ");
                 item.ComponentRef.DamageLevel = ComponentDamageLevel.Penalized;

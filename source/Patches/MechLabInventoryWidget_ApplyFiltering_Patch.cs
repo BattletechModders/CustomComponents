@@ -41,6 +41,12 @@ namespace CustomComponents
 
                     var mechlab = __instance.ParentDropTarget as MechLabPanel;
                     if (item.ComponentRef != null)
+                    {
+                        if(item.ComponentRef.IsDefault())
+                        {
+                            item.gameObject.SetActive(false);
+                            Control.LogDebug(DType.Filter, $"---- filterd, default");
+                        }
                         foreach (var filter in item.ComponentRef.GetComponents<IMechLabFilter>())
                         {
                             try
@@ -58,6 +64,7 @@ namespace CustomComponents
                                 Control.LogError("Error in filter", e);
                             }
                         }
+                    }
                     else
                         Control.LogDebug(DType.Filter, $"-- ITEM IS NULL!");
 
