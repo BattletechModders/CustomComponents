@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 using BattleTech.UI;
+using CustomComponents.ExtendedDetails;
 using fastJSON;
 using HBS.Extensions;
 
@@ -14,7 +15,7 @@ namespace CustomComponents
     /// </summary>
     [CustomComponent("Category", true)]
     public class Category : SimpleCustomComponent, IAfterLoad, IOnInstalled, IReplaceValidateDrop,
-        IPreValidateDrop, IPostValidateDrop, IReplaceIdentifier, IAdjustDescription, IOnItemGrabbed,
+        IPreValidateDrop, IPostValidateDrop, IReplaceIdentifier, IAdjustDescriptionED, IOnItemGrabbed,
         IClearInventory, IAdjustValidateDrop
     {
         /// <summary>
@@ -266,24 +267,6 @@ namespace CustomComponents
             return string.Empty;
         }
 
-        public string AdjustDescription(string Description)
-        {
-            if (CategoryDescriptor.AddCategoryToDescription)
-            {
-                var color_start = $"<b><color={Control.Settings.CategoryDescriptionColor}>[";
-                var color_end = "]</color></b>";
-                if (Description.Contains(color_start))
-                {
-                    int pos = Description.IndexOf(color_start, 0) + color_start.Length;
-                    Description = Description.Substring(0, pos) + CategoryDescriptor.DisplayName + ", " +
-                                  Description.Substring(pos);
-                }
-                else
-                    Description = Description + "\n" + color_start + CategoryDescriptor.DisplayName + color_end;
-            }
-
-            return Description;
-        }
 
 
         public override string ToString()
@@ -343,5 +326,46 @@ namespace CustomComponents
 
             yield return new AddDefaultChange(replace.MountedLocation, DefaultHelper.CreateSlot(replace, mechlab.MechLab));
         }
+
+        public void AdjustDescription()
+        {
+            if (this.CategoryDescriptor.AddCategoryToDescription)
+            {
+                var ed = ExtendedDetails.ExtendedDetails.GetOrCreate(Def);
+                var detail =
+                    ed.GetDetails().FirstOrDefault(i => i.Identifier == "Category") as
+                        ExtendedDetails.ExtendedDetailList ??
+                    new ExtendedDetailList()
+                    {
+                        Index = 10,
+                        Identifier = "Category",
+                        OpenBracket = $"\n<b><color={Control.Settings.CategoryDescriptionColor}>[",
+                        CloseBracket = "]</color></b>\n"
+                    };
+
+                detail.Values.Add(this.CategoryDescriptor.DisplayName);
+                ed.AddDetail(detail);
+            }
+        }
+
+
+        //public string AdjustDescription(string Description)
+        //{
+        //    if (CategoryDescriptor.AddCategoryToDescription)
+        //    {
+        //        var color_start = $"<b><color={Control.Settings.CategoryDescriptionColor}>[";
+        //        var color_end = "]</color></b>";
+        //        if (Description.Contains(color_start))
+        //        {
+        //            int pos = Description.IndexOf(color_start, 0) + color_start.Length;
+        //            Description = Description.Substring(0, pos) + CategoryDescriptor.DisplayName + ", " +
+        //                          Description.Substring(pos);
+        //        }
+        //        else
+        //            Description = Description + "\n" + color_start + CategoryDescriptor.DisplayName + color_end;
+        //    }
+
+        //    return Description;
+        //}
     }
 }

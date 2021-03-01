@@ -126,9 +126,9 @@ namespace CustomComponents
                     .Select(i => new InvItem { item = i.item.ComponentRef, location = i.location }));
 
                 foreach (var remove in changes.OfType<RemoveChange>())
-                {
                     new_inventory.RemoveAll(i => i.item == remove.item.ComponentRef);
-                }
+
+
                 Control.LogDebug(DType.ComponentInstall, $"- post validation");
 
                 foreach (var pst_validator in Validator.GetPost(newComponentDef))
@@ -141,6 +141,7 @@ namespace CustomComponents
                 {
                     change.DoChange(mechlab_helper, location_helper);
                 }
+
 
                 ___mechLab.ClearDragItem(true);
                 __instance.RefreshHardpointData();

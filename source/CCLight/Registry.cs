@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using BattleTech;
 
 namespace CustomComponents
 {
@@ -139,11 +140,19 @@ namespace CustomComponents
                     }
 
                     Control.LogDebug(DType.CCLoading, $"Created {component} for {identifier}");
-                
-                    if (Database.SetCustomWithIdentifier(identifier, component, replace) && component is IAfterLoad load)
+
+                    if (Database.SetCustomWithIdentifier(identifier, component, replace) )
                     {
-                        Control.LogDebug(DType.CCLoading, $"IAfterLoad: {identifier}");
-                        load.OnLoaded(values);
+                        if (component is IAfterLoad load)
+                        {
+                            Control.LogDebug(DType.CCLoading, $"IAfterLoad: {identifier}");
+                            load.OnLoaded(values);
+                        }
+
+                        if (component is IAdjustDescriptionED ed)
+                        {
+                            ed.AdjustDescription();
+                        }
                     }
                 }
             }

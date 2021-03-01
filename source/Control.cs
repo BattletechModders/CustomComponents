@@ -53,7 +53,7 @@ namespace CustomComponents
                 var harmony = HarmonyInstance.Create("io.github.denadan.CustomComponents");
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
 
-                Registry.RegisterPreProcessor(new AdjustDescriptionPreProcessor());
+                //Registry.RegisterPreProcessor(new AdjustDescriptionPreProcessor());
 
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
                 Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);

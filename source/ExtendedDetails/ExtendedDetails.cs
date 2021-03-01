@@ -76,8 +76,8 @@ namespace CustomComponents.ExtendedDetails
         public string Identifier { get; set; }
 
         public int Index { get; set; } // 0 => original description details, -1 before, 1 after
-        public string Text { get; set; }
-
+        public virtual string Text { get; set; }
+        
         public int CompareTo(ExtendedDetail other)
         {
             var compared = Index.CompareTo(other.Index);
@@ -86,6 +86,24 @@ namespace CustomComponents.ExtendedDetails
                 return compared;
             }
             return Identifier.CompareTo(other.Identifier);
+        }
+    }
+
+    public class ExtendedDetailList : ExtendedDetail
+    {
+        public string OpenBracket { get; set; }
+        public string CloseBracket { get; set; }
+        public List<string> Values { get; set; } = new List<string>();
+
+
+        public override string Text
+        {
+            get => OpenBracket + Values.Join() + CloseBracket;
+
+            set
+            {
+
+            }
         }
     }
 }
