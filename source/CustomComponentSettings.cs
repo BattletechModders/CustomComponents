@@ -105,7 +105,8 @@ namespace CustomComponents
         AutoFixBase = 1 << 18,
         DetailTagValidation = 1 << 19,
         AutofixValidate = 1 << 20,
-        FULL = 0xffffff
+        UnitType = 1 << 21,
+        FULL = 0xffffff,
     }
 
 
@@ -169,13 +170,15 @@ namespace CustomComponents
         public int OmniTechInstallCost = 1;
         public bool DontUseFilter = false;
         public bool FixIcons = true;
-        public string[] IgnoreAutofixTags = { "ignore_autofix", "noautofix" }; 
+        public string[] IgnoreAutofixTags = { "ignore_autofix", "noautofix" };
 
+        public string DefaultOldCategoryType = "Mech";
         public bool CheckWeaponCount = false;
         public int MaxWeaponCount = 14;
         public string WrongWeaponCountMessage = "Cannot equip more then {0} weapons";
         internal TagSet ignoreAutofixTags;
         public string[] IgnoreValidationTags = null;
+        public TagUnitType[] UnitTypes = null;
 
         public void Complete()
         {
@@ -191,6 +194,12 @@ namespace CustomComponents
                 }
 
             ignoreAutofixTags = new TagSet(IgnoreAutofixTags);
+
+            if (UnitTypes != null && UnitTypes.Length > 0)
+                foreach (var tagUnitType in UnitTypes)
+                {
+                    UnitTypeDatabase.Instance.RegisterUnitType(tagUnitType);
+                }
         }
     }
 }

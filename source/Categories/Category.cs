@@ -74,9 +74,18 @@ namespace CustomComponents
             if (order.DesiredLocation == ChassisLocations.None)
                 return;
 
-            if (!CategoryDescriptor.AutoReplace || CategoryDescriptor.MaxEquiped < 0 && CategoryDescriptor.MaxEquipedPerLocation < 0)
+            var record = CategoryDescriptor[mech];
+            if (record == null)
             {
-                Control.LogDebug(DType.ComponentInstall, $"-- {CategoryDescriptor.DisplayName} r:{CategoryDescriptor.AutoReplace}  max:{CategoryDescriptor.MaxEquiped} mpr:{CategoryDescriptor.MaxEquipedPerLocation} = not requre replace");
+                Control.LogDebug(DType.ComponentInstall,
+                    $"-- {CategoryDescriptor.DisplayName} r:{CategoryDescriptor.AutoReplace}  record:null = not requre replace");
+
+                return;
+            }
+
+            if (!CategoryDescriptor.AutoReplace || record.MaxEquiped < 0 && record.MaxEquipedPerLocation < 0)
+            {
+                Control.LogDebug(DType.ComponentInstall, $"-- {CategoryDescriptor.DisplayName} r:{CategoryDescriptor.AutoReplace}  max:{record.MaxEquiped} mpr:{record.MaxEquipedPerLocation} = not requre replace");
 
                 return;
             }
@@ -99,7 +108,7 @@ namespace CustomComponents
             }
 #endif
 
-            Control.LogDebug(DType.ComponentInstall, $"-- total {n1}/{CategoryDescriptor.MaxEquiped}  location: {n2}/{CategoryDescriptor.MaxEquipedPerLocation}");
+            Control.LogDebug(DType.ComponentInstall, $"-- total {n1}/{record.MaxEquiped}  location: {n2}/{record.MaxEquipedPerLocation}");
 
             var replace = mech.Inventory.FirstOrDefault(i => !i.IsModuleFixed(mech) && (i.MountedLocation == order.DesiredLocation || CategoryDescriptor.ReplaceAnyLocation) && i.IsCategory(CategoryID) && i.IsDefault());
 
@@ -108,8 +117,8 @@ namespace CustomComponents
             if (replace == null)
                 return;
 
-            bool need_replace = (CategoryDescriptor.MaxEquiped > 0 && n1 > CategoryDescriptor.MaxEquiped) ||
-                (CategoryDescriptor.MaxEquipedPerLocation > 0 && n2 > CategoryDescriptor.MaxEquipedPerLocation);
+            bool need_replace = (record.MaxEquiped > 0 && n1 > record.MaxEquiped) ||
+                (record.MaxEquipedPerLocation > 0 && n2 > record.MaxEquipedPerLocation);
 
             Control.LogDebug(DType.ComponentInstall, $"-- need_repalce: {need_replace}");
 
@@ -121,9 +130,12 @@ namespace CustomComponents
         public string ReplaceValidateDrop(MechLabItemSlotElement drop_item, LocationHelper location, List<IChange> changes)
         {
             Control.LogDebug(DType.ComponentInstall, $"-- Category {CategoryID}");
+            var mech = location.mechLab.activeMechDef;
 
-            if (!CategoryDescriptor.AutoReplace ||
-                CategoryDescriptor.MaxEquiped <= 0 && CategoryDescriptor.MaxEquipedPerLocation <= 0)
+            var record = CategoryDescriptor[mech];
+
+            if (!CategoryDescriptor.AutoReplace || record == null ||
+                record.MaxEquiped <= 0 && record.MaxEquipedPerLocation <= 0)
             {
                 Control.LogDebug(DType.ComponentInstall, $"--- no replace needed");
                 return String.Empty;
@@ -136,14 +148,13 @@ namespace CustomComponents
             }
 
 
-            var mech = location.mechLab.activeMechDef;
 
-            if (CategoryDescriptor.MaxEquiped > 0)
+            if (record.MaxEquiped > 0)
             {
                 var n = location.mechLab.activeMechDef.Inventory.Count(i => i.Def.IsCategory(CategoryID));
-                Control.LogDebug(DType.ComponentInstall, $"--- MaxEquiped: {n}/{CategoryDescriptor.MaxEquiped} ReplaceAny:{CategoryDescriptor.ReplaceAnyLocation}");
+                Control.LogDebug(DType.ComponentInstall, $"--- MaxEquiped: {n}/{record.MaxEquiped} ReplaceAny:{CategoryDescriptor.ReplaceAnyLocation}");
 
-                if (n >= CategoryDescriptor.MaxEquiped)
+                if (n >= record.MaxEquiped)
                 {
                     var replace = location.LocalInventory
                         .FirstOrDefault(i => i.ComponentRef.Def.IsCategory(CategoryID) && !i.ComponentRef.IsModuleFixed(mech));
@@ -175,7 +186,7 @@ namespace CustomComponents
                     {
                         Control.LogDebug(DType.ComponentInstall, $"--- return error");
 
-                        if (CategoryDescriptor.MaxEquiped > 1)
+                        if (record.MaxEquiped > 1)
                             return string.Format(CategoryDescriptor.AddMaximumReached, CategoryDescriptor.displayName,
                                 n);
                         else
@@ -189,12 +200,12 @@ namespace CustomComponents
                 }
             }
 
-            if (CategoryDescriptor.MaxEquipedPerLocation > 0)
+            if (record.MaxEquipedPerLocation > 0)
             {
                 var n = location.LocalInventory.Count(i => i.ComponentRef.Def.IsCategory(CategoryID));
-                Control.LogDebug(DType.ComponentInstall, $"--- MaxEquipedPerLocation: {n}/{CategoryDescriptor.MaxEquipedPerLocation}");
+                Control.LogDebug(DType.ComponentInstall, $"--- MaxEquipedPerLocation: {n}/{record.MaxEquipedPerLocation}");
 
-                if (n >= CategoryDescriptor.MaxEquipedPerLocation)
+                if (n >= record.MaxEquipedPerLocation)
                 {
                     var replace = location.LocalInventory
                         .FirstOrDefault(i => i.ComponentRef.Def.IsCategory(CategoryID) && !i.ComponentRef.IsModuleFixed(mech));
@@ -204,7 +215,7 @@ namespace CustomComponents
                     {
                         Control.LogDebug(DType.ComponentInstall, $"--- return error");
 
-                        if (CategoryDescriptor.MaxEquipedPerLocation > 1)
+                        if (record.MaxEquipedPerLocation > 1)
                             return string.Format(CategoryDescriptor.AddMaximumLocationReached,
                                 CategoryDescriptor.displayName, n, location.LocationName);
                         else
@@ -231,19 +242,22 @@ namespace CustomComponents
         public string PostValidateDrop(MechLabItemSlotElement drop_item, MechDef mech, List<InvItem> new_inventory, List<IChange> changes)
         {
             Control.LogDebug(DType.ComponentInstall, $"-- Category {CategoryID}");
+            var record = CategoryDescriptor[mech];
+            if (record == null)
+                return string.Empty;
 
-            if (CategoryDescriptor.MaxEquiped > 0)
+            if (record.MaxEquiped > 0)
             {
                 var total = new_inventory.Count(i => i.item.Def.IsCategory(CategoryID));
-                Control.LogDebug(DType.ComponentInstall, $"---- {total}/{CategoryDescriptor.MaxEquiped}");
-                if (total > CategoryDescriptor.MaxEquiped)
-                    if (CategoryDescriptor.MaxEquiped > 1)
-                        return string.Format(CategoryDescriptor.AddMaximumReached, CategoryDescriptor.displayName, CategoryDescriptor.MaxEquiped);
+                Control.LogDebug(DType.ComponentInstall, $"---- {total}/{record.MaxEquiped}");
+                if (total > record.MaxEquiped)
+                    if (record.MaxEquiped > 1)
+                        return string.Format(CategoryDescriptor.AddMaximumReached, CategoryDescriptor.displayName, record.MaxEquiped);
                     else
                         return string.Format(CategoryDescriptor.AddAlreadyEquiped, CategoryDescriptor.displayName);
             }
 
-            if (CategoryDescriptor.MaxEquipedPerLocation > 0)
+            if (record.MaxEquipedPerLocation > 0)
             {
                 var total = new_inventory
                     .Where(i => i.item.Def.IsCategory(CategoryID))
@@ -253,12 +267,12 @@ namespace CustomComponents
                         return new { l = i.location, c = component };
                     })
                     .GroupBy(i => i.l)
-                    .FirstOrDefault(i => i.Count() > CategoryDescriptor.MaxEquipedPerLocation);
+                    .FirstOrDefault(i => i.Count() > record.MaxEquipedPerLocation);
 
                 if (total != null)
-                    if (CategoryDescriptor.MaxEquipedPerLocation > 1)
+                    if (record.MaxEquipedPerLocation > 1)
                         return string.Format(CategoryDescriptor.AddMaximumLocationReached, CategoryDescriptor.DisplayName,
-                           CategoryDescriptor.MaxEquipedPerLocation, total.Key);
+                            record.MaxEquipedPerLocation, total.Key);
                     else
                         return string.Format(CategoryDescriptor.AddAlreadyEquipedLocation,
                             CategoryDescriptor.DisplayName, total.Key);

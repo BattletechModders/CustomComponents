@@ -20,6 +20,7 @@ namespace CustomComponents
         private static List<ValidateMechCanBeFieldedDelegate> field_validators =
             new List<ValidateMechCanBeFieldedDelegate>();
         internal static List<ClearInventoryDelegate> clear_inventory = new List<ClearInventoryDelegate>();
+        public static List<ValidateAdjustDelegate> adjust_validators= new List<ValidateAdjustDelegate>();
 
         /// <summary>
         /// register new AddValidator
@@ -36,6 +37,11 @@ namespace CustomComponents
             if (check != null)
                 chk_drop_validators.Add(check);
 
+        }
+
+        public static void RegisterAdjustValidatod(ValidateAdjustDelegate adjust)
+        {
+            adjust_validators.Add(adjust);
         }
 
         public static ReplaceValidateDropDelegate HardpointValidator { get; set; } = null;

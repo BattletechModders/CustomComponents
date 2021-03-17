@@ -17,4 +17,7 @@ namespace CustomComponents
         IEnumerable<IChange> ValidateDropOnAdd(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab, List<IChange> changes);
         IEnumerable<IChange> ValidateDropOnRemove(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab, List<IChange> changes);
     }
+
+    public delegate IEnumerable<IChange> ValidateAdjustDelegate(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab, List<InvItem> new_inventory);
+
 }

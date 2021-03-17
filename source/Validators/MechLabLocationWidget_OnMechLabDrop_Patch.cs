@@ -101,8 +101,9 @@ namespace CustomComponents
 
                 Control.LogDebug(DType.ComponentInstall, $"- adjusting {changes.Count} changes");
 
+                //???
                 int num = changes.Count;
-                for (int i = 0; i < num; i++)
+                for (int i = 0; i < changes.Count; i++)
                 {
                     if (changes[i] is AddChange add)
                     {
@@ -120,6 +121,12 @@ namespace CustomComponents
                             changes.AddRange(adj_validator.ValidateDropOnRemove(remove.item, location_helper,
                                 mechlab_helper, changes));
                     }
+                }
+
+                foreach (var validator in Validator.adjust_validators)
+                {
+                    var inv = GetInventory(___mechLab, changes);
+                    changes.AddRange(validator(dragItem, location_helper, mechlab_helper, inv));
                 }
 
                 List<InvItem> new_inventory = GetInventory(___mechLab, changes);

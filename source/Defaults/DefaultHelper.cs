@@ -64,7 +64,7 @@ namespace CustomComponents
 
             }
 
-            
+
             if (mech.Chassis.FixedEquipment != null && mech.Chassis.FixedEquipment.Length > 0)
                 foreach (var mref in mech.Chassis.FixedEquipment)
                 {
@@ -191,6 +191,29 @@ namespace CustomComponents
             var slot = CreateSlot(id, type, mechLab.MechLab);
             slot.MountedLocation = location;
             target.OnAddItem(slot, false);
+        }
+
+        public static void RemoveMechLab(MechLabLocationWidget widget, MechLabItemSlotElement slot,
+            MechLabHelper mechLab)
+        {
+            RemoveMechLab(new LocationHelper(widget), slot, mechLab);
+        }
+
+        public static void RemoveMechLab(LocationHelper helper, MechLabItemSlotElement slot, MechLabHelper mechLab)
+        {
+            if (helper == null || slot == null)
+                return;
+
+            if (helper.LocalInventory.Contains(slot))
+            {
+
+                helper.widget.OnRemoveItem(slot, true);
+                Control.LogDebug(DType.DefaultHandle, $"- removed");
+                slot.thisCanvasGroup.blocksRaycasts = true;
+                mechLab.MechLab.dataManager.PoolGameObject(MechLabPanel.MECHCOMPONENT_ITEM_PREFAB, slot.GameObject);
+            }
+            else
+                Control.LogDebug(DType.DefaultHandle, $"DefaultHelper: Cannot remove {slot.ComponentRef.ComponentDefID} from {helper.LocationName} - wrong location ");
         }
 
         public static void RemoveMechLab(string id, ComponentType type, MechLabHelper mechLab, ChassisLocations location)
@@ -337,14 +360,14 @@ namespace CustomComponents
                         var result = new MechComponentRef(i, i.SimGameUID);
                         result.DataManager = i.DataManager;
                         result.RefreshComponentDef();
-                        if(i.IsFixed || i.IsDefault() ||
+                        if (i.IsFixed || i.IsDefault() ||
                            i.SimGameUID != null && i.SimGameUID.StartsWith("FixedEquipment"))
                             result.SetData(i.HardpointSlot, ComponentDamageLevel.Functional, true);
                         return result;
                     }
                     ).ToList();
 
-            
+
             for (int i = list.Count - 1; i >= 0; i--)
             {
                 Control.LogDebug(DType.ClearInventory, $"- {list[i].ComponentDefID} - {(list[i].Def == null ? "NULL" : list[i].SimGameUID)}");
@@ -375,7 +398,7 @@ namespace CustomComponents
             Control.LogDebug(DType.ClearInventory, $"- setting guids");
             foreach (var item in result_list)
             {
-                if(string.IsNullOrEmpty(item.SimGameUID))
+                if (string.IsNullOrEmpty(item.SimGameUID))
                     item.SetSimGameUID(state.GenerateSimGameUID());
                 Control.LogDebug(DType.ClearInventory, $"-- {item.ComponentDefID} - {item.SimGameUID}");
             }

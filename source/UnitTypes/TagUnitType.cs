@@ -7,7 +7,6 @@ namespace CustomComponents
     {
         public string Name { get; set; }
 
-
         public string[] RequiredTags { get; set; }
         public string[] ForbiddenTags { get; set; }
 

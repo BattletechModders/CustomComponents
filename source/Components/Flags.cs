@@ -11,23 +11,50 @@ namespace CustomComponents
     {
         public List<string> flags;
 
-        [JsonIgnore]
-        public bool CannotRemove { get; private set; }
+        [JsonIgnore] private bool _noremove;
+        [JsonIgnore] private bool _arepair;
+        [JsonIgnore] private bool _hideinv;
+        [JsonIgnore] private bool _nosalvag;
 
         [JsonIgnore]
-        public bool AutoRepair { get; private set; }
+        public bool CannotRemove
+        {
+            get => _noremove || Def.IsDefault();
+            private set { _noremove = value; }
+        }
 
         [JsonIgnore]
-        public bool HideFromInventory { get; private set; }
+        public bool AutoRepair
+        {
+            get => _arepair || Def.IsDefault();
+            private set { _arepair = value; }
+        }
+
 
         [JsonIgnore]
-        public bool NotSalvagable { get; private set; }
+        public bool HideFromInventory
+        {
+            get => _hideinv || Def.IsDefault();
+            private set { _hideinv = value; }
+        }
+
 
         [JsonIgnore]
-        public bool Default => CannotRemove && AutoRepair && HideFromInventory && NotSalvagable;
+        public bool NotSalvagable
+        {
+            get => _nosalvag || Def.IsDefault();
+            private set { _nosalvag = value; }
+        }
+
+
+        [JsonIgnore] public bool Default => Def.IsDefault();
 
         [JsonIgnore]
-        public bool NotBroken { get; private set; }
+        public bool NotBroken
+        {
+            get;
+            private set;
+        }
         [JsonIgnore]
         public bool NotDestroyed { get; private set; }
         [JsonIgnore]

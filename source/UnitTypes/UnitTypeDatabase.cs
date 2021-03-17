@@ -30,11 +30,20 @@ namespace CustomComponents
 
         public void RegisterUnitType(IUnitType unitType)
         {
+            if (unitType == null)
+            {
+                Control.LogError("Null unit type, skipping");
+            }
+
+            Control.LogDebug(DType.UnitType, $"Unit type [{unitType.Name}] registred");
             var old = types.FirstOrDefault(i => i.Name == unitType.Name);
             if (old != null)
+            {
+                Control.LogDebug(DType.UnitType, $"-- removed old one");
                 types.Remove(old);
+            }
 
-            types.Add(old);
+            types.Add(unitType);
         }
 
         public string[] GetUnitTypes(string mechid)

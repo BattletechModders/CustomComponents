@@ -31,7 +31,13 @@ namespace CustomComponents
 
         internal void Setup(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
-            foreach (var category in SettingsResourcesTools.Enumerate<CategoryDescriptor>("CCCategories", customResources))
+            foreach (var category in SettingsResourcesTools.Enumerate<CategoryDescriptor_Old>("CCCategories", customResources))
+            {
+                var new_category = new CategoryDescriptor();
+                new_category.CreateFromOld(category);
+                AddCategory(new_category);
+            }
+            foreach (var category in SettingsResourcesTools.Enumerate<CategoryDescriptor>("CCCategories2", customResources))
             {
                 AddCategory(category);
             }
@@ -101,12 +107,12 @@ namespace CustomComponents
                 .Select(item => new { item, def = item.Def.GetComponents<Category>() })
                 .Where(@t => @t.def != null)
                 .SelectMany(@t => t.def.Select(item => new
-                    {
-                        category = item.CategoryDescriptor,
-                        itemdef = @t.item.Def,
-                        itemref = @t.item,
-                        mix = item.GetTag()
-                    }))
+                {
+                    category = item.CategoryDescriptor,
+                    itemdef = @t.item.Def,
+                    itemref = @t.item,
+                    mix = item.GetTag()
+                }))
                 .GroupBy(i => i.category)
                 .ToDictionary(i => i.Key, i => i.ToList());
 
@@ -114,25 +120,32 @@ namespace CustomComponents
             //fcache.Clear();
 
             //check each "required" category
-            foreach (var category in GetCategories().Where(i => i.Required))
+            foreach (var category in GetCategories())
             {
-                if (!items_by_category.ContainsKey(category) || items_by_category[category].Count < category.MinEquiped)
-                    if (category.MinEquiped == 1)
+                var record = category[mechDef];
+                if (record == null || !record.Required)
+                    continue;
+
+                if (!items_by_category.ContainsKey(category) || items_by_category[category].Count < record.MinEquiped)
+                    if (record.MinEquiped == 1)
                         errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(category.ValidateRequred, category.DisplayName.ToUpper(), category.DisplayName)));
                     else
-                        errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(category.ValidateMinimum, category.DisplayName.ToUpper(), category.DisplayName, category.MinEquiped)));
+                        errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(category.ValidateMinimum, category.DisplayName.ToUpper(), category.DisplayName, record.MinEquiped)));
             }
 
             foreach (var pair in items_by_category)
             {
-                //check if too mant items of same category
-                if (pair.Key.MaxEquiped > 0 && pair.Value.Count > pair.Key.MaxEquiped)
-                    if (pair.Key.MaxEquiped == 1)
+                var record = pair.Key[mechDef];
+                if(record == null)
+                    continue;
+                //check if too many items of same category
+                if (record.MaxEquiped > 0 && pair.Value.Count > record.MaxEquiped)
+                    if (record.MaxEquiped == 1)
                         errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(pair.Key.ValidateUnique,
                             pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName)));
                     else
                         errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(pair.Key.ValidateMaximum,
-                            pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName, pair.Key.MaxEquiped)));
+                            pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName, record.MaxEquiped)));
 
                 //check if cateory mix tags
                 if (!pair.Key.AllowMixTags)
@@ -148,16 +161,16 @@ namespace CustomComponents
                 }
 
                 // check count items per location
-                if (pair.Key.MaxEquipedPerLocation > 0)
+                if (record.MaxEquipedPerLocation > 0)
                 {
                     var max = pair.Value.GroupBy(i => i.itemref.MountedLocation).Max(i => i.Count());
-                    if (max > pair.Key.MaxEquipedPerLocation)
-                        if (pair.Key.MaxEquipedPerLocation == 1)
+                    if (max > record.MaxEquipedPerLocation)
+                        if (record.MaxEquipedPerLocation == 1)
                             errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(pair.Key.ValidateUniqueLocation,
                                 pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName)));
                         else
                             errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(pair.Key.ValidateMaximumLocation,
-                                pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName, pair.Key.MaxEquipedPerLocation)));
+                                pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName, record.MaxEquipedPerLocation)));
                 }
             }
         }
@@ -197,12 +210,19 @@ namespace CustomComponents
                 .ToDictionary(i => i.Key, i => i.ToList());
 
             // if all required category present
-            foreach (var category in GetCategories().Where(i => i.Required))
+            foreach (var category in GetCategories())
             {
+                var record = category[mechDef];
+                if (record == null || !record.Required)
+                    continue;
+
+
 #if CCDEBUG
                 Control.Logger.LogDebug($"-- MinEquiped for {category.displayName}");
 #endif
-                if (!items_by_category.ContainsKey(category) || items_by_category[category].Count < category.MinEquiped)
+
+
+                if (!items_by_category.ContainsKey(category) || items_by_category[category].Count < record.MinEquiped)
                 {
 #if CCDEBUG
                     Control.Logger.LogDebug($"--- not passed {items_by_category[category].Count}/{category.MinEquiped}");
@@ -216,8 +236,17 @@ namespace CustomComponents
 #if CCDEBUG
                 Control.Logger.LogDebug($"-- MaxEquiped for {pair.Key.displayName}");
 #endif                
+                var record = pair.Key[mechDef];
+                if (record == null)
+                {
+#if CCDEBUG
+                    Control.Logger.LogDebug($"-- no record for unittype - skipped");
+#endif
+                    continue;
+                }
+
                 // if too many equiped
-                if (pair.Key.MaxEquiped > 0 && pair.Value.Count > pair.Key.MaxEquiped)
+                if (record.MaxEquiped > 0 && pair.Value.Count > record.MaxEquiped)
                 {
 #if CCDEBUG
                     Control.Logger.LogDebug($"--- not passed {pair.Value.Count}/{pair.Key.MaxEquiped}");
@@ -244,13 +273,13 @@ namespace CustomComponents
                 }
 
                 // if too many per location
-                if (pair.Key.MaxEquipedPerLocation > 0)
+                if (record.MaxEquipedPerLocation > 0)
                 {
 #if CCDEBUG
                     Control.Logger.LogDebug($"-- MaxEquipedPerLocation for {pair.Key.displayName}");
 #endif
                     var max = pair.Value.GroupBy(i => i.itemref.MountedLocation).Max(i => i.Count());
-                    if (max > pair.Key.MaxEquipedPerLocation)
+                    if (max > record.MaxEquipedPerLocation)
                     {
 #if CCDEBUG
                         Control.Logger.LogDebug($"--- not passed {max}/{pair.Key.MaxEquipedPerLocation}");
@@ -278,7 +307,8 @@ namespace CustomComponents
 
             if (item.Is<Category>(out var category))
             {
-                if (category.CategoryDescriptor.MaxEquiped > 0 || category.CategoryDescriptor.MaxEquipedPerLocation > 0)
+                var record = category.CategoryDescriptor[mech];
+                if (record.MaxEquiped > 0 || record.MaxEquipedPerLocation > 0)
                     return true;
             }
 
