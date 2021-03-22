@@ -49,7 +49,7 @@ namespace CustomComponents
 
                     if (allchanges != null)
                     {
-                        foreach (var change in allchanges)
+                        foreach (IApplyChange change in allchanges)
                         {
                             change.CancelChange(mechlab_helper, location_helper);
                         }
@@ -64,17 +64,17 @@ namespace CustomComponents
 
                 foreach (var pre_validator in Validator.GetPre(newComponentDef))
                 {
-                    
+
                     if (do_cancel(pre_validator(dragItem, location_helper, mechlab_helper), null))
                         return false;
                 }
 
                 Control.LogDebug(DType.ComponentInstall, $"- replace validation");
 
-                List<IChange> changes = new List<IChange>();
+                var changes = new List<IChange>();
                 changes.Add(new AddFromInventoryChange(__instance.loadout.Location, dragItem));
 
-                foreach (var rep_validator in Validator.GetReplace(newComponentDef))
+                foreach (ReplaceValidateDropDelegate rep_validator in Validator.GetReplace(newComponentDef))
                     if (do_cancel(rep_validator(dragItem, location_helper, changes), changes))
                         return false;
 
@@ -105,7 +105,24 @@ namespace CustomComponents
                 int num = changes.Count;
                 for (int i = 0; i < changes.Count; i++)
                 {
-                    if (changes[i] is AddChange add)
+                    if (changes[i] is IAdjustChange adj)
+                    {
+                        bool skip = false;
+                        string cid = adj.ChangeID;
+                        for (int j = i + 1; j < changes.Count; j++)
+                        {
+                            if(changes[j] is IAdjustChange adj2 && adj2.ChangeID == cid)
+                            {
+                                skip = true;
+                                break;
+                            }
+                        }
+                        if (skip)
+                            continue;
+                        else
+                            adj.DoAdjust(mechlab_helper, location_helper, changes);
+                    }
+                    else if (changes[i] is AddChange add)
                     {
                         Control.LogDebug(DType.ComponentInstall, $"-- add: {add.item.ComponentRef.ComponentDefID}");
 
@@ -144,9 +161,9 @@ namespace CustomComponents
                 }
                 Control.LogDebug(DType.ComponentInstall, $"- apply changes");
 
-                foreach (var change in changes)
+                foreach (IApplyChange change in changes)
                 {
-                    change.DoChange(mechlab_helper, location_helper);
+                    change?.DoChange(mechlab_helper, location_helper);
                 }
 
 

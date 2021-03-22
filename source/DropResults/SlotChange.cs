@@ -3,7 +3,7 @@ using BattleTech.UI;
 
 namespace CustomComponents
 {
-    public abstract class SlotChange : IChange
+    public abstract class SlotChange : IApplyChange
     {
         public ChassisLocations location;
         public MechLabItemSlotElement item;

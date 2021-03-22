@@ -177,7 +177,7 @@
     <Compile Include="DEBUGTOOLS\DEBUGTOOLS.cs" />
     <Compile Include="TagRestrictions\TagRestrictions.cs" />
     <Compile Include="TagRestrictions\TagRestrictionsHandler.cs" />
-    <Compile Include="DropResults\IChange.cs" />
+    <Compile Include="DropResults\IApplyChange.cs" />
     <Compile Include="DropResults\InvItem.cs" />
     <Compile Include="Interfaces\IPreValidateDrop.cs" />
     <Compile Include="Categories\CategoryController.cs" />
