@@ -94,6 +94,32 @@ namespace CustomComponents
             return component_ref;
         }
 
+        public static MechComponentDef GetComponentDef(string id, ComponentType type)
+        {
+            var dm = UnityGameInstance.BattleTechGame.DataManager;
+            switch (type)
+            {
+                case ComponentType.Weapon:
+                    dm.WeaponDefs.TryGet(id, out var weapon);
+                    return weapon;
+                case ComponentType.AmmunitionBox:
+                    dm.AmmoBoxDefs.TryGet(id, out var ammobox);
+                    return ammobox;
+                case ComponentType.HeatSink:
+                    dm.HeatSinkDefs.TryGet(id, out var hs);
+                    return hs;
+                case ComponentType.JumpJet:
+                    dm.JumpJetDefs.TryGet(id, out var jj);
+                    return jj;
+                case ComponentType.Upgrade:
+                    dm.UpgradeDefs.TryGet(id, out var upgrade);
+                    return upgrade;
+                default:
+                    CustomComponents.Control.LogError($"Cannot find {id} of type {type}");
+                    return null;
+            }
+        }
+
         public static void RemoveInventory(string defaultID, MechDef mech, ChassisLocations location, ComponentType type)
         {
             var item = mech.Inventory.FirstOrDefault(i => i.MountedLocation == location && i.ComponentDefID == defaultID);

@@ -27,6 +27,8 @@ namespace CustomComponents
         /// </summary>
         public string Tag { get; set; }
 
+        public int Weight { get; set; } = 1;
+
         public string ReplaceID => CategoryID;
 
 

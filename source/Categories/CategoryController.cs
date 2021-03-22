@@ -53,6 +53,7 @@ namespace CustomComponents
 #if CCDEBUG
                 Control.Logger.LogDebug($"Already have, apply: {category.Name}");
 #endif
+                category.Init();
                 c.Apply(category);
             }
             else
@@ -60,8 +61,8 @@ namespace CustomComponents
 #if CCDEBUG
                 Control.Logger.LogDebug($"Adding new: {category.Name}");
 #endif
-                Categories.Add(category.Name, category);
-                category.InitDefaults();
+                Categories[category.Name] = category;
+                category.Init();
             }
 
 #if CCDEBUG
@@ -136,7 +137,7 @@ namespace CustomComponents
             foreach (var pair in items_by_category)
             {
                 var record = pair.Key[mechDef];
-                if(record == null)
+                if (record == null)
                     continue;
                 //check if too many items of same category
                 if (record.MaxEquiped > 0 && pair.Value.Count > record.MaxEquiped)

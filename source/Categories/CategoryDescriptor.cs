@@ -79,14 +79,23 @@ namespace CustomComponents
 
         public string ValidateMaximumLocation = "EXCESS {0}: This mech can't mount more then {2} of {1} any location";
 
-        public CategoryDescriptorRecord[] UnitTypes;
+        public List<CategoryDescriptorRecord> UnitTypes = new List<CategoryDescriptorRecord>();
+
+        [JsonIgnore] private Dictionary<string, CategoryDescriptorRecord> records;
+        [JsonIgnore] private CategoryDescriptorRecord default_record;
+
 
         public CategoryDescriptorRecord this[string mechid]
         {
             get
             {
                 var types = UnitTypeDatabase.Instance.GetUnitTypes(mechid);
-                return UnitTypes.FirstOrDefault(i => types.Contains(i.UnitType));
+                if (records.TryGetValue(mechid, out var result))
+                    return result;
+
+                result = UnitTypes?.FirstOrDefault(i => types.Contains(i.UnitType)) ?? default_record;
+                records[mechid] = result;
+                return result;
             }
         }
 
@@ -96,7 +105,7 @@ namespace CustomComponents
             {
                 if (mech != null)
                     return this[mech.Description.Id];
-                return null;
+                return default_record;
             }
         }
 
@@ -126,13 +135,13 @@ namespace CustomComponents
 
             var record = new CategoryDescriptorRecord()
             {
-                UnitType = Control.Settings.DefaultOldCategoryType,
+                UnitType = "*",
                 MaxEquiped = source.MaxEquiped,
                 MaxEquipedPerLocation = source.MaxEquipedPerLocation,
                 MinEquiped = source.MinEquiped,
             };
 
-            this.UnitTypes = new[] {record};
+            this.UnitTypes = null;
         }
         public void Apply(CategoryDescriptor source)
         {
@@ -158,13 +167,13 @@ namespace CustomComponents
             ValidateMaximumLocation = source.ValidateMaximumLocation;
 
             UnitTypes = source.UnitTypes;
-
+            default_record = source.default_record;
         }
 
         [JsonIgnore]
         public Dictionary<string, object> Defaults = null;
 
-        public void InitDefaults()
+        public void Init()
         {
             if (DefaultCustoms == null)
             {
@@ -174,6 +183,16 @@ namespace CustomComponents
 
             Defaults = new Dictionary<string, object>();
             Defaults.Add(Control.CustomSectionName, DefaultCustoms);
+
+            if(UnitTypes == null)
+                UnitTypes = new List<CategoryDescriptorRecord>();
+
+            default_record = UnitTypes.FirstOrDefault(i => i.UnitType == "*");
+            if (default_record == null)
+                default_record = new CategoryDescriptorRecord();
+            else
+                UnitTypes.Remove(default_record);
+
         }
     }
 
