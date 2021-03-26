@@ -14,6 +14,8 @@ namespace CustomComponents
         public int MaxEquipedPerLocation = -1;
         public int MinEquiped = 0;
 
+        public ChassisLocations AllowEquip = ChassisLocations.All;
+
         [JsonIgnore]
         public bool Unique
         {
@@ -35,6 +37,8 @@ namespace CustomComponents
         [JsonIgnore]
         public bool Required => MinEquiped > 0;
 
+        [JsonIgnore]
+        public bool NotAllowed => MaxEquiped == 0 || AllowEquip == ChassisLocations.None;
 
     }
 

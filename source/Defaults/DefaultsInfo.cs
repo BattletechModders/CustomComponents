@@ -7,36 +7,11 @@ namespace CustomComponents
     [SerializeField]
     public class DefaultsInfo : IDefault
     {
-        public string Tag { get; set; }
-
         public ChassisLocations Location { get; set; }
         public string CategoryID { get; set; }
         public string DefID { get; set; }
         public ComponentType Type { get; set; }
         public bool AnyLocation { get; set; } = true;
-        public bool AddIfNotPresent { get; set; } = true;
-
-        public MechComponentRef GetReplace(MechDef mechDef, SimGameState state)
-        {
-            var res = DefaultHelper.CreateRef(DefID, Type, mechDef.DataManager, state);
-            res.SetData(Location, -1, ComponentDamageLevel.Functional, true);
-            return res;
-        }
-
-        public virtual bool AddItems(MechDef mechDef, SimGameState state)
-        {
-            if (AddIfNotPresent)
-            {
-                DefaultHelper.AddInventory(DefID, mechDef, Location, Type, state);
-                return true;
-            }
-            return false;
-        }
-
-        public bool NeedReplaceExistDefault(MechDef mechDef, MechComponentRef item)
-        {
-            return item.ComponentDefID != DefID;
-        }
 
         public override string ToString()
         {
@@ -44,14 +19,13 @@ namespace CustomComponents
         }
     }
 
-    public class UTDefaultRecord
+    public class UTDefaultRecord : IDefault
     {
         public ChassisLocations Location { get; set; }
         public string CategoryID { get; set; }
         public string DefID { get; set; }
         public ComponentType Type { get; set; }
         public bool AnyLocation { get; set; } = true;
-        public bool AddIfNotPresent { get; set; } = true;
 
         [JsonIgnore] public bool Ready { get; private set; } = false;
         public bool Invalid => Ready && _def == null;

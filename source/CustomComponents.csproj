@@ -115,6 +115,7 @@
     <Compile Include="Defaults\DefaultsDatabase.cs" />
     <Compile Include="Defaults\DefaultsInfo.cs" />
     <Compile Include="Defaults\IDefaultComponent.cs" />
+    <Compile Include="Defaults\IMultiCategoryDefault.cs" />
     <Compile Include="ExtendedDetails\ExtendedDetails.cs" />
     <Compile Include="Fixes\WeaponsCountFix.cs" />
     <Compile Include="Icons\IconController.cs" />
