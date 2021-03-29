@@ -106,6 +106,7 @@
     <Compile Include="AutoFixer\Patches\SimGameState_InitCompanyStats_Patch.cs" />
     <Compile Include="Categories\CategoriesExtentions.cs" />
     <Compile Include="Categories\Category.cs" />
+    <Compile Include="Categories\ChassisCategory.cs" />
     <Compile Include="CCLight\Factories\SimpleCustomChassis.cs" />
     <Compile Include="CCLight\IReplaceIdentifier.cs" />
     <Compile Include="CCLight\Factories\IPreProcessor.cs" />

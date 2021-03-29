@@ -46,9 +46,9 @@ namespace CustomComponents
             types.Add(unitType);
         }
 
-        public string[] GetUnitTypes(string mechid)
+        public string[] GetUnitTypes(string chassis_id)
         {
-            if (UnityGameInstance.BattleTechGame.DataManager.MechDefs.TryGet(mechid, out var mech))
+            if (UnityGameInstance.BattleTechGame.DataManager.MechDefs.TryGet(chassis_id, out var mech))
             {
                 return GetUnitTypes(mech);
             }
@@ -59,12 +59,13 @@ namespace CustomComponents
         {
             string[] result;
 
-            if (known.TryGetValue(mech.Description.Id, out result))
+            if (known.TryGetValue(mech.ChassisID, out result))
                 return result;
 
             result = CheckCustom(mech);
 
             var tags = new List<string>();
+
             foreach (var unitType in types)
             {
                 if (unitType.IsThisType(mech))

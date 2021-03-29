@@ -84,6 +84,12 @@ namespace CustomComponents
             return mech.Chassis.GetComponents<IMultiCategoryDefault>();
         }
 
+        public IEnumerable<ICategoryDescriptorRecord> GetMechCategories(MechDef mech)
+        {
+            return mech.Chassis.GetComponents<ICategoryDescriptorRecord>();
+        }
+
+
         private MechDefaultInfo CreateDefaultRecord(MechDef mech)
         {
             var result = new MechDefaultInfo();
@@ -100,7 +106,7 @@ namespace CustomComponents
                         DefID = m.DefID,
                         ComponentType = m.ComponentType,
                         Location = m.Location,
-                        CategoryRecords = new  Dictionary<string, KeyValuePair<Category, CategoryDescriptorRecord>>,
+                        CategoryRecords = new  Dictionary<string, KeyValuePair<Category, CategoryDescriptorRecord>>(),
                         Component = DefaultHelper.GetComponentDef(m.DefID, m.ComponentType)
                         
                     };
@@ -147,6 +153,10 @@ namespace CustomComponents
 
                     result.Multi.Add(info);
                 }
+
+            var categories = GetMechCategories(mech);
+            var defaults = GetMechDefaults(mech);
+            result.Defaults = new Dictionary<string, CategoryDefault>();
 
 
 

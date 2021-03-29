@@ -16,7 +16,8 @@ namespace CustomComponents
 
         internal readonly List<DefaultsInfo> TaggedDefaults = new List<DefaultsInfo>();
         internal readonly List<DefaultsInfo> Defaults = new List<DefaultsInfo>();
-        internal readonly List<IDefault> CustomDefaults = new List<IDefault>();
+        private readonly Dictionary<string, UTDefaultInfo> DefaultsByUnitType = new Dictionary<string, UTDefaultInfo>();
+        private readonly Dictionary<string, UTDefaultInfo> DefauldsByMech = new Dictionary<string, UTDefaultInfo>();
 
         internal void Setup(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {

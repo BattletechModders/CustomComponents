@@ -6,15 +6,27 @@ using Newtonsoft.Json;
 
 namespace CustomComponents
 {
-    public class CategoryDescriptorRecord
+    public interface ICategoryDescriptorRecord
+    {
+        int MaxEquiped { get;  }
+        int MaxEquipedPerLocation { get;  }
+        int MinEquiped { get;  }
+        ChassisLocations AllowEquip { get;  }
+        bool Unique { get; }
+        bool UniqueForLocation { get; }
+        bool Required { get; }
+        bool NotAllowed { get; }
+    }
+
+    public class CategoryDescriptorRecord : ICategoryDescriptorRecord
     {
         public string UnitType;
 
-        public int MaxEquiped = -1;
-        public int MaxEquipedPerLocation = -1;
-        public int MinEquiped = 0;
+        public int MaxEquiped { get; set; } = -1;
+        public int MaxEquipedPerLocation { get; set; } = -1;
+        public int MinEquiped { get; set; } = 0;
 
-        public ChassisLocations AllowEquip = ChassisLocations.All;
+        public ChassisLocations AllowEquip { get; set; } = ChassisLocations.All;
 
         [JsonIgnore]
         public bool Unique
@@ -89,16 +101,16 @@ namespace CustomComponents
         [JsonIgnore] private CategoryDescriptorRecord default_record;
 
 
-        public CategoryDescriptorRecord this[string mechid]
+        public CategoryDescriptorRecord this[string chassis_id]
         {
             get
             {
-                var types = UnitTypeDatabase.Instance.GetUnitTypes(mechid);
-                if (records.TryGetValue(mechid, out var result))
+                var types = UnitTypeDatabase.Instance.GetUnitTypes(chassis_id);
+                if (records.TryGetValue(chassis_id, out var result))
                     return result;
 
                 result = UnitTypes?.FirstOrDefault(i => types.Contains(i.UnitType)) ?? default_record;
-                records[mechid] = result;
+                records[chassis_id] = result;
                 return result;
             }
         }
@@ -108,7 +120,7 @@ namespace CustomComponents
             get
             {
                 if (mech != null)
-                    return this[mech.Description.Id];
+                    return this[mech.ChassisID];
                 return default_record;
             }
         }
