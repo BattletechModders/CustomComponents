@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using BattleTech;
@@ -12,10 +13,6 @@ namespace CustomComponents
         int MaxEquipedPerLocation { get;  }
         int MinEquiped { get;  }
         ChassisLocations AllowEquip { get;  }
-        bool Unique { get; }
-        bool UniqueForLocation { get; }
-        bool Required { get; }
-        bool NotAllowed { get; }
     }
 
     public class CategoryDescriptorRecord : ICategoryDescriptorRecord
@@ -52,6 +49,20 @@ namespace CustomComponents
         [JsonIgnore]
         public bool NotAllowed => MaxEquiped == 0 || AllowEquip == ChassisLocations.None;
 
+
+        public CategoryDescriptorRecord()
+        {
+
+        }
+
+        public CategoryDescriptorRecord(ICategoryDescriptorRecord source)
+        {
+            this.AllowEquip = source.AllowEquip;
+            this.MinEquiped = source.MinEquiped;
+            this.MaxEquiped = source.MaxEquiped;
+            this.MaxEquipedPerLocation = source.MaxEquipedPerLocation;
+            
+        }
     }
 
     public class CategoryDescriptor
@@ -100,31 +111,39 @@ namespace CustomComponents
         [JsonIgnore] private Dictionary<string, CategoryDescriptorRecord> records;
         [JsonIgnore] private CategoryDescriptorRecord default_record;
 
-
-        public CategoryDescriptorRecord this[string chassis_id]
-        {
-            get
-            {
-                var types = UnitTypeDatabase.Instance.GetUnitTypes(chassis_id);
-                if (records.TryGetValue(chassis_id, out var result))
-                    return result;
-
-                result = UnitTypes?.FirstOrDefault(i => types.Contains(i.UnitType)) ?? default_record;
-                records[chassis_id] = result;
-                return result;
-            }
-        }
-
         public CategoryDescriptorRecord this[MechDef mech]
         {
             get
             {
-                if (mech != null)
-                    return this[mech.ChassisID];
-                return default_record;
+                if (mech == null)
+                    return default_record;
+
+                if (records.TryGetValue(mech.ChassisID, out var result))
+                    return result;
+
+                var iface = GetMechCategoryCustom(mech);
+                if(iface != null)
+                {
+                    result = new CategoryDescriptorRecord(iface);
+
+                }
+                else
+                {
+                    var ut = UnitTypeDatabase.Instance.GetUnitTypes(mech);
+                    result = UnitTypes.FirstOrDefault(i => ut.Contains(i.UnitType));
+                    if (result == null)
+                        result = default_record;
+                }
+
+                records[mech.ChassisID] = result;
+                return result;
             }
         }
 
+        private ICategoryDescriptorRecord GetMechCategoryCustom(MechDef mech)
+        {
+            return mech.Chassis.GetComponents<ChassisCategory>().FirstOrDefault(i => i.Category == Name);
+        }
 
         public void CreateFromOld(CategoryDescriptor_Old source)
         {
@@ -204,6 +223,7 @@ namespace CustomComponents
                 UnitTypes = new List<CategoryDescriptorRecord>();
 
             default_record = UnitTypes.FirstOrDefault(i => i.UnitType == "*");
+            
             if (default_record == null)
                 default_record = new CategoryDescriptorRecord();
             else
