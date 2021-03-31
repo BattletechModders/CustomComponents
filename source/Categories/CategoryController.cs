@@ -31,13 +31,7 @@ namespace CustomComponents
 
         internal void Setup(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
-            foreach (var category in SettingsResourcesTools.Enumerate<CategoryDescriptor_Old>("CCCategories", customResources))
-            {
-                var new_category = new CategoryDescriptor();
-                new_category.CreateFromOld(category);
-                AddCategory(new_category);
-            }
-            foreach (var category in SettingsResourcesTools.Enumerate<CategoryDescriptor>("CCCategories2", customResources))
+            foreach (var category in SettingsResourcesTools.Enumerate<CategoryDescriptor>("CCCategories", customResources))
             {
                 AddCategory(category);
             }

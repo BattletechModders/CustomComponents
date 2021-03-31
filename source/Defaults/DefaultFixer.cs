@@ -14,25 +14,6 @@ namespace CustomComponents
 
         public static DefaultFixer Shared = new DefaultFixer();
 
-        internal readonly List<DefaultsInfo> TaggedDefaults = new List<DefaultsInfo>();
-        internal readonly List<DefaultsInfo> Defaults = new List<DefaultsInfo>();
-        private readonly Dictionary<string, UTDefaultInfo> DefaultsByUnitType = new Dictionary<string, UTDefaultInfo>();
-        private readonly Dictionary<string, UTDefaultInfo> DefauldsByMech = new Dictionary<string, UTDefaultInfo>();
-
-        internal void Setup(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
-        {
-            foreach (var entry in SettingsResourcesTools.Enumerate<DefaultsInfo>("CCDefaults", customResources))
-            {
-                if (string.IsNullOrEmpty(entry.Tag))
-                {
-                    Defaults.Add(entry);
-                }
-                else
-                {
-                    TaggedDefaults.Add(entry);
-                }
-            }
-        }
         public string GetID(IDefault item)
         {
             return item.AnyLocation ? item.CategoryID : item.CategoryID + "_" + item.Location;
