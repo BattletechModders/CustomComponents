@@ -8,7 +8,5 @@ namespace CustomComponents
         ComponentType ComponentType { get; }
         string DefID { get; }
         ChassisLocations Location { get; }
-        public bool AnyLocation { get; }
-
     }
 }

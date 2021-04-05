@@ -33,7 +33,7 @@ namespace CustomComponents
         public CategoryDescriptorRecord CategoryRecord { get; set; }
         public CategoryDescriptor CategoryDescriptor { get; set; }
 
-        public Dictionary<ChassisLocations, CategoryDefaultRecord[]> DefaultsPerLocation { get; set; }
+        public Dictionary<ChassisLocations, List<CategoryDefaultRecord>> DefaultsPerLocation { get; set; }
     }
 
     public class DefaultRecord
@@ -166,10 +166,42 @@ namespace CustomComponents
 
                 foreach (var item in defaults.Where(i => !seen.Contains(i.CategoryID)))
                 {
-                    if(!result.Defaults.TryGetValue(item.CategoryID, out var catdefault))
+                    if (!result.Defaults.TryGetValue(item.CategoryID, out var catdefault))
                     {
                         catdefault = new CategoryDefault();
+                        catdefault.CategoryDescriptor = CategoryController.Shared.GetCategory(item.CategoryID);
+                        if (catdefault.CategoryDescriptor == null)
+                            return;
+                        catdefault.CategoryRecord = catdefault.CategoryDescriptor[mech];
+                        if (catdefault.CategoryRecord.MinEquiped <= 0)
+                        {
+                            Control.LogError($"{mech.ChassisID} have default of category {item.CategoryID} which minequiped == 0, skipped");
+                            continue;
+                        }
+                        result.Defaults[item.CategoryID] = catdefault;
                     }
+                    var def = DefaultHelper.GetComponentDef(item.DefID, item.Type);
+                    if (def == null)
+                    {
+                        Control.LogError($"{mech.ChassisID} have unexisting default {item.DefID}[{item.Type}]");
+                        continue;
+                    }
+                    if (!def.IsCategory(item.CategoryID, out var c))
+                    {
+                        Control.LogError($"{mech.ChassisID} default {item.DefID} dont have category {item.CategoryID}");
+                        continue;
+                    }
+                    var cr = new CategoryDefaultRecord()
+                    {
+                        Category = c,
+                        Item = def
+                    };
+                    if (!catdefault.DefaultsPerLocation.TryGetValue(item.Location, out var list))
+                    {
+                        list = new List<CategoryDefaultRecord>();
+                        catdefault.DefaultsPerLocation[item.Location] = list;
+                    }
+                    list.Add(cr);
                 }
             }
 
@@ -182,7 +214,6 @@ namespace CustomComponents
                 {
                     var info = new MultiCategoryDefault
                     {
-                        AnyLocation = m.AnyLocation,
                         Categories = m.Categories,
                         DefID = m.DefID,
                         ComponentType = m.ComponentType,

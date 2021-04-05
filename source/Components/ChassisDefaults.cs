@@ -9,9 +9,6 @@ namespace CustomComponents
         public string CategoryID { get; set; }
         public string DefID { get; set; }
         public ComponentType Type { get; set; }
-        public bool AnyLocation { get; set; } = true;
-
-
 
         public override string ToString()
         {
@@ -24,7 +21,6 @@ namespace CustomComponents
     {
         public ChassisLocations Location { get; set; }
         public string DefID { get; set; }
-        public bool AnyLocation { get; set; } = true;
         public string[] Categories { get; set; }
         public ComponentType ComponentType { get; set; }
         public override string ToString()

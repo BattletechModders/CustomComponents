@@ -11,7 +11,6 @@ namespace CustomComponents
         public string CategoryID { get; set; }
         public string DefID { get; set; }
         public ComponentType Type { get; set; }
-        public bool AnyLocation { get; set; } = true;
 
         public override string ToString()
         {

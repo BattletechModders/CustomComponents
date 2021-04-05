@@ -8,7 +8,5 @@ namespace CustomComponents
         public string CategoryID { get;  }
         public string DefID { get;  }
         public ComponentType Type { get;  }
-        public bool AnyLocation { get; } 
-
     }
 }

@@ -100,7 +100,7 @@ namespace CustomComponents
         {
             Control.LogDebug(DType.CustomResource, "Custom Resource Load started");
             CategoryController.Shared.Setup(customResources);
-            DefaultFixer.Shared.Setup(customResources);
+            DefaultsDatabase.Instance.Setup(customResources);
             TagRestrictionsHandler.Shared.Setup(customResources);
             if (customResources.TryGetValue("CustomSVGIcon", out var icons))
                 IconController.LoadIcons(icons);
