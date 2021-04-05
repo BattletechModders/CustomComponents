@@ -119,6 +119,8 @@
     <Compile Include="Defaults\IMultiCategoryDefault.cs" />
     <Compile Include="ExtendedDetails\ExtendedDetails.cs" />
     <Compile Include="Fixes\WeaponsCountFix.cs" />
+    <Compile Include="Flags\FlagsController.cs" />
+    <Compile Include="Flags\FlagsExtentions.cs" />
     <Compile Include="Icons\IconController.cs" />
     <Compile Include="Icons\SVGAssets_Contains.cs" />
     <Compile Include="Icons\SVGCache_GetAsset.cs" />
@@ -200,7 +202,7 @@
     <Compile Include="Interfaces\IMechLabFilter.cs" />
     <Compile Include="Salvage\Contract_AddToFilnaSalvagePatch.cs" />
     <Compile Include="Components\AutoReplace.cs" />
-    <Compile Include="Components\Flags.cs" />
+    <Compile Include="Flags\Flags.cs" />
     <Compile Include="SorterMechInventory\Patches\MechLabLocationWidget_OnAddItem.cs" />
     <Compile Include="Patches\MechLabLocationWidget_Repair_Patches.cs" />
     <Compile Include="Components\AutoLinked.cs" />

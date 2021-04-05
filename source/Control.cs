@@ -58,7 +58,7 @@ namespace CustomComponents
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
                 Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);
 
-                Logger.Log("Loaded CustomComponents v0.13 for bt 1.9.1");
+                Logger.Log("Loaded CustomComponents v3.0.1 for bt 1.9.1");
 
                 Validator.RegisterMechValidator(TagRestrictionsHandler.Shared.ValidateMech, TagRestrictionsHandler.Shared.ValidateMechCanBeFielded);
                 Validator.RegisterDropValidator(pre: TagRestrictionsHandler.Shared.ValidateDrop);
@@ -88,6 +88,18 @@ namespace CustomComponents
                         foreach (var tag in Settings.ignoreAutofixTags)
                             AutoFixer.Shared.RegisterMechFixer(AutoFixer.Shared.EmptyFixer, tag);
                 }
+
+                FlagsController.Instance.RegisterFlag("autorepair");
+                FlagsController.Instance.RegisterFlag("no_remove");
+                FlagsController.Instance.RegisterFlag("hide");
+                FlagsController.Instance.RegisterFlag("no_salvage");
+                FlagsController.Instance.RegisterFlag("default",(item) => item.Is<IDefault>(), new[] { "autorepair", "no_remove", "hide", "no_salvage" });
+                FlagsController.Instance.RegisterFlag("not_broken");
+                FlagsController.Instance.RegisterFlag("not_destroyed");
+                FlagsController.Instance.RegisterFlag("invalid");
+                FlagsController.Instance.RegisterFlag("hide_remove_message");
+                FlagsController.Instance.RegisterFlag("vital");
+
                 Logger.LogDebug("done");
             }
             catch (Exception e)
