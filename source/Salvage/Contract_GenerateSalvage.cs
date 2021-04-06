@@ -19,7 +19,7 @@ namespace CustomComponents
                     i.Def.CriticalComponent && i.DamageLevel == ComponentDamageLevel.Destroyed))
                 return true;
 
-            return mech.Inventory.Any(item => (item.DamageLevel == ComponentDamageLevel.Destroyed && item.HasFlag("vital")) || item.GetComponents<IIsDestroyed>().Any(isDestroyed => isDestroyed.IsMechDestroyed(item, mech)));
+            return mech.Inventory.Any(item => (item.DamageLevel == ComponentDamageLevel.Destroyed && item.HasFlag(CCF.Vital)) || item.GetComponents<IIsDestroyed>().Any(isDestroyed => isDestroyed.IsMechDestroyed(item, mech)));
         }
 
         [HarmonyPrefix]

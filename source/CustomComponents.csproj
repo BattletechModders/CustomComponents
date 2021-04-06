@@ -119,6 +119,7 @@
     <Compile Include="Defaults\IMultiCategoryDefault.cs" />
     <Compile Include="ExtendedDetails\ExtendedDetails.cs" />
     <Compile Include="Fixes\WeaponsCountFix.cs" />
+    <Compile Include="Flags\CCF.cs" />
     <Compile Include="Flags\FlagsController.cs" />
     <Compile Include="Flags\FlagsExtentions.cs" />
     <Compile Include="Icons\IconController.cs" />

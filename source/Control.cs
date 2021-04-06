@@ -90,16 +90,15 @@ namespace CustomComponents
                             AutoFixer.Shared.RegisterMechFixer(AutoFixer.Shared.EmptyFixer, tag);
                 }
 
-                FlagsController.Instance.RegisterFlag("autorepair");
-                FlagsController.Instance.RegisterFlag("no_remove");
-                FlagsController.Instance.RegisterFlag("hide");
-                FlagsController.Instance.RegisterFlag("no_salvage");
-                FlagsController.Instance.RegisterFlag("default",(item) => item.Is<IDefault>(), new[] { "autorepair", "no_remove", "hide", "no_salvage" });
-                FlagsController.Instance.RegisterFlag("not_broken");
-                FlagsController.Instance.RegisterFlag("not_destroyed");
-                FlagsController.Instance.RegisterFlag("invalid");
-                FlagsController.Instance.RegisterFlag("hide_remove_message");
-                FlagsController.Instance.RegisterFlag("vital");
+                FlagsController.Instance.RegisterFlag(CCF.AutoRepair);
+                FlagsController.Instance.RegisterFlag(CCF.NoRemove);
+                FlagsController.Instance.RegisterFlag(CCF.HideFromInv);
+                FlagsController.Instance.RegisterFlag(CCF.NoSalvage);
+                FlagsController.Instance.RegisterFlag(CCF.Default,(item) => item.Is<IDefault>(), new[] { CCF.AutoRepair, CCF.NoRemove, CCF.HideFromInv, CCF.NoSalvage });
+                FlagsController.Instance.RegisterFlag(CCF.NotBroken);
+                FlagsController.Instance.RegisterFlag(CCF.NotDestroyed);
+                FlagsController.Instance.RegisterFlag(CCF.Invalid);
+                FlagsController.Instance.RegisterFlag(CCF.Vital);
 
                 Logger.LogDebug("done");
             }

@@ -19,7 +19,7 @@ namespace CustomComponents
             public Flag(Dictionary<string, bool> flags)
             {
                 this.flags = flags;
-                if (flags.TryGetValue("default", out var v))
+                if (flags.TryGetValue(CCF.Default, out var v))
                     Default = v;
                 else
                     Default = false;
@@ -133,13 +133,13 @@ namespace CustomComponents
             {
                 var f = item.Flags();
 
-                if (f["invalid"])
+                if (f[CCF.Invalid])
                     return false;
 
-                if (item.DamageLevel == ComponentDamageLevel.Destroyed && (f["not_broken"] || f["not_destroyed"]))
+                if (item.DamageLevel == ComponentDamageLevel.Destroyed && (f[CCF.NotBroken] || f[CCF.NotDestroyed]))
                     return false;
 
-                if (item.DamageLevel == ComponentDamageLevel.Penalized && f["not_broken"])
+                if (item.DamageLevel == ComponentDamageLevel.Penalized && f[CCF.NotBroken])
                     return false;
             }
             return true;
@@ -151,17 +151,17 @@ namespace CustomComponents
             {
                 var f = item.Flags();
 
-                if (f["invalid"])
+                if (f[CCF.Invalid])
                     errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(
                         Control.Settings.InvaildComponentMessage,  item.Def.Description.Name));
 
-                if (item.DamageLevel == ComponentDamageLevel.Destroyed && (f["not_broken"] || f["not_destroyed"]))
+                if (item.DamageLevel == ComponentDamageLevel.Destroyed && (f[CCF.NotBroken] || f[CCF.NotDestroyed]))
                 {
                     errors[MechValidationType.StructureDestroyed].Add(new Localize.Text(
                         Control.Settings.DestroyedComponentMessage, item.Def.Description.Name));
                 }
 
-                if (item.DamageLevel == ComponentDamageLevel.Penalized && f["not_broken"])
+                if (item.DamageLevel == ComponentDamageLevel.Penalized && f[CCF.NotBroken])
                 {
                     errors[MechValidationType.StructureDestroyed].Add(new Localize.Text(
                         Control.Settings.DamagedComponentMessage, item.Def.Description.Name));

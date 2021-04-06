@@ -17,7 +17,7 @@ namespace CustomComponents
             try
             {
                 var f = componentRef.Flags();
-                if (f["invalid"])
+                if (f[CCF.Invalid])
                 {
                     __result = UIColor.Red;
                 }
