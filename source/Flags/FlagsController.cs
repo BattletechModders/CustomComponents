@@ -153,18 +153,18 @@ namespace CustomComponents
 
                 if (f[CCF.Invalid])
                     errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(
-                        Control.Settings.InvaildComponentMessage,  item.Def.Description.Name));
+                        Control.Settings.Message.Flags_InvaildComponent,  item.Def.Description.Name));
 
                 if (item.DamageLevel == ComponentDamageLevel.Destroyed && (f[CCF.NotBroken] || f[CCF.NotDestroyed]))
                 {
                     errors[MechValidationType.StructureDestroyed].Add(new Localize.Text(
-                        Control.Settings.DestroyedComponentMessage, item.Def.Description.Name));
+                        Control.Settings.Message.Flags_DestroyedComponent, item.Def.Description.Name));
                 }
 
                 if (item.DamageLevel == ComponentDamageLevel.Penalized && f[CCF.NotBroken])
                 {
                     errors[MechValidationType.StructureDestroyed].Add(new Localize.Text(
-                        Control.Settings.DamagedComponentMessage, item.Def.Description.Name));
+                        Control.Settings.Message.Flags_DamagedComponent, item.Def.Description.Name));
                 }
             }
         }

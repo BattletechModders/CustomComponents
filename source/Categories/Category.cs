@@ -15,7 +15,7 @@ namespace CustomComponents
     /// </summary>
     [CustomComponent("Category", true)]
     public class Category : SimpleCustomComponent, IAfterLoad, IOnInstalled, IReplaceValidateDrop,
-        IPreValidateDrop, IPostValidateDrop, IReplaceIdentifier, IAdjustDescriptionED, IOnItemGrabbed,
+        IPostValidateDrop, IReplaceIdentifier, IAdjustDescriptionED, IOnItemGrabbed,
         IClearInventory, IAdjustValidateDrop
     {
         /// <summary>
@@ -231,16 +231,6 @@ namespace CustomComponents
             return string.Empty;
         }
 
-        public string PreValidateDrop(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab)
-        {
-            Control.LogDebug(DType.ComponentInstall, $"-- Category {CategoryID}");
-
-            if (!CategoryDescriptor.AllowMixTags && mechlab.MechLab.activeMechDef.Inventory.Any(i => i.Def.IsCategory(CategoryID, out var c) && GetTag() != c.GetTag()))
-                return string.Format(CategoryDescriptor.AddMixed, CategoryDescriptor.DisplayName);
-
-            return string.Empty;
-        }
-
         public string PostValidateDrop(MechLabItemSlotElement drop_item, MechDef mech, List<InvItem> new_inventory, List<IChange> changes)
         {
             Control.LogDebug(DType.ComponentInstall, $"-- Category {CategoryID}");
@@ -282,7 +272,6 @@ namespace CustomComponents
 
             return string.Empty;
         }
-
 
 
         public override string ToString()
@@ -363,25 +352,5 @@ namespace CustomComponents
                 ed.AddDetail(detail);
             }
         }
-
-
-        //public string AdjustDescription(string Description)
-        //{
-        //    if (CategoryDescriptor.AddCategoryToDescription)
-        //    {
-        //        var color_start = $"<b><color={Control.Settings.CategoryDescriptionColor}>[";
-        //        var color_end = "]</color></b>";
-        //        if (Description.Contains(color_start))
-        //        {
-        //            int pos = Description.IndexOf(color_start, 0) + color_start.Length;
-        //            Description = Description.Substring(0, pos) + CategoryDescriptor.DisplayName + ", " +
-        //                          Description.Substring(pos);
-        //        }
-        //        else
-        //            Description = Description + "\n" + color_start + CategoryDescriptor.DisplayName + color_end;
-        //    }
-
-        //    return Description;
-        //}
     }
 }

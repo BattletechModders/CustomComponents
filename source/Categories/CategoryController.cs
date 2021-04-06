@@ -106,7 +106,8 @@ namespace CustomComponents
                     category = item.CategoryDescriptor,
                     itemdef = @t.item.Def,
                     itemref = @t.item,
-                    mix = item.GetTag()
+                    mix = item.GetTag(),
+                    num = item.Weight
                 }))
                 .GroupBy(i => i.category)
                 .ToDictionary(i => i.Key, i => i.ToList());
@@ -118,14 +119,15 @@ namespace CustomComponents
             foreach (var category in GetCategories())
             {
                 var record = category[mechDef];
+
                 if (record == null || !record.Required)
                     continue;
 
-                if (!items_by_category.ContainsKey(category) || items_by_category[category].Count < record.MinEquiped)
+                if (!items_by_category.ContainsKey(category) || items_by_category[category].Sum(i => i.num) < record.MinEquiped)
                     if (record.MinEquiped == 1)
-                        errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(category.ValidateRequred, category.DisplayName.ToUpper(), category.DisplayName)));
+                        errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(category.ValidateRequred, category.DisplayName.ToUpper(), category.DisplayName));
                     else
-                        errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(category.ValidateMinimum, category.DisplayName.ToUpper(), category.DisplayName, record.MinEquiped)));
+                        errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(category.ValidateMinimum, category.DisplayName.ToUpper(), category.DisplayName, record.MinEquiped));
             }
 
             foreach (var pair in items_by_category)
@@ -133,11 +135,13 @@ namespace CustomComponents
                 var record = pair.Key[mechDef];
                 if (record == null)
                     continue;
+                var count = pair.Value.Sum(i => i.num);
+
                 //check if too many items of same category
-                if (record.MaxEquiped > 0 && pair.Value.Count > record.MaxEquiped)
+                if (record.MaxEquiped > 0 && count > record.MaxEquiped)
                     if (record.MaxEquiped == 1)
-                        errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(pair.Key.ValidateUnique,
-                            pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName)));
+                        errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(pair.Key.ValidateUnique,
+                            pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName));
                     else
                         errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(pair.Key.ValidateMaximum,
                             pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName, record.MaxEquiped)));
@@ -145,27 +149,31 @@ namespace CustomComponents
                 //check if cateory mix tags
                 if (!pair.Key.AllowMixTags)
                 {
-                    string def = pair.Value[0].mix;
-
-                    bool flag = pair.Value.Any(i => i.mix != def);
-                    if (flag)
+                    string first_tag = pair.Value
+                        .Select(i => i.mix == null ? "" : i.mix)
+                        .FirstOrDefault(i => i != "*");
+                    if (first_tag != null)
                     {
-                        errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(pair.Key.ValidateMixed,
-                            pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName)));
+                        bool mixed = pair.Value.Any(i => i.mix != "*" && i.mix != null && i.mix != first_tag);
+                        if (mixed)
+                        {
+                            errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(pair.Key.ValidateMixed,
+                                pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName));
+                        }
                     }
                 }
 
                 // check count items per location
                 if (record.MaxEquipedPerLocation > 0)
                 {
-                    var max = pair.Value.GroupBy(i => i.itemref.MountedLocation).Max(i => i.Count());
+                    var max = pair.Value.GroupBy(i => i.itemref.MountedLocation).Max(i => i.Sum(a => a.num));
                     if (max > record.MaxEquipedPerLocation)
                         if (record.MaxEquipedPerLocation == 1)
-                            errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(pair.Key.ValidateUniqueLocation,
-                                pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName)));
+                            errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(pair.Key.ValidateUniqueLocation,
+                                pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName));
                         else
-                            errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(pair.Key.ValidateMaximumLocation,
-                                pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName, record.MaxEquipedPerLocation)));
+                            errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(pair.Key.ValidateMaximumLocation,
+                                pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName, record.MaxEquipedPerLocation));
                 }
             }
         }
@@ -199,7 +207,8 @@ namespace CustomComponents
                     category = item.CategoryDescriptor,
                     itemdef = @t.item.Def,
                     itemref = @t.item,
-                    mix = item.GetTag()
+                    mix = item.GetTag(),
+                    num = item.Weight
                 }))
                 .GroupBy(i => i.category)
                 .ToDictionary(i => i.Key, i => i.ToList());
@@ -217,7 +226,7 @@ namespace CustomComponents
 #endif
 
 
-                if (!items_by_category.ContainsKey(category) || items_by_category[category].Count < record.MinEquiped)
+                if (!items_by_category.ContainsKey(category) || items_by_category[category].Sum(i => i.num) < record.MinEquiped)
                 {
 #if CCDEBUG
                     Control.Logger.LogDebug($"--- not passed {items_by_category[category].Count}/{category.MinEquiped}");
@@ -239,9 +248,10 @@ namespace CustomComponents
 #endif
                     continue;
                 }
+                var count = pair.Value.Sum(i => i.num);
 
-                // if too many equiped
-                if (record.MaxEquiped > 0 && pair.Value.Count > record.MaxEquiped)
+                //check if too many items of same category
+                if (record.MaxEquiped > 0 && count > record.MaxEquiped)
                 {
 #if CCDEBUG
                     Control.Logger.LogDebug($"--- not passed {pair.Value.Count}/{pair.Key.MaxEquiped}");
@@ -252,18 +262,16 @@ namespace CustomComponents
                 //if mixed
                 if (!pair.Key.AllowMixTags)
                 {
-#if CCDEBUG
-                    Control.Logger.LogDebug($"-- AllowMixTags for {pair.Key.displayName}");
-#endif
-                    string def = pair.Value[0].mix;
-
-                    bool flag = pair.Value.Any(i => i.mix != def);
-                    if (flag)
+                    string first_tag = pair.Value
+                        .Select(i => i.mix == null ? "" : i.mix)
+                        .FirstOrDefault(i => i != "*");
+                    if (first_tag != null)
                     {
-#if CCDEBUG
-                        Control.Logger.LogDebug($"--- not passed {def}");
-#endif
-                        return false;
+                        bool mixed = pair.Value.Any(i => i.mix != "*" && i.mix != null && i.mix != first_tag);
+                        if (mixed)
+                        {
+                            return false;
+                        }
                     }
                 }
 
@@ -273,7 +281,7 @@ namespace CustomComponents
 #if CCDEBUG
                     Control.Logger.LogDebug($"-- MaxEquipedPerLocation for {pair.Key.displayName}");
 #endif
-                    var max = pair.Value.GroupBy(i => i.itemref.MountedLocation).Max(i => i.Count());
+                    var max = pair.Value.GroupBy(i => i.itemref.MountedLocation).Max(i => i.Sum(a => a.num));
                     if (max > record.MaxEquipedPerLocation)
                     {
 #if CCDEBUG

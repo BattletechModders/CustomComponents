@@ -14,7 +14,7 @@ namespace CustomComponents
         {
             if (!CheckWeaponsFielded(mechDef))
             {
-                errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(Control.Settings.WrongWeaponCountMessage, Control.Settings.MaxWeaponCount)));
+                errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(Control.Settings.Message.WrongWeaponCount, Control.Settings.MaxWeaponCount));
             }
         }
 

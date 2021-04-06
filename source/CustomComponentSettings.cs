@@ -66,7 +66,31 @@ namespace CustomComponents
         FULL = 0xffffff,
     }
 
+    public class ErrorMessages
+    {
+        public string WrongWeaponCount = "Cannot equip more then {0} weapons";
+        
+        public string Flags_InvaildComponent = "{0} is placeholder, remove it";
+        public string Flags_DestroyedComponent = "{0} is destroyed, replace it";
+        public string Flags_DamagedComponent = "{0} is damaged, repair it";
 
+
+        public string Category_AlreadyEquiped = "{0} already installed on mech";
+        public string Category_AlreadyEquipedLocation = "{0} already installed on {1}";
+        public string Category_MaximumReached = "Mech already have {1} of {0} installed";
+        public string Category_MaximumLocationReached = "Mech already have {1} of {0} installed at {2}";
+        public string Category_Mixed = "Mech can have only one type of {0}";
+
+
+        public string Category_ValidateRequred = "MISSING {0}: This mech must mount a {1}";
+        public string Category_ValidateMinimum = "MISSING {0}: This mech must mount at least {2} of {1}";
+        public string Category_ValidateMixed = "WRONG {0}: Mech can have only one type of {1}";
+        public string Category_ValidateUnique = "EXCESS {0}: This mech can't mount more then one {1}";
+        public string Category_ValidateMaximum = "EXCESS {0}: This mech can't mount more then {2} of {1}";
+        public string Category_ValidateUniqueLocation = "EXCESS {0}: This mech can't mount more then one {1} at any location";
+        public string Category_ValidateMaximumLocation = "EXCESS {0}: This mech can't mount more then {2} of {1} any location";
+
+    }
     public class CustomComponentSettings
     {
         public DType DebugInfo = DType.Color;
@@ -132,15 +156,12 @@ namespace CustomComponents
         public string DefaultOldCategoryType = "Mech";
         public bool CheckWeaponCount = false;
         public int MaxWeaponCount = 14;
-        public string WrongWeaponCountMessage = "Cannot equip more then {0} weapons";
         internal TagSet ignoreAutofixTags;
         public string[] IgnoreValidationTags = null;
         public TagUnitType[] UnitTypes = null;
 
-        public string InvaildComponentMessage = "{0} is placeholder, remove it";
-
-        public string DestroyedComponentMessage = "{0} is destroyed, replace it";
-        public string DamagedComponentMessage = "{0} is damaged, repair it";
+        public ErrorMessages Message = new ErrorMessages();
+        
 
         public void Complete()
         {
