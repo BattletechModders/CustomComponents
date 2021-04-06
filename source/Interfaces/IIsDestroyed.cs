@@ -2,8 +2,8 @@
 
 namespace CustomComponents
 {
-    public interface IIsDestroyed
+    internal interface IIsDestroyed
     {
-        bool IsMechDestroyed(MechComponentRef component, MechDef mech);
+        bool IsMechDestroyed(MechComponentRef item, MechDef mech);
     }
 }

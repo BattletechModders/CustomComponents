@@ -42,10 +42,10 @@ namespace CustomComponents
                     var mechlab = __instance.ParentDropTarget as MechLabPanel;
                     if (item.ComponentRef != null)
                     {
-                        if(item.ComponentRef.IsDefault())
+                        if(item.ComponentRef.HasFlag("hide"))
                         {
                             item.gameObject.SetActive(false);
-                            Control.LogDebug(DType.Filter, $"---- filterd, default");
+                            Control.LogDebug(DType.Filter, $"---- filterd, hide from inventory/default");
                         }
                         foreach (var filter in item.ComponentRef.GetComponents<IMechLabFilter>())
                         {

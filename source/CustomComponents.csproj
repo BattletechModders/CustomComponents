@@ -124,6 +124,7 @@
     <Compile Include="Icons\IconController.cs" />
     <Compile Include="Icons\SVGAssets_Contains.cs" />
     <Compile Include="Icons\SVGCache_GetAsset.cs" />
+    <Compile Include="Interfaces\IIsDestroyed.cs" />
     <Compile Include="Tags\Tags.cs" />
     <Compile Include="Cheats\Patches\JSONSerializationUtility_RehydrateObjectFromDictionary_Patch2.cs" />
     <Compile Include="ColorPatches\TColorExtentions.cs" />
@@ -152,7 +153,6 @@
     <Compile Include="Helpers\SettingsResourceTools.cs" />
     <Compile Include="AdjustDescription\IAdjustDescription.cs" />
     <Compile Include="Defaults\IDefault.cs" />
-    <Compile Include="Interfaces\IIsDestroyed.cs" />
     <Compile Include="SorterLabInventory\InventorySorter.cs" />
     <Compile Include="SorterLabInventory\InventorySorterComparer.cs" />
     <Compile Include="SorterLabInventory\InventorySorterListComparer.cs" />

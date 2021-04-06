@@ -17,5 +17,14 @@ namespace CustomComponents
         {
             return item == null ? false : FlagsController.Instance[item.Def, flag];
         }
+
+        public static FlagsController.Flag Flags(this MechComponentDef item)
+        {
+            return item == null ? null : FlagsController.Instance[item];
+        }
+        public static FlagsController.Flag Flags(this MechComponentRef item)
+        {
+            return item == null ? null : FlagsController.Instance[item.Def];
+        }
     }
 }

@@ -15,7 +15,7 @@ namespace CustomComponents
 
             widget.OnRemoveItem(item, true);
             Control.LogDebug(DType.ComponentInstall, $"--- removed");
-            if (item.ComponentRef.Is<Flags>(out var f) && f.Default)
+            if (item.ComponentRef.IsDefault())
             {
                 Control.LogDebug(DType.ComponentInstall, $"--- Default: clear");
                 item.thisCanvasGroup.blocksRaycasts = true;

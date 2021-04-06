@@ -137,6 +137,11 @@ namespace CustomComponents
         public string[] IgnoreValidationTags = null;
         public TagUnitType[] UnitTypes = null;
 
+        public string InvaildComponentMessage = "{0} is placeholder, remove it";
+
+        public string DestroyedComponentMessage = "{0} is destroyed, replace it";
+        public string DamagedComponentMessage = "{0} is damaged, repair it";
+
         public void Complete()
         {
             PreinstalledOverlayColor = PreinstalledOverlayCColor.ToColor();

@@ -30,9 +30,9 @@ namespace CustomComponents
             }
 
 
-            var flags = def.GetComponent<Flags>();
+            var flags = def.Flags();
 
-            if (!def.IsDefault() && (flags == null || !flags.NotSalvagable))
+            if (!flags.Default && !flags["no_salvage"])
                 return true;
 
             var lootable = def.GetComponent<LootableDefault>();
@@ -73,7 +73,9 @@ namespace CustomComponents
                     break;
             }
 
-            if (component == null || component.IsDefault() || (component.Is<Flags>(out flags) && flags.NotSalvagable))
+            var flags2 = component.Flags();
+
+            if (component == null || flags2 == null || flags2["no_salvage"])
             {
                 Control.LogDebug(DType.SalvageProccess, $"---- default, lootable {lootable.ItemID} not found or notsalvagable - skipped");
                 return false;

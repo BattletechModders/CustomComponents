@@ -1,4 +1,5 @@
 ﻿using BattleTech;
+using Localize;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,32 @@ namespace CustomComponents
 
     public class FlagsController
     {
+        public class Flag
+        {
+            private Dictionary<string, bool> flags;
+
+            public Flag(Dictionary<string, bool> flags)
+            {
+                this.flags = flags;
+                if (flags.TryGetValue("default", out var v))
+                    Default = v;
+                else
+                    Default = false;
+            }
+        
+            public bool this[string flag]
+            {
+                get
+                {
+                    if (flags.TryGetValue(flag, out var v))
+                        return v;
+                    return false;
+                }
+            }
+
+            public bool Default { get; internal set; }
+        }
+
         private class flag_record
         {
             public string name;
@@ -23,7 +50,7 @@ namespace CustomComponents
         }
 
         private static FlagsController _instance;
-        private Dictionary<string, Dictionary<string, bool>> flags_database = new Dictionary<string, Dictionary<string, bool>>;
+        private Dictionary<string, Flag> flags_database = new Dictionary<string, Flag>();
         private HashSet<string> all_flags = new HashSet<string>();
         private List<flag_record> flag_records;
 
@@ -38,6 +65,19 @@ namespace CustomComponents
             }
         }
 
+        public Flag this[MechComponentDef item]
+        {
+            get
+            {
+                if (!flags_database.TryGetValue(item.Description.Id, out var flags))
+                {
+                    flags = BuildFlags(item);
+                    flags_database[item.Description.Id] = flags;
+                }
+
+                return flags;
+            }
+        }
 
         public bool this[MechComponentDef item, string flag]
         {
@@ -56,7 +96,7 @@ namespace CustomComponents
             }
         }
 
-        private Dictionary<string, bool> BuildFlags(MechComponentDef item)
+        private Flag BuildFlags(MechComponentDef item)
         {
             var result = new Dictionary<string, bool>();
             foreach (var record in flag_records)
@@ -84,7 +124,49 @@ namespace CustomComponents
                 }
             }
 
-            return result;
+            return new Flag(result);
+        }
+
+        internal bool CanBeFielded(MechDef mechDef)
+        {
+            foreach (var item in mechDef.Inventory)
+            {
+                var f = item.Flags();
+
+                if (f["invalid"])
+                    return false;
+
+                if (item.DamageLevel == ComponentDamageLevel.Destroyed && (f["not_broken"] || f["not_destroyed"]))
+                    return false;
+
+                if (item.DamageLevel == ComponentDamageLevel.Penalized && f["not_broken"])
+                    return false;
+            }
+            return true;
+        }
+
+        internal void ValidateMech(Dictionary<MechValidationType, List<Text>> errors, MechValidationLevel validationLevel, MechDef mechDef)
+        {
+            foreach (var item in mechDef.Inventory)
+            {
+                var f = item.Flags();
+
+                if (f["invalid"])
+                    errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(
+                        Control.Settings.InvaildComponentMessage,  item.Def.Description.Name));
+
+                if (item.DamageLevel == ComponentDamageLevel.Destroyed && (f["not_broken"] || f["not_destroyed"]))
+                {
+                    errors[MechValidationType.StructureDestroyed].Add(new Localize.Text(
+                        Control.Settings.DestroyedComponentMessage, item.Def.Description.Name));
+                }
+
+                if (item.DamageLevel == ComponentDamageLevel.Penalized && f["not_broken"])
+                {
+                    errors[MechValidationType.StructureDestroyed].Add(new Localize.Text(
+                        Control.Settings.DamagedComponentMessage, item.Def.Description.Name));
+                }
+            }
         }
 
         public void RegisterFlag(string name, CheckFlagDelegate check_delegate = null, string[] subflags = null)

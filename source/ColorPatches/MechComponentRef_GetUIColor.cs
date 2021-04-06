@@ -16,16 +16,14 @@ namespace CustomComponents
         {
             try
             {
-                if (componentRef.Is<Flags>(out var f))
+                var f = componentRef.Flags();
+                if (f["invalid"])
                 {
-                    if (f.Invalid)
-                    {
-                        __result = UIColor.Red;
-                    }
-                    else if (f.Default)
-                    {
-                        __result = Control.Settings.DefaultFlagBackgroundColor;
-                    }
+                    __result = UIColor.Red;
+                }
+                else if (f.Default)
+                {
+                    __result = Control.Settings.DefaultFlagBackgroundColor;
                 }
             }
             catch (Exception e)

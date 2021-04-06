@@ -61,6 +61,7 @@ namespace CustomComponents
                 Logger.Log("Loaded CustomComponents v3.0.1 for bt 1.9.1");
 
                 Validator.RegisterMechValidator(TagRestrictionsHandler.Shared.ValidateMech, TagRestrictionsHandler.Shared.ValidateMechCanBeFielded);
+                Validator.RegisterMechValidator(FlagsController.Instance.ValidateMech, FlagsController.Instance.CanBeFielded);
                 Validator.RegisterDropValidator(pre: TagRestrictionsHandler.Shared.ValidateDrop);
                 if(Control.Settings.CheckWeaponCount)
                 {

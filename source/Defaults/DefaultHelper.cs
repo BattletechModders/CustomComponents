@@ -16,42 +16,18 @@ namespace CustomComponents
 
         private static Dictionary<string, bool> defaults = new Dictionary<string, bool>();
 
+
         public static bool IsDefault(this MechComponentDef cdef)
         {
-            if (cdef == null)
-                return false;
-
-            if (defaults.TryGetValue(cdef.Description.Id, out var result))
-                return result;
-
-            result = cdef.Is<IDefault>() || cdef.Is<Flags>(out var f) && f.Default;
-            defaults[cdef.Description.Id] = result;
-            return result;
-
+            return FlagsController.Instance[cdef].Default;
         }
         public static bool IsDefault(this MechComponentRef cref)
         {
-            if (defaults.TryGetValue(cref.ComponentDefID, out var result))
-                return result;
-
-            result = cref.Is<IDefault>() || cref.Is<Flags>(out var f) && f.Default;
-            defaults[cref.ComponentDefID] = result;
-            return result;
+            return FlagsController.Instance[cref.Def].Default;
         }
-
         public static bool IsDefault(this BaseComponentRef cref)
         {
-            if (defaults.TryGetValue(cref.ComponentDefID, out var result))
-                return result;
-
-            result = cref.Is<IDefault>() || cref.Is<Flags>(out var f) && f.Default;
-            defaults[cref.ComponentDefID] = result;
-            return result;
-        }
-
-        internal static void SetDefault(string id)
-        {
-            defaults[id] = true;
+            return FlagsController.Instance[cref.Def].Default;
         }
 
         public static bool IsModuleFixed(this MechComponentRef item, MechDef mech)
@@ -141,28 +117,6 @@ namespace CustomComponents
                 inv.Add(r);
                 mech.SetInventory(inv.ToArray());
 
-#if CCDEBUG
-                if (Control.Settings.DebugInfo.HasFlag(DType.FixedCheck))
-                {
-                    var flag = r.GetComponent<Flags>();
-                    Control.LogDebug(DType.FixedCheck,
-                        $"AddInventory: {r.Def.Description.Id} isdefult:{r.Def.IsDefault()} isfixed:{r.IsFixed} isFlag:{flag == null}");
-                    if (flag == null)
-                    {
-                        Control.LogDebug(DType.FixedCheck, $"-- NO FLAGS!");
-                    }
-                    else
-                    {
-                        Control.LogDebug(DType.FixedCheck,
-                            $"-- default: {flag.IsSet("default")} isdefault:{flag.Default}");
-                    }
-
-                    foreach (var simpleCustomComponent in r.GetComponents<SimpleCustomComponent>())
-                    {
-                        Control.LogDebug(DType.FixedCheck, $"-- {simpleCustomComponent}");
-                    }
-                }
-#endif
             }
         }
 
@@ -282,7 +236,7 @@ namespace CustomComponents
             repair_state = true;
             repair_widget = widget;
 
-            if (component.IsDefault() || component.Is<Flags>(out var f) && f.AutoRepair)
+            if (component.IsDefault() || component.HasFlag("autorepair"))
             {
                 Control.LogDebug(DType.DefaultHandle, $"AutoRepair: {component.Description.Id} ");
                 item.ComponentRef.DamageLevel = ComponentDamageLevel.Penalized;
