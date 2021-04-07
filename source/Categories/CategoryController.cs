@@ -88,12 +88,6 @@ namespace CustomComponents
         }
 
 
-        /// <summary>
-        /// validate mech and fill errors
-        /// </summary>
-        /// <param name="errors">errors by category</param>
-        /// <param name="validationLevel"></param>
-        /// <param name="mechDef">mech to validate</param>
         internal void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors,
             MechValidationLevel validationLevel, MechDef mechDef)
         {
@@ -106,6 +100,7 @@ namespace CustomComponents
                     category = item.CategoryDescriptor,
                     itemdef = @t.item.Def,
                     itemref = @t.item,
+                    location = t.item.MountedLocation,
                     mix = item.GetTag(),
                     num = item.Weight
                 }))
@@ -113,21 +108,40 @@ namespace CustomComponents
                 .ToDictionary(i => i.Key, i => i.ToList());
 
 
-            //fcache.Clear();
 
-            //check each "required" category
+            //check all minimum values
             foreach (var category in GetCategories())
             {
                 var record = category[mechDef];
 
-                if (record == null || !record.Required)
+                if (record == null || record.LocationLimits.Count == 0)
                     continue;
 
-                if (!items_by_category.ContainsKey(category) || items_by_category[category].Sum(i => i.num) < record.MinEquiped)
-                    if (record.MinEquiped == 1)
-                        errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(category.ValidateRequred, category.DisplayName.ToUpper(), category.DisplayName));
-                    else
-                        errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(category.ValidateMinimum, category.DisplayName.ToUpper(), category.DisplayName, record.MinEquiped));
+                items_by_category.TryGetValue(category, out var items);
+                
+                foreach(var pair in record.LocationLimits)
+                {
+                    if(pair.Value.Min > 0)
+                    {
+                        var count = items == null ? 0 : items.Where(i => pair.Key.HasFlag(i.location)).Sum(i => i.num);
+                        
+                        if(count < pair.Value.Min)
+                            errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(category.ValidateMinimum,
+                                category.DisplayName, pair.Value.Min, count, mechDef.Description.UIName, 
+                                mechDef.Description.Name, pair.Key == ChassisLocations.All ? "All Locations" : pair.Key.ToString()));
+                    }
+
+                    if(pair.Value.Max >= 0)
+                    {
+                        var count = items == null ? 0 : items.Where(i => pair.Key.HasFlag(i.location)).Sum(i => i.num);
+                        
+                        if (count > pair.Value.Max)
+                            errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(category.ValidateMaximum,
+                                category.DisplayName, pair.Value.Max, count, mechDef.Description.UIName,
+                                mechDef.Description.Name, pair.Key == ChassisLocations.All ? "All Locations" : pair.Key.ToString()));
+                    }
+                }
+    
             }
 
             foreach (var pair in items_by_category)
@@ -135,45 +149,23 @@ namespace CustomComponents
                 var record = pair.Key[mechDef];
                 if (record == null)
                     continue;
-                var count = pair.Value.Sum(i => i.num);
-
-                //check if too many items of same category
-                if (record.MaxEquiped > 0 && count > record.MaxEquiped)
-                    if (record.MaxEquiped == 1)
-                        errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(pair.Key.ValidateUnique,
-                            pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName));
-                    else
-                        errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(string.Format(pair.Key.ValidateMaximum,
-                            pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName, record.MaxEquiped)));
 
                 //check if cateory mix tags
                 if (!pair.Key.AllowMixTags)
                 {
                     string first_tag = pair.Value
-                        .Select(i => i.mix == null ? "" : i.mix)
+                        .Select(i => i.mix == null ? "!null!" : i.mix)
                         .FirstOrDefault(i => i != "*");
+                    
                     if (first_tag != null)
                     {
                         bool mixed = pair.Value.Any(i => i.mix != "*" && i.mix != null && i.mix != first_tag);
                         if (mixed)
                         {
                             errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(pair.Key.ValidateMixed,
-                                pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName));
+                                pair.Key.DisplayName));
                         }
                     }
-                }
-
-                // check count items per location
-                if (record.MaxEquipedPerLocation > 0)
-                {
-                    var max = pair.Value.GroupBy(i => i.itemref.MountedLocation).Max(i => i.Sum(a => a.num));
-                    if (max > record.MaxEquipedPerLocation)
-                        if (record.MaxEquipedPerLocation == 1)
-                            errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(pair.Key.ValidateUniqueLocation,
-                                pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName));
-                        else
-                            errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(pair.Key.ValidateMaximumLocation,
-                                pair.Key.DisplayName.ToUpper(), pair.Key.DisplayName, record.MaxEquipedPerLocation));
                 }
             }
         }
@@ -185,20 +177,6 @@ namespace CustomComponents
         /// <returns></returns>
         internal bool ValidateMechCanBeFielded(MechDef mechDef)
         {
-#if CCDEBUG
-            Control.Logger.LogDebug($"- Category");
-#endif
-            //var items_by_category = (from item in mechDef.Inventory
-            //                         let def = item.Def.GetComponent<Category>()
-            //                         where def != null
-            //                         select new
-            //                         {
-            //                             category = def.CategoryDescriptor,
-            //                             itemdef = item.Def,
-            //                             itemref = item,
-            //                             mix = def.GetTag()
-            //                         }).GroupBy(i => i.category).ToDictionary(i => i.Key, i => i.ToList());
-
             var items_by_category = mechDef.Inventory
                 .Select(item => new { item, def = item.Def.GetComponents<Category>() })
                 .Where(@t => @t.def != null)
@@ -207,64 +185,59 @@ namespace CustomComponents
                     category = item.CategoryDescriptor,
                     itemdef = @t.item.Def,
                     itemref = @t.item,
+                    location = t.item.MountedLocation,
                     mix = item.GetTag(),
                     num = item.Weight
                 }))
                 .GroupBy(i => i.category)
                 .ToDictionary(i => i.Key, i => i.ToList());
 
-            // if all required category present
+
+
+            //check all minimum values
             foreach (var category in GetCategories())
             {
                 var record = category[mechDef];
-                if (record == null || !record.Required)
+
+                if (record == null || record.LocationLimits.Count == 0)
                     continue;
 
+                items_by_category.TryGetValue(category, out var items);
 
-#if CCDEBUG
-                Control.Logger.LogDebug($"-- MinEquiped for {category.displayName}");
-#endif
-
-
-                if (!items_by_category.ContainsKey(category) || items_by_category[category].Sum(i => i.num) < record.MinEquiped)
+                foreach (var pair in record.LocationLimits)
                 {
-#if CCDEBUG
-                    Control.Logger.LogDebug($"--- not passed {items_by_category[category].Count}/{category.MinEquiped}");
-#endif
-                    return false;
+                    if (pair.Value.Min > 0)
+                    {
+                        var count = items == null ? 0 : items.Where(i => pair.Key.HasFlag(i.location)).Sum(i => i.num);
+
+                        if (count < pair.Value.Min)
+                            return false;
+                    }
+
+                    if (pair.Value.Max >= 0)
+                    {
+                        var count = items == null ? 0 : items.Where(i => pair.Key.HasFlag(i.location)).Sum(i => i.num);
+
+                        if (count > pair.Value.Max)
+                            return false;
+                    }
                 }
+
             }
 
             foreach (var pair in items_by_category)
             {
-#if CCDEBUG
-                Control.Logger.LogDebug($"-- MaxEquiped for {pair.Key.displayName}");
-#endif                
                 var record = pair.Key[mechDef];
                 if (record == null)
-                {
-#if CCDEBUG
-                    Control.Logger.LogDebug($"-- no record for unittype - skipped");
-#endif
                     continue;
-                }
-                var count = pair.Value.Sum(i => i.num);
 
-                //check if too many items of same category
-                if (record.MaxEquiped > 0 && count > record.MaxEquiped)
-                {
-#if CCDEBUG
-                    Control.Logger.LogDebug($"--- not passed {pair.Value.Count}/{pair.Key.MaxEquiped}");
-#endif
-                    return false;
-                }
-
-                //if mixed
+                //check if cateory mix tags
                 if (!pair.Key.AllowMixTags)
                 {
                     string first_tag = pair.Value
-                        .Select(i => i.mix == null ? "" : i.mix)
+                        .Select(i => i.mix == null ? "!null!" : i.mix)
                         .FirstOrDefault(i => i != "*");
+
                     if (first_tag != null)
                     {
                         bool mixed = pair.Value.Any(i => i.mix != "*" && i.mix != null && i.mix != first_tag);
@@ -274,26 +247,7 @@ namespace CustomComponents
                         }
                     }
                 }
-
-                // if too many per location
-                if (record.MaxEquipedPerLocation > 0)
-                {
-#if CCDEBUG
-                    Control.Logger.LogDebug($"-- MaxEquipedPerLocation for {pair.Key.displayName}");
-#endif
-                    var max = pair.Value.GroupBy(i => i.itemref.MountedLocation).Max(i => i.Sum(a => a.num));
-                    if (max > record.MaxEquipedPerLocation)
-                    {
-#if CCDEBUG
-                        Control.Logger.LogDebug($"--- not passed {max}/{pair.Key.MaxEquipedPerLocation}");
-#endif
-                        return false;
-                    }
-                }
             }
-#if CCDEBUG
-            Control.Logger.LogDebug($"--- all passed");
-#endif
             return true;
         }
 
@@ -311,7 +265,7 @@ namespace CustomComponents
             if (item.Is<Category>(out var category))
             {
                 var record = category.CategoryDescriptor[mech];
-                if (record.MaxEquiped > 0 || record.MaxEquipedPerLocation > 0)
+                if (record.MaxEquiped >= 0 || record.MaxEquipedPerLocation > 0)
                     return true;
             }
 

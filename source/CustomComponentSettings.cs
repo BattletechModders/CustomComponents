@@ -81,14 +81,12 @@ namespace CustomComponents
         public string Category_MaximumLocationReached = "Mech already have {1} of {0} installed at {2}";
         public string Category_Mixed = "Mech can have only one type of {0}";
 
-
-        public string Category_ValidateRequred = "MISSING {0}: This mech must mount a {1}";
-        public string Category_ValidateMinimum = "MISSING {0}: This mech must mount at least {2} of {1}";
-        public string Category_ValidateMixed = "WRONG {0}: Mech can have only one type of {1}";
-        public string Category_ValidateUnique = "EXCESS {0}: This mech can't mount more then one {1}";
-        public string Category_ValidateMaximum = "EXCESS {0}: This mech can't mount more then {2} of {1}";
-        public string Category_ValidateUniqueLocation = "EXCESS {0}: This mech can't mount more then one {1} at any location";
-        public string Category_ValidateMaximumLocation = "EXCESS {0}: This mech can't mount more then {2} of {1} any location";
+        // 0 - Display Name, 1 - Minimum, 2 - count, 3 - Mech Uiname, 4 - Mech Name
+        // 6 - Location
+        public string Category_ValidateMinimum = "MISSING {0}: This unit must mount at least {1} in {5}";
+        public string Category_ValidateMaximum = "EXCESS {0}: This mech can't mount more then {1} in {5}";
+        // 0 - Display Name
+        public string Category_ValidateMixed = "WRONG {0}: Mech can have only one type of {0}";
 
     }
     public class CustomComponentSettings

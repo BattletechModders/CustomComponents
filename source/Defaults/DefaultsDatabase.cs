@@ -152,10 +152,10 @@ namespace CustomComponents
             return mech.Chassis.GetComponents<IMultiCategoryDefault>();
         }
 
-        public IEnumerable<ICategoryDescriptorRecord> GetMechCategories(MechDef mech)
-        {
-            return mech.Chassis.GetComponents<ICategoryDescriptorRecord>();
-        }
+        //public IEnumerable<ICategoryDescriptorRecord> GetMechCategories(MechDef mech)
+        //{
+        //    return mech.Chassis.GetComponents<ICategoryDescriptorRecord>();
+        //}
 
 
         private MechDefaultInfo CreateDefaultRecord(MechDef mech)
@@ -173,9 +173,9 @@ namespace CustomComponents
                         if (catdefault.CategoryDescriptor == null)
                             return;
                         catdefault.CategoryRecord = catdefault.CategoryDescriptor[mech];
-                        if (catdefault.CategoryRecord.MinEquiped <= 0)
+                        if (!catdefault.CategoryRecord.MinLimited)
                         {
-                            Control.LogError($"{mech.ChassisID} have default of category {item.CategoryID} which minequiped == 0, skipped");
+                            Control.LogError($"{mech.ChassisID} have default of category {item.CategoryID} which not have minimum limit, skipped");
                             continue;
                         }
                         result.Defaults[item.CategoryID] = catdefault;
@@ -241,9 +241,9 @@ namespace CustomComponents
                         if (info.Component.IsCategory(category, out var c))
                         {
                             var cr = c.CategoryDescriptor[mech];
-                            if (cr == null || cr.MinEquiped == 0)
+                            if (cr == null || !cr.MinLimited)
                             {
-                                Control.LogError($"MultiDefault record for {mech.Description.Id}, component {m.DefID}, category {category} have MinEquiped = 0, so defaults will be ignored");
+                                Control.LogError($"MultiDefault record for {mech.Description.Id}, component {m.DefID}, category {category} dont have minimum limit, so defaults will be ignored");
                                 continue;
                             }
 

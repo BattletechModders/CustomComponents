@@ -7,57 +7,66 @@ using Newtonsoft.Json;
 
 namespace CustomComponents
 {
-    public interface ICategoryDescriptorRecord
+    public struct CategoryLimit
     {
-        int MaxEquiped { get;  }
-        int MaxEquipedPerLocation { get;  }
-        int MinEquiped { get;  }
+        public CategoryLimit(int min, int max)
+        {
+            Min = min;
+            Max = max;
+        }
+
+
+        public int Max { get; set; }
+        public int Min { get; set; }
     }
 
-    public class CategoryDescriptorRecord : ICategoryDescriptorRecord
+
+
+    public class CategoryDescriptorRecord
     {
+        private class record
+        {
+            public ChassisLocations Location { get; set; } = ChassisLocations.All;
+            public int Min { get; set; } = 0;
+            public int Max { get; set; } = 1;
+
+            public override bool Equals(object obj)
+            {
+                var r = obj as record;
+                if (r == null)
+                    return false;
+
+                return Location == r.Location;
+            }
+
+            public override int GetHashCode()
+            {
+                return Location.GetHashCode();
+            }
+        }
+        
         public string UnitType;
 
-        public int MaxEquiped { get; set; } = -1;
-        public int MaxEquipedPerLocation { get; set; } = -1;
-        public int MinEquiped { get; set; } = 0;
+        private record[] Limits;
 
         [JsonIgnore]
-        public bool Unique
-        {
-            get
-            {
-                return MaxEquiped == 1;
-            }
-        }
+        public Dictionary<ChassisLocations, CategoryLimit> LocationLimits;
         [JsonIgnore]
-
-        public bool UniqueForLocation
-        {
-            get
-            {
-                return MaxEquipedPerLocation == 1;
-            }
-        }
-
+        public bool MinLimited { get; set; }
         [JsonIgnore]
-        public bool Required => MinEquiped > 0;
-
-        [JsonIgnore]
-        public bool NotAllowed => MaxEquiped <= 0;
+        public bool MaxLimited { get; set; }
 
 
-        public CategoryDescriptorRecord()
+        public void Complete()
         {
+            if (Limits == null || Limits.Length == 0)
+                LocationLimits = new Dictionary<ChassisLocations, CategoryLimit>();
+            else
+                LocationLimits = Limits.Distinct().ToDictionary(i => i.Location, i => new CategoryLimit(i.Min, i.Max));
 
-        }
+            MinLimited = LocationLimits.Count > 0 && LocationLimits.Values.Any(i => i.Min > 0);
+            MaxLimited = LocationLimits.Count > 0 && LocationLimits.Values.Any(i => i.Max >= 0);
 
-        public CategoryDescriptorRecord(ICategoryDescriptorRecord source)
-        {
-            this.MinEquiped = source.MinEquiped;
-            this.MaxEquiped = source.MaxEquiped;
-            this.MaxEquipedPerLocation = source.MaxEquipedPerLocation;
-            
         }
     }
 
@@ -71,6 +80,7 @@ namespace CustomComponents
             get => string.IsNullOrEmpty(displayName) ? Name : displayName;
             set => displayName = value;
         }
+
         public bool AutoReplace = false;
         public bool ReplaceAnyLocation = false;
         public bool AddCategoryToDescription = true;
@@ -79,19 +89,14 @@ namespace CustomComponents
 
         public string AddAlreadyEquiped;
         public string AddAlreadyEquipedLocation;
-        public string AddMaximumReached; 
+        public string AddMaximumReached;
 
         public string AddMaximumLocationReached;
         public string AddMixed;
-        public string ValidateRequred;
 
         public string ValidateMinimum;
-        public string ValidateMixed;
-        public string ValidateUnique;
-
         public string ValidateMaximum;
-        public string ValidateUniqueLocation;
-        public string ValidateMaximumLocation;
+        public string ValidateMixed;
 
         public List<CategoryDescriptorRecord> UnitTypes = new List<CategoryDescriptorRecord>();
 
@@ -108,15 +113,20 @@ namespace CustomComponents
                 if (records.TryGetValue(mech.ChassisID, out var result))
                     return result;
 
-                var iface = GetMechCategoryCustom(mech);
-                if(iface != null)
-                    result = new CategoryDescriptorRecord(iface);
+                var chassis_limits = GetMechCategoryCustom(mech);
+                if (chassis_limits != null)
+                    result = new CategoryDescriptorRecord()
+                    {
+                        LocationLimits = chassis_limits
+                    };
                 else
                 {
                     var ut = UnitTypeDatabase.Instance.GetUnitTypes(mech);
                     result = UnitTypes.FirstOrDefault(i => ut.Contains(i.UnitType));
                     if (result == null)
                         result = default_record;
+                    if (result.LocationLimits == null)
+                        result.Complete();
                 }
 
                 records[mech.ChassisID] = result;
@@ -124,9 +134,14 @@ namespace CustomComponents
             }
         }
 
-        private ICategoryDescriptorRecord GetMechCategoryCustom(MechDef mech)
+        private Dictionary<ChassisLocations, CategoryLimit> GetMechCategoryCustom(MechDef mech)
         {
-            return mech.Chassis.GetComponents<ChassisCategory>().FirstOrDefault(i => i.Category == Name);
+            var custom = mech.Chassis.GetComponents<ChassisCategory>().FirstOrDefault(i => i.Category == Name);
+
+            if (custom != null)
+                return custom.LocationLimits;
+
+            return null;
         }
 
         public void Apply(CategoryDescriptor source)
@@ -149,22 +164,13 @@ namespace CustomComponents
                 AddMaximumLocationReached = source.AddMaximumLocationReached;
             if (!string.IsNullOrEmpty(source.AddMixed))
                 AddMixed = source.AddMixed;
-            if (!string.IsNullOrEmpty(source.ValidateRequred))
-                ValidateRequred = source.ValidateRequred;
 
             if (!string.IsNullOrEmpty(source.ValidateMinimum))
                 ValidateMinimum = source.ValidateMinimum;
-            if (!string.IsNullOrEmpty(source.ValidateMixed))
-                ValidateMixed = source.ValidateMixed;
-            if (!string.IsNullOrEmpty(source.ValidateUnique))
-                ValidateUnique = source.ValidateUnique;
-
             if (!string.IsNullOrEmpty(source.ValidateMaximum))
                 ValidateMaximum = source.ValidateMaximum;
-            if (!string.IsNullOrEmpty(source.ValidateUniqueLocation))
-                ValidateUniqueLocation = source.ValidateUniqueLocation;
-            if (!string.IsNullOrEmpty(source.ValidateMaximumLocation))
-                ValidateMaximumLocation = source.ValidateMaximumLocation;
+            if (!string.IsNullOrEmpty(source.ValidateMixed))
+                ValidateMixed = source.ValidateMixed;
 
             UnitTypes = source.UnitTypes;
             default_record = source.default_record;
@@ -184,11 +190,11 @@ namespace CustomComponents
             Defaults = new Dictionary<string, object>();
             Defaults.Add(Control.CustomSectionName, DefaultCustoms);
 
-            if(UnitTypes == null)
+            if (UnitTypes == null)
                 UnitTypes = new List<CategoryDescriptorRecord>();
 
             default_record = UnitTypes.FirstOrDefault(i => i.UnitType == "*");
-            
+
             if (default_record == null)
                 default_record = new CategoryDescriptorRecord();
             else
@@ -205,22 +211,13 @@ namespace CustomComponents
                 AddMaximumLocationReached = Control.Settings.Message.Category_AlreadyEquiped;
             if (string.IsNullOrEmpty(AddMixed))
                 AddMixed = Control.Settings.Message.Category_AlreadyEquiped;
-            if (string.IsNullOrEmpty(ValidateRequred))
-                ValidateRequred = Control.Settings.Message.Category_AlreadyEquiped;
-            
+
             if (string.IsNullOrEmpty(ValidateMinimum))
-                ValidateMinimum = Control.Settings.Message.Category_AlreadyEquiped;
+                ValidateMinimum = Control.Settings.Message.Category_ValidateMinimum;
+            if (string.IsNullOrEmpty(ValidateMaximum))
+                ValidateMaximum = Control.Settings.Message.Category_ValidateMaximum;
             if (string.IsNullOrEmpty(ValidateMixed))
                 ValidateMixed = Control.Settings.Message.Category_AlreadyEquiped;
-            if (string.IsNullOrEmpty(ValidateUnique))
-                ValidateUnique = Control.Settings.Message.Category_AlreadyEquiped;
-           
-            if (string.IsNullOrEmpty(ValidateMaximum))
-                ValidateMaximum = Control.Settings.Message.Category_AlreadyEquiped;
-            if (string.IsNullOrEmpty(ValidateUniqueLocation))
-                ValidateUniqueLocation = Control.Settings.Message.Category_AlreadyEquiped;
-            if (string.IsNullOrEmpty(ValidateMaximumLocation))
-                ValidateMaximumLocation = Control.Settings.Message.Category_AlreadyEquiped;
         }
     }
 
