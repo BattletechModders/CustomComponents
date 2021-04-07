@@ -5,8 +5,6 @@ using BattleTech;
 using BattleTech.UI;
 using CustomComponents.ExtendedDetails;
 using fastJSON;
-using HBS.Extensions;
-
 
 namespace CustomComponents
 {
@@ -18,6 +16,14 @@ namespace CustomComponents
         IPostValidateDrop, IReplaceIdentifier, IAdjustDescriptionED, IOnItemGrabbed,
         IClearInventory, IAdjustValidateDrop
     {
+
+        private class free_record
+        {
+            public int free;
+            public int can_free;
+            public List<MechComponentRef> items = new List<MechComponentRef>();
+        }
+
         /// <summary>
         /// name of category
         /// </summary>
@@ -137,97 +143,43 @@ namespace CustomComponents
             var record = CategoryDescriptor[mech];
 
             if (!CategoryDescriptor.AutoReplace || record == null ||
-                record.MaxEquiped <= 0 && record.MaxEquipedPerLocation <= 0)
+                !record.MaxLimited)
             {
                 Control.LogDebug(DType.ComponentInstall, $"--- no replace needed");
                 return String.Empty;
             }
 
-            if (changes.OfType<RemoveChange>().Select(i => i.item.ComponentRef).Any(i => i.IsCategory(CategoryID)))
+            var mount_location = location.widget.loadout.Location;
+
+            var removed = changes.OfType<RemoveChange>().Select(i =>i.item.ComponentRef).ToList();
+
+            var limits = record.LocationLimits.Where(i => i.Key.HasFlag(location.widget.loadout.Location) && i.Value.Max > 0).ToList();
+            var inventory = mech.Inventory
+                .Where(i => !removed.Contains(i))
+                .Select(i => new { item = i, def = i.IsDefault(), fixd = i.IsModuleFixed(mech), cat = i.IsCategory(CategoryID, out var c) ? c : null })
+                .Where(i => i.cat != null)
+                .ToList();
+
+            var free_places = new Dictionary<ChassisLocations, free_record>();
+
+            foreach(var limit in limits)
             {
-                Control.LogDebug(DType.ComponentInstall, $"--- replace already found");
-                return string.Empty;
-            }
-
-
-
-            if (record.MaxEquiped > 0)
-            {
-                var n = location.mechLab.activeMechDef.Inventory.Count(i => i.Def.IsCategory(CategoryID));
-                Control.LogDebug(DType.ComponentInstall, $"--- MaxEquiped: {n}/{record.MaxEquiped} ReplaceAny:{CategoryDescriptor.ReplaceAnyLocation}");
-
-                if (n >= record.MaxEquiped)
+                var free = new free_record();
+                free.free = limit.Value.Max;
+                foreach (var item_info in inventory.Where(i => limit.Key.HasFlag(i.item.MountedLocation)))
                 {
-                    var replace = location.LocalInventory
-                        .FirstOrDefault(i => i.ComponentRef.Def.IsCategory(CategoryID) && !i.ComponentRef.IsModuleFixed(mech));
-
-                    if (CategoryDescriptor.ReplaceAnyLocation && replace == null)
+                    if (item_info.fixd)
+                        free.free -= item_info.cat.Weight;
+                    else if (!item_info.def)
                     {
-                        var mechlab = new MechLabHelper(location.mechLab);
-                        foreach (var widget in mechlab.GetWidgets())
-                        {
-                            if (widget.loadout.Location == location.widget.loadout.Location)
-                                continue;
-
-                            var loc_helper = new LocationHelper(widget);
-                            replace = loc_helper.LocalInventory
-                                .FirstOrDefault(i => i.ComponentRef.Def.IsCategory(CategoryID) && !i.ComponentRef.IsModuleFixed(mech));
-                            if (replace != null)
-                            {
-                                Control.LogDebug(DType.ComponentInstall, "---- found in " + loc_helper.LocationName);
-                                break;
-                            }
-                        }
+                        free.free -= item_info.cat.Weight;
+                        free.can_free += item_info.cat.Weight;
+                        free.items.Add(item_info.item);
                     }
-                    else
-                        Control.LogDebug(DType.ComponentInstall, "---- found in same location");
-
-                    Control.LogDebug(DType.ComponentInstall, $"--- replace: {(replace == null ? "none" : replace.ComponentRef.ComponentDefID)}");
-
-                    if (replace == null)
-                    {
-                        Control.LogDebug(DType.ComponentInstall, $"--- return error");
-
-                        if (record.MaxEquiped > 1)
-                            return string.Format(CategoryDescriptor.AddMaximumReached, CategoryDescriptor.displayName,
-                                n);
-                        else
-                            return string.Format(CategoryDescriptor.AddAlreadyEquiped, CategoryDescriptor.displayName);
-                    }
-                    Control.LogDebug(DType.ComponentInstall, $"--- return replace");
-
-                    changes.Add(new RemoveChange(replace.MountedLocation, replace));
-
-                    return string.Empty;
                 }
+                free.items.Sort(i => i.)
             }
 
-            if (record.MaxEquipedPerLocation > 0)
-            {
-                var n = location.LocalInventory.Count(i => i.ComponentRef.Def.IsCategory(CategoryID));
-                Control.LogDebug(DType.ComponentInstall, $"--- MaxEquipedPerLocation: {n}/{record.MaxEquipedPerLocation}");
-
-                if (n >= record.MaxEquipedPerLocation)
-                {
-                    var replace = location.LocalInventory
-                        .FirstOrDefault(i => i.ComponentRef.Def.IsCategory(CategoryID) && !i.ComponentRef.IsModuleFixed(mech));
-                    Control.LogDebug(DType.ComponentInstall, $"--- replace: {(replace == null ? "none" : replace.ComponentRef.ComponentDefID)}");
-
-                    if (replace == null)
-                    {
-                        Control.LogDebug(DType.ComponentInstall, $"--- return error");
-
-                        if (record.MaxEquipedPerLocation > 1)
-                            return string.Format(CategoryDescriptor.AddMaximumLocationReached,
-                                CategoryDescriptor.displayName, n, location.LocationName);
-                        else
-                            return string.Format(CategoryDescriptor.AddAlreadyEquipedLocation,
-                                CategoryDescriptor.displayName, location.LocationName);
-                    }
-                    Control.LogDebug(DType.ComponentInstall, $"--- return replace");
-                    changes.Add(new RemoveChange(replace.MountedLocation, replace));
-                }
-            }
             return string.Empty;
         }
 

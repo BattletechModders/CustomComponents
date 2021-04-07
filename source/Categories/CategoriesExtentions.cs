@@ -42,5 +42,8 @@ namespace CustomComponents
             category = cref.GetComponents<Category>().FirstOrDefault(c => c.CategoryID == categoryid);
             return category != null;
         }
+
+        
+
     }
 }
