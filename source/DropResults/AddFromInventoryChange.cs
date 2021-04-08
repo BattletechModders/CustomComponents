@@ -58,9 +58,9 @@ namespace CustomComponents
             Predicate<MechComponentDef> SearchTerms, Predicate<MechComponentDef> PrioritySeatch)
         {
             Control.LogDebug(DType.ComponentInstall, $"AddFromInventoryChange.Create() double search");
-            var item = search_item( PrioritySeatch);
+            var item = search_item(PrioritySeatch);
             if (item == null)
-                item = search_item( SearchTerms);
+                item = search_item(SearchTerms);
 
             return item == null ? null : new AddFromInventoryChange(location, item);
         }
@@ -80,8 +80,8 @@ namespace CustomComponents
         public override void DoChange()
         {
             Control.LogDebug(DType.ComponentInstall, $"-- AddFromInventoryChange: {item.ComponentRef.ComponentDefID} to {location}");
-
-            var widget = location == loc.widget.loadout.Location ? loc.widget : mechLab.GetLocationWidget(location);
+            var mechLab = MechLabHelper.CurrentMechLab;
+            var widget = mechLab.GetLocationWidget(location);
             if (widget == null)
                 return;
 
@@ -89,7 +89,7 @@ namespace CustomComponents
             Control.LogDebug(DType.ComponentInstall, "--- added");
 
 
-            if (mechLab.MechLab.IsSimGame)
+            if (mechLab.InSimGame)
             {
                 Control.LogDebug(DType.ComponentInstall, "--- not default: create work order");
                 WorkOrderEntry_InstallComponent subEntry = mechLab.MechLab.Sim.CreateComponentInstallWorkOrder(

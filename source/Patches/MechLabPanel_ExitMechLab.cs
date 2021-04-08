@@ -10,7 +10,7 @@ namespace CustomComponents.Patches
         [HarmonyPostfix]
         public static void OnMechLabClose()
         {
-
+            MechLabHelper.CloseMechLab();
         }
     }
 }
