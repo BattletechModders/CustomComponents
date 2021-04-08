@@ -21,6 +21,11 @@ namespace CustomComponents
             mechlab_instance = new MechLabHelper(mechlab);
         }
 
+        internal static void CloseMechLab()
+        {
+            mechlab_instance = null;
+        }
+
         public MechLabPanel MechLab { get; private set; }
 
 
@@ -40,7 +45,8 @@ namespace CustomComponents
 
         public LocationHelper LHelper_SP { get; private set; }
 
-
+        public bool InMechLab => mechlab_instance != null;
+        public bool InSimGame => MechLab.IsSimGame;
         public IEnumerable<MechLabLocationWidget> GetWidgets()
         {
             yield return MechLab.headWidget;
@@ -140,6 +146,8 @@ namespace CustomComponents
             all_helpers.Add(LHelper_RL);
             if(LHelper_SP != null)
                 all_helpers.Add(LHelper_SP);
+
+            InMechLab = true;
         }
 
         private LocationHelper GetLocationHelperSP()

@@ -10,14 +10,18 @@ namespace CustomComponents
 
     public interface IApplyChange : IChange
     {
-        void DoChange(MechLabHelper mechLab, LocationHelper loc);
-        void CancelChange(MechLabHelper mechLab, LocationHelper loc);
+        void DoChange();
+    }
+
+    public interface ICancelChange : IChange
+    {
+        void CancelChange();
     }
 
     public interface IAdjustChange : IChange
     {
         public string ChangeID { get; }
 
-        void DoAdjust(MechLabHelper mechLab, LocationHelper loc, List<IChange> changes);
+        void DoAdjust(Queue<IChange> changes);
     }
 }

@@ -117,6 +117,7 @@
     <Compile Include="Defaults\DefaultsInfo.cs" />
     <Compile Include="Defaults\IDefaultComponent.cs" />
     <Compile Include="Defaults\IMultiCategoryDefault.cs" />
+    <Compile Include="DropResults\CategoryDefaultsAdjust.cs" />
     <Compile Include="ExtendedDetails\ExtendedDetails.cs" />
     <Compile Include="Fixes\WeaponsCountFix.cs" />
     <Compile Include="Flags\CCF.cs" />
@@ -126,6 +127,7 @@
     <Compile Include="Icons\SVGAssets_Contains.cs" />
     <Compile Include="Icons\SVGCache_GetAsset.cs" />
     <Compile Include="Interfaces\IIsDestroyed.cs" />
+    <Compile Include="Patches\MechLabPanel_ExitMechLab.cs" />
     <Compile Include="Patches\MechLabPanel_LoadMech.cs" />
     <Compile Include="Tags\Tags.cs" />
     <Compile Include="Cheats\Patches\JSONSerializationUtility_RehydrateObjectFromDictionary_Patch2.cs" />
@@ -183,7 +185,7 @@
     <Compile Include="DEBUGTOOLS\DEBUGTOOLS.cs" />
     <Compile Include="TagRestrictions\TagRestrictions.cs" />
     <Compile Include="TagRestrictions\TagRestrictionsHandler.cs" />
-    <Compile Include="DropResults\IApplyChange.cs" />
+    <Compile Include="DropResults\IChange.cs" />
     <Compile Include="DropResults\InvItem.cs" />
     <Compile Include="Interfaces\IPreValidateDrop.cs" />
     <Compile Include="Categories\CategoryController.cs" />

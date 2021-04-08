@@ -6,10 +6,12 @@ namespace CustomComponents
 {
     public class RemoveChange : SlotChange
     {
-        public override void DoChange(MechLabHelper mechLab, LocationHelper loc)
+        public override void DoChange()
         {
+            var mechLab = MechLabHelper.CurrentMechLab;
+
             Control.LogDebug(DType.ComponentInstall, $"-- RemoveChange: {item.ComponentRef.ComponentDefID} from {location}");
-            var widget = location == loc.widget.loadout.Location ? loc.widget : mechLab.GetLocationWidget(location);
+            var widget = mechLab.GetLocationWidget(location);
             if (widget == null)
                 return;
 

@@ -9,11 +9,11 @@ namespace CustomComponents
         {
         }
 
-        public override void DoChange(MechLabHelper mechLab, LocationHelper loc)
+        public override void DoChange()
         {
             Control.LogDebug(DType.ComponentInstall, $"-- AddFromInventoryChange: {item.ComponentRef.ComponentDefID} to {location}");
 
-            var widget = location == loc.widget.loadout.Location ? loc.widget : mechLab.GetLocationWidget(location);
+            var widget = MechLabHelper.CurrentMechLab.GetLocationWidget(location);
             if (widget == null)
                 return;
 

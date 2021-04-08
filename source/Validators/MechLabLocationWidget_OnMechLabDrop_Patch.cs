@@ -22,7 +22,7 @@ namespace CustomComponents
             try
             {
                 var dragItem = ___mechLab.DragItem as MechLabItemSlotElement;
-
+                var location = __instance.loadout.Location;
 
                 if (!___mechLab.Initialized)
                 {
@@ -37,10 +37,7 @@ namespace CustomComponents
 
                 Control.LogDebug(DType.ComponentInstall, $"OnMechLabDrop: Adding {newComponentDef.Description.Id}");
 
-                var location_helper = new LocationHelper(__instance);
-                var mechlab_helper = new MechLabHelper(___mechLab);
-
-                bool do_cancel(string error, List<IChange> allchanges)
+                bool do_cancel(string error, IEnumerable<IChange> allchanges)
                 {
                     if (string.IsNullOrEmpty(error))
                         return false;
@@ -65,17 +62,18 @@ namespace CustomComponents
                 foreach (var pre_validator in Validator.GetPre(newComponentDef))
                 {
 
-                    if (do_cancel(pre_validator(dragItem, location_helper, mechlab_helper), null))
+                    if (do_cancel(pre_validator(dragItem, location), null))
                         return false;
                 }
 
                 Control.LogDebug(DType.ComponentInstall, $"- replace validation");
 
-                var changes = new List<IChange>();
-                changes.Add(new AddFromInventoryChange(__instance.loadout.Location, dragItem));
+                var changes = new Queue<IChange>();
+
+                changes.Enqueue(new AddFromInventoryChange(__instance.loadout.Location, dragItem));
 
                 foreach (ReplaceValidateDropDelegate rep_validator in Validator.GetReplace(newComponentDef))
-                    if (do_cancel(rep_validator(dragItem, location_helper, changes), changes))
+                    if (do_cancel(rep_validator(dragItem, location, changes), changes))
                         return false;
 
 #if CCDEBUG

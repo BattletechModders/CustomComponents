@@ -5,11 +5,13 @@ using BattleTech.UI;
 
 namespace CustomComponents
 {
-    public class AddFromInventoryChange : AddChange
+    public class AddFromInventoryChange : AddChange, ICancelChange
     {
-        private static MechLabItemSlotElement search_item(MechLabHelper mechlab,
+        private static MechLabItemSlotElement search_item(
             Predicate<MechComponentDef> SearchTerms)
         {
+            var mechlab = MechLabHelper.CurrentMechLab;
+
             Control.LogDebug(DType.ComponentInstall, $"- bin search");
             if (mechlab.MechLab.sim != null)
             {
@@ -34,7 +36,7 @@ namespace CustomComponents
             Control.LogDebug(DType.ComponentInstall, $"- inventory search");
             foreach (var inventoryItem in mechlab.InventoryWidget.localInventory)
             {
-                if(inventoryItem.ComponentRef?.Def == null)
+                if (inventoryItem.ComponentRef?.Def == null)
                     continue;
 
                 if (SearchTerms(inventoryItem.ComponentRef.Def))
@@ -52,21 +54,21 @@ namespace CustomComponents
             return null;
         }
 
-        public static AddFromInventoryChange FoundInInventory(ChassisLocations location, MechLabHelper mechlab,
+        public static AddFromInventoryChange FoundInInventory(ChassisLocations location,
             Predicate<MechComponentDef> SearchTerms, Predicate<MechComponentDef> PrioritySeatch)
         {
             Control.LogDebug(DType.ComponentInstall, $"AddFromInventoryChange.Create() double search");
-            var item = search_item(mechlab, PrioritySeatch);
+            var item = search_item( PrioritySeatch);
             if (item == null)
-                item = search_item(mechlab, SearchTerms);
+                item = search_item( SearchTerms);
 
             return item == null ? null : new AddFromInventoryChange(location, item);
         }
 
-        public static AddFromInventoryChange FoundInInventory(ChassisLocations location, MechLabHelper mechlab, Predicate<MechComponentDef> SearchTerms)
+        public static AddFromInventoryChange FoundInInventory(ChassisLocations location, Predicate<MechComponentDef> SearchTerms)
         {
             Control.LogDebug(DType.ComponentInstall, $"AddFromInventoryChange.Create() one search");
-            var item = search_item(mechlab, SearchTerms);
+            var item = search_item(SearchTerms);
             return item == null ? null : new AddFromInventoryChange(location, item);
         }
 
@@ -75,7 +77,7 @@ namespace CustomComponents
 
         }
 
-        public override void DoChange(MechLabHelper mechLab, LocationHelper loc)
+        public override void DoChange()
         {
             Control.LogDebug(DType.ComponentInstall, $"-- AddFromInventoryChange: {item.ComponentRef.ComponentDefID} to {location}");
 
@@ -99,9 +101,9 @@ namespace CustomComponents
             item.MountedLocation = location;
         }
 
-        public override void CancelChange(MechLabHelper mechLab, LocationHelper loc)
+        public void CancelChange()
         {
-            mechLab.MechLab.ForceItemDrop(item);
+            MechLabHelper.CurrentMechLab.MechLab.ForceItemDrop(item);
         }
     }
 }
