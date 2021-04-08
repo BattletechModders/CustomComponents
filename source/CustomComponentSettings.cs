@@ -75,10 +75,9 @@ namespace CustomComponents
         public string Flags_DamagedComponent = "{0} is damaged, repair it";
 
 
-        public string Category_AlreadyEquiped = "{0} already installed on mech";
-        public string Category_AlreadyEquipedLocation = "{0} already installed on {1}";
-        public string Category_MaximumReached = "Mech already have {1} of {0} installed";
-        public string Category_MaximumLocationReached = "Mech already have {1} of {0} installed at {2}";
+        // 0 - Display Name, 1 - maximum, 2 - Mech Uiname, 3 - Mech Name
+        // 4 - Location, 5 - item name, 6 - item uiname
+        public string Category_MaximumReached = "Unit Cannot install more {0} in {6}";
         public string Category_Mixed = "Mech can have only one type of {0}";
 
         // 0 - Display Name, 1 - Minimum, 2 - count, 3 - Mech Uiname, 4 - Mech Name

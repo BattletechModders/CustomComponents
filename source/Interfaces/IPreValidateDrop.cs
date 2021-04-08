@@ -7,7 +7,7 @@ namespace CustomComponents
 {
     public interface IPreValidateDrop
     {
-        string PreValidateDrop(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab);
+        string PreValidateDrop(MechLabItemSlotElement item, LocationHelper location);
     }
 
     public delegate string PreValidateDropDelegate(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab);

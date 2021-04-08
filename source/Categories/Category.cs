@@ -19,9 +19,11 @@ namespace CustomComponents
 
         private class free_record
         {
+            public ChassisLocations locations;
+            public CategoryLimit limit;
             public int free;
             public int can_free;
-            public List<MechComponentRef> items = new List<MechComponentRef>();
+            public List<(MechComponentRef item, int weight)> items = new List<(MechComponentRef item, int weight)>();
         }
 
         /// <summary>
@@ -72,7 +74,7 @@ namespace CustomComponents
                 MechComponentRef def_replace = DefaultFixer.Shared.GetReplaceFor(mech, CategoryID, order.PreviousLocation, state);
                 if (def_replace != null)
                 {
-                    Control.LogDebug(DType.ComponentInstall,$"--- added {def_replace.ComponentDefID}");
+                    Control.LogDebug(DType.ComponentInstall, $"--- added {def_replace.ComponentDefID}");
                     var inv = mech.Inventory.ToList();
                     inv.Add(def_replace);
                     mech.SetInventory(inv.ToArray());
@@ -151,21 +153,23 @@ namespace CustomComponents
 
             var mount_location = location.widget.loadout.Location;
 
-            var removed = changes.OfType<RemoveChange>().Select(i =>i.item.ComponentRef).ToList();
+            var removed = changes.OfType<RemoveChange>().Select(i => i.item.ComponentRef).ToList();
 
-            var limits = record.LocationLimits.Where(i => i.Key.HasFlag(location.widget.loadout.Location) && i.Value.Max > 0).ToList();
+            var limits = record.LocationLimits.Where(i => i.Key.HasFlag(location.widget.loadout.Location) && i.Value.Max >= 0).ToList();
             var inventory = mech.Inventory
                 .Where(i => !removed.Contains(i))
                 .Select(i => new { item = i, def = i.IsDefault(), fixd = i.IsModuleFixed(mech), cat = i.IsCategory(CategoryID, out var c) ? c : null })
                 .Where(i => i.cat != null)
                 .ToList();
 
-            var free_places = new Dictionary<ChassisLocations, free_record>();
+            var free_places = new List<free_record>();
 
-            foreach(var limit in limits)
+            foreach (var limit in limits)
             {
                 var free = new free_record();
                 free.free = limit.Value.Max;
+                free.locations = limit.Key;
+                free.limit = limit.Value;
                 foreach (var item_info in inventory.Where(i => limit.Key.HasFlag(i.item.MountedLocation)))
                 {
                     if (item_info.fixd)
@@ -174,10 +178,58 @@ namespace CustomComponents
                     {
                         free.free -= item_info.cat.Weight;
                         free.can_free += item_info.cat.Weight;
-                        free.items.Add(item_info.item);
+                        free.items.Add( (item_info.item, item_info.cat.Weight) );
                     }
                 }
-                free.items.Sort(i => i.)
+                free.items.Sort((a,b) => a.weight.CompareTo(b.weight));
+                free_places.Add(free);
+            }
+
+            var to_remove = new List<(MechComponentRef item, int weight)>();
+
+            foreach (var free in free_places)
+            {
+                foreach (var item in to_remove.Where(i => free.locations.HasFlag(i.item.MountedLocation)))
+                {
+                    free.free += item.weight;
+                    free.can_free -= item.weight;
+                    free.items.RemoveAll(i => i.item == item.item);
+                }
+
+                if (free.free >= Weight)
+                    continue;
+
+                if (free.free + free.can_free < Weight)
+                {
+                    // 0 - Display Name, 1 - maximum, 2 - Mech Uiname, 3 - Mech Name
+                    // 4 - Location, 5 - item name, 6 - item uiname
+                    return new Localize.Text(CategoryDescriptor.AddMaximumReached, CategoryDescriptor.DisplayName,
+                        free.limit.Max, mech.Description.UIName, mech.Description.Name,
+                        free.locations == ChassisLocations.All ? "All Locations" : free.locations.ToString(),
+                        drop_item.ComponentRef.Def.Description.Name, drop_item.ComponentRef.Def.Description.UIName
+                        ).ToString();
+                }
+
+                int need_free = Weight - free.free;
+                foreach(var item in free.items)
+                {
+                    if (need_free <= 0)
+                        break;
+                    to_remove.Add(item);
+                    need_free -= item.weight;
+                }
+            }
+
+            foreach (var item in to_remove)
+            {
+                var slot = MechLabHelper.CurrentMechLab.FullInventory.FirstOrDefault(i => i.ComponentRef == item.item);
+                if (slot == null)
+                {
+                    Control.LogError($"Cannot find slot to remove for {item.item.ComponentDefID} in {item.item.MountedLocation}");
+                }
+                else
+                    changes.Add(new RemoveChange(slot.MountedLocation, slot));
+            
             }
 
             return string.Empty;
@@ -234,7 +286,7 @@ namespace CustomComponents
         public void ClearInventory(MechDef mech, List<MechComponentRef> result, SimGameState state, MechComponentRef source)
         {
             var item = DefaultFixer.Shared.GetReplaceFor(mech, CategoryID, source.MountedLocation, state);
-            if(item != null)
+            if (item != null)
                 result.Add(item);
         }
 

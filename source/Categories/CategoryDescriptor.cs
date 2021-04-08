@@ -87,11 +87,7 @@ namespace CustomComponents
         public bool AllowMixTags = true;
         public Dictionary<string, object> DefaultCustoms = null;
 
-        public string AddAlreadyEquiped;
-        public string AddAlreadyEquipedLocation;
         public string AddMaximumReached;
-
-        public string AddMaximumLocationReached;
         public string AddMixed;
 
         public string ValidateMinimum;
@@ -153,15 +149,8 @@ namespace CustomComponents
             ReplaceAnyLocation = source.ReplaceAnyLocation;
             AddCategoryToDescription = source.AddCategoryToDescription;
 
-            if (!string.IsNullOrEmpty(source.AddAlreadyEquiped))
-                AddAlreadyEquiped = source.AddAlreadyEquiped;
-            if (!string.IsNullOrEmpty(source.AddAlreadyEquipedLocation))
-                AddAlreadyEquipedLocation = source.AddAlreadyEquipedLocation;
             if (!string.IsNullOrEmpty(source.AddMaximumReached))
                 AddMaximumReached = source.AddMaximumReached;
-
-            if (!string.IsNullOrEmpty(source.AddMaximumLocationReached))
-                AddMaximumLocationReached = source.AddMaximumLocationReached;
             if (!string.IsNullOrEmpty(source.AddMixed))
                 AddMixed = source.AddMixed;
 
@@ -200,24 +189,17 @@ namespace CustomComponents
             else
                 UnitTypes.Remove(default_record);
 
-            if (string.IsNullOrEmpty(AddAlreadyEquiped))
-                AddAlreadyEquiped = Control.Settings.Message.Category_AlreadyEquiped;
-            if (string.IsNullOrEmpty(AddAlreadyEquipedLocation))
-                AddAlreadyEquipedLocation = Control.Settings.Message.Category_AlreadyEquiped;
             if (string.IsNullOrEmpty(AddMaximumReached))
-                AddMaximumReached = Control.Settings.Message.Category_AlreadyEquiped;
-
-            if (string.IsNullOrEmpty(AddMaximumLocationReached))
-                AddMaximumLocationReached = Control.Settings.Message.Category_AlreadyEquiped;
+                AddMaximumReached = Control.Settings.Message.Category_MaximumReached;
             if (string.IsNullOrEmpty(AddMixed))
-                AddMixed = Control.Settings.Message.Category_AlreadyEquiped;
+                AddMixed = Control.Settings.Message.Category_Mixed;
 
             if (string.IsNullOrEmpty(ValidateMinimum))
                 ValidateMinimum = Control.Settings.Message.Category_ValidateMinimum;
             if (string.IsNullOrEmpty(ValidateMaximum))
                 ValidateMaximum = Control.Settings.Message.Category_ValidateMaximum;
             if (string.IsNullOrEmpty(ValidateMixed))
-                ValidateMixed = Control.Settings.Message.Category_AlreadyEquiped;
+                ValidateMixed = Control.Settings.Message.Category_ValidateMixed;
         }
     }
 

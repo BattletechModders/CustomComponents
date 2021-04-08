@@ -1,12 +1,26 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BattleTech;
 using BattleTech.UI;
 using Harmony;
+using System.Linq;
 
 namespace CustomComponents
 {
     public class MechLabHelper
     {
+        private static MechLabHelper mechlab_instance;
+
+        public static MechLabHelper CurrentMechLab
+        { 
+            get { return mechlab_instance; }
+        }
+
+        internal static void EnterMechLab(MechLabPanel mechlab)
+        {
+            mechlab_instance = new MechLabHelper(mechlab);
+        }
+
         public MechLabPanel MechLab { get; private set; }
 
 
@@ -14,6 +28,17 @@ namespace CustomComponents
         private Traverse drag_item;
         private Traverse<MechLabInventoryWidget> inventory;
         private Traverse<MechLabDismountWidget> bin;
+        private List<LocationHelper> all_helpers;
+        public LocationHelper LHelper_HD { get; private set; }
+        public LocationHelper LHelper_CT { get; private set; }
+        public LocationHelper LHelper_LT { get; private set; }
+        public LocationHelper LHelper_RT { get; private set; }
+        public LocationHelper LHelper_LA { get; private set; }
+        public LocationHelper LHelper_RA { get; private set; }
+        public LocationHelper LHelper_LL { get; private set; }
+        public LocationHelper LHelper_RL { get; private set; }
+
+        public LocationHelper LHelper_SP { get; private set; }
 
 
         public IEnumerable<MechLabLocationWidget> GetWidgets()
@@ -28,6 +53,18 @@ namespace CustomComponents
             yield return MechLab.rightLegWidget;
         }
 
+        public IEnumerable<LocationHelper> GetLocationHelpers()
+        {
+            return all_helpers;
+        }
+
+        public IEnumerable<MechLabItemSlotElement> FullInventory
+        {
+            get
+            {
+                return all_helpers.SelectMany(i => i.LocalInventory);
+            }
+        }
 
         public MechLabLocationWidget GetLocationWidget(ChassisLocations location)
         {
@@ -74,10 +111,40 @@ namespace CustomComponents
             }
         }
 
-        public MechLabHelper(MechLabPanel mechLab)
+        private MechLabHelper(MechLabPanel mechLab)
         {
             MechLab = mechLab;
             main = Traverse.Create(mechLab);
+
+            LHelper_CT = new LocationHelper(MechLab.centerTorsoWidget);
+            LHelper_HD = new LocationHelper(MechLab.headWidget);
+            LHelper_RT = new LocationHelper(MechLab.rightTorsoWidget);
+            LHelper_LT = new LocationHelper(MechLab.leftTorsoWidget);
+
+            LHelper_LA = new LocationHelper(MechLab.leftArmWidget);
+            LHelper_RA = new LocationHelper(MechLab.rightArmWidget);
+            LHelper_LL = new LocationHelper(MechLab.leftLegWidget);
+            LHelper_RL = new LocationHelper(MechLab.rightLegWidget);
+
+            LHelper_SP = GetLocationHelperSP();
+
+            all_helpers = new List<LocationHelper>();
+
+            all_helpers.Add(LHelper_CT);
+            all_helpers.Add(LHelper_HD);
+            all_helpers.Add(LHelper_RT);
+            all_helpers.Add(LHelper_LT);
+            all_helpers.Add(LHelper_LA);
+            all_helpers.Add(LHelper_RA);
+            all_helpers.Add(LHelper_LL);
+            all_helpers.Add(LHelper_RL);
+            if(LHelper_SP != null)
+                all_helpers.Add(LHelper_SP);
+        }
+
+        private LocationHelper GetLocationHelperSP()
+        {
+            return null;
         }
 
         public void SetDragItem(MechLabItemSlotElement item)
