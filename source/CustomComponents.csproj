@@ -102,6 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdjustDescription\AdjustDescriptionPreProcessor.cs" />
+    <Compile Include="AllowedLocations\Patches\MechLabLocationWidget_ShowHighlightFrame.cs" />
     <Compile Include="AutoFixer\AutoFixer.cs" />
     <Compile Include="AutoFixer\Patches\SimGameState_InitCompanyStats_Patch.cs" />
     <Compile Include="Categories\CategoriesExtentions.cs" />

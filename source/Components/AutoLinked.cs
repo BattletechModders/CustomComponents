@@ -99,8 +99,6 @@ namespace CustomComponents
             }
         }
 
-
-
         public void ValidateDropOnRemove(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes)
         {
             Control.LogDebug(DType.ComponentInstall, "--- AutoLinked Remove");
