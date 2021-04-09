@@ -118,6 +118,8 @@
     <Compile Include="Defaults\IDefaultComponent.cs" />
     <Compile Include="Defaults\IMultiCategoryDefault.cs" />
     <Compile Include="DropResults\CategoryDefaultsAdjust.cs" />
+    <Compile Include="LocationRedefine\EquipLocationController.cs" />
+    <Compile Include="LocationRedefine\EquipLocations.cs" />
     <Compile Include="ExtendedDetails\ExtendedDetails.cs" />
     <Compile Include="Fixes\WeaponsCountFix.cs" />
     <Compile Include="Flags\CCF.cs" />
@@ -127,6 +129,7 @@
     <Compile Include="Icons\SVGAssets_Contains.cs" />
     <Compile Include="Icons\SVGCache_GetAsset.cs" />
     <Compile Include="Interfaces\IIsDestroyed.cs" />
+    <Compile Include="LocationRedefine\LocationRedefineTag.cs" />
     <Compile Include="Patches\MechLabPanel_ExitMechLab.cs" />
     <Compile Include="Patches\MechLabPanel_LoadMech.cs" />
     <Compile Include="Tags\Tags.cs" />

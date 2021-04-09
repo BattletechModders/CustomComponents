@@ -137,10 +137,13 @@ namespace CustomComponents
 
         }
 
-        public string ReplaceValidateDrop(MechLabItemSlotElement drop_item, LocationHelper location, List<IChange> changes)
+        public string ReplaceValidateDrop(MechLabItemSlotElement drop_item, ChassisLocations location, Queue<IChange> changes)
         {
             Control.LogDebug(DType.ComponentInstall, $"-- Category {CategoryID}");
-            var mech = location.mechLab.activeMechDef;
+
+
+            var mech = MechLabHelper.CurrentMechLab.MechLab.activeMechDef ;
+
 
             var record = CategoryDescriptor[mech];
 
@@ -151,11 +154,10 @@ namespace CustomComponents
                 return String.Empty;
             }
 
-            var mount_location = location.widget.loadout.Location;
 
             var removed = changes.OfType<RemoveChange>().Select(i => i.item.ComponentRef).ToList();
 
-            var limits = record.LocationLimits.Where(i => i.Key.HasFlag(location.widget.loadout.Location) && i.Value.Max >= 0).ToList();
+            var limits = record.LocationLimits.Where(i => i.Key.HasFlag(location) && i.Value.Max >= 0).ToList();
             var inventory = mech.Inventory
                 .Where(i => !removed.Contains(i))
                 .Select(i => new { item = i, def = i.IsDefault(), fixd = i.IsModuleFixed(mech), cat = i.IsCategory(CategoryID, out var c) ? c : null })
@@ -228,8 +230,7 @@ namespace CustomComponents
                     Control.LogError($"Cannot find slot to remove for {item.item.ComponentDefID} in {item.item.MountedLocation}");
                 }
                 else
-                    changes.Add(new RemoveChange(slot.MountedLocation, slot));
-            
+                    changes.Enqueue(new RemoveChange(slot.MountedLocation, slot));
             }
 
             return string.Empty;
@@ -303,38 +304,12 @@ namespace CustomComponents
                 return;
             }
 
-            DefaultHelper.AddMechLab(replace, new MechLabHelper(mechLab));
+            DefaultHelper.AddMechLab(replace);
             Control.LogDebug(DType.ComponentInstall, $"-- added {replace.ComponentDefID} to {replace.MountedLocation}");
             mechLab.ValidateLoadout(false);
         }
 
-        public IEnumerable<IChange> ValidateDropOnAdd(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab, List<IChange> changes)
-        {
-            yield break;
-        }
 
-        public IEnumerable<IChange> ValidateDropOnRemove(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab, List<IChange> changes)
-        {
-            var replace = DefaultFixer.Shared.GetReplaceFor(mechlab.MechLab.activeMechDef, CategoryID, item.MountedLocation, mechlab.MechLab.sim);
-            if (replace == null)
-            {
-                Control.LogDebug(DType.ComponentInstall, $"--- Category {CategoryID} - no replace, return");
-                yield break;
-            }
-
-            foreach (var addChange in changes.OfType<AddChange>())
-            {
-                if (addChange.item.ComponentRef.IsCategory(CategoryID))
-                {
-                    Control.LogDebug(DType.ComponentInstall, $"--- Category {CategoryID} - replace already added");
-                    yield break;
-                }
-            }
-
-            Control.LogDebug(DType.ComponentInstall, $"--- Category {CategoryID} - add replace {replace.ComponentDefID}");
-
-            yield return new AddDefaultChange(replace.MountedLocation, DefaultHelper.CreateSlot(replace, mechlab.MechLab));
-        }
 
         public void AdjustDescription()
         {
@@ -355,6 +330,20 @@ namespace CustomComponents
                 detail.Values.Add(this.CategoryDescriptor.DisplayName);
                 ed.AddDetail(detail);
             }
+        }
+
+        public void ValidateDropOnAdd(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes)
+        {
+            var record = CategoryDescriptor[MechLabHelper.CurrentMechLab.ActiveMech];
+            if(record!= null && record.MaxLimited)
+                changes.Enqueue(new CategoryDefaultsAdjust(CategoryID));
+        }
+
+        public void ValidateDropOnRemove(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes)
+        {
+            var record = CategoryDescriptor[MechLabHelper.CurrentMechLab.ActiveMech];
+            if (record != null && record.MinLimited)
+                changes.Enqueue(new CategoryDefaultsAdjust(CategoryID));
         }
     }
 }

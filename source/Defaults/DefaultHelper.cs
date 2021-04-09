@@ -120,7 +120,7 @@ namespace CustomComponents
             }
         }
 
-        public static MechLabItemSlotElement CreateSlot(string id, ComponentType type, MechLabPanel mechLab)
+        public static MechLabItemSlotElement CreateSlot(string id, ComponentType type)
         {
             var component_ref = new MechComponentRef(id, string.Empty, type, ChassisLocations.None, isFixed: true);
 
@@ -129,22 +129,23 @@ namespace CustomComponents
                 Control.LogError($"CreateDefault: {id} not default or not exist");
             }
 
+            var mechLab = MechLabHelper.CurrentMechLab.MechLab;
             if (mechLab.IsSimGame)
                 component_ref.SetSimGameUID(mechLab.Sim.GenerateSimGameUID());
 
             return mechLab.CreateMechComponentItem(component_ref, false, ChassisLocations.None, mechLab);
         }
 
-        public static MechLabItemSlotElement CreateSlot(MechComponentRef item, MechLabPanel mechLab)
+        public static MechLabItemSlotElement CreateSlot(MechComponentRef item)
         {
-            return mechLab.CreateMechComponentItem(item, false, ChassisLocations.None, mechLab);
+            return MechLabHelper.CurrentMechLab.MechLab.CreateMechComponentItem(item, false, ChassisLocations.None, MechLabHelper.CurrentMechLab.MechLab);
         }
 
-        internal static void AddMechLab(MechComponentRef replace, MechLabHelper mechLab)
+        internal static void AddMechLab(MechComponentRef replace)
         {
             Control.LogDebug(DType.DefaultHandle, $"DefaultHelper.AddMechLab: adding {replace.ComponentDefID} to {replace.MountedLocation}");
 
-            var target = mechLab.GetLocationWidget(replace.MountedLocation);
+            var target = MechLabHelper.CurrentMechLab.GetLocationWidget(replace.MountedLocation);
 
             if (target == null)
             {
@@ -152,7 +153,7 @@ namespace CustomComponents
                 return;
             }
 
-            var slot = CreateSlot(replace, mechLab.MechLab);
+            var slot = CreateSlot(replace);
             slot.MountedLocation = replace.MountedLocation;
             target.OnAddItem(slot, false);
         }
@@ -168,7 +169,7 @@ namespace CustomComponents
                 return;
             }
 
-            var slot = CreateSlot(id, type, mechLab.MechLab);
+            var slot = CreateSlot(id, type);
             slot.MountedLocation = location;
             target.OnAddItem(slot, false);
         }

@@ -114,6 +114,8 @@ namespace CustomComponents
             CategoryController.Shared.Setup(customResources);
             DefaultsDatabase.Instance.Setup(customResources);
             TagRestrictionsHandler.Shared.Setup(customResources);
+            EquipLocationController.Instance.Setup(customResources);
+
             if (customResources.TryGetValue("CustomSVGIcon", out var icons))
                 IconController.LoadIcons(icons);
             Control.LogDebug(DType.CustomResource, " - done");

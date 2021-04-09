@@ -45,6 +45,7 @@ namespace CustomComponents
 
         public LocationHelper LHelper_SP { get; private set; }
 
+        public MechDef ActiveMech => MechLab.activeMechDef;
         public bool InMechLab => mechlab_instance != null;
         public bool InSimGame => MechLab.IsSimGame;
         public IEnumerable<MechLabLocationWidget> GetWidgets()
@@ -147,7 +148,31 @@ namespace CustomComponents
             if(LHelper_SP != null)
                 all_helpers.Add(LHelper_SP);
 
-            InMechLab = true;
+        }
+
+        internal LocationHelper GetLocationHelper(ChassisLocations location)
+        {
+            switch (location)
+            {
+                case ChassisLocations.Head:
+                    return LHelper_HD;
+                case ChassisLocations.LeftArm:
+                    return LHelper_LA;
+                case ChassisLocations.LeftTorso:
+                    return LHelper_LT;
+                case ChassisLocations.CenterTorso:
+                    return LHelper_CT;
+                case ChassisLocations.RightTorso:
+                    return LHelper_RT;
+                case ChassisLocations.RightArm:
+                    return LHelper_RA;
+                case ChassisLocations.LeftLeg:
+                    return LHelper_LL;
+                case ChassisLocations.RightLeg:
+                    return LHelper_RL;
+            }
+
+            return null;
         }
 
         private LocationHelper GetLocationHelperSP()

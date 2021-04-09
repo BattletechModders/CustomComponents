@@ -1,5 +1,6 @@
 ﻿using BattleTech.UI;
 using System.Collections.Generic;
+using BattleTech;
 
 namespace CustomComponents
 {
@@ -14,10 +15,10 @@ namespace CustomComponents
         /// <param name="widget">location, where check</param>
         /// <param name="element">element being dragged</param>
         /// <returns></returns>
-        IEnumerable<IChange> ValidateDropOnAdd(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab, List<IChange> changes);
-        IEnumerable<IChange> ValidateDropOnRemove(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab, List<IChange> changes);
+        void ValidateDropOnAdd(MechLabItemSlotElement item, ChassisLocations location,Queue<IChange> changes);
+        void ValidateDropOnRemove(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes);
     }
 
-    public delegate IEnumerable<IChange> ValidateAdjustDelegate(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab, List<InvItem> new_inventory);
+    //public delegate IEnumerable<IChange> ValidateAdjustDelegate(MechLabItemSlotElement item, ChassisLocations location, Queue<InvItem> changes);
 
 }

@@ -46,14 +46,7 @@ namespace CustomComponents
             types.Add(unitType);
         }
 
-        public string[] GetUnitTypes(string chassis_id)
-        {
-            if (UnityGameInstance.BattleTechGame.DataManager.MechDefs.TryGet(chassis_id, out var mech))
-            {
-                return GetUnitTypes(mech);
-            }
-            return null;
-        }
+        public string[] this[MechDef mech] => GetUnitTypes(mech);
 
         public string[] GetUnitTypes(MechDef mech)
         {

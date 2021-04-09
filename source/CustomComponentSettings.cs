@@ -87,6 +87,11 @@ namespace CustomComponents
         // 0 - Display Name
         public string Category_ValidateMixed = "WRONG {0}: Mech can have only one type of {0}";
 
+        /// 0 - item Name, 1 - Location name, 2 - item.uiname
+        public string Base_LocationDestroyed = "Cannot add {0} to {1}: The location is Destroyed.";
+        /// 0 - item Name, 1 - Location name, 2 - item.uiname
+        public string Base_WrongLocation = "Cannot add {0} to {1}: Component is not permitted in this location.";
+
     }
     public class CustomComponentSettings
     {
