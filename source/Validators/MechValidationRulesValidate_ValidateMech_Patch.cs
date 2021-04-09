@@ -40,6 +40,14 @@ namespace CustomComponents
                     {
                         validator.ValidateMech(__result, validationLevel, mechDef, component);
                     }
+
+                    if (component.Is<IAllowedLocations>(out var locations) 
+                        && (component.MountedLocation & locations.GetLocationsFor(mechDef)) <= ChassisLocations.None)
+                    {
+                        __result[MechValidationType.InvalidInventorySlots].Add(
+                            new Localize.Text(Control.Settings.Message.Base_LocationDestroyed,
+                            component.Def.Description.Name, component.MountedLocation, component.Def.Description.UIName));
+                    }
                 }
             }
             catch (Exception e)

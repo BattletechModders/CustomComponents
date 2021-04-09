@@ -23,38 +23,40 @@ namespace CustomComponents
         }
 
         private Dictionary<string, Dictionary<string, ChassisLocations>> Locations = new Dictionary<string, Dictionary<string, ChassisLocations>>();
-        private Dictionary<string, LocationRedefineTag> Tags = new Dictionary<string, LocationRedefineTag>();
+        private Dictionary<string, EquipLocationTag> Tags = new Dictionary<string, EquipLocationTag>();
         public ChassisLocations this[MechDef mechdef, MechComponentDef itemdef]
         {
-            get 
+            get
             {
+                ChassisLocations get_location(ChassisLocations Default, EquipLocationTag.record[] records)
+                {
+                    var ut = UnitTypeDatabase.Instance[mechdef];
+                    if (records == null || records.Length == 0 || ut != null || ut.Length == 0)
+                        return itemdef.AllowedLocations & Default;
+                    var lr = records.FirstOrDefault(i => ut.Contains(i.UnitType));
+                    return itemdef.AllowedLocations & (lr?.Location ?? Default);
+                }
+
                 if (mechdef == null || itemdef == null)
                     return ChassisLocations.None;
 
-                if(!Locations.TryGetValue(mechdef.ChassisID, out var ld))
+                if (!Locations.TryGetValue(mechdef.ChassisID, out var ld))
                 {
                     ld = new Dictionary<string, ChassisLocations>();
-                    Locations[mechdef.ChassisID] = ld;  
+                    Locations[mechdef.ChassisID] = ld;
                 }
 
                 if (!ld.TryGetValue(itemdef.Description.Id, out var location))
                 {
-                    if (itemdef.Is<EquipLocations>(out var el))
+                    if (itemdef.Is<EquipLocationsUT>(out var el))
                     {
-                        location = itemdef.AllowedLocations & el.Locations;
+                        location = get_location(el.Default, el.UnitTypes);
                     }
-                    else if (itemdef.Is<EquipLocationsTag>(out var elt))
+                    else if (itemdef.Is<EquipLocationsTAG>(out var elt))
                     {
                         if (Tags.TryGetValue(elt.Tag, out var tag))
                         {
-                            var ut = UnitTypeDatabase.Instance[mechdef];
-                            if (ut != null || ut.Length == 0)
-                                location = itemdef.AllowedLocations & tag.Default;
-                            else
-                            {
-                                var lr = tag.UnitTypes.FirstOrDefault(i => ut.Contains(i.UnitType));
-                                location = itemdef.AllowedLocations & ( lr?.Location ?? tag.Default);
-                            }
+                            location = get_location(tag.Default, tag.UnitTypes);
                         }
                         else
                         {
@@ -75,7 +77,7 @@ namespace CustomComponents
 
         internal void Setup(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
-            foreach (var tag in SettingsResourcesTools.Enumerate<LocationRedefineTag>("CCCEquipLocationTag", customResources))
+            foreach (var tag in SettingsResourcesTools.Enumerate<EquipLocationTag>("CCCEquipLocationTag", customResources))
             {
                 Tags[tag.Tag] = tag;
             }

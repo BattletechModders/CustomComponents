@@ -7,9 +7,9 @@ using BattleTech;
 
 namespace CustomComponents
 {
-    public class LocationRedefineTag
+    public class EquipLocationTag
     {
-        public class LocationRedefineRecord
+        public class record
         {
             public string UnitType { get; set; }
             public ChassisLocations Location = ChassisLocations.All;
@@ -17,7 +17,6 @@ namespace CustomComponents
 
         public string Tag { get; set; }
         public ChassisLocations Default = ChassisLocations.All;
-        public LocationRedefineRecord[] UnitTypes;
-
+        public record[] UnitTypes;
     }
 }

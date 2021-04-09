@@ -90,7 +90,10 @@ namespace CustomComponents
         /// 0 - item Name, 1 - Location name, 2 - item.uiname
         public string Base_LocationDestroyed = "Cannot add {0} to {1}: The location is Destroyed.";
         /// 0 - item Name, 1 - Location name, 2 - item.uiname
-        public string Base_WrongLocation = "Cannot add {0} to {1}: Component is not permitted in this location.";
+        public string Base_AddWrongLocation = "Cannot add {0} to {1}: Component is not permitted in this location.";
+        
+        /// 0 - item Name, 1 - Location name, 2 - item.uiname
+        public string Base_ValidateWrongLocation = "Unit have {0} installed in wrong location";
 
     }
     public class CustomComponentSettings

@@ -132,7 +132,7 @@ namespace CustomComponents
         {
             var component = item.ComponentRef.Def;
             var lhelper = MechLabHelper.CurrentMechLab.GetLocationHelper(locations);
-
+            var mech = MechLabHelper.CurrentMechLab.ActiveMech;
 
             if (lhelper.widget.loadout.CurrentInternalStructure <= 0f)
             {
@@ -140,12 +140,12 @@ namespace CustomComponents
                 return new Localize.Text(Control.Settings.Message.Base_LocationDestroyed, component.Description.Name, lhelper.LocationName, component.Description.UIName).ToString();
             }
 
-            var allowed = EquipLocationController.Instance[MechLabHelper.CurrentMechLab.ActiveMech, component];
+            var allowed = component.Is<IAllowedLocations>(out var al) ? al.GetLocationsFor(mech) : component.AllowedLocations;           
 
-            if ((allowed & lhelper.widget.loadout.Location) <= ChassisLocations.None)
+            if ((allowed & locations) <= ChassisLocations.None)
             {
                 // 0 - item Name, 1 - Location name, 2 - item.uiname
-                return new Localize.Text(Control.Settings.Message.Base_WrongLocation, component.Description.Name, lhelper.LocationName, component.Description.UIName).ToString();
+                return new Localize.Text(Control.Settings.Message.Base_AddWrongLocation, component.Description.Name, lhelper.LocationName, component.Description.UIName).ToString();
             }
             return string.Empty;
         }

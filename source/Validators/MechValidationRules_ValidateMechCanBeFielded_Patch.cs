@@ -59,6 +59,16 @@ namespace CustomComponents
                             return;
                         }
                     }
+
+
+                    if (component.Is<IAllowedLocations>(out var locations)
+                        && (component.MountedLocation & locations.GetLocationsFor(mechDef)) <= ChassisLocations.None)
+                    {
+                        __result = false;
+                        Control.LogDebug(DType.MechValidation, $"- failed component location validation");
+                        return;
+                    }
+
                 }
 
                 Control.LogDebug(DType.MechValidation, $"- validation passed");
