@@ -28,11 +28,10 @@ namespace CustomComponents
 
         public void RemoveLinked(IMechLabDraggableItem item, MechLabPanel mechLab)
         {
-            var helper = new MechLabHelper(mechLab);
             foreach (var r_link in Links)
             {
                 Control.LogDebug(DType.ComponentInstall, $"{r_link.ComponentDefId} from {r_link.Location}");
-                DefaultHelper.RemoveMechLab(r_link.ComponentDefId, r_link.ComponentDefType ?? Def.ComponentType, helper, r_link.Location);
+                DefaultHelper.RemoveMechLab(r_link.ComponentDefId, r_link.ComponentDefType ?? Def.ComponentType, r_link.Location);
             }
         }
 
@@ -70,39 +69,48 @@ namespace CustomComponents
 
         }
 
-        public IEnumerable<IChange> ValidateDropOnAdd(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab , List<IChange> changes)
+        public void ClearInventory(MechDef mech, List<MechComponentRef> result, SimGameState state, MechComponentRef source)
+        {
+            foreach (var l in Links)
+            {
+                result.RemoveAll(item => item.ComponentDefID == l.ComponentDefId && item.MountedLocation == l.Location);
+            }
+        }
+
+        public void ValidateDropOnAdd(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes)
         {
             Control.LogDebug(DType.ComponentInstall, "--- AutoLinked Add");
 
             if (Links == null || Links.Length == 0)
-                yield break;
+                return;
 
             foreach (var link in Links)
             {
                 Control.LogDebug(DType.ComponentInstall, $"---- {link.ComponentDefId} to {link.Location}");
-                var slot = DefaultHelper.CreateSlot(link.ComponentDefId,  link.ComponentDefType ?? Def.ComponentType, mechlab.MechLab);
+                var slot = DefaultHelper.CreateSlot(link.ComponentDefId, link.ComponentDefType ?? Def.ComponentType);
 
                 if (slot != null)
                 {
                     Control.LogDebug(DType.ComponentInstall, $"----- added");
-                    yield return new AddDefaultChange(link.Location, slot);
+                    changes.Enqueue(new AddDefaultChange(link.Location, slot));
                 }
                 else
                     Control.LogDebug(DType.ComponentInstall, $"----- not found");
             }
-
         }
 
-        public IEnumerable<IChange> ValidateDropOnRemove(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab, List<IChange> changes)
+
+
+        public void ValidateDropOnRemove(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes)
         {
             Control.LogDebug(DType.ComponentInstall, "--- AutoLinked Remove");
 
             if (Links == null || Links.Length == 0)
-                yield break;
+                return;
 
             foreach (var link in Links)
             {
-                var widget = mechlab.GetLocationWidget(link.Location);
+                var widget = MechLabHelper.CurrentMechLab.GetLocationWidget(link.Location);
                 if (widget != null)
                 {
                     Control.LogDebug(DType.ComponentInstall, $"---- {link.ComponentDefId} from {link.Location}");
@@ -111,20 +119,12 @@ namespace CustomComponents
                     if (remove != null)
                     {
                         Control.LogDebug(DType.ComponentInstall, $"----- removed");
-                        yield return new RemoveChange(link.Location, remove);
+                        changes.Enqueue(new RemoveChange(link.Location, remove));
 
                     }
                     else
                         Control.LogDebug(DType.ComponentInstall, $"----- not found");
                 }
-            }
-        }
-
-        public void ClearInventory(MechDef mech, List<MechComponentRef> result, SimGameState state, MechComponentRef source)
-        {
-            foreach (var l in Links)
-            {
-                result.RemoveAll(item => item.ComponentDefID == l.ComponentDefId && item.MountedLocation == l.Location);
             }
         }
     }

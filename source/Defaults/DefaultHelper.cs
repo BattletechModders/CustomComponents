@@ -174,16 +174,12 @@ namespace CustomComponents
             target.OnAddItem(slot, false);
         }
 
-        public static void RemoveMechLab(MechLabLocationWidget widget, MechLabItemSlotElement slot,
-            MechLabHelper mechLab)
+        public static void RemoveMechLab(ChassisLocations location, MechLabItemSlotElement slot)
         {
-            RemoveMechLab(new LocationHelper(widget), slot, mechLab);
-        }
-
-        public static void RemoveMechLab(LocationHelper helper, MechLabItemSlotElement slot, MechLabHelper mechLab)
-        {
-            if (helper == null || slot == null)
+            if (slot == null)
                 return;
+
+            var helper = MechLabHelper.CurrentMechLab.GetLocationHelper(location);
 
             if (helper.LocalInventory.Contains(slot))
             {
@@ -191,21 +187,15 @@ namespace CustomComponents
                 helper.widget.OnRemoveItem(slot, true);
                 Control.LogDebug(DType.DefaultHandle, $"- removed");
                 slot.thisCanvasGroup.blocksRaycasts = true;
-                mechLab.MechLab.dataManager.PoolGameObject(MechLabPanel.MECHCOMPONENT_ITEM_PREFAB, slot.GameObject);
+                MechLabHelper.CurrentMechLab.MechLab.dataManager.PoolGameObject(MechLabPanel.MECHCOMPONENT_ITEM_PREFAB, slot.GameObject);
             }
             else
                 Control.LogDebug(DType.DefaultHandle, $"DefaultHelper: Cannot remove {slot.ComponentRef.ComponentDefID} from {helper.LocationName} - wrong location ");
         }
 
-        public static void RemoveMechLab(string id, ComponentType type, MechLabHelper mechLab, ChassisLocations location)
+        public static void RemoveMechLab(string id, ComponentType type, ChassisLocations location)
         {
-            var widget = mechLab.GetLocationWidget(location);
-            if (widget == null)
-            {
-                Control.LogDebug(DType.DefaultHandle, $"DefaultHelper: Cannot remove {id} from {location} - wrong location ");
-                return;
-            }
-            var helper = new LocationHelper(widget);
+            var helper = MechLabHelper.CurrentMechLab.GetLocationHelper(location);
 
             var remove = helper.LocalInventory.FirstOrDefault(e => e.ComponentRef.ComponentDefID == id);
             if (remove == null)
@@ -218,10 +208,10 @@ namespace CustomComponents
             }
             else
             {
-                widget.OnRemoveItem(remove, true);
+                helper.widget.OnRemoveItem(remove, true);
                 Control.LogDebug(DType.DefaultHandle, $"- removed");
                 remove.thisCanvasGroup.blocksRaycasts = true;
-                mechLab.MechLab.dataManager.PoolGameObject(MechLabPanel.MECHCOMPONENT_ITEM_PREFAB, remove.GameObject);
+                MechLabHelper.CurrentMechLab.MechLab.dataManager.PoolGameObject(MechLabPanel.MECHCOMPONENT_ITEM_PREFAB, remove.GameObject);
             }
         }
 
