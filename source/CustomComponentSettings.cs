@@ -95,6 +95,24 @@ namespace CustomComponents
         /// 0 - item Name, 1 - Location name, 2 - item.uiname
         public string Base_ValidateWrongLocation = "Unit have {0} installed in wrong location";
 
+        /// <summary>
+        /// 0 - mech.Uiname, 1 - item.Name, 2 - item.Uiname, 3 - Hardpoint Name, 4 - Harpdpoint Friendly Name,
+        /// 5 - Location 
+        /// </summary>
+        public string Base_AddNoHardpoins = "{0} dont have {1} hardpoints in {2}";
+
+
+        /// <summary>
+        /// 0 - mech.Uiname, 1 - item.Name, 2 - item.Uiname, 3 - Hardpoint Name, 4 - Harpdpoint Friendly Name,
+        /// 5 - Location 
+        /// </summary>
+        public string Base_AddNotEnoughHardpoints = "Unit dont have enough {1} hardpoints in {2}";
+
+        /// <summary>
+        /// 0 - mech.Uiname, 1 - item.Name, 2 - item.Uiname, 3 - Hardpoint Name, 4 - Harpdpoint Friendly Name,
+        /// 5 - Location 
+        /// </summary>
+        public string Base_ValidateNotEnoughHardpoints = "Unit dont have enough {1} hardpoints in {2}";
     }
     public class CustomComponentSettings
     {
@@ -164,6 +182,8 @@ namespace CustomComponents
         internal TagSet ignoreAutofixTags;
         public string[] IgnoreValidationTags = null;
         public TagUnitType[] UnitTypes = null;
+
+        public bool AllowMechlabWrongHardpoints = false;
 
         public ErrorMessages Message = new ErrorMessages();
         

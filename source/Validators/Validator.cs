@@ -1,10 +1,7 @@
 ﻿using BattleTech;
 using BattleTech.UI;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Harmony;
-using HBS.Extensions;
 
 namespace CustomComponents
 {
@@ -20,7 +17,6 @@ namespace CustomComponents
         private static List<ValidateMechCanBeFieldedDelegate> field_validators =
             new List<ValidateMechCanBeFieldedDelegate>();
         internal static List<ClearInventoryDelegate> clear_inventory = new List<ClearInventoryDelegate>();
-        //public static List<ValidateAdjustDelegate> adjust_validators= new List<ValidateAdjustDelegate>();
 
         /// <summary>
         /// register new AddValidator
@@ -43,8 +39,6 @@ namespace CustomComponents
         //{
         //    adjust_validators.Add(adjust);
         //}
-
-        public static ReplaceValidateDropDelegate HardpointValidator { get; set; } = null;
 
         /// <summary>
         /// register new mech validator
@@ -75,8 +69,6 @@ namespace CustomComponents
                 yield return validator;
         }
 
-
-
         internal static IEnumerable<ReplaceValidateDropDelegate> GetReplace(MechComponentDef component)
         {
 
@@ -85,11 +77,6 @@ namespace CustomComponents
 
             foreach (var item in component.GetComponents<IReplaceValidateDrop>())
                 yield return item.ReplaceValidateDrop;
-
-            if (HardpointValidator != null)
-                yield return HardpointValidator;
-            else
-                yield return ValidateHardpoint;
 
         }
 
@@ -105,7 +92,6 @@ namespace CustomComponents
             yield return ValidateSize;
             yield return ValidateJumpJets;
         }
-
 
         private static string ValidateECM(MechLabItemSlotElement item, ChassisLocations locations)
         {
@@ -186,79 +172,6 @@ namespace CustomComponents
             return string.Empty;
         }
 
-
-        private static string ValidateHardpoint(MechLabItemSlotElement drop_item, ChassisLocations location, Queue<IChange> changes)
-        {
-            Control.LogDebug(DType.ComponentInstall, $"-- Hardpoints");
-            // if dropped item not weapon - skip check
-            if (drop_item.ComponentRef.Def.ComponentType != ComponentType.Weapon)
-            {
-                Control.LogDebug(DType.ComponentInstall, $"--- Not a weapon");
-                return string.Empty;
-            }
-
-            if (changes.Count == 1)
-            {
-                //calculate hardpoint
-                int num = 0;
-                int num2 = 0;
-                WeaponDef weaponDef = drop_item.ComponentRef.Def as WeaponDef;
-
-                var mech = MechLabHelper.CurrentMechLab.ActiveMech;
-                var lhelper = MechLabHelper.CurrentMechLab.GetLocationHelper(location);
-
-                var replace_list = lhelper.LocalInventory.Where(i =>
-                            (i?.ComponentRef?.Def is WeaponDef def)
-                            && def.Description.Id != drop_item.ComponentRef.ComponentDefID
-                            && !i.ComponentRef.IsModuleFixed(mech));
-
-                if (weaponDef.WeaponCategoryValue.IsBallistic)
-                {
-                    num = lhelper.currentBallisticCount;
-                    num2 = lhelper.totalBallisticHardpoints;
-                    replace_list = replace_list.Where(i => i.weaponDef.WeaponCategoryValue.IsBallistic);
-                }
-                else if (weaponDef.WeaponCategoryValue.IsEnergy)
-                {
-                    num = lhelper.currentEnergyCount;
-                    num2 = lhelper.totalEnergyHardpoints;
-                    replace_list = replace_list.Where(i => i.weaponDef.WeaponCategoryValue.IsEnergy);
-                }
-                else if (weaponDef.WeaponCategoryValue.IsMissile)
-                {
-                    num = lhelper.currentMissileCount;
-                    num2 = lhelper.totalMissileHardpoints;
-                    replace_list = replace_list.Where(i => i.weaponDef.WeaponCategoryValue.IsMissile);
-                }
-                else if (weaponDef.WeaponCategoryValue.IsSupport)
-                {
-                    num = lhelper.currentSmallCount;
-                    num2 = lhelper.totalSmallHardpoints;
-                    replace_list = replace_list.Where(i => i.weaponDef.WeaponCategoryValue.IsSupport);
-                }
-
-                if (num2 == 0)
-                    return $"Cannot add {weaponDef.Description.Name} to {lhelper.LocationName}: There are no available hardpoints.";
-                if (num > num2)
-                    return $"Cannot add {weaponDef.Description.Name} to {lhelper.LocationName}: There are no available hardpoints.";
-
-                if (num == num2)
-                {
-                    var replace = replace_list.FirstOrDefault();
-                    if (replace == null)
-                        return
-                            $"Cannot add {weaponDef.Description.Name} to {lhelper.LocationName}: There are no available hardpoints.";
-                    else
-                        changes.Add(new RemoveChange(location, replace));
-                }
-            }
-            else
-            { 
-                //!TODO Check for found replacements
-
-            }
-            return string.Empty;
-        }
 
         internal static void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors,
             MechValidationLevel validationLevel, MechDef mechDef)

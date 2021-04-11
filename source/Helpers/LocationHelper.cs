@@ -24,7 +24,8 @@ namespace CustomComponents
         public int mb_slots = -1, me_slots = -1, mm_slots = -1, ms_slots = -1;
 
         private List<MechLabItemSlotElement> inventory;
-
+        public IReadOnlyList<HardpointInfo> Hardpoints { get; private set; }
+        public int OmniHardpoints { get; private set; }
 
         public int currentBallisticCount
         {
@@ -158,7 +159,22 @@ namespace CustomComponents
         {
             this.widget = widget;
             main = Traverse.Create(widget);
+            var hplist = new List<HardpointInfo>();
+            var mech = MechLabHelper.CurrentMechLab.ActiveMech;
+            var locationdef = mech.Chassis.GetLocationDef(widget.loadout.Location);
+            OmniHardpoints = 0;
+            foreach (var hp in locationdef.Hardpoints)
+            {
+                if (hp.Omni)
+                    OmniHardpoints += 1;
+                else if (HardpointController.Instance.Hardpoints.TryGetValue(hp.WeaponMountValue.Name, out var hpinfo))
+                    hplist.Add(hpinfo);
+                else 
+                    Control.LogError($"{mech.ChassisID} have unknown hardpoint type {hp.WeaponMountValue.Name}");
+            }
+            hplist.Sort((a,b) => a.Compatible.Length.CompareTo(b.Compatible.Length));
 
+            Hardpoints = hplist.AsReadOnly();
         }
 
     }

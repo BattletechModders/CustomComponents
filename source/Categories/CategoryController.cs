@@ -251,34 +251,9 @@ namespace CustomComponents
             return true;
         }
 
-        public bool need_remove(MechComponentRef item, MechDef mech)
+        public static void ClearInventory(MechDef mech, List<MechComponentRef> result, SimGameState state)
         {
-            if (!item.IsFixed)
-                return false;
-
-            if (item.IsModuleFixed(mech))
-                return false;
-
-            if (!item.IsDefault())
-                return false;
-
-            if (item.Is<Category>(out var category))
-            {
-                var record = category.CategoryDescriptor[mech];
-                if (record.MaxEquiped >= 0 || record.MaxEquipedPerLocation > 0)
-                    return true;
-            }
-
-            return false;
-        }
-
-        public void RemoveExcessDefaults(List<MechDef> mechDefs, SimGameState state)
-        {
-            foreach (var mechDef in mechDefs)
-            {
-                mechDef.SetInventory(mechDef.Inventory.Where(i => !need_remove(i, mechDef)).ToArray());
-                mechDef.Refresh();
-            }
+            throw new System.NotImplementedException();
         }
     }
 }

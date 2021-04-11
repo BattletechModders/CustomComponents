@@ -1,15 +1,12 @@
-﻿using Harmony;
+﻿using BattleTech;
+using Harmony;
+using HBS.Logging;
+using HBS.Util;
 using System;
-using System.Reflection;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using fastJSON;
-using BattleTech;
-using ErosionBrushPlugin;
-using HBS.Extensions;
-using HBS.Logging;
-using HBS.Util;
+using System.Reflection;
 
 
 namespace CustomComponents
@@ -64,6 +61,8 @@ namespace CustomComponents
                 Validator.RegisterMechValidator(TagRestrictionsHandler.Shared.ValidateMech, TagRestrictionsHandler.Shared.ValidateMechCanBeFielded);
                 Validator.RegisterMechValidator(FlagsController.Instance.ValidateMech, FlagsController.Instance.CanBeFielded);
                 Validator.RegisterMechValidator(EquipLocationController.Instance.ValidateMech, EquipLocationController.Instance.CanBeFielded);
+                Validator.RegisterMechValidator(HardpointController.Instance.ValidateMech, HardpointController.Instance.CanBeFielded);
+                
                 if(Control.Settings.CheckWeaponCount)
                 {
                     Validator.RegisterMechValidator(WeaponsCountFix.CheckWeapons, WeaponsCountFix.CheckWeaponsFielded);
@@ -82,7 +81,6 @@ namespace CustomComponents
                     if (Settings.FixSaveGameMech)
                     {
                         AutoFixer.Shared.RegisterSaveMechFixer(AutoFixer.Shared.ReAddFixed);
-                        AutoFixer.Shared.RegisterSaveMechFixer(CategoryController.Shared.RemoveExcessDefaults);
                     }
 
                     if (Settings.FixDefaults)
@@ -95,6 +93,8 @@ namespace CustomComponents
                         foreach (var tag in Settings.ignoreAutofixTags)
                             AutoFixer.Shared.RegisterMechFixer(AutoFixer.Shared.EmptyFixer, tag);
                 }
+
+                Validator.RegisterClearInventory(CategoryController.ClearInventory);
 
                 FlagsController.Instance.RegisterFlag(CCF.AutoRepair);
                 FlagsController.Instance.RegisterFlag(CCF.NoRemove);

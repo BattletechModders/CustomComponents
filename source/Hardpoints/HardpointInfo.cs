@@ -16,6 +16,7 @@ namespace CustomComponents
         public string Short { get; set; }
         public string DisplayName { get; set; }
         public string[] Compatible { get; set; }
+        public bool AcceptOmni { get; set; }
 
         [JsonIgnore] public WeaponCategoryValue WeaponCategory { get; set; }
         [JsonIgnore] public Color Color { get; set; }

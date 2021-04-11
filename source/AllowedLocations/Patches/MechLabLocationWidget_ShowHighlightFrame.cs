@@ -27,12 +27,15 @@ namespace CustomComponents.Patches
             var allowed = cRef.Is<IAllowedLocations>(out var al) ? al.GetLocationsFor(mech) : cRef.Def.AllowedLocations;
 
             var show = (allowed & __instance.loadout.Location) > ChassisLocations.None;
-            if (wDef != null)
+            if (wDef != null && show)
             {
-                wDef.WeaponCategoryValue.ID;
+                var lhelper = MechLabHelper.CurrentMechLab.GetLocationHelper(__instance.loadout.Location);
 
+                show &= (lhelper.OmniHardpoints > 0 ||
+                         lhelper.Hardpoints.Any(i => i.Compatible.Contains(wDef.WeaponCategoryValue.Name)));
             }
 
+            __instance.ShowHighlightFrame(show, isOriginalLocation ? UIColor.Blue : UIColor.Gold);
 
             return false;
         }
