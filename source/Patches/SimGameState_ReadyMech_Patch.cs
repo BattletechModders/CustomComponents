@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using BattleTech;
-using BattleTech.UI;
 using Harmony;
 
-namespace CustomComponents
+namespace CustomComponents.Patches
 {
     [HarmonyPatch(typeof(SimGameState), "ReadyMech")]
     internal class SimGameState_ReadyMech_Patch

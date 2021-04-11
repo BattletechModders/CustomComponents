@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 using BattleTech.UI;
-using Harmony;
-using HBS.Collections;
 using Localize;
 
 namespace CustomComponents
@@ -47,9 +44,9 @@ namespace CustomComponents
         //}
 
 
-        public string ValidateDrop(MechLabItemSlotElement drop_item, LocationHelper location, MechLabHelper mechlab)
+        public string ValidateDrop(MechLabItemSlotElement drop_item, ChassisLocations location)
         {
-            ValidateMech(out var error, mechlab.MechLab.activeMechDef, location.widget.loadout.Location, drop_item.ComponentRef);
+            ValidateMech(out var error, MechLabHelper.CurrentMechLab.ActiveMech, location, drop_item.ComponentRef);
             return error;
         }
 

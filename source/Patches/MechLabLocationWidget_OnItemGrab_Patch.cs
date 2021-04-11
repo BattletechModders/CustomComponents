@@ -4,7 +4,7 @@ using BattleTech.UI;
 using Harmony;
 using Localize;
 
-namespace CustomComponents
+namespace CustomComponents.Patches
 {
     /// <summary>
     /// ItemGrab path for IDefaultReplace

@@ -2,7 +2,7 @@
 using Harmony;
 using System;
 
-namespace CustomComponents
+namespace CustomComponents.Patches
 {
     [HarmonyPatch(typeof(BaseComponentRef), "RefreshComponentDef")]
     public static class BaseComponentRef_RefreshComponentDef

@@ -5,7 +5,7 @@ using System.Reflection.Emit;
 using BattleTech;
 using Harmony;
 
-namespace CustomComponents
+namespace CustomComponents.Patches
 {
     [HarmonyPatch(typeof(SimGameState), "AddMechPart")]
     public static class SimGameState_AddMechPart_Patch

@@ -42,7 +42,7 @@ namespace CustomComponents
     {
         NONE = 0,
         SalvageProccess = 1,
-        EffectNull = 1 << 1,
+        Hardpoints = 1 << 1,
         ShowConfig = 1 << 2,
         ComponentInstall = 1 << 3,
         MechValidation = 1 << 4,

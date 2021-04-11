@@ -140,13 +140,6 @@ namespace CustomComponents
                 return new Localize.Text(Control.Settings.Message.Base_LocationDestroyed, component.Description.Name, lhelper.LocationName, component.Description.UIName).ToString();
             }
 
-            var allowed = component.Is<IAllowedLocations>(out var al) ? al.GetLocationsFor(mech) : component.AllowedLocations;           
-
-            if ((allowed & locations) <= ChassisLocations.None)
-            {
-                // 0 - item Name, 1 - Location name, 2 - item.uiname
-                return new Localize.Text(Control.Settings.Message.Base_AddWrongLocation, component.Description.Name, lhelper.LocationName, component.Description.UIName).ToString();
-            }
             return string.Empty;
         }
 

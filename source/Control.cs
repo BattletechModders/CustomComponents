@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using fastJSON;
 using BattleTech;
+using ErosionBrushPlugin;
 using HBS.Extensions;
 using HBS.Logging;
 using HBS.Util;
@@ -56,17 +57,22 @@ namespace CustomComponents
                 //Registry.RegisterPreProcessor(new AdjustDescriptionPreProcessor());
 
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
-                Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);
-
                 Logger.Log("Loaded CustomComponents v3.0.1 for bt 1.9.1");
 
+
+                Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);
                 Validator.RegisterMechValidator(TagRestrictionsHandler.Shared.ValidateMech, TagRestrictionsHandler.Shared.ValidateMechCanBeFielded);
                 Validator.RegisterMechValidator(FlagsController.Instance.ValidateMech, FlagsController.Instance.CanBeFielded);
-                Validator.RegisterDropValidator(pre: TagRestrictionsHandler.Shared.ValidateDrop);
+                Validator.RegisterMechValidator(EquipLocationController.Instance.ValidateMech, EquipLocationController.Instance.CanBeFielded);
                 if(Control.Settings.CheckWeaponCount)
                 {
                     Validator.RegisterMechValidator(WeaponsCountFix.CheckWeapons, WeaponsCountFix.CheckWeaponsFielded);
                 }
+                
+                
+                Validator.RegisterDropValidator(pre: TagRestrictionsHandler.Shared.ValidateDrop);
+                Validator.RegisterDropValidator(HardpointController.Instance.PreValidateDrop, HardpointController.Instance.ReplaceValidatorDrop, HardpointController.Instance.PostValidatorDrop);
+                Validator.RegisterDropValidator(EquipLocationController.Instance.PreValidateDrop);
 
                 if (Settings.RunAutofixer)
                 {
@@ -115,6 +121,7 @@ namespace CustomComponents
             DefaultsDatabase.Instance.Setup(customResources);
             TagRestrictionsHandler.Shared.Setup(customResources);
             EquipLocationController.Instance.Setup(customResources);
+            HardpointController.Instance.Setup(customResources);
 
             if (customResources.TryGetValue("CustomSVGIcon", out var icons))
                 IconController.LoadIcons(icons);

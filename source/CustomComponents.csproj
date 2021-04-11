@@ -126,6 +126,9 @@
     <Compile Include="Flags\CCF.cs" />
     <Compile Include="Flags\FlagsController.cs" />
     <Compile Include="Flags\FlagsExtentions.cs" />
+    <Compile Include="Hardpoints\HardpointController.cs" />
+    <Compile Include="Hardpoints\HardpointInfo.cs" />
+    <Compile Include="Hardpoints\Patches\MechValidationRules_ValidateMechInventorySlots.cs" />
     <Compile Include="Icons\IconController.cs" />
     <Compile Include="Icons\SVGAssets_Contains.cs" />
     <Compile Include="Icons\SVGCache_GetAsset.cs" />

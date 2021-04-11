@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Collections.Generic;
 using System.Reflection.Emit;
-using BattleTech;
 using BattleTech.UI;
 using Harmony;
 
-using System.IO;
-
-namespace CustomComponents
+namespace CustomComponents.Patches
 {
     [HarmonyPatch(typeof(MechLabLocationWidget), "OnRemoveItem")]
     public static class MechLabLocationWidjet_OnRemove

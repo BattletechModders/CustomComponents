@@ -1,10 +1,9 @@
 ﻿using System;
-using BattleTech;
 using BattleTech.UI;
 using Harmony;
 using System.Collections.Generic;
 
-namespace CustomComponents
+namespace CustomComponents.Patches
 {
     /// <summary>
     /// pathing filtering

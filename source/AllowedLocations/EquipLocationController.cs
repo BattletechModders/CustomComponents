@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BattleTech.UI;
+using Localize;
 
 namespace CustomComponents
 {
@@ -81,6 +83,41 @@ namespace CustomComponents
             {
                 Tags[tag.Tag] = tag;
             }
+        }
+
+        public string PreValidateDrop(MechLabItemSlotElement item, ChassisLocations location)
+        {
+            return string.Empty;
+        }
+
+        public void ValidateMech(Dictionary<MechValidationType, List<Text>> errors, MechValidationLevel validationlevel, MechDef mechdef)
+        {
+            foreach (var item in mechdef.Inventory)
+            {
+                var location = item.Is<IAllowedLocations>(out var al)
+                    ? al.GetLocationsFor(mechdef)
+                    : item.Def.AllowedLocations;
+
+                if ((location & item.MountedLocation) <= ChassisLocations.None)
+                    errors[MechValidationType.InvalidInventorySlots].Add(
+                        new Text(Control.Settings.Message.Base_ValidateWrongLocation, item.Def.Description.Name)
+                        );
+            }
+        }
+
+        public bool CanBeFielded(MechDef mechdef)
+        {
+            foreach (var item in mechdef.Inventory)
+            {
+                var location = item.Is<IAllowedLocations>(out var al)
+                    ? al.GetLocationsFor(mechdef)
+                    : item.Def.AllowedLocations;
+
+                if ((location & item.MountedLocation) <= ChassisLocations.None)
+                    return false;
+            }
+
+            return true;
         }
     }
 }

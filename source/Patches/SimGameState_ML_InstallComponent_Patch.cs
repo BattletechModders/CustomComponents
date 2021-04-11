@@ -1,10 +1,9 @@
 ﻿using BattleTech;
 using Harmony;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace CustomComponents
+
+namespace CustomComponents.Patches
 {
     [HarmonyPatch(typeof(SimGameState), "ML_InstallComponent")]
     public static class SimGameState_ML_InstallComponent_Patch
