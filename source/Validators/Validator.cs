@@ -34,15 +34,6 @@ namespace CustomComponents
                 chk_drop_validators.Add(check);
 
         }
-
-        //public static void RegisterAdjustValidatod(ValidateAdjustDelegate adjust)
-        //{
-        //    adjust_validators.Add(adjust);
-        //}
-
-        /// <summary>
-        /// register new mech validator
-        /// </summary>
         public static void RegisterMechValidator(ValidateMechDelegate mechvalidator,
             ValidateMechCanBeFieldedDelegate fieldvalidator)
         {
