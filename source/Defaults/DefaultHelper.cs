@@ -158,11 +158,13 @@ namespace CustomComponents
             target.OnAddItem(slot, false);
         }
 
-        public static void AddMechLab(string id, ComponentType type, MechLabHelper mechLab, ChassisLocations location)
+        public static void AddMechLab(string id, ComponentType type, ChassisLocations location)
         {
+            if (!MechLabHelper.CurrentMechLab.InMechLab)
+                return;
             Control.LogDebug(DType.DefaultHandle, $"DefaultHelper.AddMechLab: adding {id} to {location}");
 
-            var target = mechLab.GetLocationWidget(location);
+            var target = MechLabHelper.CurrentMechLab.GetLocationWidget(location);
             if (target == null)
             {
                 Control.LogDebug(DType.DefaultHandle, $"DefaultHelper: Cannot add {id} to {location} - wrong location ");

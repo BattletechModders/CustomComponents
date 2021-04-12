@@ -129,44 +129,26 @@ namespace CustomComponents
             return string.Empty;
         }
 
-        private static string ValidateSize(MechLabItemSlotElement drop_item, MechDef mech, List<InvItem> new_inventory, List<IChange> changes)
+        private static string ValidateSize(MechLabItemSlotElement drop_item,List<InvItem> new_inventory)
         {
-            var change_by_location = changes
-                .OfType<SlotChange>()
-                .Select(slot => new { location = slot.location, val = slot.item.ComponentRef.Def.InventorySize * (slot is AddChange ? 1 : -1) })
-                .GroupBy(s => s.location)
-                .Select(s => new { location = s.Key, val = s.Sum(i => i.val) });
+            var items_by_location = new_inventory
+                .GroupBy(i => i.location)
+                .Select(i => new { location = i.Key, size = i.Sum(a => a.item.Def.InventorySize) });
+            var mech = MechLabHelper.CurrentMechLab.ActiveMech;
 
-            Control.LogDebug(DType.ComponentInstall, $"drop_item={drop_item.ComponentRef.Def.Description.Id}");
-
-            foreach (var location in change_by_location)
+            foreach(var record in items_by_location)
             {
-#if CCDEBUG
-                if (Control.Settings.DebugInfo.HasFlag(DType.ComponentInstall))
-                    Control.LogDebug(DType.ComponentInstall, $"location={location.location}");
-                foreach (var item in mech.Inventory.Where(i => i.MountedLocation == location.location))
-                {
-                    Control.LogDebug(DType.ComponentInstall, $" mech.Inventory item={item.Def.Description.Id} size={item.Def.InventorySize}");
-                }
-                foreach (var item in new_inventory.Where(i => i.location == location.location))
-                {
-                    Control.LogDebug(DType.ComponentInstall, $" new_inventory  item={item.item.Def.Description.Id} size={item.item.Def.InventorySize}");
-                }
-#endif
-                int used = mech.Inventory.Where(i => i.MountedLocation == location.location).Sum(i => i.Def.InventorySize);
-                int max = mech.GetChassisLocationDef(location.location).InventorySlots;
-                Control.LogDebug(DType.ComponentInstall, $" used={used} location.val={location.val} max={max}");
-
-                if (used + location.val > max)
-                    return $"Cannot add {drop_item.ComponentRef.Def.Description.Name}: Not enough free slots.";
+                if (record.size > mech.Chassis.GetLocationDef(record.location).InventorySlots)
+                    return (new Localize.Text(Control.Settings.Message.Base_AddInventorySize,drop_item.ComponentRef.Def.Description.Name, record.location)).ToString();
             }
+
             return string.Empty;
         }
 
-        private static string ValidateJumpJets(MechLabItemSlotElement drop_item, MechDef mech, List<InvItem> new_inventory, List<IChange> changes)
+        private static string ValidateJumpJets(MechLabItemSlotElement drop_item, List<InvItem> new_inventory)
         {
             var total = new_inventory.Count(i => i.item.ComponentDefType == ComponentType.JumpJet);
-            var max = mech.Chassis.MaxJumpjets;
+            var max = MechLabHelper.CurrentMechLab.ActiveMech.Chassis.MaxJumpjets;
             if (total > max)
                 return $"Cannot add {drop_item.ComponentRef.Def.Description.Name}: Max number of jumpjets for 'Mech reached";
             return string.Empty;

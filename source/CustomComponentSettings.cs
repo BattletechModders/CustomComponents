@@ -118,6 +118,8 @@ namespace CustomComponents
         /// 5 - Location 
         /// </summary>
         public string Base_ValidateNotEnoughHardpoints = "Unit dont have enough {1} hardpoints in {5}";
+
+        public string Base_AddInventorySize = "Can't install {0} - not enough free space at {1}";
     }
     public class CustomComponentSettings
     {

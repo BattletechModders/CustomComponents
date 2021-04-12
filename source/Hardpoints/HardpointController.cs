@@ -215,7 +215,7 @@ namespace CustomComponents
             return string.Empty;
         }
 
-        public string PostValidatorDrop(MechLabItemSlotElement drop_item, MechDef mech, List<InvItem> new_inventory, List<IChange> changes)
+        public string PostValidatorDrop(MechLabItemSlotElement drop_item, List<InvItem> new_inventory)
         {
             if (Control.Settings.AllowMechlabWrongHardpoints)
                 return string.Empty;

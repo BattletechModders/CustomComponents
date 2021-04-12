@@ -211,7 +211,6 @@
     <Compile Include="DropResults\SlotChange.cs" />
     <Compile Include="Interfaces\IMechLabFilter.cs" />
     <Compile Include="Salvage\Contract_AddToFilnaSalvagePatch.cs" />
-    <Compile Include="Components\AutoReplace.cs" />
     <Compile Include="Flags\Flags.cs" />
     <Compile Include="SorterMechInventory\Patches\MechLabLocationWidget_OnAddItem.cs" />
     <Compile Include="Patches\MechLabLocationWidget_Repair_Patches.cs" />
