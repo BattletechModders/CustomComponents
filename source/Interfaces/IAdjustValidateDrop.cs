@@ -15,8 +15,8 @@ namespace CustomComponents
         /// <param name="widget">location, where check</param>
         /// <param name="element">element being dragged</param>
         /// <returns></returns>
-        void ValidateDropOnAdd(MechLabItemSlotElement item, ChassisLocations location,Queue<IChange> changes);
-        void ValidateDropOnRemove(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes);
+        bool ValidateDropOnAdd(MechLabItemSlotElement item, ChassisLocations location,Queue<IChange> changes, List<InvItem> inventory);
+        bool ValidateDropOnRemove(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes, List<InvItem> inventory);
     }
 
     //public delegate IEnumerable<IChange> ValidateAdjustDelegate(MechLabItemSlotElement item, ChassisLocations location, Queue<InvItem> changes);

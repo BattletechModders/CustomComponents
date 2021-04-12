@@ -1,4 +1,6 @@
-﻿using BattleTech;
+﻿using System;
+using System.Collections.Generic;
+using BattleTech;
 using BattleTech.UI;
 
 namespace CustomComponents
@@ -9,6 +11,23 @@ namespace CustomComponents
         {
             this.location = location;
             this.item = item;
+        }
+
+        public override void PreviewChange(List<InvItem> inventory)
+        {
+            inventory.Add(new InvItem() { item = item.ComponentRef, location = location });
+        }
+
+        public override bool DoAdjust(Queue<IChange> changes, List<InvItem> inventory)
+        {
+            bool changed = false;
+
+            foreach (var adjust in item.ComponentRef.GetComponents<IAdjustValidateDrop>())
+            {
+                changed = changed || adjust.ValidateDropOnAdd(item, location, changes, inventory);
+            }
+
+            return changed;
         }
     }
 }

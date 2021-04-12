@@ -2,7 +2,7 @@
 
 namespace CustomComponents
 {
-    public class CategoryDefaultsAdjust : IAdjustChange
+    public class CategoryDefaultsAdjust : IDelayChange
     {
         public string CategoryID { get; private set; }
         public string ChangeID => "Category_" + CategoryID;

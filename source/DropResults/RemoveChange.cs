@@ -1,4 +1,6 @@
-﻿using BattleTech;
+﻿using System.Collections.Generic;
+using System.Linq;
+using BattleTech;
 using BattleTech.UI;
 using UnityEngine;
 
@@ -30,10 +32,37 @@ namespace CustomComponents
             }
         }
 
+        public override void PreviewChange(List<InvItem> inventory)
+        {
+            var to_remove = inventory.FirstOrDefault(i => i.item == item.ComponentRef && i.location == location);
+            if (to_remove == null)
+            {
+                to_remove = inventory.FirstOrDefault(i =>
+                    i.item.ComponentDefID == item.ComponentRef.ComponentDefID && i.location == location);
+            }
+
+            if (to_remove != null)
+                inventory.Remove(to_remove);
+            else
+                Control.LogError($"Cannot remove preview for {item.ComponentRef.ComponentDefID} at {location}");
+        }
+
         public RemoveChange(ChassisLocations location, MechLabItemSlotElement item)
         {
             this.location = location;
             this.item = item;
+        }
+
+        public override bool DoAdjust(Queue<IChange> changes, List<InvItem> inventory)
+        {
+            bool changed = false;
+
+            foreach (var adjust in item.ComponentRef.GetComponents<IAdjustValidateDrop>())
+            {
+                changed = changed || adjust.ValidateDropOnRemove(item, location, changes, inventory);
+            }
+
+            return changed;
         }
     }
 }

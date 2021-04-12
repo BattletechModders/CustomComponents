@@ -46,9 +46,9 @@ namespace CustomComponents
 
                     if (allchanges != null)
                     {
-                        foreach (IApplyChange change in allchanges)
+                        foreach (ICancelChange change in allchanges)
                         {
-                            change.CancelChange(mechlab_helper, location_helper);
+                            change.CancelChange();
                         }
                     }
 
@@ -97,71 +97,42 @@ namespace CustomComponents
 #endif
 
 
-                Control.LogDebug(DType.ComponentInstall, $"- adjusting {changes.Count} changes");
+                Control.LogDebug(DType.ComponentInstall, $"- adjusting");
 
-                //???
-                int num = changes.Count;
-                for (int i = 0; i < changes.Count; i++)
+                List<IChange> to_execute = new List<IChange>();
+                List<InvItem> inventory = GetInventory(to_execute.Concat(changes));
+
+                while (changes.Count > 0)
                 {
-                    if (changes[i] is IAdjustChange adj)
+                    var change = changes.Dequeue();
+
+                    if (change is IApplyChange)
+                        to_execute.Add(change);
+                    
+                    if (change is IDelayChange adjust)
                     {
-                        bool skip = false;
-                        string cid = adj.ChangeID;
-                        for (int j = i + 1; j < changes.Count; j++)
-                        {
-                            if(changes[j] is IAdjustChange adj2 && adj2.ChangeID == cid)
-                            {
-                                skip = true;
-                                break;
-                            }
-                        }
-                        if (skip)
+                        if(changes.Any(i => i is IDelayChange ch2 && ch2.ChangeID == adjust.ChangeID))
                             continue;
-                        else
-                            adj.DoAdjust(mechlab_helper, location_helper, changes);
                     }
-                    else if (changes[i] is AddChange add)
-                    {
-                        Control.LogDebug(DType.ComponentInstall, $"-- add: {add.item.ComponentRef.ComponentDefID}");
 
-                        foreach (var adj_validator in add.item.ComponentRef.GetComponents<IAdjustValidateDrop>())
-                            changes.AddRange(adj_validator.ValidateDropOnAdd(add.item, location_helper, mechlab_helper,
-                                changes));
-                    }
-                    else if (changes[i] is RemoveChange remove)
-                    {
-                        Control.LogDebug(DType.ComponentInstall, $"-- remove: {remove.item.ComponentRef.ComponentDefID}");
+                    if (change.DoAdjust(changes, inventory))
+                        inventory = GetInventory(to_execute.Concat(changes));
 
-                        foreach (var adj_validator in remove.item.ComponentRef.GetComponents<IAdjustValidateDrop>())
-                            changes.AddRange(adj_validator.ValidateDropOnRemove(remove.item, location_helper,
-                                mechlab_helper, changes));
-                    }
                 }
-
-                foreach (var validator in Validator.adjust_validators)
-                {
-                    var inv = GetInventory(___mechLab, changes);
-                    changes.AddRange(validator(dragItem, location_helper, mechlab_helper, inv));
-                }
-
-                List<InvItem> new_inventory = GetInventory(___mechLab, changes);
-
 
                 Control.LogDebug(DType.ComponentInstall, $"- post validation");
 
                 foreach (var pst_validator in Validator.GetPost(newComponentDef))
                 {
                     int n = changes.Count;
-                    if (do_cancel(pst_validator(dragItem, ___mechLab.activeMechDef, new_inventory, changes), changes))
+                    if (do_cancel(pst_validator(dragItem, inventory), to_execute))
                         return false;
-                    if (changes.Count != n)
-                        new_inventory = GetInventory(___mechLab, changes);
                 }
                 Control.LogDebug(DType.ComponentInstall, $"- apply changes");
 
                 foreach (IApplyChange change in changes)
                 {
-                    change?.DoChange(mechlab_helper, location_helper);
+                    change?.DoChange();
                 }
 
 
@@ -179,16 +150,15 @@ namespace CustomComponents
             return true;
         }
 
-        private static List<InvItem> GetInventory(MechLabPanel ___mechLab, List<IChange> changes)
+        private static List<InvItem> GetInventory(IEnumerable<IChange> changes)
         {
-            List<InvItem> new_inventory = ___mechLab.activeMechInventory
+            List<InvItem> new_inventory = MechLabHelper.CurrentMechLab.MechLab.activeMechInventory
                 .Select(i => new InvItem { item = i, location = i.MountedLocation }).ToList();
 
-            new_inventory.AddRange(changes.OfType<AddChange>()
-                .Select(i => new InvItem { item = i.item.ComponentRef, location = i.location }));
-
-            foreach (var remove in changes.OfType<RemoveChange>())
-                new_inventory.RemoveAll(i => i.item == remove.item.ComponentRef);
+            foreach (IApplyChange change in changes)
+            {
+                change.PreviewChange(new_inventory);
+            }
 
             return new_inventory;
         }

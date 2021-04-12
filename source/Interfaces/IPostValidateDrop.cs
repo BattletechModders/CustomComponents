@@ -15,8 +15,8 @@ namespace CustomComponents
         /// <param name="widget">location, where check</param>
         /// <param name="element">element being dragged</param>
         /// <returns></returns>
-        string PostValidateDrop(MechLabItemSlotElement drop_item, MechDef mech, List<InvItem> new_inventory, List<IChange> changes);
+        string PostValidateDrop(MechLabItemSlotElement drop_item, List<InvItem> new_inventory);
     }
 
-    public delegate string PostValidateDropDelegate(MechLabItemSlotElement drop_item, MechDef mech, List<InvItem> new_inventory, List<IChange> changes);
+    public delegate string PostValidateDropDelegate(MechLabItemSlotElement drop_item, List<InvItem> new_inventory);
 }
