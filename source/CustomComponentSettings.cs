@@ -74,6 +74,11 @@ namespace CustomComponents
         public string Flags_DestroyedComponent = "{0} is destroyed, replace it";
         public string Flags_DamagedComponent = "{0} is damaged, repair it";
 
+        public string Tonnage_AddAllow = "{0} designed for {1}t 'Mech";
+        public string Tonnage_ValidateAllow = "{0} designed for {1}t 'Mech";
+        public string Tonnage_AddLimit = "{0} designed for {1}-{2}t 'Mech";
+        public string Tonnage_ValidateLimit = "{0} designed for {1}-{2}t 'Mech";
+
 
         // 0 - Display Name, 1 - maximum, 2 - Mech Uiname, 3 - Mech Name
         // 4 - Location, 5 - item name, 6 - item uiname
@@ -106,13 +111,13 @@ namespace CustomComponents
         /// 0 - mech.Uiname, 1 - item.Name, 2 - item.Uiname, 3 - Hardpoint Name, 4 - Harpdpoint Friendly Name,
         /// 5 - Location 
         /// </summary>
-        public string Base_AddNotEnoughHardpoints = "Unit dont have enough {1} hardpoints in {2}";
+        public string Base_AddNotEnoughHardpoints = "Unit dont have enough {1} hardpoints in {5}";
 
         /// <summary>
         /// 0 - mech.Uiname, 1 - item.Name, 2 - item.Uiname, 3 - Hardpoint Name, 4 - Harpdpoint Friendly Name,
         /// 5 - Location 
         /// </summary>
-        public string Base_ValidateNotEnoughHardpoints = "Unit dont have enough {1} hardpoints in {2}";
+        public string Base_ValidateNotEnoughHardpoints = "Unit dont have enough {1} hardpoints in {5}";
     }
     public class CustomComponentSettings
     {

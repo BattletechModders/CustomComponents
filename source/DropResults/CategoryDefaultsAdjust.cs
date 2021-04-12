@@ -11,7 +11,8 @@ namespace CustomComponents
         {
             CategoryID = categoryId;
         }
-        public void DoAdjust(MechLabHelper mechLab, LocationHelper loc, List<IChange> changes)
+
+        public bool DoAdjust(Queue<IChange> changes, List<SlotInvItem> inventory)
         {
         }
     }

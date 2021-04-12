@@ -93,18 +93,18 @@ namespace CustomComponents
         public string ValidateMinimum;
         public string ValidateMaximum;
         public string ValidateMixed;
+        public CategoryDescriptorRecord DefaultLimits { get; set; }
 
         public List<CategoryDescriptorRecord> UnitTypes = new List<CategoryDescriptorRecord>();
 
-        [JsonIgnore] private Dictionary<string, CategoryDescriptorRecord> records;
-        [JsonIgnore] private CategoryDescriptorRecord default_record;
+        [JsonIgnore] private Dictionary<string, CategoryDescriptorRecord> records = new Dictionary<string, CategoryDescriptorRecord>();
 
         public CategoryDescriptorRecord this[MechDef mech]
         {
             get
             {
                 if (mech == null)
-                    return default_record;
+                    return DefaultLimits;
 
                 if (records.TryGetValue(mech.ChassisID, out var result))
                     return result;
@@ -120,7 +120,7 @@ namespace CustomComponents
                     var ut = UnitTypeDatabase.Instance.GetUnitTypes(mech);
                     result = UnitTypes.FirstOrDefault(i => ut.Contains(i.UnitType));
                     if (result == null)
-                        result = default_record;
+                        result = DefaultLimits;
                     if (result.LocationLimits == null)
                         result.Complete();
                 }
@@ -162,7 +162,7 @@ namespace CustomComponents
                 ValidateMixed = source.ValidateMixed;
 
             UnitTypes = source.UnitTypes;
-            default_record = source.default_record;
+            DefaultLimits = source.DefaultLimits;
         }
 
         [JsonIgnore]
@@ -182,12 +182,12 @@ namespace CustomComponents
             if (UnitTypes == null)
                 UnitTypes = new List<CategoryDescriptorRecord>();
 
-            default_record = UnitTypes.FirstOrDefault(i => i.UnitType == "*");
+            DefaultLimits = UnitTypes.FirstOrDefault(i => i.UnitType == "*");
 
-            if (default_record == null)
-                default_record = new CategoryDescriptorRecord();
+            if (DefaultLimits == null)
+                DefaultLimits = new CategoryDescriptorRecord();
             else
-                UnitTypes.Remove(default_record);
+                UnitTypes.Remove(DefaultLimits);
 
             if (string.IsNullOrEmpty(AddMaximumReached))
                 AddMaximumReached = Control.Settings.Message.Category_MaximumReached;

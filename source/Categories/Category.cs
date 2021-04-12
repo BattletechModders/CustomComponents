@@ -13,7 +13,7 @@ namespace CustomComponents
     /// </summary>
     [CustomComponent("Category", true)]
     public class Category : SimpleCustomComponent, IAfterLoad, IOnInstalled, IReplaceValidateDrop,
-        IPostValidateDrop, IReplaceIdentifier, IAdjustDescriptionED, IOnItemGrabbed,
+        IReplaceIdentifier, IAdjustDescription, IOnItemGrabbed,
         IClearInventory, IAdjustValidateDrop
     {
 
@@ -236,49 +236,6 @@ namespace CustomComponents
             return string.Empty;
         }
 
-        public string PostValidateDrop(MechLabItemSlotElement drop_item, MechDef mech, List<InvItem> new_inventory, List<IChange> changes)
-        {
-            Control.LogDebug(DType.ComponentInstall, $"-- Category {CategoryID}");
-            var record = CategoryDescriptor[mech];
-            if (record == null)
-                return string.Empty;
-
-            if (record.MaxEquiped > 0)
-            {
-                var total = new_inventory.Count(i => i.item.Def.IsCategory(CategoryID));
-                Control.LogDebug(DType.ComponentInstall, $"---- {total}/{record.MaxEquiped}");
-                if (total > record.MaxEquiped)
-                    if (record.MaxEquiped > 1)
-                        return string.Format(CategoryDescriptor.AddMaximumReached, CategoryDescriptor.displayName, record.MaxEquiped);
-                    else
-                        return string.Format(CategoryDescriptor.AddAlreadyEquiped, CategoryDescriptor.displayName);
-            }
-
-            if (record.MaxEquipedPerLocation > 0)
-            {
-                var total = new_inventory
-                    .Where(i => i.item.Def.IsCategory(CategoryID))
-                    .Select(i =>
-                    {
-                        i.item.Def.IsCategory(CategoryID, out var component);
-                        return new { l = i.location, c = component };
-                    })
-                    .GroupBy(i => i.l)
-                    .FirstOrDefault(i => i.Count() > record.MaxEquipedPerLocation);
-
-                if (total != null)
-                    if (record.MaxEquipedPerLocation > 1)
-                        return string.Format(CategoryDescriptor.AddMaximumLocationReached, CategoryDescriptor.DisplayName,
-                            record.MaxEquipedPerLocation, total.Key);
-                    else
-                        return string.Format(CategoryDescriptor.AddAlreadyEquipedLocation,
-                            CategoryDescriptor.DisplayName, total.Key);
-            }
-
-            return string.Empty;
-        }
-
-
         public override string ToString()
         {
             return "Category: " + CategoryID;
@@ -331,19 +288,21 @@ namespace CustomComponents
                 ed.AddDetail(detail);
             }
         }
-
-        public void ValidateDropOnAdd(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes)
+        public bool ValidateDropOnAdd(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes, List<SlotInvItem> inventory)
         {
-            var record = CategoryDescriptor[MechLabHelper.CurrentMechLab.ActiveMech];
-            if(record!= null && record.MaxLimited)
+            if (CategoryDescriptor[MechLabHelper.CurrentMechLab.ActiveMech].MaxLimited)
                 changes.Enqueue(new CategoryDefaultsAdjust(CategoryID));
+
+            return false;
+
         }
 
-        public void ValidateDropOnRemove(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes)
+        public bool ValidateDropOnRemove(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes, List<SlotInvItem> inventory)
         {
-            var record = CategoryDescriptor[MechLabHelper.CurrentMechLab.ActiveMech];
-            if (record != null && record.MinLimited)
+            if (CategoryDescriptor[MechLabHelper.CurrentMechLab.ActiveMech].MinLimited)
                 changes.Enqueue(new CategoryDefaultsAdjust(CategoryID));
+
+            return false;
         }
     }
 }

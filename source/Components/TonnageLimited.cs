@@ -42,19 +42,20 @@ namespace CustomComponents
         }
 
 
-        public string PreValidateDrop(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlab)
+
+        public string PreValidateDrop(MechLabItemSlotElement item, ChassisLocations location)
         {
             Control.LogDebug(DType.ComponentInstall, "-- TonnageLimit");
-            var tonnage = location.mechLab.activeMechDef.Chassis.Tonnage;
+            var tonnage = MechLabHelper.CurrentMechLab.ActiveMech.Chassis.Tonnage;
 
 
             if (tonnage < Min ||
                 tonnage > Max)
             {
                 if (Min == Max)
-                    return $"{Def.Description.Name} designed for {Min}t 'Mech";
+                    return (new Localize.Text(Control.Settings.Message.Tonnage_ValidateAllow, item.ComponentRef.Def.Description.UIName, Min)).ToString();
                 else
-                    return $"{Def.Description.Name} designed for {Min}t-{Max}t 'Mech";
+                    return (new Localize.Text(Control.Settings.Message.Tonnage_ValidateLimit, item.ComponentRef.Def.Description.UIName, Min, Max)).ToString();
             }
 
             return string.Empty;
@@ -62,14 +63,12 @@ namespace CustomComponents
 
         public void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
         {
-            if(mechDef.Chassis.Tonnage < Min && mechDef.Chassis.Tonnage > Max)
+            if (mechDef.Chassis.Tonnage < Min && mechDef.Chassis.Tonnage > Max)
 
-            if (Min == Max)
-                errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(
-                    $"{Def.Description.Name.ToUpper()} designed for {Min}t 'Mech"));
-            else
-                errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(
-                    $"{Def.Description.Name.ToUpper()} designed for {Min}t-{Max}t 'Mech"));
+                if (Min == Max)
+                    errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(Control.Settings.Message.Tonnage_ValidateAllow, componentRef.Def.Description.UIName, Min));
+                else
+                    errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(Control.Settings.Message.Tonnage_ValidateLimit, componentRef.Def.Description.UIName, Min, Max));
         }
 
         public bool ValidateMechCanBeFielded(MechDef mechDef, MechComponentRef componentRef)

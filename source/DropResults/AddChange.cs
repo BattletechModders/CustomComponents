@@ -13,12 +13,12 @@ namespace CustomComponents
             this.item = item;
         }
 
-        public override void PreviewChange(List<InvItem> inventory)
+        public override void PreviewChange(List<SlotInvItem> inventory)
         {
-            inventory.Add(new InvItem() { item = item.ComponentRef, location = location });
+            inventory.Add(new SlotInvItem(item, location));
         }
 
-        public override bool DoAdjust(Queue<IChange> changes, List<InvItem> inventory)
+        public override bool DoAdjust(Queue<IChange> changes, List<SlotInvItem> inventory)
         {
             bool changed = false;
 

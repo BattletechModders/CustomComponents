@@ -32,7 +32,7 @@ namespace CustomComponents
             }
         }
 
-        public override void PreviewChange(List<InvItem> inventory)
+        public override void PreviewChange(List<SlotInvItem> inventory)
         {
             var to_remove = inventory.FirstOrDefault(i => i.item == item.ComponentRef && i.location == location);
             if (to_remove == null)
@@ -53,7 +53,7 @@ namespace CustomComponents
             this.item = item;
         }
 
-        public override bool DoAdjust(Queue<IChange> changes, List<InvItem> inventory)
+        public override bool DoAdjust(Queue<IChange> changes, List<SlotInvItem> inventory)
         {
             bool changed = false;
 

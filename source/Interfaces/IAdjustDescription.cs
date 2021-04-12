@@ -1,14 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace CustomComponents
 {
-    [Obsolete]
     public interface IAdjustDescription
-    {
-        string AdjustDescription(string Description);
-    }
-
-    public interface IAdjustDescriptionED
     {
         void AdjustDescription();
     }

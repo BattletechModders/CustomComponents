@@ -4,14 +4,14 @@ namespace CustomComponents
 {
     public interface IChange
     {
-        bool DoAdjust(Queue<IChange> changes, List<InvItem> inventory);
+        bool DoAdjust(Queue<IChange> changes, List<SlotInvItem> inventory);
     }
 
 
     public interface IApplyChange : IChange
     {
         void DoChange();
-        void PreviewChange(List<InvItem> inventory);
+        void PreviewChange(List<SlotInvItem> inventory);
 
     }
 

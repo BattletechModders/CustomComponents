@@ -15,13 +15,14 @@ namespace CustomComponents
             return Tonnage == tonnage;
         }
 
-        public string PreValidateDrop(MechLabItemSlotElement item, LocationHelper location, MechLabHelper mechlabf)
+
+        public string PreValidateDrop(MechLabItemSlotElement item, ChassisLocations location)
         {
             Control.LogDebug(DType.ComponentInstall, "-- TonnageAllowed");
-            var tonnage = location.mechLab.activeMechDef.Chassis.Tonnage;
+            var tonnage = MechLabHelper.CurrentMechLab.ActiveMech.Chassis.Tonnage;
             if (tonnage != Tonnage)
             {
-                return $"{Def.Description.Name} designed for {Tonnage}t 'Mech";
+                return (new Localize.Text(Control.Settings.Message.Tonnage_ValidateAllow, item.ComponentRef.Def.Description.UIName, Tonnage)).ToString();
             }
 
             return string.Empty;
@@ -31,8 +32,7 @@ namespace CustomComponents
         {
             if (mechDef.Chassis.Tonnage != Tonnage)
             {
-                errors[MechValidationType.InvalidInventorySlots].Add( new Localize.Text(
-                    $"{Def.Description.Name} designed for {Tonnage}t mech"));
+                errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(Control.Settings.Message.Tonnage_ValidateAllow, componentRef.Def.Description.UIName, Tonnage));
             }
         }
 

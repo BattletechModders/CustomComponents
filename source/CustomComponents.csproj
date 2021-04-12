@@ -101,7 +101,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdjustDescription\AdjustDescriptionPreProcessor.cs" />
     <Compile Include="AllowedLocations\Patches\MechLabLocationWidget_ShowHighlightFrame.cs" />
     <Compile Include="AutoFixer\AutoFixer.cs" />
     <Compile Include="AutoFixer\Patches\SimGameState_InitCompanyStats_Patch.cs" />
@@ -132,6 +131,7 @@
     <Compile Include="Icons\IconController.cs" />
     <Compile Include="Icons\SVGAssets_Contains.cs" />
     <Compile Include="Icons\SVGCache_GetAsset.cs" />
+    <Compile Include="Interfaces\IAdjustDescription.cs" />
     <Compile Include="Interfaces\IIsDestroyed.cs" />
     <Compile Include="AllowedLocations\EquipLocationTag.cs" />
     <Compile Include="Patches\MechLabPanel_ExitMechLab.cs" />
@@ -162,7 +162,6 @@
     <Compile Include="Fixes\SkirmishSettings_Beta_LoadLanceConfiguratorData_Patch.cs" />
     <Compile Include="Helpers\ContractHelper.cs" />
     <Compile Include="Helpers\SettingsResourceTools.cs" />
-    <Compile Include="AdjustDescription\IAdjustDescription.cs" />
     <Compile Include="Defaults\IDefault.cs" />
     <Compile Include="SorterLabInventory\InventorySorter.cs" />
     <Compile Include="SorterLabInventory\InventorySorterComparer.cs" />

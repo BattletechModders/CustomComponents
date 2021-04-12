@@ -77,13 +77,14 @@ namespace CustomComponents
             }
         }
 
-        public void ValidateDropOnAdd(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes)
+        public bool ValidateDropOnAdd(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes, List<SlotInvItem> inventory)
         {
             Control.LogDebug(DType.ComponentInstall, "--- AutoLinked Add");
 
             if (Links == null || Links.Length == 0)
-                return;
+                return false;
 
+            var result = false;
             foreach (var link in Links)
             {
                 Control.LogDebug(DType.ComponentInstall, $"---- {link.ComponentDefId} to {link.Location}");
@@ -93,37 +94,42 @@ namespace CustomComponents
                 {
                     Control.LogDebug(DType.ComponentInstall, $"----- added");
                     changes.Enqueue(new AddDefaultChange(link.Location, slot));
+                    result = true;
                 }
                 else
                     Control.LogDebug(DType.ComponentInstall, $"----- not found");
             }
+
+            return result;
         }
 
-        public void ValidateDropOnRemove(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes)
+        public bool ValidateDropOnRemove(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes, List<SlotInvItem> inventory)
         {
             Control.LogDebug(DType.ComponentInstall, "--- AutoLinked Remove");
 
             if (Links == null || Links.Length == 0)
-                return;
+                return false;
 
+            var result = false;
+
+            var to_remove = new List<SlotInvItem>();
             foreach (var link in Links)
             {
-                var widget = MechLabHelper.CurrentMechLab.GetLocationWidget(link.Location);
-                if (widget != null)
-                {
-                    Control.LogDebug(DType.ComponentInstall, $"---- {link.ComponentDefId} from {link.Location}");
-                    var remove = new LocationHelper(widget).LocalInventory.FirstOrDefault(e =>
-                        e?.ComponentRef?.ComponentDefID == link.ComponentDefId);
-                    if (remove != null)
-                    {
-                        Control.LogDebug(DType.ComponentInstall, $"----- removed");
-                        changes.Enqueue(new RemoveChange(link.Location, remove));
+                Control.LogDebug(DType.ComponentInstall, $"---- {link.ComponentDefId} from {link.Location}");
 
-                    }
-                    else
-                        Control.LogDebug(DType.ComponentInstall, $"----- not found");
+                var remove = inventory.FirstOrDefault(i => i.item.ComponentDefID == link.ComponentDefId && i.location == link.Location && !to_remove.Contains(i));
+                if (remove != null)
+                {
+                    Control.LogDebug(DType.ComponentInstall, $"----- removed");
+                    to_remove.Add(remove);
+                    changes.Enqueue(new RemoveChange(link.Location, remove.slot));
+                    result = true;
+
                 }
+                else
+                    Control.LogDebug(DType.ComponentInstall, $"----- not found");
             }
+            return result;
         }
     }
 }

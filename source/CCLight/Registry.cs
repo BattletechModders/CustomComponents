@@ -149,7 +149,7 @@ namespace CustomComponents
                             load.OnLoaded(values);
                         }
 
-                        if (component is IAdjustDescriptionED ed)
+                        if (component is IAdjustDescription ed)
                         {
                             ed.AdjustDescription();
                         }

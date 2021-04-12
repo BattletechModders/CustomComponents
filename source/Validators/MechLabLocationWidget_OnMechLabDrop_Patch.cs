@@ -100,7 +100,7 @@ namespace CustomComponents
                 Control.LogDebug(DType.ComponentInstall, $"- adjusting");
 
                 List<IChange> to_execute = new List<IChange>();
-                List<InvItem> inventory = GetInventory(to_execute.Concat(changes));
+                List<SlotInvItem> inventory = GetInventory(to_execute.Concat(changes));
 
                 while (changes.Count > 0)
                 {
@@ -121,11 +121,12 @@ namespace CustomComponents
                 }
 
                 Control.LogDebug(DType.ComponentInstall, $"- post validation");
+                var inv = inventory.ToList<InvItem>();
 
                 foreach (var pst_validator in Validator.GetPost(newComponentDef))
                 {
                     int n = changes.Count;
-                    if (do_cancel(pst_validator(dragItem, inventory), to_execute))
+                    if (do_cancel(pst_validator(dragItem, inv), to_execute))
                         return false;
                 }
                 Control.LogDebug(DType.ComponentInstall, $"- apply changes");
@@ -150,10 +151,12 @@ namespace CustomComponents
             return true;
         }
 
-        private static List<InvItem> GetInventory(IEnumerable<IChange> changes)
+        private static List<SlotInvItem> GetInventory(IEnumerable<IChange> changes)
         {
-            List<InvItem> new_inventory = MechLabHelper.CurrentMechLab.MechLab.activeMechInventory
-                .Select(i => new InvItem { item = i, location = i.MountedLocation }).ToList();
+            List<SlotInvItem> new_inventory = MechLabHelper.CurrentMechLab
+                .GetLocationHelpers()
+                .SelectMany(i => i.LocalInventory.Select(a => new SlotInvItem(a, i.widget.loadout.Location)))
+                .ToList<SlotInvItem>();
 
             foreach (IApplyChange change in changes)
             {
