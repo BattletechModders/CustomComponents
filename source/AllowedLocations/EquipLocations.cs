@@ -23,7 +23,7 @@ namespace CustomComponents
         }
     }
 
-    [CustomComponent("AllowedLocationsTAG", group: "AllowedLocation")]
+    [CustomComponent("AllowedLocationsUT", group: "AllowedLocation")]
     public class EquipLocationsUT : SimpleCustomComponent, IAllowedLocations
     {
         internal EquipLocationTag.record[] UnitTypes;
