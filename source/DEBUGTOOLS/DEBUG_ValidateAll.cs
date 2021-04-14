@@ -12,8 +12,6 @@ namespace CustomComponents
     {
         internal static void Validate(List<MechDef> mechdefs)
         {
-
-
             foreach (var mechDef in mechdefs)
             {
                 try
@@ -75,7 +73,6 @@ namespace CustomComponents
                     Control.LogError($"{mechDef.Description.Id} throwed exception on validation", e);
                 }
             }
-
         }
     }
 }
