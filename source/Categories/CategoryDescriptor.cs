@@ -43,6 +43,24 @@ namespace CustomComponents
             {
                 return Location.GetHashCode();
             }
+
+            public record()
+            {
+            }
+
+            public record(ChassisLocations location, int min, int max)
+            {
+                this.Location = location;
+                this.Max = max;
+                this.Min = min;
+            }
+
+            public record(record source)
+            {
+                this.Location = source.Location;
+                this.Max = source.Max;
+                this.Min = source.Min;
+            }
         }
         
         public string UnitType;

@@ -27,17 +27,18 @@ namespace CustomComponents.ExtendedDetails
             return def.GetOrCreate(() => new ExtendedDetails(def.Description));
         }
 
-        [Obsolete] // remove
-        public ExtendedDetails(MechComponentDef def) : this(def.Description)
-        {
-        }
+        //[Obsolete] // remove
+        //public ExtendedDetails(MechComponentDef def) : this(def.Description)
+        //{
+        //}
 
-        [Obsolete] // make private
-        public ExtendedDetails(DescriptionDef def)
+        //[Obsolete] // make private
+        private ExtendedDetails(DescriptionDef def)
         {
             Def = def;
             OriginalDetails = Def.Details;
-            var original = new ExtendedDetail {
+            var original = new ExtendedDetail
+            {
                 UnitType = UnitType.UNDEFINED,
                 Index = 0,
                 Text = OriginalDetails
@@ -93,12 +94,13 @@ namespace CustomComponents.ExtendedDetails
     {
         public string OpenBracket { get; set; }
         public string CloseBracket { get; set; }
+        public string Delimiter { get; set; } = ", ";
         public List<string> Values { get; set; } = new List<string>();
 
 
         public override string Text
         {
-            get => OpenBracket + Values.Join() + CloseBracket;
+            get => OpenBracket + Values.Join(null, Delimiter) + CloseBracket;
 
             set
             {

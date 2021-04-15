@@ -253,7 +253,6 @@ namespace CustomComponents
 
         public static void ClearInventory(MechDef mech, List<MechComponentRef> result, SimGameState state)
         {
-            throw new System.NotImplementedException();
         }
     }
 }

@@ -290,7 +290,7 @@ namespace CustomComponents
         }
         public bool ValidateDropOnAdd(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes, List<SlotInvItem> inventory)
         {
-            if (CategoryDescriptor[MechLabHelper.CurrentMechLab.ActiveMech].MaxLimited)
+            if (!Def.HasFlag(CCF.NoRemove) && CategoryDescriptor[MechLabHelper.CurrentMechLab.ActiveMech].MaxLimited)
                 changes.Enqueue(new CategoryDefaultsAdjust(CategoryID));
 
             return false;
@@ -299,7 +299,7 @@ namespace CustomComponents
 
         public bool ValidateDropOnRemove(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes, List<SlotInvItem> inventory)
         {
-            if (CategoryDescriptor[MechLabHelper.CurrentMechLab.ActiveMech].MinLimited)
+            if (!Def.HasFlag(CCF.NoRemove) && CategoryDescriptor[MechLabHelper.CurrentMechLab.ActiveMech].MinLimited)
                 changes.Enqueue(new CategoryDefaultsAdjust(CategoryID));
 
             return false;

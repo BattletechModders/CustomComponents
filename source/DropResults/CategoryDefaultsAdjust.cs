@@ -21,7 +21,7 @@ namespace CustomComponents
             if (record == null || mech == null)
                 return false;
 
-            if (record.Multi != null && record.Multi.Any(i => i.Categories.Contains(CategoryID)))
+            if (record.Multi != null && record.Multi.UsedCategories.ContainsKey(CategoryID))
             {
                 var mchanges = DefaultFixer.Instance.GetMultiChange(mech, inventory);
                 if (mchanges != null )

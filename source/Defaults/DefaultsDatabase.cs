@@ -7,6 +7,7 @@ namespace CustomComponents
 {
     public class MultiCategoryDefault : IMultiCategoryDefault
     {
+
         public ChassisLocations Location { get; set; }
         public string[] Categories { get; set; }
         public string DefID { get; set; }
@@ -17,7 +18,7 @@ namespace CustomComponents
         [JsonIgnore]
         public MechComponentDef Component { get; set; }
         [JsonIgnore]
-        public Dictionary<string, KeyValuePair<Category, CategoryDescriptorRecord>> CategoryRecords { get; set; }
+        public Dictionary<string, (Category category, CategoryDescriptorRecord record)> CategoryRecords { get; set; }
 
     }
 
@@ -88,14 +89,25 @@ namespace CustomComponents
     }
 
 
-    public class MechDefaultInfo
-    {
-        public List<MultiCategoryDefault> Multi;
-        public Dictionary<string, CategoryDefault> Defaults;
-    }
+  
 
     public class DefaultsDatabase
     {
+
+        public class MechDefaultInfo
+        {
+            public MultiRecord Multi { get; set; }
+            public Dictionary<string, CategoryDefault> Defaults { get; set; }
+        }
+
+        public class MultiRecord
+        {
+            public List<MultiCategoryDefault> Defaults { get; set; }
+            public Dictionary<string, CategoryDescriptorRecord> UsedCategories { get; set; }
+
+            public bool HasRecords => Defaults != null && Defaults.Count > 0;
+        }
+
         private static DefaultsDatabase _instance;
         private Dictionary<string, MechDefaultInfo> database = new Dictionary<string, MechDefaultInfo>();
         private Dictionary<string, MechComponentDef> def_cache = new Dictionary<string, MechComponentDef>();
@@ -207,7 +219,8 @@ namespace CustomComponents
 
             var result = new MechDefaultInfo();
 
-            result.Multi = new List<MultiCategoryDefault>();
+            var multi = new MultiRecord() {Defaults = new List<MultiCategoryDefault>()};
+
             var mech_multi = GetMechMultiDefauls(mech);
             if (mech_multi != null)
                 foreach (var m in mech_multi)
@@ -218,7 +231,7 @@ namespace CustomComponents
                         DefID = m.DefID,
                         ComponentType = m.ComponentType,
                         Location = m.Location,
-                        CategoryRecords = new Dictionary<string, KeyValuePair<Category, CategoryDescriptorRecord>>(),
+                        CategoryRecords = new Dictionary<string, (Category category, CategoryDescriptorRecord record)>(),
                         Component = DefaultHelper.GetComponentDef(m.DefID, m.ComponentType)
 
                     };
@@ -247,7 +260,7 @@ namespace CustomComponents
                                 continue;
                             }
 
-                            info.CategoryRecords[category] = new KeyValuePair<Category, CategoryDescriptorRecord>(c, cr);
+                            info.CategoryRecords[category] = (c, cr);
 
                         }
                         else
@@ -263,8 +276,18 @@ namespace CustomComponents
                         continue;
                     }
 
-                    result.Multi.Add(info);
+                    multi.Defaults.Add(info);
                 }
+
+            if (multi.HasRecords)
+            {
+                multi.UsedCategories = multi.Defaults
+                    .SelectMany(i => i.CategoryRecords)
+                    .GroupBy(i => i.Key)
+                    .ToDictionary(a => a.Key, a => a.First().Value.record);
+
+                result.Multi = multi;
+            }
 
             result.Defaults = new Dictionary<string, CategoryDefault>();
             var defaults = GetMechDefaults(mech);

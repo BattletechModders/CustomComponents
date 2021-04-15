@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
+using BattleTech.UI;
 using HBS.Extensions;
 
 namespace CustomComponents
@@ -17,17 +18,19 @@ namespace CustomComponents
 
             public string Id { get; set; }
             public ChassisLocations Location { get; set; }
+            public ComponentType Type { get; set; }
 
-            private inv_change(bool add, string id, ChassisLocations location)
+            private inv_change(bool add, string id, ChassisLocations location, ComponentType type = ComponentType.NotSet)
             {
                 this.add = add;
                 this.Location = location;
                 this.Id = id;
+                this.Type = type;
             }
 
-            public static inv_change Add(string id, ChassisLocations location)
+            public static inv_change Add(string id, ComponentType type, ChassisLocations location)
             {
-                return new inv_change(true, id, location);
+                return new inv_change(true, id, location, type);
             }
 
             public static inv_change Remove(string id, ChassisLocations location)
@@ -36,6 +39,21 @@ namespace CustomComponents
             }
         }
 
+        private class free_record
+        {
+            public CategoryLimit limit { get; set; }
+            public int free { get; set; }
+
+            public ChassisLocations location { get; set; }
+        }
+
+        private class usage_record
+        {
+            public MultiCategoryDefault record;
+            public bool used_now => item != null;
+            public bool used_after = false;
+            public MechComponentRef item;
+        }
 
         private static DefaultFixer _instance;
 
@@ -43,7 +61,7 @@ namespace CustomComponents
         {
             get
             {
-                if(_instance == null)
+                if (_instance == null)
                     _instance = new DefaultFixer();
                 return _instance;
             }
@@ -52,11 +70,108 @@ namespace CustomComponents
         public List<inv_change> GetMultiChange(MechDef mech, IEnumerable<InvItem> inventory)
         {
             var defaults = DefaultsDatabase.Instance[mech];
-            if (defaults == null || defaults.Multi == null || defaults.Multi.Count == 0)
+
+            if (defaults?.Multi != null && defaults.Multi.HasRecords)
                 return null;
 
+            var result = new List<inv_change>();
 
-            return null;
+            var usage = defaults.Multi.Defaults
+                .Select(i => new usage_record()
+                {
+                    record = i,
+                    item = inventory.FirstOrDefault(a => a.location == i.Location && a.item.ComponentDefID == i.DefID)?.item
+                });
+
+            var free = defaults.Multi.UsedCategories.Select(i => new
+            {
+                category = i.Key,
+                value = i.Value.LocationLimits.Select(a => new free_record()
+                {
+                    free = a.Value.Min,
+                    location = a.Key,
+                    limit = a.Value
+                }).ToArray()
+            }).ToList();
+
+            var items_by_category = inventory
+                .Where(i => usage.All(a => a.item != i.item)
+                            || !i.item.HasFlag(CCF.Default)
+                            || i.item.IsModuleFixed(mech)
+                            || i.item.HasFlag(CCF.NoRemove))
+                .Select(item => new { item.item, def = item.item.GetComponents<Category>(), location = item.location })
+                .Where(@t => @t.def != null)
+                .SelectMany(@t => t.def.Where(c => defaults.Multi.UsedCategories.ContainsKey(c.CategoryID)).Select(item => new
+                {
+                    category = item.CategoryDescriptor,
+                    itemdef = @t.item.Def,
+                    itemref = @t.item,
+                    location = t.location,
+                    num = item.Weight
+                }))
+                .GroupBy(i => i.category)
+                .ToDictionary(i => i.Key.Name, i => i.ToList());
+
+            foreach (var free_record in free)
+                if (items_by_category.TryGetValue(free_record.category, out var list))
+                    foreach (var item in list)
+                        foreach (var freeRecord in free_record.value)
+                            if (freeRecord.location.HasFlag(item.location))
+                                freeRecord.free -= item.num;
+
+            var used_records = new List<(free_record record, int value)>();
+            foreach (var usageRecord in usage)
+            {
+                var fit = true;
+
+                used_records.Clear();
+
+                foreach (var pair in usageRecord.record.CategoryRecords)
+                {
+                    var freerecord = free.FirstOrDefault(i => i.category == pair.Key);
+                    if (freerecord == null)
+                    {
+                        fit = false;
+                        break;
+                    }
+
+                    var num = pair.Value.category.Weight;
+
+                    foreach (var record in freerecord.value)
+                    {
+                        if (record.free > num)
+                        {
+                            fit = false;
+                            break;
+                        }
+                        used_records.Add((record, num));
+                    }
+
+                    if (!fit)
+                        break;
+
+
+                }
+
+                usageRecord.used_after = fit;
+                if (fit)
+                    foreach (var value in used_records)
+                    {
+                        value.record.free -= value.value;
+                    }
+
+                if (usageRecord.used_after != usageRecord.used_now)
+                {
+                    var d = usageRecord.record;
+                    if (usageRecord.used_after)
+                        result.Add(inv_change.Add(d.DefID, d.ComponentType, d.Location));
+                    else
+                        result.Add(inv_change.Remove(d.DefID, d.Location));
+                }
+            }
+
+
+            return result;
         }
     }
 }
