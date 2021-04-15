@@ -43,7 +43,20 @@ namespace CustomComponents
             return category != null;
         }
 
-        
+        public static Category GetCategory(this BaseComponentRef item, string categoryid)
+        {
+            return item.GetComponents<Category>()?.FirstOrDefault(i => i.CategoryID == categoryid);
+        }
+
+        public static Category GetCategory(this MechComponentDef item, string categoryid)
+        {
+            return item.GetComponents<Category>()?.FirstOrDefault(i => i.CategoryID == categoryid);
+        }
+
+        public static Category GetCategory(this MechComponentRef item, string categoryid)
+        {
+            return item.GetComponents<Category>()?.FirstOrDefault(i => i.CategoryID == categoryid);
+        }
 
     }
 }

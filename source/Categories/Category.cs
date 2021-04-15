@@ -14,7 +14,7 @@ namespace CustomComponents
     [CustomComponent("Category", true)]
     public class Category : SimpleCustomComponent, IAfterLoad, IOnInstalled, IReplaceValidateDrop,
         IReplaceIdentifier, IAdjustDescription, IOnItemGrabbed,
-        IClearInventory, IAdjustValidateDrop
+        IAdjustValidateDrop
     {
 
         private class free_record
@@ -241,13 +241,6 @@ namespace CustomComponents
             return "Category: " + CategoryID;
         }
 
-        public void ClearInventory(MechDef mech, List<MechComponentRef> result, SimGameState state, MechComponentRef source)
-        {
-            var item = DefaultFixer.Shared.GetReplaceFor(mech, CategoryID, source.MountedLocation, state);
-            if (item != null)
-                result.Add(item);
-        }
-
         public void OnItemGrabbed(IMechLabDraggableItem item, MechLabPanel mechLab, MechLabLocationWidget widget)
         {
             Control.LogDebug(DType.ComponentInstall, $"- Category {CategoryID}");
@@ -290,7 +283,7 @@ namespace CustomComponents
         }
         public bool ValidateDropOnAdd(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes, List<SlotInvItem> inventory)
         {
-            if (!Def.HasFlag(CCF.NoRemove) && CategoryDescriptor[MechLabHelper.CurrentMechLab.ActiveMech].MaxLimited)
+            if (!Def.HasFlag(CCF.NoRemove) && CategoryDescriptor[MechLabHelper.CurrentMechLab.ActiveMech].MinLimited)
                 changes.Enqueue(new CategoryDefaultsAdjust(CategoryID));
 
             return false;

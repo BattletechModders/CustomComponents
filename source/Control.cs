@@ -84,7 +84,7 @@ namespace CustomComponents
                     }
 
                     if (Settings.FixDefaults)
-                        AutoFixer.Shared.RegisterMechFixer(DefaultFixer.Shared.FixMechs);
+                        AutoFixer.Shared.RegisterMechFixer(DefaultFixer.Instance.FixMechs);
 
                     if (Settings.DebugInfo.HasFlag(DType.AutoFixFAKE))
                         AutoFixer.Shared.RegisterMechFixer(DEBUGTOOLS.SHOWTAGS);

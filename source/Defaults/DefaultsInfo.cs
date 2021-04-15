@@ -7,7 +7,7 @@ namespace CustomComponents
     [SerializeField]
     public class DefaultsInfoRecord : IDefault
     {
-        public ChassisLocations Location { get; set; }
+        public ChassisLocations Location { get; set; } = ChassisLocations.None;
         public string CategoryID { get; set; }
         public string DefID { get; set; }
         public ComponentType Type { get; set; }

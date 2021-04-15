@@ -26,6 +26,8 @@ namespace CustomComponents
     {
         public MechComponentDef Item { get; set; }
         public Category Category { get; set; }
+
+        public ChassisLocations Location { get; set; }
     }
 
 
@@ -33,8 +35,7 @@ namespace CustomComponents
     {
         public CategoryDescriptorRecord CategoryRecord { get; set; }
         public CategoryDescriptor CategoryDescriptor { get; set; }
-
-        public Dictionary<ChassisLocations, List<CategoryDefaultRecord>> DefaultsPerLocation { get; set; }
+        public List<CategoryDefaultRecord> Defaults { get; set; }
     }
 
     public class DefaultRecord
@@ -43,7 +44,6 @@ namespace CustomComponents
         public string CategoryID { get; set; }
         public string DefID { get; set; }
         public ComponentType Type { get; set; }
-        public bool AnyLocation { get; set; } = true;
 
         [JsonIgnore] public bool Ready { get; private set; } = false;
         public bool Invalid => Ready && _def == null;
@@ -89,10 +89,24 @@ namespace CustomComponents
     }
 
 
-  
+
 
     public class DefaultsDatabase
     {
+        public static ChassisLocations[] SingleLocations = new[]
+        {
+            ChassisLocations.Head,
+            ChassisLocations.CenterTorso,
+
+            ChassisLocations.LeftTorso,
+            ChassisLocations.LeftArm,
+            ChassisLocations.LeftLeg,
+
+            ChassisLocations.RightTorso,
+            ChassisLocations.RightArm,
+            ChassisLocations.RightLeg,
+        };
+
 
         public class MechDefaultInfo
         {
@@ -164,12 +178,6 @@ namespace CustomComponents
             return mech.Chassis.GetComponents<IMultiCategoryDefault>();
         }
 
-        //public IEnumerable<ICategoryDescriptorRecord> GetMechCategories(MechDef mech)
-        //{
-        //    return mech.Chassis.GetComponents<ICategoryDescriptorRecord>();
-        //}
-
-
         private MechDefaultInfo CreateDefaultRecord(MechDef mech)
         {
             void process_defaults(MechDefaultInfo result, IEnumerable<IDefault> defaults)
@@ -178,6 +186,13 @@ namespace CustomComponents
 
                 foreach (var item in defaults.Where(i => !seen.Contains(i.CategoryID)))
                 {
+                    if (!SingleLocations.Contains(item.Location))
+                    {
+                        Control.LogError(
+                            $"{mech.ChassisID} have default in group location {item.DefID}, skipped");
+                        continue;
+                    }
+
                     if (!result.Defaults.TryGetValue(item.CategoryID, out var catdefault))
                     {
                         catdefault = new CategoryDefault();
@@ -192,6 +207,8 @@ namespace CustomComponents
                         }
                         result.Defaults[item.CategoryID] = catdefault;
                     }
+
+
                     var def = DefaultHelper.GetComponentDef(item.DefID, item.Type);
                     if (def == null)
                     {
@@ -203,23 +220,25 @@ namespace CustomComponents
                         Control.LogError($"{mech.ChassisID} default {item.DefID} dont have category {item.CategoryID}");
                         continue;
                     }
+                    if (!def.HasFlag(CCF.NoRemove))
+                    {
+                        Control.LogError($"{mech.ChassisID} default {item.DefID} dont have `{CCF.NoRemove}` flag");
+                        continue;
+                    }
+
                     var cr = new CategoryDefaultRecord()
                     {
                         Category = c,
-                        Item = def
+                        Item = def,
+                        Location = item.Location
                     };
-                    if (!catdefault.DefaultsPerLocation.TryGetValue(item.Location, out var list))
-                    {
-                        list = new List<CategoryDefaultRecord>();
-                        catdefault.DefaultsPerLocation[item.Location] = list;
-                    }
-                    list.Add(cr);
+                    catdefault.Defaults.Add(cr);
                 }
             }
 
             var result = new MechDefaultInfo();
 
-            var multi = new MultiRecord() {Defaults = new List<MultiCategoryDefault>()};
+            var multi = new MultiRecord() { Defaults = new List<MultiCategoryDefault>() };
 
             var mech_multi = GetMechMultiDefauls(mech);
             if (mech_multi != null)

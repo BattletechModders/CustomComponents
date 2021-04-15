@@ -30,6 +30,10 @@ namespace CustomComponents
                 }
             }
 
+            var dchanges = DefaultFixer.Instance.GetDefaultsChange(mech, inventory, CategoryID);
+            if(dchanges != null)
+                changes_to_mechlab(dchanges, changes, inventory);
+
             return false;
         }
 
