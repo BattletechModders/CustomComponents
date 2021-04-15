@@ -59,7 +59,6 @@ namespace CustomComponents
 
         #endregion
 
-
         public static MechComponentRef CreateRef(string id, ComponentType type, DataManager datamanager, SimGameState state)
         {
             var component_ref = new MechComponentRef(id, string.Empty, type, ChassisLocations.None);
