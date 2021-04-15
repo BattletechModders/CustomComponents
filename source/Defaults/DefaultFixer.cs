@@ -1,4 +1,5 @@
 ﻿//undef CCDEBUG
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
@@ -45,11 +46,14 @@ namespace CustomComponents
             public int free { get; set; }
 
             public ChassisLocations location { get; set; }
+
+            public bool HaveMin => limit.Min > 0;
         }
 
         private class usage_record
         {
-            public MultiCategoryDefault record;
+            public MultiCategoryDefault mrecord;
+            public CategoryDefaultRecord crecord;
             public bool used_now => item != null;
             public bool used_after = false;
             public MechComponentRef item;
@@ -79,16 +83,16 @@ namespace CustomComponents
             var usage = defaults.Multi.Defaults
                 .Select(i => new usage_record()
                 {
-                    record = i,
+                    mrecord = i,
                     item = inventory.FirstOrDefault(a => a.location == i.Location && a.item.ComponentDefID == i.DefID)?.item
                 });
 
             var free = defaults.Multi.UsedCategories.Select(i => new
             {
                 category = i.Key,
-                value = i.Value.LocationLimits.Select(a => new free_record()
+                value = i.Value.LocationLimits.Where(a => a.Value.Min > 0).Select(a => new free_record()
                 {
-                    free = a.Value.Min,
+                    free = a.Value.Min == 0 ? 9999 : a.Value.Min,
                     location = a.Key,
                     limit = a.Value
                 }).ToArray()
@@ -120,13 +124,14 @@ namespace CustomComponents
                                 freeRecord.free -= item.num;
 
             var used_records = new List<(free_record record, int value)>();
+
             foreach (var usageRecord in usage)
             {
                 var fit = true;
 
                 used_records.Clear();
 
-                foreach (var pair in usageRecord.record.CategoryRecords)
+                foreach (var pair in usageRecord.mrecord.CategoryRecords)
                 {
                     var freerecord = free.FirstOrDefault(i => i.category == pair.Key);
                     if (freerecord == null)
@@ -162,7 +167,7 @@ namespace CustomComponents
 
                 if (usageRecord.used_after != usageRecord.used_now)
                 {
-                    var d = usageRecord.record;
+                    var d = usageRecord.mrecord;
                     if (usageRecord.used_after)
                         result.Add(inv_change.Add(d.DefID, d.ComponentType, d.Location));
                     else
@@ -170,6 +175,56 @@ namespace CustomComponents
                 }
             }
             return result;
+        }
+
+        internal void FixMechs(List<MechDef> mechDefs, SimGameState simgame)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<inv_change> GetDefaultsChange(MechDef mech, IEnumerable<InvItem> inventory, string category)
+        {
+            var record = DefaultsDatabase.Instance[mech];
+            if (!record.Defaults.TryGetValue(category, out var defaults))
+                return inventory
+                    .Where(i => i.item.IsCategory(category) && i.item.IsDefault() && !i.item.HasFlag(CCF.NoRemove))
+                    .Select(i => inv_change.Remove(i.item.ComponentDefID, i.location))
+                    .ToList();
+
+            var usage = defaults.Defaults
+                .Select(i => new usage_record()
+                {
+                    crecord = i,
+                    item = inventory.FirstOrDefault(a => a.location == i.Location && a.item.ComponentDefID == i.Item.Description.Id)?.item
+                });
+
+
+            var items_of_category = inventory
+                .Where(i => i.item.IsCategory(category))
+                .Select(i => new { i.item, cat = i.item.GetCategory(category), location = i.location })
+                .Select(i => new
+                {
+                    item = i.item,
+                    def = i.item.IsDefault(),
+                    num = i.cat.Weight,
+                    fix = i.item.IsModuleFixed(mech),
+                    remove = i.item.HasFlag(CCF.NoRemove)
+                }).ToList();
+
+            var used_records = new List<(free_record record, int value)>();
+            var free = defaults.CategoryRecord.LocationLimits
+                .Where(i => i.Value.Min > 0)
+                .Select(i =>
+                    new free_record
+                    {
+                        location = i.Key,
+                        free = i.Value.Min
+                    })
+                .ToList();
+
+
+
+            return null;
         }
     }
 }

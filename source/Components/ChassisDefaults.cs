@@ -5,7 +5,7 @@ namespace CustomComponents
     [CustomComponent("ChassisDefaults", true)]
     public class ChassisDefaults : SimpleCustomChassis, IDefault
     {
-        public ChassisLocations Location { get; set; }
+        public ChassisLocations Location { get; set; } = ChassisLocations.None;
         public string CategoryID { get; set; }
         public string DefID { get; set; }
         public ComponentType Type { get; set; }
