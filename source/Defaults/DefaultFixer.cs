@@ -94,6 +94,7 @@ namespace CustomComponents
                 }).ToArray()
             }).ToList();
 
+
             var items_by_category = inventory
                 .Where(i => usage.All(a => a.item != i.item)
                             || !i.item.HasFlag(CCF.Default)
