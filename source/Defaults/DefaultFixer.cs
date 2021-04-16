@@ -104,56 +104,31 @@ namespace CustomComponents
             var usage = defaults.Multi.Defaults
                 .Select(i => new usage_record(i));
 
+            var free = defaults.Multi.UsedCategories.ToDictionary(
+                i => i.Key,
+                i => i.Value.LocationLimits.Where(a => a.Value.Min > 0)
+                    .Select(a => new free_record()
+                    {
+                        free = a.Value.Min == 0 ? 9999 : a.Value.Min,
+                        location = a.Key,
+                        limit = a.Value
+                    }).ToArray());
+
+
             foreach (var invItem in inventory)
             {
-                var item = usage.FirstOrDefault(i => i.DefId == invItem.item.ComponentDefID
-                                                     && i.Location == invItem.location && !i.used_now);
+                var item = usage.FirstOrDefault(i => !i.used_now && i.DefId == invItem.item.ComponentDefID
+                                                     && i.Location == invItem.location);
                 if (item != null)
                     item.item = invItem.item;
-                else
+                else if (item.item.IsModuleFixed(mech) || !item.item.IsDefault() || item.item.HasFlag(CCF.NoRemove))
                 {
-                    foreach (var cat_desc in defaults.Multi.UsedCategories)
-                    {
-                        
-                    }
+                    foreach (var catid in defaults.Multi.UsedCategories.Keys)
+                        if (invItem.item.IsCategory(catid, out var cat))
+                            foreach (var freeRecord in free[catid].Where(i => i.location.HasFlag(item.Location)))
+                                freeRecord.free -= cat.Weight;
                 }
             }
-
-            var free = defaults.Multi.UsedCategories.Select(i => new
-            {
-                category = i.Key,
-                value = i.Value.LocationLimits.Where(a => a.Value.Min > 0).Select(a => new free_record()
-                {
-                    free = a.Value.Min == 0 ? 9999 : a.Value.Min,
-                    location = a.Key,
-                    limit = a.Value
-                }).ToArray()
-            }).ToList();
-
-            var items_by_category = inventory
-                .Where(i => usage.All(a => a.item != i.item)
-                            || !i.item.HasFlag(CCF.Default)
-                            || i.item.IsModuleFixed(mech)
-                            || i.item.HasFlag(CCF.NoRemove))
-                .Select(item => new { item.item, def = item.item.GetComponents<Category>(), location = item.location })
-                .Where(@t => @t.def != null)
-                .SelectMany(@t => t.def.Where(c => defaults.Multi.UsedCategories.ContainsKey(c.CategoryID)).Select(item => new
-                {
-                    category = item.CategoryDescriptor,
-                    itemdef = @t.item.Def,
-                    itemref = @t.item,
-                    location = t.location,
-                    num = item.Weight
-                }))
-                .GroupBy(i => i.category)
-                .ToDictionary(i => i.Key.Name, i => i.ToList());
-
-            foreach (var free_record in free)
-                if (items_by_category.TryGetValue(free_record.category, out var list))
-                    foreach (var item in list)
-                        foreach (var freeRecord in free_record.value)
-                            if (freeRecord.location.HasFlag(item.location))
-                                freeRecord.free -= item.num;
 
             var used_records = new List<(free_record record, int value)>();
 
@@ -165,16 +140,10 @@ namespace CustomComponents
 
                 foreach (var pair in usageRecord.mrecord.CategoryRecords)
                 {
-                    var freerecord = free.FirstOrDefault(i => i.category == pair.Key);
-                    if (freerecord == null)
-                    {
-                        fit = false;
-                        break;
-                    }
-
+                    var freerecords = free[pair.Key];
                     var num = pair.Value.category.Weight;
 
-                    foreach (var record in freerecord.value)
+                    foreach (var record in freerecords)
                     {
                         if (record.free > num)
                         {
@@ -197,7 +166,7 @@ namespace CustomComponents
                         value.record.free -= value.value;
                     }
 
-                if (usageRecord.used_after != usageRecord.used_now)
+                //if (usageRecord.used_after != usageRecord.used_now)
                 {
                     var d = usageRecord.mrecord;
                     if (usageRecord.used_after)
@@ -232,7 +201,7 @@ namespace CustomComponents
                         free = i.Value.Min
                     })
                 .ToList();
-            
+
             foreach (var invItem in inventory)
             {
                 var item = usage.FirstOrDefault(i => i.DefId == invItem.item.ComponentDefID
@@ -287,9 +256,60 @@ namespace CustomComponents
 
         internal void FixMechs(List<MechDef> mechDefs, SimGameState simgame)
         {
-            //TODO FIX MECHS!
+            foreach (var mechDef in mechDefs)
+            {
+                FixMech(simgame, mechDef);
+            }
         }
 
+        private void FixMech(SimGameState simgame, MechDef mechDef)
+        {
+            var defaults = DefaultsDatabase.Instance[mechDef];
+            if (defaults == null)
+                return;
 
+            var inv = mechDef.Inventory.ToInvItems().ToList();
+            bool changed = false;
+            var changes = GetMultiChange(mechDef, inv);
+            if (changes != null && changes.Count > 0)
+            {
+                changed = true;
+                apply_changes(changes, inv, simgame);
+            }
+
+            foreach (var cat_id in defaults.Defaults.Keys)
+            {
+                changes = GetDefaultsChange(mechDef, inv, cat_id);
+                if (changes != null && changes.Count > 0)
+                {
+                    changed = true;
+                    apply_changes(changes, inv, simgame);
+                }
+            }
+
+            if (changed)
+                mechDef.SetInventory(inv.Select(i => i.item).ToArray());
+        }
+
+        private void apply_changes(List<inv_change> changes, List<InvItem> inv, SimGameState simgame)
+        {
+            var dm = UnityGameInstance.BattleTechGame.DataManager;
+            foreach (var invChange in changes)
+            {
+                if (invChange.IsAdd)
+                {
+                    var r = DefaultHelper.CreateRef(invChange.Id, invChange.Type, dm, simgame);
+                    r.SetData(invChange.Location, 0, ComponentDamageLevel.Functional, true);
+                    inv.Add(new RefInvItem(r, r.MountedLocation));
+                }
+                else if (invChange.IsRemove)
+                {
+                    var to_remove = inv.FirstOrDefault(i =>
+                        i.location == invChange.Location && i.item.ComponentDefID == invChange.Id);
+                    if (to_remove != null)
+                        inv.Remove(to_remove);
+                }
+            }
+        }
     }
 }

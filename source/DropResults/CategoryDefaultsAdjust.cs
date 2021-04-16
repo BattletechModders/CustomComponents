@@ -39,7 +39,25 @@ namespace CustomComponents
 
         private void changes_to_mechlab(List<DefaultFixer.inv_change> inv_changes, Queue<IChange> changes, List<SlotInvItem> inventory)
         {
-
+            foreach (var invChange in inv_changes)
+            {
+                if (invChange.IsAdd)
+                {
+                    var slot = DefaultHelper.CreateSlot(invChange.Id, invChange.Type);
+                    changes.Enqueue(new AddDefaultChange(invChange.Location, slot));
+                    inventory.Add(new SlotInvItem(slot, invChange.Location));
+                }
+                else if (invChange.IsRemove)
+                {
+                    var slot = inventory.FirstOrDefault(i =>
+                        i.location == invChange.Location && i.slot.ComponentRef.ComponentDefID == invChange.Id);
+                    if (slot != null)
+                    {
+                        changes.Enqueue(new RemoveChange(invChange.Location, slot.slot));
+                        inventory.Remove(slot);
+                    }
+                }
+            }
         }
     }
 }
