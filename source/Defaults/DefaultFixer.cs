@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime;
 using BattleTech;
 using BattleTech.UI;
 using HBS.Extensions;
@@ -57,6 +58,26 @@ namespace CustomComponents
             public bool used_now => item != null;
             public bool used_after = false;
             public MechComponentRef item;
+
+            public bool mode { get; private set; }
+
+            public string DefId => mode ? mrecord.Component.Description.Id : crecord.Item.Description.Id;
+            public ComponentType Type => mode ? mrecord.Component.ComponentType : crecord.Item.ComponentType;
+            public ChassisLocations Location => mode ? mrecord.Location : crecord.Location;
+
+            public usage_record(MultiCategoryDefault mrecord)
+            {
+                this.mrecord = mrecord;
+                mode = true;
+            }
+
+            public usage_record(CategoryDefaultRecord crecord)
+            {
+                this.crecord = crecord;
+                mode = false;
+            }
+
+
         }
 
         private static DefaultFixer _instance;
@@ -81,11 +102,22 @@ namespace CustomComponents
             var result = new List<inv_change>();
 
             var usage = defaults.Multi.Defaults
-                .Select(i => new usage_record()
+                .Select(i => new usage_record(i));
+
+            foreach (var invItem in inventory)
+            {
+                var item = usage.FirstOrDefault(i => i.DefId == invItem.item.ComponentDefID
+                                                     && i.Location == invItem.location && !i.used_now);
+                if (item != null)
+                    item.item = invItem.item;
+                else
                 {
-                    mrecord = i,
-                    item = inventory.FirstOrDefault(a => a.location == i.Location && a.item.ComponentDefID == i.DefID)?.item
-                });
+                    foreach (var cat_desc in defaults.Multi.UsedCategories)
+                    {
+                        
+                    }
+                }
+            }
 
             var free = defaults.Multi.UsedCategories.Select(i => new
             {
@@ -176,12 +208,6 @@ namespace CustomComponents
             }
             return result;
         }
-
-        internal void FixMechs(List<MechDef> mechDefs, SimGameState simgame)
-        {
-            throw new NotImplementedException();
-        }
-
         public List<inv_change> GetDefaultsChange(MechDef mech, IEnumerable<InvItem> inventory, string category)
         {
             var record = DefaultsDatabase.Instance[mech];
@@ -191,27 +217,12 @@ namespace CustomComponents
                     .Select(i => inv_change.Remove(i.item.ComponentDefID, i.location))
                     .ToList();
 
+
+
             var usage = defaults.Defaults
-                .Select(i => new usage_record()
-                {
-                    crecord = i,
-                    item = inventory.FirstOrDefault(a => a.location == i.Location && a.item.ComponentDefID == i.Item.Description.Id)?.item
-                });
+                .Select(i => new usage_record(i))
+                .ToList();
 
-
-            var items_of_category = inventory
-                .Where(i => i.item.IsCategory(category))
-                .Select(i => new { i.item, cat = i.item.GetCategory(category), location = i.location })
-                .Select(i => new
-                {
-                    item = i.item,
-                    def = i.item.IsDefault(),
-                    num = i.cat.Weight,
-                    fix = i.item.IsModuleFixed(mech),
-                    remove = i.item.HasFlag(CCF.NoRemove)
-                }).ToList();
-
-            var used_records = new List<(free_record record, int value)>();
             var free = defaults.CategoryRecord.LocationLimits
                 .Where(i => i.Value.Min > 0)
                 .Select(i =>
@@ -221,10 +232,64 @@ namespace CustomComponents
                         free = i.Value.Min
                     })
                 .ToList();
+            
+            foreach (var invItem in inventory)
+            {
+                var item = usage.FirstOrDefault(i => i.DefId == invItem.item.ComponentDefID
+                                                     && i.Location == invItem.location && !i.used_now);
+                if (item != null)
+                {
+                    item.item = invItem.item;
+                }
+                else if (invItem.item.IsCategory(category, out var cat))
+                {
+                    foreach (var freeRecord in free.Where(i => i.location.HasFlag(item.Location)))
+                        freeRecord.free -= cat.Weight;
+                }
+            }
 
+            var used_records = new List<(free_record record, int value)>();
+            var result = new List<inv_change>();
 
+            foreach (var usageRecord in usage)
+            {
+                used_records.Clear();
+                bool fit = true;
+                foreach (var freeRecord in free.Where(i => i.location.HasFlag(usageRecord.Location)))
+                {
+                    if (freeRecord.free >= usageRecord.crecord.Category.Weight)
+                        used_records.Add((freeRecord, usageRecord.crecord.Category.Weight));
+                    else
+                    {
+                        fit = false;
+                        break;
+                    }
+                }
 
-            return null;
+                usageRecord.used_after = fit;
+                if (fit)
+                    foreach (var used in used_records)
+                        used.record.free -= used.value;
+
+                if (usageRecord.used_after != usageRecord.used_now)
+                {
+                    var d = usageRecord.mrecord;
+                    if (usageRecord.used_after)
+                        result.Add(inv_change.Add(d.DefID, d.ComponentType, d.Location));
+                    else
+                        result.Add(inv_change.Remove(d.DefID, d.Location));
+                }
+            }
+
+            return result;
         }
+
+
+        internal void FixMechs(List<MechDef> mechDefs, SimGameState simgame)
+        {
+            //TODO FIX MECHS!
+        }
+
+
     }
 }
