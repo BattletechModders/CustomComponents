@@ -46,7 +46,7 @@ namespace CustomComponents.Patches
 
                 foreach (var grab_handler in item.ComponentRef.Def.GetComponents<IOnItemGrabbed>())
                 {
-                    grab_handler.OnItemGrabbed(item, ___mechLab, __instance);
+                    grab_handler.OnItemGrabbed(item, ___mechLab, __instance.loadout.Location);
                 }
 
                 ___mechLab.ValidateLoadout(false);

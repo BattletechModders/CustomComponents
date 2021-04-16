@@ -52,7 +52,7 @@ namespace CustomComponents
         private static FlagsController _instance;
         private Dictionary<string, Flag> flags_database = new Dictionary<string, Flag>();
         private HashSet<string> all_flags = new HashSet<string>();
-        private List<flag_record> flag_records;
+        private List<flag_record> flag_records = new List<flag_record>();
 
 
         public static FlagsController Instance

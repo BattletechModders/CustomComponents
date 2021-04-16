@@ -241,21 +241,38 @@ namespace CustomComponents
             return "Category: " + CategoryID;
         }
 
-        public void OnItemGrabbed(IMechLabDraggableItem item, MechLabPanel mechLab, MechLabLocationWidget widget)
+        public void OnItemGrabbed(IMechLabDraggableItem item, MechLabPanel mechLab, ChassisLocations location)
         {
+            void apply_changes(List<DefaultFixer.inv_change> changes)
+            {
+
+                foreach (var invChange in changes)
+                {
+                    if(invChange.IsAdd)
+                        DefaultHelper.AddMechLab(invChange.Id, invChange.Type, invChange.Location);
+
+                    else if (invChange.IsRemove)
+                        DefaultHelper.RemoveMechLab(invChange.Id, invChange.Type, invChange.Location);
+                }
+            }
+
             Control.LogDebug(DType.ComponentInstall, $"- Category {CategoryID}");
             Control.LogDebug(DType.ComponentInstall, $"-- search replace for {item.ComponentRef.ComponentDefID}");
 
-            var replace = DefaultFixer.Shared.GetReplaceFor(mechLab.activeMechDef, CategoryID, widget.loadout.Location, mechLab.sim);
+            var mechlab = MechLabHelper.CurrentMechLab;
+            var mech = mechlab.ActiveMech;
 
-            if (replace == null)
-            {
-                Control.LogDebug(DType.ComponentInstall, $"-- no replacement, skipping");
+        var record = CategoryDescriptor[mech];
+            if (record?.MinLimited != true)
                 return;
-            }
 
-            DefaultHelper.AddMechLab(replace);
-            Control.LogDebug(DType.ComponentInstall, $"-- added {replace.ComponentDefID} to {replace.MountedLocation}");
+            var changes = DefaultFixer.Instance.GetMultiChange(mech, mech.Inventory.ToInvItems());
+            if (changes != null)
+                apply_changes(changes);
+            changes = DefaultFixer.Instance.GetDefaultsChange(mech, mech.Inventory.ToInvItems(), CategoryID);
+            if (changes != null)
+                apply_changes(changes);
+
             mechLab.ValidateLoadout(false);
         }
 

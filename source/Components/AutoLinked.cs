@@ -18,7 +18,7 @@ namespace CustomComponents
 
         public Link[] Links { get; set; }
 
-        public void OnItemGrabbed(IMechLabDraggableItem item, MechLabPanel mechLab, MechLabLocationWidget w)
+        public void OnItemGrabbed(IMechLabDraggableItem item, MechLabPanel mechLab, ChassisLocations location)
         {
             if (Links != null && Links.Length > 0)
             {

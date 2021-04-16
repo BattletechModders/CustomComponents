@@ -262,7 +262,7 @@ namespace CustomComponents
                     foreach (var validator in item.ComponentRef.Def.GetComponents<IOnItemGrabbed>())
                     {
                         Control.LogDebug(DType.DefaultHandle, $" -  {validator.GetType()}");
-                        validator.OnItemGrabbed(item, mechlab, repair_widget);
+                        validator.OnItemGrabbed(item, mechlab, repair_widget.loadout.Location);
                     }
                     mechlab.ForceItemDrop(item);
                 }
@@ -312,7 +312,7 @@ namespace CustomComponents
             {
                 foreach (var validator in item.ComponentRef.Def.GetComponents<IOnItemGrabbed>())
                 {
-                    validator.OnItemGrabbed(item, mechlab, strip_widget);
+                    validator.OnItemGrabbed(item, mechlab, strip_widget.loadout.Location);
                 }
                 mechlab.ForceItemDrop(item);
             }
