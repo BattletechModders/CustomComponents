@@ -51,8 +51,6 @@ namespace CustomComponents
                 var harmony = HarmonyInstance.Create("io.github.denadan.CustomComponents");
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
 
-                //Registry.RegisterPreProcessor(new AdjustDescriptionPreProcessor());
-
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
                 Logger.Log("Loaded CustomComponents v3.0.1 for bt 1.9.1");
 
@@ -72,6 +70,7 @@ namespace CustomComponents
                 Validator.RegisterDropValidator(pre: TagRestrictionsHandler.Shared.ValidateDrop);
                 Validator.RegisterDropValidator(HardpointController.Instance.PreValidateDrop, HardpointController.Instance.ReplaceValidatorDrop, HardpointController.Instance.PostValidatorDrop);
                 Validator.RegisterDropValidator(EquipLocationController.Instance.PreValidateDrop);
+
 
                 if (Settings.RunAutofixer)
                 {
@@ -94,7 +93,9 @@ namespace CustomComponents
                             AutoFixer.Shared.RegisterMechFixer(AutoFixer.Shared.EmptyFixer, tag);
                 }
 
+                
                 Validator.RegisterClearInventory(CategoryController.ClearInventory);
+                Validator.RegisterOnInstalled(DefaultFixer.Instance.OnInstalled);
 
                 FlagsController.Instance.RegisterFlag(CCF.AutoRepair);
                 FlagsController.Instance.RegisterFlag(CCF.NoRemove);

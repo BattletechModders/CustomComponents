@@ -311,5 +311,10 @@ namespace CustomComponents
                 }
             }
         }
+
+        public void OnInstalled(WorkOrderEntry_InstallComponent order, SimGameState state, MechDef mech)
+        {
+            FixMech(state, mech);
+        }
     }
 }

@@ -2,6 +2,7 @@
 using BattleTech.UI;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 
 namespace CustomComponents
 {
@@ -17,7 +18,13 @@ namespace CustomComponents
         private static List<ValidateMechCanBeFieldedDelegate> field_validators =
             new List<ValidateMechCanBeFieldedDelegate>();
         internal static List<ClearInventoryDelegate> clear_inventory = new List<ClearInventoryDelegate>();
+        private static List<OnInstalledDelegate> on_onstalled = new List<OnInstalledDelegate>();
 
+        public static void RegisterOnInstalled(OnInstalledDelegate onInstalled)
+        {
+            if(onInstalled != null)
+                on_onstalled.Add(onInstalled);
+        }
         /// <summary>
         /// register new AddValidator
         /// </summary>
@@ -44,6 +51,11 @@ namespace CustomComponents
         public static void RegisterClearInventory(ClearInventoryDelegate clear)
         {
             if (clear != null) clear_inventory.Add(clear);
+        }
+
+        public static IEnumerable<OnInstalledDelegate> GetOnInstalled()
+        {
+            return on_onstalled;
         }
 
         internal static IEnumerable<PreValidateDropDelegate> GetPre(MechComponentDef component)

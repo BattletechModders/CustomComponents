@@ -24,6 +24,11 @@ namespace CustomComponents.Patches
                 {
                     handler.OnInstalled(order, __instance, mech);
                 }
+
+                foreach (var onInstalledDelegate in Validator.GetOnInstalled())
+                {
+                    onInstalledDelegate(order, __instance, mech);
+                }
                 Control.LogDebug(DType.ComponentInstall, $"ML_InstallComponent complete");
 
             }

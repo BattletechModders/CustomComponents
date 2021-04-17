@@ -12,7 +12,7 @@ namespace CustomComponents
     /// component use category logic
     /// </summary>
     [CustomComponent("Category", true)]
-    public class Category : SimpleCustomComponent, IAfterLoad, IOnInstalled, IReplaceValidateDrop,
+    public class Category : SimpleCustomComponent, IAfterLoad,  IReplaceValidateDrop,
         IReplaceIdentifier, IAdjustDescription, IOnItemGrabbed,
         IAdjustValidateDrop
     {
@@ -63,78 +63,6 @@ namespace CustomComponents
             }
 
             Registry.ProcessCustomFactories(Def, CategoryDescriptor.Defaults, false);
-        }
-
-        public void OnInstalled(WorkOrderEntry_InstallComponent order, SimGameState state, MechDef mech)
-        {
-            Control.LogDebug(DType.ComponentInstall, $"- Category");
-            if (order.PreviousLocation != ChassisLocations.None)
-            {
-                Control.LogDebug(DType.ComponentInstall, "-- removing");
-                MechComponentRef def_replace = DefaultFixer.Shared.GetReplaceFor(mech, CategoryID, order.PreviousLocation, state);
-                if (def_replace != null)
-                {
-                    Control.LogDebug(DType.ComponentInstall, $"--- added {def_replace.ComponentDefID}");
-                    var inv = mech.Inventory.ToList();
-                    inv.Add(def_replace);
-                    mech.SetInventory(inv.ToArray());
-                }
-            }
-
-            if (order.DesiredLocation == ChassisLocations.None)
-                return;
-
-            var record = CategoryDescriptor[mech];
-            if (record == null)
-            {
-                Control.LogDebug(DType.ComponentInstall,
-                    $"-- {CategoryDescriptor.DisplayName} r:{CategoryDescriptor.AutoReplace}  record:null = not requre replace");
-
-                return;
-            }
-
-            if (!CategoryDescriptor.AutoReplace || record.MaxEquiped < 0 && record.MaxEquipedPerLocation < 0)
-            {
-                Control.LogDebug(DType.ComponentInstall, $"-- {CategoryDescriptor.DisplayName} r:{CategoryDescriptor.AutoReplace}  max:{record.MaxEquiped} mpr:{record.MaxEquipedPerLocation} = not requre replace");
-
-                return;
-            }
-
-
-            int n1 = mech.Inventory.Count(i => i.IsCategory(CategoryID));
-            int n2 = mech.Inventory.Count(i => i.MountedLocation == order.DesiredLocation && i.IsCategory(CategoryID));
-
-#if CCDEBUG
-            if (Control.Settings.DebugInfo.HasFlag(DType.ComponentInstall))
-            {
-                Control.LogDebug(DType.ComponentInstall, "--- list:");
-                foreach (var def in mech.Inventory
-                    .Where(i => i.MountedLocation == order.DesiredLocation && i.IsCategory(CategoryID))
-                    .Select(i => i.Def))
-                {
-                    Control.LogDebug(DType.ComponentInstall,
-                        $"---- list: {def.Description.Id}: Default:{def.IsDefault()}");
-                }
-            }
-#endif
-
-            Control.LogDebug(DType.ComponentInstall, $"-- total {n1}/{record.MaxEquiped}  location: {n2}/{record.MaxEquipedPerLocation}");
-
-            var replace = mech.Inventory.FirstOrDefault(i => !i.IsModuleFixed(mech) && (i.MountedLocation == order.DesiredLocation || CategoryDescriptor.ReplaceAnyLocation) && i.IsCategory(CategoryID) && i.IsDefault());
-
-            Control.LogDebug(DType.ComponentInstall, $"-- possible replace: {(replace == null ? "not found" : replace.ComponentDefID)}");
-
-            if (replace == null)
-                return;
-
-            bool need_replace = (record.MaxEquiped > 0 && n1 > record.MaxEquiped) ||
-                (record.MaxEquipedPerLocation > 0 && n2 > record.MaxEquipedPerLocation);
-
-            Control.LogDebug(DType.ComponentInstall, $"-- need_repalce: {need_replace}");
-
-            if (need_replace)
-                DefaultHelper.RemoveInventory(replace.ComponentDefID, mech, replace.MountedLocation, replace.ComponentDefType);
-
         }
 
         public string ReplaceValidateDrop(MechLabItemSlotElement drop_item, ChassisLocations location, Queue<IChange> changes)
