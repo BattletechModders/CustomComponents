@@ -78,6 +78,7 @@ namespace CustomComponents
                 Logger.Log("- EnableAllTags: " + Settings.DEBUG_EnableAllTags);
                 Logger.Log("- ShowConfig: " + Settings.DEBUG_ShowConfig);
                 Logger.Log("- ShowLoadedCategory: " + Settings.DEBUG_ShowLoadedCategory);
+                Logger.Log("- ShowLoadedDefaults: " + Settings.DEBUG_ShowLoadedDefaults);
 
 
                 Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);

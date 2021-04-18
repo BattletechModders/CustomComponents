@@ -14,10 +14,12 @@
 		"LogLevel": "Debug",
 		"DebugInfo" : "AutofixValidate, CustomResource",
 
-		"DEBUG_ValidateMechDefs": true,
-        "DEBUG_ShowOnlyErrors": true,
-        "DEBUG_ShowAllUnitTypes": true,
-		"DEBUG_ShowConfig" : true,
+		"DEBUG_ValidateMechDefs": false,
+        "DEBUG_ShowOnlyErrors": false,
+        "DEBUG_ShowAllUnitTypes": false,
+		"DEBUG_ShowConfig" : false,
+		"DEBUG_ShowLoadedCategory" : true,
+		"DEBUG_ShowLoadedDefaults" : true,
 		
 		"Message" : {
 		
@@ -107,6 +109,14 @@
 		{
 			"Type" : "CCCategories",
 			"Path" : "CCTestMod/test/categories"
+		},
+		{
+			"Type" : "CCDefaults",
+			"Path" : "CCTestMod/test/defaults"
+		},
+		{
+			"Type" : "UpgradeDef",
+			"Path" : "CCTestMod/test/items"
 		}
 	]
 }

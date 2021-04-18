@@ -1,5 +1,27 @@
 {
 	"Settings" : [
+		{
+			"CategoryID" : "TestCategory1",
+			"Defaults" : [
+				{ "Location" : "RightTorso", "DefID" : "TestGear_Default_2slot", "Type" : "Upgrade" },
+				{ "Location" : "RightTorso", "DefID" : "TestGear_Default_1slot", "Type" : "Upgrade" },
+				{ "Location" : "RightTorso", "DefID" : "TestGear_Default_3slot", "Type" : "Upgrade" },
+				{ "Location" : "LeftTorso", "DefID" : "TestGear_Default_2slot", "Type" : "Upgrade" },				
+				{ "Location" : "LeftTorso", "DefID" : "TestGear_Default_1slot", "Type" : "Upgrade" },				
+				{ "Location" : "LeftTorso", "DefID" : "TestGear_Default_3slot", "Type" : "Upgrade" },				
+			],
+			"UnitTypes" : [
+				{
+					"UnitType" : "MediumMech",
+					"Defaults" : [
+						{ "Location" : "RightTorso", "DefID" : "TestGear_Default_1slot", "Type" : "Upgrade" },
+						{ "Location" : "RightTorso", "DefID" : "TestGear_Default_1slot", "Type" : "Upgrade" },
+						{ "Location" : "LeftTorso", "DefID" : "TestGear_Default_1slot", "Type" : "Upgrade" },				
+						{ "Location" : "LeftTorso", "DefID" : "TestGear_Default_1slot", "Type" : "Upgrade" },				
+					],
+				}
+			]
+		}
 		
 	]
 }

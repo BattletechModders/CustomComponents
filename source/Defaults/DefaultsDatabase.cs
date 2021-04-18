@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using BattleTech;
 using Newtonsoft.Json;
 
@@ -13,9 +14,6 @@ namespace CustomComponents
         public string[] Categories { get; set; }
         public string DefID { get; set; }
         public ComponentType ComponentType { get; set; }
-
-        public bool AnyLocation { get; set; }
-
         [JsonIgnore]
         public MechComponentDef Component { get; set; }
         [JsonIgnore]
@@ -36,60 +34,8 @@ namespace CustomComponents
     {
         public CategoryDescriptorRecord CategoryRecord { get; set; }
         public CategoryDescriptor CategoryDescriptor { get; set; }
-        public List<CategoryDefaultRecord> Defaults { get; set; }
+        public List<CategoryDefaultRecord> Defaults { get; set; } = new List<CategoryDefaultRecord>();
     }
-
-    public class DefaultRecord
-    {
-        public ChassisLocations Location { get; set; }
-        public string CategoryID { get; set; }
-        public string DefID { get; set; }
-        public ComponentType Type { get; set; }
-
-        [JsonIgnore] public bool Ready { get; private set; } = false;
-        public bool Invalid => Ready && _def == null;
-
-        private MechComponentDef _def;
-        private Category _cat;
-
-        [JsonIgnore]
-        public MechComponentDef Def
-        {
-            get
-            {
-                if (!Ready)
-                    Init();
-                return _def;
-            }
-        }
-
-        [JsonIgnore]
-        public Category Category
-        {
-            get
-            {
-                if (!Ready)
-                    Init();
-                return _cat;
-            }
-        }
-
-        private void Init()
-        {
-            Ready = true;
-            _def = DefaultHelper.GetComponentDef(DefID, Type);
-            if (_def == null)
-                return;
-            if (!_def.IsCategory(CategoryID, out _cat))
-            {
-                _def = null;
-                return;
-            }
-        }
-
-    }
-
-
 
 
     public class DefaultsDatabase
@@ -108,6 +54,11 @@ namespace CustomComponents
             ChassisLocations.RightLeg,
         };
 
+        private class temp_idefault : IDefault
+        {
+            public string CategoryID { get; set; }
+            public DefaultsInfoRecord[] Defaults { get; set; }
+        }
 
         public class MechDefaultInfo
         {
@@ -126,8 +77,7 @@ namespace CustomComponents
         private static DefaultsDatabase _instance;
         private Dictionary<string, MechDefaultInfo> database = new Dictionary<string, MechDefaultInfo>();
         private Dictionary<string, MechComponentDef> def_cache = new Dictionary<string, MechComponentDef>();
-        private List<DefaultsInfo> load_defaults = new List<DefaultsInfo>();
-        private DefaultsInfoRecord[] default_defaults;
+        private Dictionary<string, DefaultsInfo> defaults_by_category = new Dictionary<string, DefaultsInfo>();
 
         public static DefaultsDatabase Instance
         {
@@ -160,23 +110,15 @@ namespace CustomComponents
         {
             foreach (var entry in SettingsResourcesTools.Enumerate<DefaultsInfo>("CCDefaults", customResources))
             {
-                load_defaults.Add(entry);
+                if(string.IsNullOrEmpty(entry.CategoryID))
+                    continue;
+
+                defaults_by_category[entry.CategoryID] = entry;
+
+                entry.Complete();
+                if(Control.Settings.DEBUG_ShowLoadedDefaults)
+                    Control.Log(entry.ToString());
             }
-
-
-            if (load_defaults != null)
-            {
-                var item = load_defaults.FirstOrDefault(i => i.UnitType == "*");
-                if(item != null)
-                {
-                    load_defaults.Remove(item);
-                    default_defaults = item.Records;
-                }
-                load_defaults.Sort((i, j) => -i.Priority.CompareTo(j.Priority));
-            }
-            else
-                load_defaults = new List<DefaultsInfo>();
-
         }
 
         private IEnumerable<IDefault> GetMechDefaults(MechDef mech)
@@ -200,53 +142,70 @@ namespace CustomComponents
 
                 foreach (var item in defaults.Where(i => !seen.Contains(i.CategoryID)))
                 {
-                    if (!SingleLocations.Contains(item.Location))
+                    seen.Add(item.CategoryID);
+                    if (item.Defaults == null || item.Defaults.Length == 0)
                     {
-                        Control.LogError(
-                            $"{mech.ChassisID} have default in group location {item.DefID}, skipped");
+                        result.Defaults[item.CategoryID] = null;
                         continue;
                     }
 
-                    if (!result.Defaults.TryGetValue(item.CategoryID, out var catdefault))
+                    var category = new CategoryDefault();
+                    category.CategoryDescriptor = CategoryController.Shared.GetCategory(item.CategoryID);
+                    if (category.CategoryDescriptor == null)
                     {
-                        catdefault = new CategoryDefault();
-                        catdefault.CategoryDescriptor = CategoryController.Shared.GetCategory(item.CategoryID);
-                        if (catdefault.CategoryDescriptor == null)
-                            return;
-                        catdefault.CategoryRecord = catdefault.CategoryDescriptor[mech];
-                        if (!catdefault.CategoryRecord.MinLimited)
+                        Control.LogError($"Defaults for {mech.ChassisID} have unknown category {item.CategoryID}, skipped");
+                        continue;
+                    }
+
+
+                    category.CategoryRecord = category.CategoryDescriptor[mech];
+                    if (!category.CategoryRecord.MinLimited)
+                    {
+                        Control.LogError($"{mech.ChassisID} have default of category {item.CategoryID} which not have minimum limit, skipped");
+                        continue;
+                    }
+
+
+                    foreach (var default_record in item.Defaults)
+                    {
+                        if (!SingleLocations.Contains(default_record.Location))
                         {
-                            Control.LogError($"{mech.ChassisID} have default of category {item.CategoryID} which not have minimum limit, skipped");
+                            Control.LogError(
+                                $"{mech.ChassisID} have default in group location for {default_record.DefID}, skipped");
                             continue;
                         }
-                        result.Defaults[item.CategoryID] = catdefault;
+
+                        var def = GetComponentDef(default_record.DefID, default_record.Type);
+                        if (def == null)
+                        {
+                            Control.LogError($"{mech.ChassisID} have unexisting default {default_record.DefID}[{default_record.Type}]");
+                            continue;
+                        }
+                        if (!def.IsCategory(item.CategoryID, out var c))
+                        {
+                            Control.LogError($"{mech.ChassisID} default {default_record.DefID} dont have category {item.CategoryID}");
+                            continue;
+                        }
+                        if (!def.HasFlag(CCF.NoRemove))
+                        {
+                            Control.LogError($"{mech.ChassisID} default {default_record.DefID} dont have `{CCF.NoRemove}` flag");
+                            continue;
+                        }
+
+                        var cr = new CategoryDefaultRecord()
+                        {
+                            Category = c,
+                            Item = def,
+                            Location = default_record.Location
+                        };
+
+                        category.Defaults.Add(cr);
                     }
 
-
-                    var def = DefaultHelper.GetComponentDef(item.DefID, item.Type);
-                    if (def == null)
-                    {
-                        Control.LogError($"{mech.ChassisID} have unexisting default {item.DefID}[{item.Type}]");
-                        continue;
-                    }
-                    if (!def.IsCategory(item.CategoryID, out var c))
-                    {
-                        Control.LogError($"{mech.ChassisID} default {item.DefID} dont have category {item.CategoryID}");
-                        continue;
-                    }
-                    if (!def.HasFlag(CCF.NoRemove))
-                    {
-                        Control.LogError($"{mech.ChassisID} default {item.DefID} dont have `{CCF.NoRemove}` flag");
-                        continue;
-                    }
-
-                    var cr = new CategoryDefaultRecord()
-                    {
-                        Category = c,
-                        Item = def,
-                        Location = item.Location
-                    };
-                    catdefault.Defaults.Add(cr);
+                    if (category.Defaults.Count > 0)
+                        result.Defaults[item.CategoryID] = category;
+                    else
+                        result.Defaults[item.CategoryID] = null;
                 }
             }
 
@@ -326,13 +285,33 @@ namespace CustomComponents
             result.Defaults = new Dictionary<string, CategoryDefault>();
             var defaults = GetMechDefaults(mech);
             process_defaults(result, defaults);
+
             var mechut = UnitTypeDatabase.Instance.GetUnitTypes(mech);
-            if (mechut != null)
-                foreach (var item in load_defaults.Where(i => mechut.Contains(i.UnitType)))
-                    process_defaults(result, item.Records);
-            process_defaults(result, default_defaults);
+            process_defaults(result, defaults_by_category
+                .Select(i => new temp_idefault()
+                    {
+                        Defaults = i.Value.GetDefault(mechut),
+                        CategoryID = i.Key
+                    }));
 
             return result;
+        }
+
+        private MechComponentDef GetComponentDef(string defId, ComponentType type)
+        {
+            if (def_cache.TryGetValue(defId, out var def))
+            {
+                if (def.ComponentType == type)
+                    return def;
+
+                return null;
+            }
+
+            def = DefaultHelper.GetComponentDef(defId, type);
+            if (def != null)
+                def_cache[def.Description.Id] = def;
+
+            return def;
         }
     }
 }

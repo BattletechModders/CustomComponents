@@ -19,6 +19,7 @@ namespace CustomComponents
         internal static void EnterMechLab(MechLabPanel mechlab)
         {
             mechlab_instance = new MechLabHelper(mechlab);
+            mechlab_instance.MakeLocations();
         }
 
         internal static void CloseMechLab()
@@ -123,6 +124,10 @@ namespace CustomComponents
             MechLab = mechLab;
             main = Traverse.Create(mechLab);
 
+        }
+
+        private void MakeLocations()
+        {
             LHelper_CT = new LocationHelper(MechLab.centerTorsoWidget);
             LHelper_HD = new LocationHelper(MechLab.headWidget);
             LHelper_RT = new LocationHelper(MechLab.rightTorsoWidget);
@@ -145,10 +150,10 @@ namespace CustomComponents
             all_helpers.Add(LHelper_RA);
             all_helpers.Add(LHelper_LL);
             all_helpers.Add(LHelper_RL);
-            if(LHelper_SP != null)
+            if (LHelper_SP != null)
                 all_helpers.Add(LHelper_SP);
-
         }
+
 
         internal LocationHelper GetLocationHelper(ChassisLocations location)
         {

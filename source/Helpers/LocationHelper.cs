@@ -161,20 +161,25 @@ namespace CustomComponents
             main = Traverse.Create(widget);
             var hplist = new List<HardpointInfo>();
             var mech = MechLabHelper.CurrentMechLab.ActiveMech;
-            var locationdef = mech.Chassis.GetLocationDef(widget.loadout.Location);
-            OmniHardpoints = 0;
-            foreach (var hp in locationdef.Hardpoints)
+            if (mech != null)
             {
-                if (hp.Omni)
-                    OmniHardpoints += 1;
-                else if (HardpointController.Instance.Hardpoints.TryGetValue(hp.WeaponMountValue.Name, out var hpinfo))
-                    hplist.Add(hpinfo);
-                else 
-                    Control.LogError($"{mech.ChassisID} have unknown hardpoint type {hp.WeaponMountValue.Name}");
-            }
-            hplist.Sort((a,b) => a.Compatible.Length.CompareTo(b.Compatible.Length));
+                var locationdef = mech.Chassis.GetLocationDef(widget.loadout.Location);
+                OmniHardpoints = 0;
+                foreach (var hp in locationdef.Hardpoints)
+                {
+                    if (hp.Omni)
+                        OmniHardpoints += 1;
+                    else if (HardpointController.Instance.Hardpoints.TryGetValue(hp.WeaponMountValue.Name,
+                        out var hpinfo))
+                        hplist.Add(hpinfo);
+                    else
+                        Control.LogError($"{mech.ChassisID} have unknown hardpoint type {hp.WeaponMountValue.Name}");
+                }
 
-            Hardpoints = hplist.AsReadOnly();
+                hplist.Sort((a, b) => a.Compatible.Length.CompareTo(b.Compatible.Length));
+
+                Hardpoints = hplist.AsReadOnly();
+            }
         }
 
     }

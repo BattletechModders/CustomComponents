@@ -133,6 +133,7 @@ namespace CustomComponents
         public bool DEBUG_EnableAllTags = false;
         public bool DEBUG_ShowConfig = false;
         public bool DEBUG_ShowLoadedCategory = true;
+        public bool DEBUG_ShowLoadedDefaults = true;
 
         public LogLevel LogLevel = LogLevel.Debug;
         public List<TagColor> ColorTags = new List<TagColor>();

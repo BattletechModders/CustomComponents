@@ -5,15 +5,14 @@ namespace CustomComponents
     [CustomComponent("ChassisDefaults", true)]
     public class ChassisDefaults : SimpleCustomChassis, IDefault
     {
-        public ChassisLocations Location { get; set; } = ChassisLocations.None;
         public string CategoryID { get; set; }
-        public string DefID { get; set; }
-        public ComponentType Type { get; set; }
+        public DefaultsInfoRecord[] Defaults { get; set; }
 
         public override string ToString()
         {
-            return $"ChassisDefaults: {DefID}";
+            return $"ChassisDefaults: {CategoryID}, {Defaults?.Length ?? 0} items";
         }
+
     }
 
     [CustomComponent("MultyDefaults", true)]

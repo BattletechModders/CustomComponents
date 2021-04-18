@@ -1,20 +1,37 @@
-﻿using BattleTech;
+﻿using System.Linq;
+using BattleTech;
 using fastJSON;
 using UnityEngine;
 
 namespace CustomComponents
 {
     [SerializeField]
-    public class DefaultsInfoRecord : IDefault
+    public class DefaultsInfoRecord 
     {
         public ChassisLocations Location { get; set; } = ChassisLocations.None;
-        public string CategoryID { get; set; }
         public string DefID { get; set; }
         public ComponentType Type { get; set; }
 
         public override string ToString()
         {
-            return "DefaultsInfo: " + DefID;
+            return $"[{DefID}({Type}) => {Location}]";
+        }
+    }
+
+
+    public class UnitTypeDefaultsRecord
+    {
+        public string UnitType { get; set; }
+        public DefaultsInfoRecord[] Defaults { get; set; }
+
+        public override string ToString()
+        {
+            string result = "\n- " + UnitType;
+            if(Defaults != null && Defaults.Length > 0)
+                foreach (var defaultsInfoRecord in Defaults)
+                    result += "\n-- " + defaultsInfoRecord.ToString();
+
+            return result;
         }
     }
 
@@ -22,8 +39,48 @@ namespace CustomComponents
     [SerializeField]
     public class DefaultsInfo
     {
-        public int Priority { get; set; }
-        public string UnitType { get; set; }
-        public DefaultsInfoRecord[] Records;
+        public string CategoryID { get; set; }
+        public UnitTypeDefaultsRecord[] UnitTypes { get; set; }
+        public DefaultsInfoRecord[] Defaults { get; set; }
+
+        public override string ToString()
+        {
+            string result = "Defaults for " + CategoryID;
+            if (Defaults != null && Defaults.Length > 0)
+            {
+                result += "\n- Defaults";
+                foreach (var defaultsInfoRecord in Defaults)
+                    result += "\n-- " + defaultsInfoRecord.ToString();
+            }
+
+            if (UnitTypes != null && UnitTypes.Length > 0)
+                foreach (var record in UnitTypes)
+                    result += record.ToString();
+            return result;
+        }
+
+        public void Complete()
+        {
+            if (Defaults == null && UnitTypes != null)
+            {
+                var item = UnitTypes.FirstOrDefault(i => i.UnitType == "*");
+                if (item != null)
+                    Defaults = item.Defaults;
+            }
+        }
+
+        public DefaultsInfoRecord[] GetDefault(string[] unit_types)
+        {
+            if (unit_types == null || unit_types.Length == 0)
+                return Defaults;
+
+            foreach (var record in UnitTypes)
+            {
+                if (unit_types.Contains(record.UnitType))
+                    return record.Defaults;
+            }
+
+            return Defaults;
+        }
     }
 }
