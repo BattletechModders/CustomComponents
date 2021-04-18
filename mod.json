@@ -12,12 +12,12 @@
 	
 	"Settings" : {
 		"LogLevel": "Debug",
-		"DebugInfo" : "UnitType",
+		"DebugInfo" : "AutofixValidate, CustomResource",
 
-		"DEBUG_ValidateMechDefs": false,
-        "DEBUG_ShowOnlyErrors": false,
+		"DEBUG_ValidateMechDefs": true,
+        "DEBUG_ShowOnlyErrors": true,
         "DEBUG_ShowAllUnitTypes": true,
-
+		"DEBUG_ShowConfig" : true,
 		
 		"Message" : {
 		
@@ -104,6 +104,9 @@
 	},
 	
 	"Manifest": [
-
+		{
+			"Type" : "CCCategories",
+			"Path" : "CCTestMod/test/categories"
+		}
 	]
 }

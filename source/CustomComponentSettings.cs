@@ -43,7 +43,7 @@ namespace CustomComponents
         NONE = 0,
         SalvageProccess = 1,
         Hardpoints = 1 << 1,
-        ShowConfig = 1 << 2,
+        RESERVED0 = 1 << 2,
         ComponentInstall = 1 << 3,
         MechValidation = 1 << 4,
         CCLoading = 1 << 5,
@@ -60,7 +60,7 @@ namespace CustomComponents
         Icons = 1 << 16,
         AutoFixFAKE = 1 << 17,
         AutoFixBase = 1 << 18,
-        DetailTagValidation = 1 << 19,
+        RESERVED1 = 1 << 19,
         AutofixValidate = 1 << 20,
         UnitType = 1 << 21,
         FULL = 0xffffff,
@@ -132,6 +132,7 @@ namespace CustomComponents
         public bool DEBUG_ShowAllUnitTypes = true;
         public bool DEBUG_EnableAllTags = false;
         public bool DEBUG_ShowConfig = false;
+        public bool DEBUG_ShowLoadedCategory = true;
 
         public LogLevel LogLevel = LogLevel.Debug;
         public List<TagColor> ColorTags = new List<TagColor>();

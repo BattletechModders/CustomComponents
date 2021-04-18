@@ -54,7 +54,7 @@ namespace CustomComponents
                     continue;
                 }
 
-                Control.LogDebug(DType.CustomResource, $" - total {settings.Settings} entries loaded");
+                Control.LogDebug(DType.CustomResource, $" - total {settings.Settings.Count} entries loaded");
 
                 foreach (var settingsEntry in settings.Settings)
                 {

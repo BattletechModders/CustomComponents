@@ -34,38 +34,20 @@ namespace CustomComponents
             foreach (var category in SettingsResourcesTools.Enumerate<CategoryDescriptor>("CCCategories", customResources))
             {
                 AddCategory(category);
+                Control.Log($"Category {category.Name}({category.DisplayName}) registred");
             }
         }
 
         private void AddCategory(CategoryDescriptor category)
         {
-#if CCDEBUG
-            Control.Logger.LogDebug($"Add Category: {category.Name}");
-#endif
             if (Categories.TryGetValue(category.Name, out var c))
-            {
-#if CCDEBUG
-                Control.Logger.LogDebug($"Already have, apply: {category.Name}");
-#endif
-                category.Init();
                 c.Apply(category);
-            }
             else
-            {
-#if CCDEBUG
-                Control.Logger.LogDebug($"Adding new: {category.Name}");
-#endif
                 Categories[category.Name] = category;
-                category.Init();
-            }
 
-#if CCDEBUG
-            Control.Logger.LogDebug($"Current Categories");
-            foreach (var categoryDescriptor in Categories)
-            {
-                Control.Logger.LogDebug($" - {categoryDescriptor.Value.Name}");
-            }
-#endif
+            category.Init();
+            if(Control.Settings.DEBUG_ShowLoadedCategory)
+                Control.Log(category.ToString());
         }
 
         internal CategoryDescriptor GetOrCreateCategory(string name)

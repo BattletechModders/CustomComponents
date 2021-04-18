@@ -77,6 +77,7 @@ namespace CustomComponents
                 Logger.Log("- ShowAllUnitTypes: " + Settings.DEBUG_ShowAllUnitTypes);
                 Logger.Log("- EnableAllTags: " + Settings.DEBUG_EnableAllTags);
                 Logger.Log("- ShowConfig: " + Settings.DEBUG_ShowConfig);
+                Logger.Log("- ShowLoadedCategory: " + Settings.DEBUG_ShowLoadedCategory);
 
 
                 Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);
@@ -136,6 +137,7 @@ namespace CustomComponents
 
         public static void FinishedLoading(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
+
             Control.LogDebug(DType.CustomResource, "Custom Resource Load started");
             CategoryController.Shared.Setup(customResources);
             DefaultsDatabase.Instance.Setup(customResources);

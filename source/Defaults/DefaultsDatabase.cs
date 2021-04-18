@@ -193,6 +193,9 @@ namespace CustomComponents
         {
             void process_defaults(MechDefaultInfo result, IEnumerable<IDefault> defaults)
             {
+                if(defaults == null)
+                    return;
+
                 var seen = new HashSet<string>(result.Defaults.Keys);
 
                 foreach (var item in defaults.Where(i => !seen.Contains(i.CategoryID)))
@@ -252,6 +255,7 @@ namespace CustomComponents
             var multi = new MultiRecord() { Defaults = new List<MultiCategoryDefault>() };
 
             var mech_multi = GetMechMultiDefauls(mech);
+
             if (mech_multi != null)
                 foreach (var m in mech_multi)
                 {
