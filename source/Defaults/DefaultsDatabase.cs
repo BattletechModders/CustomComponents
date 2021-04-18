@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 using Newtonsoft.Json;
@@ -161,13 +162,23 @@ namespace CustomComponents
             {
                 load_defaults.Add(entry);
             }
-            var item = load_defaults.FirstOrDefault(i => i.UnitType == "*");
+
+
+            if (load_defaults != null)
             {
-                load_defaults.Remove(item);
-                default_defaults = item.Records;
+                var item = load_defaults.FirstOrDefault(i => i.UnitType == "*");
+                if(item != null)
+                {
+                    load_defaults.Remove(item);
+                    default_defaults = item.Records;
+                }
+                load_defaults.Sort((i, j) => -i.Priority.CompareTo(j.Priority));
             }
-            load_defaults.Sort((i, j) => -i.Priority.CompareTo(j.Priority));
+            else
+                load_defaults = new List<DefaultsInfo>();
+
         }
+
         private IEnumerable<IDefault> GetMechDefaults(MechDef mech)
         {
             return mech.Chassis.GetComponents<IDefault>();

@@ -26,5 +26,19 @@ namespace CustomComponents
         {
             return item == null ? null : FlagsController.Instance[item.Def];
         }
+
+
+        public static bool IsDefault(this MechComponentDef cdef)
+        {
+            return FlagsController.Instance[cdef].Default;
+        }
+        public static bool IsDefault(this MechComponentRef cref)
+        {
+            return FlagsController.Instance[cref.Def].Default;
+        }
+        public static bool IsDefault(this BaseComponentRef cref)
+        {
+            return FlagsController.Instance[cref.Def].Default;
+        }
     }
 }

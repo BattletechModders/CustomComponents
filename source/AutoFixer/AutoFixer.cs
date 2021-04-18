@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 using HBS.Collections;
+using Harmony;
 
 namespace CustomComponents
 {
@@ -53,44 +54,20 @@ namespace CustomComponents
                     mechDef.Refresh();
             }
 
-            var work_list = mechDefs.Where(i => i != null && i.Chassis != null).Select(i => new mech_record(i))
-                .ToList();
-            var temp_work_list = new List<MechDef>();
-
-            Control.LogDebug(DType.AutoFixBase, $"Running Autofixer for total {work_list.Count} mechdefs");
-
-            foreach (var pair in tagfixers)
+            var work_list = new List<MechDef>();
+            foreach (var mechDef in mechDefs)
             {
-
-
-                foreach (var mechRecord in work_list.Where(i => !i.processed))
-                    if (mechRecord.tags.Contains(pair.Key))
-                    {
-                        mechRecord.processed = true;
-                        temp_work_list.Add(mechRecord.mech);
-                    }
-                Control.LogDebug(DType.AutoFixBase, $"-- tag:{pair.Key} mechdefs:{temp_work_list.Count} af:{pair.Value.Count}");
-                foreach (var autoFixerDelegate in pair.Value)
-                {
-                    try
-                    {
-                        autoFixerDelegate(temp_work_list, null);
-                    }
-                    catch (Exception e)
-                    {
-                        Control.LogError($"Exception in {pair.Key} Autofixer {autoFixerDelegate.Method.Name}", e);
-                    }
-                }
+                var ut = UnitTypeDatabase.Instance[mechDef];
+                if(ut == null || !ut.Contains(Control.Settings.IgnoreAutofixUnitType))
+                    work_list.Add(mechDef);
             }
 
-            temp_work_list = work_list.Where(i => !i.processed).Select(i => i.mech).ToList();
-
-            Control.LogDebug(DType.AutoFixBase, $"-- default: mechdefs:{temp_work_list.Count} af:{fixers.Count}");
+            Control.LogDebug(DType.AutoFixBase, $"-- default: mechdefs:{work_list.Count} af:{fixers.Count}");
             foreach (var autoFixerDelegate in fixers)
             {
                 try
                 {
-                    autoFixerDelegate(temp_work_list, null);
+                    autoFixerDelegate(work_list, null);
                 }
                 catch (Exception e)
                 {
@@ -100,11 +77,25 @@ namespace CustomComponents
 
             if (Control.Settings.DEBUG_ValidateMechDefs)
             {
+                work_list.Clear();
+                foreach (var mechDef in mechDefs)
+                {
+                    var ut = UnitTypeDatabase.Instance[mechDef];
+                    if (ut == null || !ut.Contains(Control.Settings.IgnoreAutofixUnitType))
+                        work_list.Add(mechDef);
+                }
+                DEBUG_ValidateAll.Validate(work_list);
+            }
 
+            if (Control.Settings.DEBUG_ShowAllUnitTypes)
+            {
+                UnitTypeDatabase.Instance.ShowRegistredTypes();
 
-
-                DEBUG_ValidateAll.Validate(temp_work_list);
-
+                foreach (var mechDef in mechDefs)
+                {
+                    var ut = UnitTypeDatabase.Instance[mechDef];
+                    Control.LogDebug(DType.UnitType, $"{mechDef.Description.Id}: [{ (ut == null ? "null" : ut.Join(null, ", "))}]");
+                }
             }
 
             Control.LogDebug(DType.AutoFixBase, $"-- done");
@@ -126,39 +117,19 @@ namespace CustomComponents
 
             mechDefs = mechDefs.Where(i => i.Chassis != null).Where(i => !i.IgnoreAutofix()).ToList();
 
-            var work_list = mechDefs.Where(i => i != null && i.Chassis != null).Select(i => new mech_record(i))
-                .ToList();
-            var temp_work_list = new List<MechDef>();
-
-            foreach (var pair in tagsavefixers)
+            var work_list = new List<MechDef>();
+            foreach (var mechDef in mechDefs)
             {
-                foreach (var mechRecord in work_list.Where(i => !i.processed))
-                    if (mechRecord.tags.Contains(pair.Key))
-                    {
-                        mechRecord.processed = true;
-                        temp_work_list.Add(mechRecord.mech);
-                    }
-
-                foreach (var autoFixerDelegate in pair.Value)
-                {
-                    try
-                    {
-                        autoFixerDelegate(temp_work_list, null);
-                    }
-                    catch (Exception e)
-                    {
-                        Control.LogError($"Exception in {pair.Key} Autofixer {autoFixerDelegate.Method.Name}", e);
-                    }
-                }
+                var ut = UnitTypeDatabase.Instance[mechDef];
+                if (ut == null || !ut.Contains(Control.Settings.IgnoreAutofixUnitType))
+                    work_list.Add(mechDef);
             }
-
-            temp_work_list = work_list.Where(i => !i.processed).Select(i => i.mech).ToList();
 
             foreach (var autoFixerDelegate in savegamefixers)
             {
                 try
                 {
-                    autoFixerDelegate(temp_work_list, null);
+                    autoFixerDelegate(work_list, null);
                 }
                 catch (Exception e)
                 {
@@ -173,52 +144,10 @@ namespace CustomComponents
             savegamefixers.Add(fixer);
         }
 
-        public void RegisterMechFixer(AutoFixerDelegate fixer, string tag)
-        {
-            if (string.IsNullOrEmpty(tag))
-            {
-                RegisterMechFixer(fixer);
-                return;
-            }
-
-            List<AutoFixerDelegate> list = null;
-            if (!tagfixers.TryGetValue(tag, out list))
-            {
-                list = new List<AutoFixerDelegate>();
-                tagfixers[tag] = list;
-            }
-            list.Add(fixer);
-
-            if (!tagsavefixers.TryGetValue(tag, out list))
-            {
-                list = new List<AutoFixerDelegate>();
-                tagsavefixers[tag] = list;
-            }
-            list.Add(fixer);
-
-        }
-
         public void RegisterSaveMechFixer(AutoFixerDelegate fixer)
         {
             savegamefixers.Add(fixer);
         }
-
-        public void RegisterSaveMechFixer(AutoFixerDelegate fixer, string tag)
-        {
-            if (string.IsNullOrEmpty(tag))
-            {
-                RegisterSaveMechFixer(fixer);
-            }
-
-            List<AutoFixerDelegate> list = null;
-            if (!tagsavefixers.TryGetValue(tag, out list))
-            {
-                list = new List<AutoFixerDelegate>();
-                tagsavefixers[tag] = list;
-            }
-            list.Add(fixer);
-        }
-
 
 
         internal void RemoveEmptyRefs(List<MechDef> mechDefs, SimGameState state)

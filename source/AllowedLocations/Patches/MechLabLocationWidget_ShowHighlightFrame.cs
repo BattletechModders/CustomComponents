@@ -11,6 +11,7 @@ namespace CustomComponents.Patches
 {
     [HarmonyPatch(typeof(MechLabLocationWidget))]
     [HarmonyPatch("ShowHighlightFrame")]
+    [HarmonyPatch(new Type[] {typeof(MechComponentRef), typeof(WeaponDef), typeof(bool), typeof(bool)})]
     public static class MechLabLocationWidget_ShowHighlightFrame
     {
         [HarmonyPrefix]

@@ -35,7 +35,6 @@ namespace CustomComponents
                 Control.LogError("Null unit type, skipping");
             }
 
-            Control.LogDebug(DType.UnitType, $"Unit type [{unitType.Name}] registred");
             var old = types.FirstOrDefault(i => i.Name == unitType.Name);
             if (old != null)
             {
@@ -44,6 +43,7 @@ namespace CustomComponents
             }
 
             types.Add(unitType);
+            Control.Log("UnitType " + unitType.Name + " Registred");
         }
 
         public string[] this[MechDef mech] => GetUnitTypes(mech);
@@ -74,6 +74,16 @@ namespace CustomComponents
         public string[] CheckCustom(MechDef mech)
         {
             return mech.Is<UnitTypeCustom>(out var ut) ? ut.Types : null;
+        }
+
+        public void ShowRegistredTypes()
+        {
+            if (!Control.Settings.DebugInfo.HasFlag(DType.UnitType))
+                return;
+            foreach (var unitType in types)
+            {
+                Control.LogDebug(DType.UnitType, unitType.ToString());
+            }
         }
     }
 

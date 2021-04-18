@@ -18,7 +18,7 @@ namespace CustomComponents
                 var f = componentDef.Flags();
                     if (f[CCF.Invalid])
                     {
-                        __result = UIColor.Red;
+                        __result = Control.Settings.InvalidFlagBackgroundColor;
                     }
                     else if (f.Default)
                     {

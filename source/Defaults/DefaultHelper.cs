@@ -17,18 +17,6 @@ namespace CustomComponents
         private static Dictionary<string, bool> defaults = new Dictionary<string, bool>();
 
 
-        public static bool IsDefault(this MechComponentDef cdef)
-        {
-            return FlagsController.Instance[cdef].Default;
-        }
-        public static bool IsDefault(this MechComponentRef cref)
-        {
-            return FlagsController.Instance[cref.Def].Default;
-        }
-        public static bool IsDefault(this BaseComponentRef cref)
-        {
-            return FlagsController.Instance[cref.Def].Default;
-        }
 
         public static bool IsModuleFixed(this MechComponentRef item, MechDef mech)
         {

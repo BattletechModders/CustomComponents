@@ -46,7 +46,7 @@ namespace CustomComponents
             public flag_record parent_flag;
             public bool has_parent { get => parent_flag == null; }
             public flag_record[] child_flags;
-            public bool has_children { get => child_flags == null || child_flags.Length == 0; }
+            public bool has_children { get => child_flags != null && child_flags.Length != 0; }
         }
 
         private static FlagsController _instance;
@@ -98,29 +98,38 @@ namespace CustomComponents
 
         private Flag BuildFlags(MechComponentDef item)
         {
+            Control.LogDebug(DType.Flags, "BuildFlags for " + item.Description.Id);
             var result = new Dictionary<string, bool>();
             foreach (var record in flag_records)
-                result[record.name] = record.check_flag(item);
-
-            foreach(var record in flag_records.Where(i => i.has_children))
             {
-                if(result[record.name])
+                var v= record.check_flag(item);
+                result[record.name] = v;
+                Control.LogDebug(DType.Flags, $"-- {record.name} : {v}");
+
+            }
+
+            foreach (var record in flag_records.Where(i => i.has_children))
+            {
+                Control.LogDebug(DType.Flags, $"- {record.name} : ChildFlags check");
+                if (result[record.name])
                 {
                     foreach (var subrecord in record.child_flags)
                         result[subrecord.name] = true;
+                    Control.LogDebug(DType.Flags, $"-- true : set all childs");
                 }
                 else
                 {
                     var r = true;
-                    foreach(var subrecord in record.child_flags)
+                    foreach (var subrecord in record.child_flags)
                     {
-                        if(!result[subrecord.name])
+                        if (!result[subrecord.name])
                         {
                             r = false;
                             break;
                         }
                     }
                     result[record.name] = r;
+                    Control.LogDebug(DType.Flags, $"-- false : set to {r} by childs");
                 }
             }
 
@@ -188,6 +197,7 @@ namespace CustomComponents
 
             flag_records.Add(record);
             all_flags.Add(record.name);
+            Control.Log("Flag " + name + " registred");
         }
     }
 }

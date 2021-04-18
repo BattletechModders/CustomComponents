@@ -22,7 +22,7 @@ namespace CustomComponents
             var tonnage = MechLabHelper.CurrentMechLab.ActiveMech.Chassis.Tonnage;
             if (tonnage != Tonnage)
             {
-                return (new Localize.Text(Control.Settings.Message.Tonnage_ValidateAllow, item.ComponentRef.Def.Description.UIName, Tonnage)).ToString();
+                return (new Localize.Text(Control.Settings.Message.Tonnage_AddAllow, item.ComponentRef.Def.Description.UIName, Tonnage)).ToString();
             }
 
             return string.Empty;

@@ -87,6 +87,16 @@ namespace CustomComponents
 
         public string PreValidateDrop(MechLabItemSlotElement item, ChassisLocations location)
         {
+            var allowed = item.ComponentRef.Is<IAllowedLocations>(out var al)
+                ? al.GetLocationsFor(MechLabHelper.CurrentMechLab.ActiveMech)
+                : item.ComponentRef.Def.AllowedLocations;
+
+
+            if ((location & allowed) <= ChassisLocations.None)
+                return new Text(Control.Settings.Message.Base_AddWrongLocation,
+                    item.ComponentRef.Def.Description.Name, location, 
+                    item.ComponentRef.Def.Description.UIName).ToString();
+
             return string.Empty;
         }
 

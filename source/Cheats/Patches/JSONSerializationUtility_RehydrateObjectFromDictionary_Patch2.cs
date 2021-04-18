@@ -19,7 +19,7 @@ namespace CustomComponents
         {
             try
             {
-                if (!Control.Settings.TestEnableAllTags)
+                if (!Control.Settings.DEBUG_EnableAllTags)
                 {
                     return;
                 }

@@ -3,7 +3,6 @@ using fastJSON;
 using Harmony;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace CustomComponents.ExtendedDetails
 {

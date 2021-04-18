@@ -53,9 +53,9 @@ namespace CustomComponents
                 tonnage > Max)
             {
                 if (Min == Max)
-                    return (new Localize.Text(Control.Settings.Message.Tonnage_ValidateAllow, item.ComponentRef.Def.Description.UIName, Min)).ToString();
+                    return (new Localize.Text(Control.Settings.Message.Tonnage_AddAllow, item.ComponentRef.Def.Description.UIName, Min)).ToString();
                 else
-                    return (new Localize.Text(Control.Settings.Message.Tonnage_ValidateLimit, item.ComponentRef.Def.Description.UIName, Min, Max)).ToString();
+                    return (new Localize.Text(Control.Settings.Message.Tonnage_AddLimit, item.ComponentRef.Def.Description.UIName, Min, Max)).ToString();
             }
 
             return string.Empty;

@@ -1,0 +1,24 @@
+		{
+			"Type" : "CCDefaults",
+			"Path" : "CCTestMod/test/defaults"
+		},
+		{
+			"Type" : "CCCategories",
+			"Path" : "CCTestMod/test/categories"
+		},
+		{
+			"Type" : "CCTagRestrictions",
+			"Path" : "CCTestMod/test/TagRestriction"
+		},
+		{
+			"Type" : "CustomSVGIcon",
+			"Path" : "CCTestMod/test/icon"
+		},
+		{
+			"Type" : "CCHardpoints",
+			"Path" : "CCTestMod/test/hardpoints"
+		},
+		{
+			"Type" : "CCCEquipLocationTag",
+			"Path" : "CCTestMod/test/equiplocation"
+		}

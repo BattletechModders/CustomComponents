@@ -119,18 +119,7 @@ namespace CustomComponents
                     return true;
                 }
 
-                try
-                {
-                    return def.MechTags.IgnoreAutofix() || def.Chassis.IgnoreAutofix();
-                }
-                catch
-                {
-                    //Control.LogError("5.got error");
-                    //Control.LogError($"got error. try to show {def}");
-                    //Control.LogError($"Tags of {def.ChassisID} not null but null. WTF???  IS NULL!");
-                    return true;
-                }
-
+                return false;
             }
             catch
             {
@@ -178,27 +167,6 @@ namespace CustomComponents
             return target.GetComponent<T>() ?? target.AddComponent(factory.Invoke());
         }
 
-        public static bool IgnoreAutofix(this ChassisDef def)
-        {
-            return def.ChassisTags.IgnoreAutofix();
-        }
-    }
-
-    public static class TagSetExtensions
-    {
-        public static bool IgnoreAutofix(this TagSet set)
-        {
-            if (set == null)
-            {
-                Control.LogError("Found empty tagset! disabling autofixer");
-                throw new NullReferenceException();
-            }
-
-            if (Control.Settings.ignoreAutofixTags == null)
-                return false;
-
-            return set.ContainsAny(Control.Settings.ignoreAutofixTags);
-        }
     }
 
     public static class MechComponentRefExtensions

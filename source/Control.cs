@@ -3,6 +3,7 @@ using Harmony;
 using HBS.Logging;
 using HBS.Util;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -11,6 +12,7 @@ using System.Reflection;
 
 namespace CustomComponents
 {
+
     public static class Control
     {
         public static CustomComponentSettings Settings = new CustomComponentSettings();
@@ -25,7 +27,7 @@ namespace CustomComponents
         {
             Logger = HBS.Logging.Logger.GetLogger("CustomComponents", LogLevel.Debug);
             SetupLogging(directory);
-            
+
             try
             {
                 try
@@ -40,19 +42,41 @@ namespace CustomComponents
                     Logger.LogError("Couldn't load settings", e);
                     Settings = new CustomComponentSettings();
                 }
-                Logger.LogError($"{Settings.TestEnableAllTags}");
 
 
                 Settings.Complete();
 
-                LogDebug(DType.ShowConfig, JSONSerializationUtility.ToJSON(Settings));
+                if (Control.Settings.DEBUG_ShowConfig)
+                    Log(JSONSerializationUtility.ToJSON(Settings));
 
 
                 var harmony = HarmonyInstance.Create("io.github.denadan.CustomComponents");
-                harmony.PatchAll(Assembly.GetExecutingAssembly());
+                try
+                {
+                    harmony.PatchAll(Assembly.GetExecutingAssembly());
+                }
+                catch (AmbiguousMatchException ame)
+                {
+                    var values = "";
+                    foreach (DictionaryEntry dictionaryEntry in ame.Data)
+                    {
+                        values += $"  {dictionaryEntry.Key} : {dictionaryEntry.Value}\n";
+                    }
+                    Control.LogError("AmbiguousMatchException\n" + values);
+                }
+
+                var version = Assembly.GetExecutingAssembly().GetName().Version;
 
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
-                Logger.Log("Loaded CustomComponents v3.0.1 for bt 1.9.1");
+                Logger.Log($"Loaded CustomComponents {version.ToString(3)} for bt 1.9.1");
+                Logger.Log("DebugInfo: " + Settings.DebugInfo);
+                Logger.Log("- DumpMechDefs:" + Settings.DEBUG_DumpMechDefs);
+                Logger.Log("-- MechDefsDir: " + Settings.DEBUG_MechDefsDir);
+                Logger.Log("- ValidateMechDefs: " + Settings.DEBUG_ValidateMechDefs);
+                Logger.Log("-- ShowOnlyErrors: " + Settings.DEBUG_ShowOnlyErrors);
+                Logger.Log("- ShowAllUnitTypes: " + Settings.DEBUG_ShowAllUnitTypes);
+                Logger.Log("- EnableAllTags: " + Settings.DEBUG_EnableAllTags);
+                Logger.Log("- ShowConfig: " + Settings.DEBUG_ShowConfig);
 
 
                 Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);
@@ -60,13 +84,13 @@ namespace CustomComponents
                 Validator.RegisterMechValidator(FlagsController.Instance.ValidateMech, FlagsController.Instance.CanBeFielded);
                 Validator.RegisterMechValidator(EquipLocationController.Instance.ValidateMech, EquipLocationController.Instance.CanBeFielded);
                 Validator.RegisterMechValidator(HardpointController.Instance.ValidateMech, HardpointController.Instance.CanBeFielded);
-                
-                if(Control.Settings.CheckWeaponCount)
+
+                if (Control.Settings.CheckWeaponCount)
                 {
                     Validator.RegisterMechValidator(WeaponsCountFix.CheckWeapons, WeaponsCountFix.CheckWeaponsFielded);
                 }
-                
-                
+
+
                 Validator.RegisterDropValidator(pre: TagRestrictionsHandler.Shared.ValidateDrop);
                 Validator.RegisterDropValidator(HardpointController.Instance.PreValidateDrop, HardpointController.Instance.ReplaceValidatorDrop, HardpointController.Instance.PostValidatorDrop);
                 Validator.RegisterDropValidator(EquipLocationController.Instance.PreValidateDrop);
@@ -76,24 +100,13 @@ namespace CustomComponents
                 {
                     if (Settings.FixDeletedComponents)
                         AutoFixer.Shared.RegisterMechFixer(AutoFixer.Shared.RemoveEmptyRefs);
-
                     if (Settings.FixSaveGameMech)
-                    {
                         AutoFixer.Shared.RegisterSaveMechFixer(AutoFixer.Shared.ReAddFixed);
-                    }
-
                     if (Settings.FixDefaults)
                         AutoFixer.Shared.RegisterMechFixer(DefaultFixer.Instance.FixMechs);
-
-                    if (Settings.DebugInfo.HasFlag(DType.AutoFixFAKE))
-                        AutoFixer.Shared.RegisterMechFixer(DEBUGTOOLS.SHOWTAGS);
-
-                    if(Settings.ignoreAutofixTags != null && Settings.ignoreAutofixTags.Count > 0)
-                        foreach (var tag in Settings.ignoreAutofixTags)
-                            AutoFixer.Shared.RegisterMechFixer(AutoFixer.Shared.EmptyFixer, tag);
                 }
 
-                
+
                 Validator.RegisterClearInventory(CategoryController.ClearInventory);
                 Validator.RegisterOnInstalled(DefaultFixer.Instance.OnInstalled);
 
@@ -101,11 +114,17 @@ namespace CustomComponents
                 FlagsController.Instance.RegisterFlag(CCF.NoRemove);
                 FlagsController.Instance.RegisterFlag(CCF.HideFromInv);
                 FlagsController.Instance.RegisterFlag(CCF.NoSalvage);
-                FlagsController.Instance.RegisterFlag(CCF.Default,(item) => item.Is<IDefault>(), new[] { CCF.AutoRepair, CCF.NoRemove, CCF.HideFromInv, CCF.NoSalvage });
+                FlagsController.Instance.RegisterFlag(CCF.Default, (item) => item.Is<IDefault>(), new[] { CCF.AutoRepair, CCF.NoRemove, CCF.HideFromInv, CCF.NoSalvage });
                 FlagsController.Instance.RegisterFlag(CCF.NotBroken);
                 FlagsController.Instance.RegisterFlag(CCF.NotDestroyed);
                 FlagsController.Instance.RegisterFlag(CCF.Invalid);
                 FlagsController.Instance.RegisterFlag(CCF.Vital);
+
+                if (Settings.UnitTypes != null && Settings.UnitTypes.Length > 0)
+                    foreach (var tagUnitType in Settings.UnitTypes)
+                    {
+                        UnitTypeDatabase.Instance.RegisterUnitType(tagUnitType);
+                    }
 
                 Logger.LogDebug("done");
             }
@@ -150,7 +169,7 @@ namespace CustomComponents
         }
         public static void LogError(string message, Exception e)
         {
-                Logger.LogError(LogPrefix + message, e);
+            Logger.LogError(LogPrefix + message, e);
         }
         public static void LogError(Exception e)
         {

@@ -4,6 +4,8 @@ namespace CustomComponents
     public class TagRestrictions
     {
         public string Tag;
+        public string[] ApplyTo;
+        public string[] IgnoreOn;
         public string[] RequiredTags;
         public string[] RequiredAnyTags;
         public string[] IncompatibleTags;
