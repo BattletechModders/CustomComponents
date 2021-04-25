@@ -104,14 +104,14 @@ namespace CustomComponents
         /// 0 - mech.Uiname, 1 - item.Name, 2 - item.Uiname, 3 - Hardpoint Name, 4 - Harpdpoint Friendly Name,
         /// 5 - Location 
         /// </summary>
-        public string Base_AddNoHardpoins = "{0} dont have {1} hardpoints in {2}";
+        public string Base_AddNoHardpoins = "{0} dont have {4} hardpoints in {5}";
 
 
         /// <summary>
         /// 0 - mech.Uiname, 1 - item.Name, 2 - item.Uiname, 3 - Hardpoint Name, 4 - Harpdpoint Friendly Name,
         /// 5 - Location 
         /// </summary>
-        public string Base_AddNotEnoughHardpoints = "Unit dont have enough {1} hardpoints in {5}";
+        public string Base_AddNotEnoughHardpoints = $"Unit dont have enough {4} hardpoints in {5}";
 
         /// <summary>
         /// 0 - mech.Uiname, 1 - item.Name, 2 - item.Uiname, 3 - Hardpoint Name, 4 - Harpdpoint Friendly Name,

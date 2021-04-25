@@ -5,6 +5,7 @@ using BattleTech;
 using BattleTech.UI;
 using HBS;
 using Localize;
+using Harmony;
 
 namespace CustomComponents
 {
@@ -117,13 +118,25 @@ namespace CustomComponents
         {
             if (item.ComponentRef.ComponentDefType != ComponentType.Weapon)
                 return string.Empty;
-            var weapon = item.ComponentRef.Def as WeaponDef;
 
+            var weapon = item.ComponentRef.Def as WeaponDef;
+            
+            Control.LogDebug(DType.Hardpoints, $"PreValidateDrop {weapon.Description.Id}[{weapon.WeaponCategoryValue.Name}]");
 
             var lhepler = MechLabHelper.CurrentMechLab.GetLocationHelper(location);
-            if (lhepler.OmniHardpoints == 0 ||
+            if (lhepler.OmniHardpoints == 0 &&
                 lhepler.Hardpoints.All(i => !i.Compatible.Contains(weapon.WeaponCategoryValue.Name)))
             {
+                if (Control.Settings.DebugInfo.HasFlag(DType.Hardpoints))
+                {
+                    Control.LogDebug(DType.Hardpoints, $"- omni: {lhepler.OmniHardpoints}");
+                    foreach (var hp in lhepler.Hardpoints)
+                    {
+                        Control.LogDebug(DType.Hardpoints,
+                            $"- id:{hp.ID} omni:{hp.AcceptOmni} comp:{hp.Compatible.Join()}");
+                    }
+                }
+
                 var mech = MechLabHelper.CurrentMechLab.ActiveMech;
                 return new Localize.Text(Control.Settings.Message.Base_AddNoHardpoins, mech.Description.UIName,
                     weapon.Description.Name, weapon.Description.UIName, weapon.WeaponCategoryValue.Name, weapon.WeaponCategoryValue.FriendlyName,

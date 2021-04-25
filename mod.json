@@ -12,7 +12,7 @@
 	
 	"Settings" : {
 		"LogLevel": "Debug",
-		"DebugInfo" : "AutofixValidate, CustomResource, ComponentInstall",
+		"DebugInfo" : "AutofixValidate, CustomResource, ComponentInstall, Hardpoints",
 
 		"DEBUG_ValidateMechDefs": false,
         "DEBUG_ShowOnlyErrors": false,
@@ -40,8 +40,8 @@
 			"Base_LocationDestroyed" : "Cannot add {0} to {1}: The location is Destroyed.",
 			"Base_AddWrongLocation" : "Cannot add {0} to {1}: Component is not permitted in this location.",
 			"Base_ValidateWrongLocation" : "Unit have {0} installed in wrong location",
-			"Base_AddNoHardpoins" : "{0} dont have {1} hardpoints in {2}",
-			"Base_AddNotEnoughHardpoints" : "Unit dont have enough {1} hardpoints in {5}",
+			"Base_AddNoHardpoins" : "{0} dont have {4} hardpoints in {5}",
+			"Base_AddNotEnoughHardpoints" : "Unit dont have enough {4} hardpoints in {5}",
 			"Base_ValidateNotEnoughHardpoints" : "Unit dont have enough {1} hardpoints in {5}",
 			"Base_AddInventorySize" : "Can't install {0} - not enough free space at {1}",
 		},
