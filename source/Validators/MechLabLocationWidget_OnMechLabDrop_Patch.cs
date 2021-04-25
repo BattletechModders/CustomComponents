@@ -130,8 +130,14 @@ namespace CustomComponents
                         return false;
                 }
                 Control.LogDebug(DType.ComponentInstall, $"- apply changes");
+                if(Control.Settings.DebugInfo.HasFlag(DType.ComponentInstall))
+                    foreach (var change in to_execute)
+                    {
+                        Control.LogDebug(DType.ComponentInstall, $"-- " + change.ToString());
+                    }
 
-                foreach (IApplyChange change in changes)
+
+                foreach (IApplyChange change in to_execute)
                 {
                     change?.DoChange();
                 }

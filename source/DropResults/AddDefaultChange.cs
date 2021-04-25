@@ -21,5 +21,10 @@ namespace CustomComponents
             Control.LogDebug(DType.ComponentInstall, "--- added");
             item.MountedLocation = location;
         }
+
+        public override string ToString()
+        {
+            return $"AddDefaultChange: {item.ComponentRef.ComponentDefID} => {location}";
+        }
     }
 }

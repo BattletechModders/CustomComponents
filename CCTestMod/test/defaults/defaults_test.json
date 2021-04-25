@@ -12,13 +12,14 @@
 			],
 			"UnitTypes" : [
 				{
-					"UnitType" : "MediumMech",
+					"UnitType" : "LightMech",
 					"Defaults" : [
 						{ "Location" : "RightTorso", "DefID" : "TestGear_Default_1slot", "Type" : "Upgrade" },
-						{ "Location" : "RightTorso", "DefID" : "TestGear_Default_1slot", "Type" : "Upgrade" },
-						{ "Location" : "LeftTorso", "DefID" : "TestGear_Default_1slot", "Type" : "Upgrade" },				
+						{ "Location" : "CenterTorso", "DefID" : "TestGear_Default_1slot", "Type" : "Upgrade" },
 						{ "Location" : "LeftTorso", "DefID" : "TestGear_Default_1slot", "Type" : "Upgrade" },				
 					],
+					
+					
 				}
 			]
 		}

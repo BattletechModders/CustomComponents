@@ -105,5 +105,10 @@ namespace CustomComponents
         {
             MechLabHelper.CurrentMechLab.MechLab.ForceItemDrop(item);
         }
+
+        public override string ToString()
+        {
+            return $"AddFromInventoryChange: {item.ComponentRef.ComponentDefID} => {location}";
+        }
     }
 }

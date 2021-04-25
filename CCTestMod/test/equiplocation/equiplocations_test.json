@@ -1,0 +1,11 @@
+{
+	"Settings" : [
+		{
+			"Tag" : "TestCategory1",
+			"Default" : "RightTorso, LeftTorso",
+			"UnitTypes" : [
+				{ "UnitType" : "LightMech", "Location" : "Torso" }
+			]
+		}
+	]
+}

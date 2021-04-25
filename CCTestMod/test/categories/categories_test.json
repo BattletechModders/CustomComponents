@@ -9,12 +9,17 @@
 				{ "Location" : "RightTorso", "Min" : 2, "Max" : 2 },
 				{ "Location" : "LeftTorso", "Min" : 2, "Max" : 2 }
 			],
+			"DefaultCustoms" : {
+				"Sorter" : { "Order" : 0  },
+				"AllowedLocationsTAG" : { "Tag" : "TestCategory1" }		
+			},
 			"UnitLimits" : [
 				{
 					"UnitType" : "LightMech",
 					"Limits" : [
 						{ "Location" : "RightTorso", "Min" : 1, "Max" : 1 },
-						{ "Location" : "LeftTorso", "Min" : 1, "Max" : 1 }
+						{ "Location" : "LeftTorso", "Min" : 1, "Max" : 1 },
+						{ "Location" : "CenterTorso", "Min" : 1, "Max" : 1 }
 					]
 				},
 				{

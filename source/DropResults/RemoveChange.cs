@@ -64,5 +64,10 @@ namespace CustomComponents
 
             return changed;
         }
+
+        public override string ToString()
+        {
+            return $"RemoveChange: {item.ComponentRef.ComponentDefID} =x {location}";
+        }
     }
 }

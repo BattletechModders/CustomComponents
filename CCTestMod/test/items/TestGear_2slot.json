@@ -1,14 +1,14 @@
 {
     "Custom" : {
-		"Flags" : { "flags" : ["default"] },
-		"Category" : { "CategoryID" : "TestCategory1" }
+		"Category" : { "CategoryID" : "TestCategory1", "Weight" : 2  },
+		"Color" : { "UIColor" : "Gold" }
     },
 
    "Description" : {
-      "Id" : "TestGear_Default_1slot",
-      "Name" : "TestSlot1",
-      "UIName" : "TestSlot1",
-      "Details" : "This is test slot default 1 size",
+      "Id" : "TestGear_2slot",
+      "Name" : "Test2",
+      "UIName" : "Test2",
+      "Details" : "This is test slot  2 size",
       "Icon" : "uixSvgIcon_quantity",
       "Cost" : 0,
       "Rarity" : 99,
@@ -20,14 +20,14 @@
    "ComponentSubType" : "NotSet",
    "PrefabIdentifier" : "",
    "BattleValue" : 0,
-   "InventorySize" : 1,
+   "InventorySize" : 2,
    "Tonnage" : 0,
    "AllowedLocations" : "All",
    "DisallowedLocations" : "None",
    "CriticalComponent" : false,
    "ComponentTags": {
       "items": [
-         ""
+         "component_type_stock"
       ],
       "tagSetSourceFile": ""
    },

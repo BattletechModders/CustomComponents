@@ -34,7 +34,7 @@ namespace CustomComponents
             foreach (var category in SettingsResourcesTools.Enumerate<CategoryDescriptor>("CCCategories", customResources))
             {
                 AddCategory(category);
-                Control.Log($"Category {category.Name}({category.DisplayName}) registred");
+                Control.Log($"Category {category.Name}({category.DisplayName}) registered");
             }
         }
 

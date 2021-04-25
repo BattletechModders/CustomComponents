@@ -142,6 +142,10 @@ namespace CustomComponents
 
                 foreach (var item in defaults.Where(i => !seen.Contains(i.CategoryID)))
                 {
+                    //    Control.Log($"item: {item}" );
+                    //    Control.Log($"item: {item.CategoryID}, {item.Defaults?.Length}");
+
+
                     seen.Add(item.CategoryID);
                     if (item.Defaults == null || item.Defaults.Length == 0)
                     {
@@ -159,6 +163,8 @@ namespace CustomComponents
 
 
                     category.CategoryRecord = category.CategoryDescriptor[mech];
+
+
                     if (!category.CategoryRecord.MinLimited)
                     {
                         Control.LogError($"{mech.ChassisID} have default of category {item.CategoryID} which not have minimum limit, skipped");

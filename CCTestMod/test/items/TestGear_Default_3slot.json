@@ -22,8 +22,8 @@
    "BattleValue" : 0,
    "InventorySize" : 3,
    "Tonnage" : 0,
-   "AllowedLocations" : "LeftTorso, RightTorso",
-   "DisallowedLocations" : "None",
+   "AllowedLocations" : "Torso",
+   "DisallowedLocations" : "All",
    "CriticalComponent" : false,
    "ComponentTags": {
       "items": [

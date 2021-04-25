@@ -23,7 +23,7 @@ namespace CustomComponents
             public CategoryLimit limit;
             public int free;
             public int can_free;
-            public List<(MechComponentRef item, int weight)> items = new List<(MechComponentRef item, int weight)>();
+            public List<(SlotInvItem item, int weight)> items = new List<(SlotInvItem item, int weight)>();
         }
 
         /// <summary>
@@ -83,12 +83,18 @@ namespace CustomComponents
             }
 
 
-            var removed = changes.OfType<RemoveChange>().Select(i => i.item.ComponentRef).ToList();
+            var removed = changes.OfType<RemoveChange>().Select(i => i.item).ToList();
 
             var limits = record.LocationLimits.Where(i => i.Key.HasFlag(location) && i.Value.Max >= 0).ToList();
-            var inventory = mech.Inventory
-                .Where(i => !removed.Contains(i))
-                .Select(i => new { item = i, def = i.IsDefault(), fixd = i.IsModuleFixed(mech), cat = i.IsCategory(CategoryID, out var c) ? c : null })
+            var inventory = MechLabHelper.CurrentMechLab.FullInventory
+                .Where(i => !removed.Contains(i.slot))
+                .Select(i => new
+                {
+                    item = i, 
+                    def = i.slot.ComponentRef.IsDefault(), 
+                    fixd = i.slot.ComponentRef.IsModuleFixed(mech), 
+                    cat = i.slot.ComponentRef.IsCategory(CategoryID, out var c) ? c : null
+                })
                 .Where(i => i.cat != null)
                 .ToList();
 
@@ -100,7 +106,7 @@ namespace CustomComponents
                 free.free = limit.Value.Max;
                 free.locations = limit.Key;
                 free.limit = limit.Value;
-                foreach (var item_info in inventory.Where(i => limit.Key.HasFlag(i.item.MountedLocation)))
+                foreach (var item_info in inventory.Where(i => limit.Key.HasFlag(i.item.location)))
                 {
                     if (item_info.fixd)
                         free.free -= item_info.cat.Weight;
@@ -115,11 +121,11 @@ namespace CustomComponents
                 free_places.Add(free);
             }
 
-            var to_remove = new List<(MechComponentRef item, int weight)>();
+            var to_remove = new List<(SlotInvItem item, int weight)>();
 
             foreach (var free in free_places)
             {
-                foreach (var item in to_remove.Where(i => free.locations.HasFlag(i.item.MountedLocation)))
+                foreach (var item in to_remove.Where(i => free.locations.HasFlag(i.item.location)))
                 {
                     free.free += item.weight;
                     free.can_free -= item.weight;
@@ -150,15 +156,10 @@ namespace CustomComponents
                 }
             }
 
-            foreach (var item in to_remove)
+
+            foreach (var item in to_remove.Select(i => i.item))
             {
-                var slot = MechLabHelper.CurrentMechLab.FullInventory.FirstOrDefault(i => i.ComponentRef == item.item);
-                if (slot == null)
-                {
-                    Control.LogError($"Cannot find slot to remove for {item.item.ComponentDefID} in {item.item.MountedLocation}");
-                }
-                else
-                    changes.Enqueue(new RemoveChange(slot.MountedLocation, slot));
+                changes.Enqueue(new RemoveChange(item.location, item.slot));
             }
 
             return string.Empty;

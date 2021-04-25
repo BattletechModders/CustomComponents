@@ -12,7 +12,7 @@
 	
 	"Settings" : {
 		"LogLevel": "Debug",
-		"DebugInfo" : "AutofixValidate, CustomResource",
+		"DebugInfo" : "AutofixValidate, CustomResource, ComponentInstall",
 
 		"DEBUG_ValidateMechDefs": false,
         "DEBUG_ShowOnlyErrors": false,
@@ -20,6 +20,7 @@
 		"DEBUG_ShowConfig" : false,
 		"DEBUG_ShowLoadedCategory" : true,
 		"DEBUG_ShowLoadedDefaults" : true,
+		"DEBUG_EnableAllTags" : false,
 		
 		"Message" : {
 		
@@ -71,7 +72,6 @@
 		
 		"CategoryDescriptionColor" : "#008000", 
 		 
-		"TestEnableAllTags": false,
 		"OmniTechFlag": "cc_omnitech",
         "OmniTechCostBySize": false,
         "OmniTechInstallCost": 1,
@@ -117,6 +117,10 @@
 		{
 			"Type" : "UpgradeDef",
 			"Path" : "CCTestMod/test/items"
+		},
+		{
+			"Type" : "CCCEquipLocationTag",
+			"Path" : "CCTestMod/test/equiplocation"
 		}
 	]
 }

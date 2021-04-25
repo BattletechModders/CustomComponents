@@ -110,6 +110,8 @@ namespace CustomComponents
         public static MechLabItemSlotElement CreateSlot(string id, ComponentType type)
         {
             var component_ref = new MechComponentRef(id, string.Empty, type, ChassisLocations.None, isFixed: true);
+            component_ref.DataManager = UnityGameInstance.BattleTechGame.DataManager;
+            component_ref.RefreshComponentDef();
 
             if (!component_ref.IsDefault())
             {

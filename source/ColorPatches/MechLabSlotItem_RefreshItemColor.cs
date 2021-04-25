@@ -55,8 +55,7 @@ namespace CustomComponents
                     var preinstalled = false;
                     if (___dropParent is MechLabLocationWidget widget)
                     {
-                        var helper = new LocationHelper(widget);
-                        preinstalled = __instance.ComponentRef.IsModuleFixed(helper.mechLab.activeMechDef);
+                        preinstalled = __instance.ComponentRef.IsModuleFixed((widget.parentDropTarget as MechLabPanel).activeMechDef);
                     }
 
                     if (!Control.Settings.UseDefaultFixedColor)

@@ -33,8 +33,9 @@ namespace CustomComponents
                 ChassisLocations get_location(ChassisLocations Default, EquipLocationTag.record[] records)
                 {
                     var ut = UnitTypeDatabase.Instance[mechdef];
-                    if (records == null || records.Length == 0 || ut != null || ut.Length == 0)
+                    if (records == null || records.Length == 0 || ut == null || ut.Length == 0)
                         return itemdef.AllowedLocations & Default;
+
                     var lr = records.FirstOrDefault(i => ut.Contains(i.UnitType));
                     return itemdef.AllowedLocations & (lr?.Location ?? Default);
                 }
@@ -62,7 +63,7 @@ namespace CustomComponents
                         }
                         else
                         {
-                            Control.LogError($"{itemdef.Description.Id} have unknow LocationOverridTag '{elt.Tag}'");
+                            Control.LogError($"{itemdef.Description.Id} have unknown LocationOverrideTag '{elt.Tag}'");
                             location = itemdef.AllowedLocations;
                         }
                     }
@@ -82,6 +83,7 @@ namespace CustomComponents
             foreach (var tag in SettingsResourcesTools.Enumerate<EquipLocationTag>("CCCEquipLocationTag", customResources))
             {
                 Tags[tag.Tag] = tag;
+                Control.Log($"LocationTag {tag.Tag} registered");
             }
         }
 
