@@ -23,7 +23,6 @@ namespace CustomComponents
                 {
                     return;
                 }
-
                 var baseTags = new[] { "ComponentTags", "MechTags" };
                 foreach (var baseTag in baseTags)
                     if (values.TryGetValue(baseTag, out var Tags))

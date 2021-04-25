@@ -111,8 +111,8 @@
     <Compile Include="CCLight\IReplaceIdentifier.cs" />
     <Compile Include="CCLight\Factories\IPreProcessor.cs" />
     <Compile Include="CCLight\Factories\SimpleCustom.cs" />
-    <Compile Include="DEBUGTOOLS\DEBUG_ValidateAll.cs" />
-    <Compile Include="DEBUGTOOLS\SimGameState_GetMechComponentRefForUID.cs" />
+    <Compile Include="Components\DEBUGTOOLS\DEBUG_ValidateAll.cs" />
+    <Compile Include="Components\DEBUGTOOLS\SimGameState_GetMechComponentRefForUID.cs" />
     <Compile Include="Defaults\DefaultsDatabase.cs" />
     <Compile Include="Defaults\DefaultsInfo.cs" />
     <Compile Include="Defaults\IDefaultComponent.cs" />
@@ -152,7 +152,6 @@
     <Compile Include="Defaults\DefaultFixer.cs" />
     <Compile Include="DropResults\AddDefaultChange.cs" />
     <Compile Include="DropResults\AddFromInventoryChange.cs" />
-    <Compile Include="Fixes\AbstractActor_InitEffectsStats.cs" />
     <Compile Include="Fixes\BTLoadUtils.cs" />
     <Compile Include="Fixes\ReflectionCache_Patch.cs" />
     <Compile Include="Fixes\MechDef_InsertFixedEquipmentIntoInventory.cs" />
@@ -188,7 +187,7 @@
     <Compile Include="Components\RGBColorComponent.cs" />
     <Compile Include="SorterMechInventory\Sorter.cs" />
     <Compile Include="Interfaces\IClearInventory.cs" />
-    <Compile Include="DEBUGTOOLS\DEBUGTOOLS.cs" />
+    <Compile Include="Components\DEBUGTOOLS\DEBUGTOOLS.cs" />
     <Compile Include="TagRestrictions\TagRestrictions.cs" />
     <Compile Include="TagRestrictions\TagRestrictionsHandler.cs" />
     <Compile Include="DropResults\IChange.cs" />

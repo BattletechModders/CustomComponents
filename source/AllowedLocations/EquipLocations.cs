@@ -9,11 +9,11 @@ namespace CustomComponents
 {
     public interface IAllowedLocations
     {
-        public ChassisLocations GetLocationsFor(MechDef mech);
+        ChassisLocations GetLocationsFor(MechDef mech);
     }
 
-    [CustomComponent("AllowedLocationsTAG", group: "AllowedLocation")]
-    public class EquipLocationsTAG : SimpleCustomComponent, IAllowedLocations
+    [CustomComponent("AllowedLocations")]
+    public class EquipLocations: SimpleCustomComponent, IAllowedLocations
     {
         internal string Tag { get; set; }
 
@@ -23,15 +23,17 @@ namespace CustomComponents
         }
     }
 
-    [CustomComponent("AllowedLocationsUT", group: "AllowedLocation")]
-    public class EquipLocationsUT : SimpleCustomComponent, IAllowedLocations
+    public interface IChassisAllowedLocations
     {
-        internal EquipLocationTag.record[] UnitTypes;
-        internal ChassisLocations Default = ChassisLocations.All;
+        string Tag { get; }
+        ChassisLocations Locations { get;  }
+    }
 
-        public ChassisLocations GetLocationsFor(MechDef mech)
-        {
-            return EquipLocationController.Instance[mech, Def];
-        }
+
+    [CustomComponent("ChassisAllowedLocations", true)]
+    public class CEquipLocations : SimpleCustomChassis, IChassisAllowedLocations
+    {
+        public string Tag { get; set; }
+        public ChassisLocations Locations { get; set; }
     }
 }

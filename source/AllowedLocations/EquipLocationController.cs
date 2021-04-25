@@ -30,52 +30,57 @@ namespace CustomComponents
         {
             get
             {
-                ChassisLocations get_location(ChassisLocations Default, EquipLocationTag.record[] records)
-                {
-                    var ut = UnitTypeDatabase.Instance[mechdef];
-                    if (records == null || records.Length == 0 || ut == null || ut.Length == 0)
-                        return itemdef.AllowedLocations & Default;
-
-                    var lr = records.FirstOrDefault(i => ut.Contains(i.UnitType));
-                    return itemdef.AllowedLocations & (lr?.Location ?? Default);
-                }
-
                 if (mechdef == null || itemdef == null)
                     return ChassisLocations.None;
 
-                if (!Locations.TryGetValue(mechdef.ChassisID, out var ld))
+                if (!Locations.TryGetValue(mechdef.ChassisID, out var mech_locations))
                 {
-                    ld = new Dictionary<string, ChassisLocations>();
-                    Locations[mechdef.ChassisID] = ld;
+                    mech_locations = new Dictionary<string, ChassisLocations>();
+                    Locations[mechdef.ChassisID] = mech_locations;
                 }
 
-                if (!ld.TryGetValue(itemdef.Description.Id, out var location))
+                if (!mech_locations.TryGetValue(itemdef.Description.Id, out var location))
                 {
-                    if (itemdef.Is<EquipLocationsUT>(out var el))
+                    
+                    if (itemdef.Is<EquipLocations>(out var el))
                     {
-                        location = get_location(el.Default, el.UnitTypes);
-                    }
-                    else if (itemdef.Is<EquipLocationsTAG>(out var elt))
-                    {
-                        if (Tags.TryGetValue(elt.Tag, out var tag))
+                        var info = GetAllowedLocations(mechdef, el.Tag);
+                        if (info == null)
                         {
-                            location = get_location(tag.Default, tag.UnitTypes);
+                            if (Tags.TryGetValue(el.Tag, out var record))
+                            {
+
+                                var ut = UnitTypeDatabase.Instance[mechdef];
+                                if (record.UnitTypes == null || record.UnitTypes.Length == 0 || ut == null ||
+                                    ut.Length == 0)
+                                    location = itemdef.AllowedLocations & record.Default;
+                                else
+                                {
+                                    var lr = record.UnitTypes.FirstOrDefault(i => ut.Contains(i.UnitType));
+                                    location = itemdef.AllowedLocations & (lr?.Location ?? record.Default);
+                                }
+                            }
+                            else
+                                location = itemdef.AllowedLocations;
                         }
                         else
-                        {
-                            Control.LogError($"{itemdef.Description.Id} have unknown LocationOverrideTag '{elt.Tag}'");
-                            location = itemdef.AllowedLocations;
-                        }
+                            location = info.Locations;
+
                     }
                     else
                     {
                         location = itemdef.AllowedLocations;
                     }
-                    ld[itemdef.Description.Id] = location;
+                    mech_locations[itemdef.Description.Id] = location;
                 }
 
                 return location;
             }
+        }
+
+        private IChassisAllowedLocations GetAllowedLocations(MechDef mechdef, string tag)
+        {
+            return mechdef.Chassis.GetComponents<IChassisAllowedLocations>().FirstOrDefault(i => i.Tag == tag);
         }
 
         internal void Setup(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
@@ -84,6 +89,8 @@ namespace CustomComponents
             {
                 Tags[tag.Tag] = tag;
                 Control.Log($"LocationTag {tag.Tag} registered");
+                if (Control.Settings.DEBUG_ShowLoadedAlLocations)
+                    Control.Log(tag.ToString());
             }
         }
 

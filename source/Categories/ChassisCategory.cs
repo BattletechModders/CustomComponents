@@ -5,13 +5,15 @@ using System.Linq;
 
 namespace CustomComponents
 {
+
+    [CustomComponent("ChassisCategory", true)]
     public class ChassisCategory : SimpleCustomChassis, IAfterLoad
     {
         public class record
         {
             public ChassisLocations Location { get; set; } = ChassisLocations.All;
             public int Min { get; set; } = 0;
-            public int Max { get; set; } = 1;
+            public int Max { get; set; } = -1;
 
             public override bool Equals(object obj)
             {
@@ -30,9 +32,9 @@ namespace CustomComponents
 
         public string Category { get; set; }
         private record[] Limits { get; set; }
-        
+
         [JsonIgnore]
-        public Dictionary<ChassisLocations, CategoryLimit> LocationLimits;
+        public Dictionary<ChassisLocations, CategoryLimit> LocationLimits { get; set; }
 
         public void OnLoaded(Dictionary<string, object> values)
         {

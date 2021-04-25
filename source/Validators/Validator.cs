@@ -75,12 +75,12 @@ namespace CustomComponents
         internal static IEnumerable<ReplaceValidateDropDelegate> GetReplace(MechComponentDef component)
         {
 
-            foreach (var validator in rep_drop_validators)
-                yield return validator;
 
             foreach (var item in component.GetComponents<IReplaceValidateDrop>())
                 yield return item.ReplaceValidateDrop;
 
+            foreach (var validator in rep_drop_validators)
+                yield return validator;
         }
 
         internal static IEnumerable<PostValidateDropDelegate> GetPost(MechComponentDef component)

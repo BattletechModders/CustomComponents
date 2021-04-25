@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using BattleTech;
-using Newtonsoft.Json;
+using fastJSON;
 
 namespace CustomComponents
 {
@@ -68,7 +68,7 @@ namespace CustomComponents
 
         private record[] Limits;
 
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public Dictionary<ChassisLocations, CategoryLimit> LocationLimits;
 
         public CategoryDescriptorRecord()
@@ -80,17 +80,18 @@ namespace CustomComponents
             this.Limits = baseLimits;
         }
 
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public bool MinLimited { get; set; }
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public bool MaxLimited { get; set; }
 
         public void Complete()
         {
-            if (Limits == null || Limits.Length == 0)
-                LocationLimits = new Dictionary<ChassisLocations, CategoryLimit>();
-            else
-                LocationLimits = Limits.Distinct().ToDictionary(i => i.Location, i => new CategoryLimit(i.Min, i.Max));
+            if(LocationLimits == null)
+                if (Limits == null || Limits.Length == 0)
+                    LocationLimits = new Dictionary<ChassisLocations, CategoryLimit>();
+                else
+                    LocationLimits = Limits.Distinct().ToDictionary(i => i.Location, i => new CategoryLimit(i.Min, i.Max));
 
             MinLimited = LocationLimits.Count > 0 && LocationLimits.Values.Any(i => i.Min > 0);
             MaxLimited = LocationLimits.Count > 0 && LocationLimits.Values.Any(i => i.Max >= 0);
@@ -102,6 +103,8 @@ namespace CustomComponents
             if (!string.IsNullOrEmpty(UnitType))
                 sb.Append(UnitType + ": ");
             sb.AppendLine($"MinL: {MinLimited}, MaxL: {MaxLimited}");
+            if(LocationLimits == null)
+                Complete();
             foreach (var pair in LocationLimits)
                 sb.AppendLine($"--- {pair.Key}: min: {pair.Value.Min}, max: {pair.Value.Max}");
 
@@ -113,7 +116,7 @@ namespace CustomComponents
     {
         public string displayName = "";
         public string Name { get; set; }
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public string DisplayName
         {
             get => string.IsNullOrEmpty(displayName) ? Name : displayName;
@@ -132,11 +135,13 @@ namespace CustomComponents
         public string ValidateMaximum = null;
         public string ValidateMixed = null;
 
+
         [JsonIgnore]
         public CategoryDescriptorRecord DefaultLimits { get; set; }
+
         private CategoryDescriptorRecord.record[] BaseLimits { get; set; }
         public List<CategoryDescriptorRecord> UnitLimits = new List<CategoryDescriptorRecord>();
-        [JsonIgnore] private Dictionary<string, CategoryDescriptorRecord> records = new Dictionary<string, CategoryDescriptorRecord>();
+        [Newtonsoft.Json.JsonIgnore] private Dictionary<string, CategoryDescriptorRecord> records = new Dictionary<string, CategoryDescriptorRecord>();
 
         public CategoryDescriptorRecord this[MechDef mech]
         {
@@ -150,21 +155,32 @@ namespace CustomComponents
 
                 var chassis_limits = GetMechCategoryCustom(mech);
                 if (chassis_limits != null)
+                {
                     result = new CategoryDescriptorRecord()
                     {
                         LocationLimits = chassis_limits
                     };
+                    result.Complete();
+
+                    if (Control.Settings.DEBUG_ShowLoadedCategory)
+                        Control.Log($"CategoryLimits for {Name} on {mech.Description.Id}\n" + result.ToString());
+                }
                 else
                 {
                     var ut = UnitTypeDatabase.Instance.GetUnitTypes(mech);
+                    if (ut == null)
+                        return DefaultLimits;
                     result = UnitLimits.FirstOrDefault(i => ut.Contains(i.UnitType));
+
                     if (result == null)
                         result = DefaultLimits;
+
                     if (result.LocationLimits == null)
                         result.Complete();
                 }
 
                 records[mech.ChassisID] = result;
+
                 return result;
             }
         }
@@ -200,10 +216,10 @@ namespace CustomComponents
                 ValidateMixed = source.ValidateMixed;
 
             UnitLimits = source.UnitLimits;
-            DefaultLimits = source.DefaultLimits;
+            BaseLimits = source.BaseLimits;
         }
 
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public Dictionary<string, object> Defaults = null;
 
         public void Init()
@@ -233,6 +249,8 @@ namespace CustomComponents
             }
             else
                 DefaultLimits = new CategoryDescriptorRecord(BaseLimits);
+
+
 
             if (string.IsNullOrEmpty(AddMaximumReached))
                 AddMaximumReached = Control.Settings.Message.Category_MaximumReached;

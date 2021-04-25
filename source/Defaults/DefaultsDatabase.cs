@@ -115,6 +115,8 @@ namespace CustomComponents
 
                 defaults_by_category[entry.CategoryID] = entry;
 
+                Control.Log($"Defaults for {entry.CategoryID} registered");
+
                 entry.Complete();
                 if(Control.Settings.DEBUG_ShowLoadedDefaults)
                     Control.Log(entry.ToString());
@@ -290,6 +292,11 @@ namespace CustomComponents
 
             result.Defaults = new Dictionary<string, CategoryDefault>();
             var defaults = GetMechDefaults(mech);
+
+            //if(defaults != null &&)
+            //    foreach (var a in defaults)
+            //        Control.Log(a.ToString());
+
             process_defaults(result, defaults);
 
             var mechut = UnitTypeDatabase.Instance.GetUnitTypes(mech);

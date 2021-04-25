@@ -20,6 +20,8 @@
 		"DEBUG_ShowConfig" : false,
 		"DEBUG_ShowLoadedCategory" : true,
 		"DEBUG_ShowLoadedDefaults" : true,
+		"DEBUG_ShowLoadedDefaults" : true,
+		"DEBUG_ShowLoadedAlLocations" : true,
 		"DEBUG_EnableAllTags" : false,
 		
 		"Message" : {
@@ -121,6 +123,18 @@
 		{
 			"Type" : "CCCEquipLocationTag",
 			"Path" : "CCTestMod/test/equiplocation"
+		},
+		{
+			"Type" : "ChassisDef",
+			"Path" : "CCTestMod/test/chassis"
+		},
+		{
+			"Type" : "MechDef",
+			"Path" : "CCTestMod/test/mech"
+		},
+		{
+			"Type" : "WeaponDef",
+			"Path" : "CCTestMod/test/weapons"
 		}
 	]
 }

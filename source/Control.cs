@@ -79,6 +79,7 @@ namespace CustomComponents
                 Logger.Log("- ShowConfig: " + Settings.DEBUG_ShowConfig);
                 Logger.Log("- ShowLoadedCategory: " + Settings.DEBUG_ShowLoadedCategory);
                 Logger.Log("- ShowLoadedDefaults: " + Settings.DEBUG_ShowLoadedDefaults);
+                Logger.Log("- ShowLoadedAlLocations: " + Settings.DEBUG_ShowLoadedAlLocations);
 
 
                 Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);
@@ -139,18 +140,21 @@ namespace CustomComponents
         public static void FinishedLoading(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
 
-            Control.LogDebug(DType.CustomResource, "Custom Resource Load started");
-            CategoryController.Shared.Setup(customResources);
-            DefaultsDatabase.Instance.Setup(customResources);
-            TagRestrictionsHandler.Shared.Setup(customResources);
-            EquipLocationController.Instance.Setup(customResources);
-            HardpointController.Instance.Setup(customResources);
+             var Manifests = customResources;
 
-            if (customResources.TryGetValue("CustomSVGIcon", out var icons))
+            Control.LogDebug(DType.CustomResource, "Custom Resource Load started");
+            CategoryController.Shared.Setup(Manifests);
+            DefaultsDatabase.Instance.Setup(Manifests);
+            TagRestrictionsHandler.Shared.Setup(Manifests);
+            EquipLocationController.Instance.Setup(Manifests);
+            HardpointController.Instance.Setup(Manifests);
+
+            if (Manifests.TryGetValue("CustomSVGIcon", out var icons))
                 IconController.LoadIcons(icons);
             Control.LogDebug(DType.CustomResource, " - done");
-
         }
+
+
 
         #region LOGGING
         [Conditional("CCDEBUG")]

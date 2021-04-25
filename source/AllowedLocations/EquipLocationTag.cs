@@ -18,5 +18,15 @@ namespace CustomComponents
         public string Tag { get; set; }
         public ChassisLocations Default = ChassisLocations.All;
         public record[] UnitTypes;
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder("Allowed Locations for " + Tag);
+            sb.Append("\n- Default: " + Default.ToString());
+            if(UnitTypes != null && UnitTypes.Length > 0)
+                foreach (var unitType in UnitTypes)
+                    sb.Append("\n- " + unitType.UnitType + ": " + unitType.Location.ToString());
+            return sb.ToString();
+        }
     }
 }

@@ -2,6 +2,7 @@
 	"Settings" : [
 		{
 			"Name" : "TestCategory1",
+			"DisplayName" : "First Test Category",
 			"AutoReplace" : true,
 			"AddCategoryToDescription" : true,
 			"AllowMixTags" : true,
@@ -11,7 +12,7 @@
 			],
 			"DefaultCustoms" : {
 				"Sorter" : { "Order" : 0  },
-				"AllowedLocationsTAG" : { "Tag" : "TestCategory1" }		
+				"AllowedLocations" : { "Tag" : "TestCategory1" }		
 			},
 			"UnitLimits" : [
 				{
@@ -30,6 +31,12 @@
 					]
 				}
 			]
+		},
+		{
+			"Name" : "bal_test",
+			"DisplayName" : "Weapon Test Category",
+			"AutoReplace" : true,
+			"AddCategoryToDescription" : true
 		}
 	]
 }

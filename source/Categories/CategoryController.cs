@@ -1,5 +1,6 @@
 ﻿#undef CCDEBUG
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
@@ -41,7 +42,11 @@ namespace CustomComponents
         private void AddCategory(CategoryDescriptor category)
         {
             if (Categories.TryGetValue(category.Name, out var c))
+            {
+                Control.Log("already have " + c.ToString());
                 c.Apply(category);
+                category = c;
+            }
             else
                 Categories[category.Name] = category;
 
@@ -55,6 +60,7 @@ namespace CustomComponents
             if (Categories.TryGetValue(name, out var c))
                 return c;
             c = new CategoryDescriptor { Name = name };
+            //Control.Log("create empty " + name + " for " + Environment.StackTrace);
             Categories.Add(name, c);
             return c;
         }
@@ -94,7 +100,18 @@ namespace CustomComponents
             //check all minimum values
             foreach (var category in GetCategories())
             {
-                var record = category[mechDef];
+                CategoryDescriptorRecord record;
+
+                try
+                {
+                    record = category[mechDef];
+                }
+                catch (NullReferenceException nre)
+                {
+                    Control.LogError($"mech: {mechDef.Description.Id}, category: {category.Name}", nre);
+                    continue;
+                    
+                }
 
                 if (record == null || record.LocationLimits.Count == 0)
                     continue;
