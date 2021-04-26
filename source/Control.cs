@@ -96,19 +96,7 @@ namespace CustomComponents
             }
         }
 
-        private static bool Loaded = false;
-        private static List<Action> delay_actions = new List<Action>();
-
-        public static void DelayLoading(Action delay_delegate)
-        {
-            if (delay_delegate == null)
-                return;
-
-            if (Loaded)
-                delay_delegate();
-            else
-                delay_actions.Add(delay_delegate);
-        }
+        public static bool Loaded { get; private set; }
         public static void FinishedLoading(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
             Control.LogDebug(DType.CustomResource, "Custom Resource Load started");
@@ -119,11 +107,7 @@ namespace CustomComponents
                 IconController.LoadIcons(icons);
             Control.LogDebug(DType.CustomResource, " - done");
             Loaded = true;
-            Control.LogDebug(DType.CustomResource, $"Start {delay_actions.Count} delayed loads");
-            foreach (var delayAction in delay_actions)
-            {
-                delayAction();
-            }
+
         }
 
         #region LOGGING

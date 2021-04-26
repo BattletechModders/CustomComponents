@@ -12,25 +12,12 @@ namespace CustomComponents
     {
         internal static void Validate(List<MechDef> mechdefs)
         {
-            Dictionary<MechValidationType, List<Text>> error = new Dictionary<MechValidationType, List<Text>>();
-            var val = Enum.GetValues(typeof(MechValidationType));
-            List<MechValidationType> values = new List<MechValidationType>();
-            foreach (var item in val)
-            {
-                var value = (MechValidationType)item;
-                values.Add(value);
-                error[value] = new List<Text>();
-            }
-
             foreach (var mechDef in mechdefs)
             {
                 try
                 {
-                    foreach (var pair in error)
-                    {
-                        pair.Value.Clear();
-                    }
-
+                    var dm = UnityGameInstance.BattleTechGame.DataManager;
+                    var work = new WorkOrderEntry_MechLab(WorkOrderType.MechLabGeneric, "test", "test", "test", 0);
 
                     if (mechDef == null)
                     {
@@ -54,7 +41,8 @@ namespace CustomComponents
                             continue;
                     }
 
-                    Validator.ValidateMech(error, MechValidationLevel.MechLab, mechDef);
+                    var error = MechValidationRules.ValidateMechDef(MechValidationLevel.Full, dm,
+                        mechDef, work);
                     foreach (var component in mechDef.Inventory)
                     {
                         foreach (var validator in component.GetComponents<IMechValidate>())
@@ -77,7 +65,7 @@ namespace CustomComponents
                                 Control.LogDebug(DType.AutofixValidate, $"[{pair.Key}]:{text}");
                         }
                     }
-                    if(!bad_mech && !Control.Settings.DEBUG_ShowOnlyErrors)
+                    if (!bad_mech && !Control.Settings.DEBUG_ShowOnlyErrors)
                         Control.LogDebug(DType.AutofixValidate, $"{mechDef.Description.Id} no errors");
                 }
                 catch (Exception e)
@@ -85,7 +73,6 @@ namespace CustomComponents
                     Control.LogError($"{mechDef.Description.Id} throwed exception on validation", e);
                 }
             }
-
         }
     }
 }
