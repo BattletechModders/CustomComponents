@@ -25,7 +25,7 @@ namespace CustomComponents
 
     public class CategoryDescriptorRecord
     {
-        public class record
+        public class _record
         {
             public ChassisLocations Location { get; set; } = ChassisLocations.All;
             public int Min { get; set; } = 0;
@@ -33,7 +33,7 @@ namespace CustomComponents
 
             public override bool Equals(object obj)
             {
-                var r = obj as record;
+                var r = obj as _record;
                 if (r == null)
                     return false;
 
@@ -45,18 +45,18 @@ namespace CustomComponents
                 return Location.GetHashCode();
             }
 
-            public record()
+            public _record()
             {
             }
 
-            public record(ChassisLocations location, int min, int max)
+            public _record(ChassisLocations location, int min, int max)
             {
                 this.Location = location;
                 this.Max = max;
                 this.Min = min;
             }
 
-            public record(record source)
+            public _record(_record source)
             {
                 this.Location = source.Location;
                 this.Max = source.Max;
@@ -66,7 +66,7 @@ namespace CustomComponents
 
         public string UnitType;
 
-        private record[] Limits;
+        private _record[] Limits;
 
         [Newtonsoft.Json.JsonIgnore]
         public Dictionary<ChassisLocations, CategoryLimit> LocationLimits;
@@ -75,7 +75,7 @@ namespace CustomComponents
         {
         }
 
-        public CategoryDescriptorRecord(record[] baseLimits)
+        public CategoryDescriptorRecord(_record[] baseLimits)
         {
             this.Limits = baseLimits;
         }
@@ -139,7 +139,7 @@ namespace CustomComponents
         [JsonIgnore]
         public CategoryDescriptorRecord DefaultLimits { get; set; }
 
-        private CategoryDescriptorRecord.record[] BaseLimits { get; set; }
+        private CategoryDescriptorRecord._record[] BaseLimits { get; set; }
         public List<CategoryDescriptorRecord> UnitLimits = new List<CategoryDescriptorRecord>();
         [Newtonsoft.Json.JsonIgnore] private Dictionary<string, CategoryDescriptorRecord> records = new Dictionary<string, CategoryDescriptorRecord>();
 

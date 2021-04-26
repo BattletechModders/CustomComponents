@@ -9,7 +9,7 @@ namespace CustomComponents
     [CustomComponent("ChassisCategory", true)]
     public class ChassisCategory : SimpleCustomChassis, IAfterLoad
     {
-        public class record
+        public class _record
         {
             public ChassisLocations Location { get; set; } = ChassisLocations.All;
             public int Min { get; set; } = 0;
@@ -17,7 +17,7 @@ namespace CustomComponents
 
             public override bool Equals(object obj)
             {
-                var r = obj as record;
+                var r = obj as _record;
                 if (r == null)
                     return false;
 
@@ -31,7 +31,7 @@ namespace CustomComponents
         }
 
         public string Category { get; set; }
-        private record[] Limits { get; set; }
+        private _record[] Limits { get; set; }
 
         [JsonIgnore]
         public Dictionary<ChassisLocations, CategoryLimit> LocationLimits { get; set; }

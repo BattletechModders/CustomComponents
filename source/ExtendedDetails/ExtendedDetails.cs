@@ -105,7 +105,7 @@ namespace CustomComponents.ExtendedDetails
         public string OpenBracket { get; set; }
         public string CloseBracket { get; set; }
         public string Delimiter { get; set; } = ", ";
-        public List<string> Values { get; set; } = new List<string>();
+        private List<string> Values { get; set; } = new List<string>();
 
         public void Add(string s)
         {

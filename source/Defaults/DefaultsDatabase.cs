@@ -240,13 +240,13 @@ namespace CustomComponents
 
                     if (info.Categories == null || info.Categories.Length == 0)
                     {
-                        Control.LogError($"MultiDefault record for {mech.Description.Id} have empty category list for {m.DefID}");
+                        Control.LogError($"MultiDefault _record for {mech.Description.Id} have empty category list for {m.DefID}");
                         continue;
                     }
 
                     if (info.Component == null)
                     {
-                        Control.LogError($"MultiDefault record for {mech.Description.Id} have unknown component {m.DefID}");
+                        Control.LogError($"MultiDefault _record for {mech.Description.Id} have unknown component {m.DefID}");
                         continue;
                     }
 
@@ -257,7 +257,7 @@ namespace CustomComponents
                             var cr = c.CategoryDescriptor[mech];
                             if (cr == null || !cr.MinLimited)
                             {
-                                Control.LogError($"MultiDefault record for {mech.Description.Id}, component {m.DefID}, category {category} dont have minimum limit, so defaults will be ignored");
+                                Control.LogError($"MultiDefault _record for {mech.Description.Id}, component {m.DefID}, category {category} dont have minimum limit, so defaults will be ignored");
                                 continue;
                             }
 
@@ -266,14 +266,14 @@ namespace CustomComponents
                         }
                         else
                         {
-                            Control.LogError($"MultiDefault record for {mech.Description.Id} have unknown category [{category}] for {m.DefID}");
+                            Control.LogError($"MultiDefault _record for {mech.Description.Id} have unknown category [{category}] for {m.DefID}");
                             continue;
                         }
                     }
 
                     if (info.CategoryRecords.Count == 0)
                     {
-                        Control.LogError($"MultiDefault record for {mech.Description.Id} have no applicable categories for {m.DefID}");
+                        Control.LogError($"MultiDefault _record for {mech.Description.Id} have no applicable categories for {m.DefID}");
                         continue;
                     }
 

@@ -9,7 +9,7 @@ namespace CustomComponents
 {
     public class EquipLocationTag
     {
-        public class record
+        public class _record
         {
             public string UnitType { get; set; }
             public ChassisLocations Location = ChassisLocations.All;
@@ -17,7 +17,7 @@ namespace CustomComponents
 
         public string Tag { get; set; }
         public ChassisLocations Default = ChassisLocations.All;
-        public record[] UnitTypes;
+        public _record[] UnitTypes;
 
         public override string ToString()
         {
