@@ -4,9 +4,11 @@ using Harmony;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ErosionBrushPlugin;
 
 namespace CustomComponents.ExtendedDetails
 {
+
     // this custom is not be used directly from jsons, this is a helper component used by any mod that wants to add custom description details
     public class ExtendedDetails : ICustom
     {
@@ -15,7 +17,7 @@ namespace CustomComponents.ExtendedDetails
         [JsonIgnore]
         private readonly SortedSet<ExtendedDetail> Details = new SortedSet<ExtendedDetail>();
 
-        private readonly DescriptionDef Def;
+        public  DescriptionDef Def;
 
         public static ExtendedDetails GetOrCreate(MechComponentDef def)
         {
@@ -26,6 +28,8 @@ namespace CustomComponents.ExtendedDetails
         {
             return def.GetOrCreate(() => new ExtendedDetails(def.Description));
         }
+
+        
 
         [Obsolete] // remove
         public ExtendedDetails(MechComponentDef def) : this(def.Description)
@@ -47,7 +51,14 @@ namespace CustomComponents.ExtendedDetails
 
         public void AddDetail(ExtendedDetail detail)
         {
+            //Control.Log(Def.UIName + " added " + detail.Text);
             Details.Add(detail);
+            SetDescriptionDetails();
+            //Control.Log("current :\n" + Def.Details);
+        }
+
+        public void RefreshDetails()
+        {
             SetDescriptionDetails();
         }
 
@@ -93,12 +104,23 @@ namespace CustomComponents.ExtendedDetails
     {
         public string OpenBracket { get; set; }
         public string CloseBracket { get; set; }
-        public List<string> Values { get; set; } = new List<string>();
+        private List<string> Values { get; set; } = new List<string>();
 
+        public void Add(string s)
+        {
+            Values.Add(s);
+        }
+
+        public void AddUnique(string s)
+        {
+            if(Values.Contains(s))
+                return;
+            Values.Add(s);
+        }
 
         public override string Text
         {
-            get => OpenBracket + Values.Join() + CloseBracket;
+            get => OpenBracket + Values.Distinct().Join() + CloseBracket;
 
             set
             {

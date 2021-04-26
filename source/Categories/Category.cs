@@ -45,6 +45,11 @@ namespace CustomComponents
 
         public void OnLoaded(Dictionary<string, object> values)
         {
+            Control.DelayLoading(FinishLoading);
+        }
+
+        private void FinishLoading()
+        {
             CategoryDescriptor = CategoryController.Shared.GetOrCreateCategory(CategoryID);
 
             if (CategoryDescriptor.Defaults == null)
@@ -343,7 +348,7 @@ namespace CustomComponents
                         CloseBracket = "]</color></b>\n"
                     };
 
-                detail.Values.Add(this.CategoryDescriptor.DisplayName);
+                detail.AddUnique(this.CategoryDescriptor.DisplayName);
                 ed.AddDetail(detail);
             }
         }

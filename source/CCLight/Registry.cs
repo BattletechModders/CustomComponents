@@ -151,7 +151,7 @@ namespace CustomComponents
 
                         if (component is IAdjustDescriptionED ed)
                         {
-                            ed.AdjustDescription();
+                            Control.DelayLoading(ed.AdjustDescription);
                         }
                     }
                 }

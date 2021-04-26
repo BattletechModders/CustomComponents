@@ -12,7 +12,7 @@
 	
 	"Settings" : {
 		"LogLevel": "Debug",
-		"DebugInfo" : "Icons, ComponentInstall, MechValidation",
+		"DebugInfo" : "Icons, ComponentInstall, MechValidation, CCLoadingSummary",
 
 		"Categories": [ ],
 		"TagRestrictions": [ ],
