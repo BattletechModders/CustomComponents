@@ -45,7 +45,7 @@ namespace CustomComponents
             var ccs = Shared.GetOrCreateCustomsList(identifier);
             ccs.Add(cc);
         }
-
+        
         internal static string Identifier(object target)
         {
             if (target == null)

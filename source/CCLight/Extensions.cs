@@ -39,7 +39,12 @@ namespace CustomComponents
 
         public static T GetOrCreate<T>(this MechComponentDef target, Func<T> factory) where T : ICustom
         {
-            return target.GetComponent<T>() ?? target.AddComponent(factory.Invoke());
+            var result = target.GetComponent<T>();
+            if ((result is ExtendedDetails.ExtendedDetails ed) && ed.Def != target.Description)
+            {
+                ed.Def = target.Description;
+            }
+            return result ?? target.AddComponent(factory.Invoke());
         }
     }
 
@@ -164,7 +169,13 @@ namespace CustomComponents
 
         public static T GetOrCreate<T>(this ChassisDef target, Func<T> factory) where T : ICustom
         {
-            return target.GetComponent<T>() ?? target.AddComponent(factory.Invoke());
+            var result = target.GetComponent<T>();
+            if ((result is ExtendedDetails.ExtendedDetails ed) && ed.Def != target.Description)
+            {
+                ed.Def = target.Description;
+            }
+
+            return result ?? target.AddComponent(factory.Invoke());
         }
 
     }
