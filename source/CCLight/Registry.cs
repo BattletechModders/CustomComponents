@@ -96,6 +96,11 @@ namespace CustomComponents
 
         internal static void ProcessCustomFactories(object target, Dictionary<string, object> values, bool replace = true)
         {
+            if (!Control.Loaded)
+            {
+                return;
+            }
+
             if (target == null)
             {
                 Control.LogError($"NULL item loaded");

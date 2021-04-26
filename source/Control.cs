@@ -96,6 +96,8 @@ namespace CustomComponents
             }
         }
 
+        public static bool Loaded { get; private set; }
+
         public static void FinishedLoading(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
             Control.LogDebug(DType.CustomResource, "Custom Resource Load started");
@@ -105,7 +107,7 @@ namespace CustomComponents
             if (customResources.TryGetValue("CustomSVGIcon", out var icons))
                 IconController.LoadIcons(icons);
             Control.LogDebug(DType.CustomResource, " - done");
-
+            Loaded = true;
         }
 
         #region LOGGING
