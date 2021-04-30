@@ -17,6 +17,9 @@ namespace CustomComponents
 
         public static void Postfix(object target, Dictionary<string, object> values)
         {
+            if (!Control.Loaded)
+                return;
+
             try
             {
                 Registry.ProcessCustomFactories(target, values);

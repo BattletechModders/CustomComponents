@@ -37,6 +37,14 @@
 			"DisplayName" : "Weapon Test Category",
 			"AutoReplace" : true,
 			"AddCategoryToDescription" : true
+		},
+		{
+			"Name" : "rep_test",
+			"DisplayName" : "DefaultReplacementTest",
+			"AutoReplace" : true,
+			"AddCategoryToDescription" : true,
+			"BaseLimits" : [ { "Location" : "All", "Min" : 1, "Max" : 1 } ],
+			
 		}
 	]
 }

@@ -22,7 +22,7 @@ namespace CustomComponents.Patches
             }
             catch (Exception e)
             {
-                Control.LogError(e);
+                Control.LogError($"Error in {__instance?.ComponentDefID} refreshing, check item", e);
             }
         }
     }

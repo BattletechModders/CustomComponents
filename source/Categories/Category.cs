@@ -55,11 +55,6 @@ namespace CustomComponents
 
         public void OnLoaded(Dictionary<string, object> values)
         {
-            Control.DelayLoading(FinishLoading);
-        }
-
-        private void FinishLoading()
-        {
             CategoryDescriptor = CategoryController.Shared.GetOrCreateCategory(CategoryID);
 
             if (CategoryDescriptor.Defaults == null)
@@ -69,6 +64,7 @@ namespace CustomComponents
 
             Registry.ProcessCustomFactories(Def, CategoryDescriptor.Defaults, false);
         }
+
 
         public string ReplaceValidateDrop(MechLabItemSlotElement drop_item, ChassisLocations location, Queue<IChange> changes)
         {
@@ -223,12 +219,14 @@ namespace CustomComponents
                     new ExtendedDetailList()
                     {
                         Index = 10,
-                        Identifier = "Category",
+                        Identifier =  "Category",
                         OpenBracket = $"\n<b><color={Control.Settings.CategoryDescriptionColor}>[",
                         CloseBracket = "]</color></b>\n"
                     };
 
-                detail.AddUnique(this.CategoryDescriptor.DisplayName);
+                detail.AddUnique((Control.Settings.AddWeightToCategory && Weight > 1) 
+                    ? this.CategoryDescriptor.DisplayName + ":" + Weight.ToString() 
+                    : this.CategoryDescriptor.DisplayName);
                 ed.AddDetail(detail);
             }
         }

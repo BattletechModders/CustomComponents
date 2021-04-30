@@ -285,7 +285,14 @@ namespace CustomComponents
         {
             foreach (var mechDef in mechDefs)
             {
-                FixMech(simgame, mechDef);
+                try
+                {
+                    FixMech(simgame, mechDef);
+                }
+                catch (Exception e)
+                {
+                    Control.LogError($"Error in Default autofixer for {mechDef.Description.Id}", e);
+                }
             }
         }
 

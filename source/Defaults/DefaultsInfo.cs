@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using BattleTech;
 using fastJSON;
 using UnityEngine;
@@ -71,13 +72,20 @@ namespace CustomComponents
 
         public DefaultsInfoRecord[] GetDefault(string[] unit_types)
         {
-            if (unit_types == null || unit_types.Length == 0)
-                return Defaults;
-
-            foreach (var record in UnitTypes)
+            try
             {
-                if (unit_types.Contains(record.UnitType))
-                    return record.Defaults;
+                if (unit_types == null || unit_types.Length == 0 || UnitTypes == null || UnitTypes.Length == 0)
+                    return Defaults;
+
+                foreach (var record in UnitTypes)
+                {
+                    if (unit_types.Contains(record.UnitType))
+                        return record.Defaults;
+                }
+            }
+            catch (Exception e)
+            {
+                Control.LogError(Defaults[0].DefID, e);
             }
 
             return Defaults;

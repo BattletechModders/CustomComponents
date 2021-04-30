@@ -87,7 +87,7 @@ namespace CustomComponents
                 Validator.RegisterMechValidator(FlagsController.Instance.ValidateMech, FlagsController.Instance.CanBeFielded);
                 Validator.RegisterMechValidator(EquipLocationController.Instance.ValidateMech, EquipLocationController.Instance.CanBeFielded);
                 Validator.RegisterMechValidator(HardpointController.Instance.ValidateMech, HardpointController.Instance.CanBeFielded);
-
+                Validator.RegisterMechValidator(AutoLinked.ValidateMech, AutoLinked.CanBeFielded);
                 if (Control.Settings.CheckWeaponCount)
                 {
                     Validator.RegisterMechValidator(WeaponsCountFix.CheckWeapons, WeaponsCountFix.CheckWeaponsFielded);
@@ -137,19 +137,7 @@ namespace CustomComponents
             }
         }
 
-        private static bool Loaded = false;
-        private static List<Action> delay_actions = new List<Action>();
-
-        public static void DelayLoading(Action delay_delegate)
-        {
-            if (delay_delegate == null)
-                return;
-
-            if (Loaded)
-                delay_delegate();
-            else
-                delay_actions.Add(delay_delegate);
-        }
+        public static bool Loaded { get; private set; } = false;
         public static void FinishedLoading(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
 
@@ -166,11 +154,6 @@ namespace CustomComponents
                 IconController.LoadIcons(icons);
             Control.LogDebug(DType.CustomResource, " - done");
             Loaded = true;
-            Control.LogDebug(DType.CustomResource, $"Start {delay_actions.Count} delayed loads");
-            foreach (var delayAction in delay_actions)
-            {
-                delayAction();
-            }
         }
 
 

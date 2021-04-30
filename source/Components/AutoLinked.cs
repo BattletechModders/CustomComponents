@@ -2,6 +2,7 @@
 using BattleTech;
 using BattleTech.UI;
 using System.Linq;
+using Localize;
 
 namespace CustomComponents
 {
@@ -13,7 +14,7 @@ namespace CustomComponents
     }
 
     [CustomComponent("Linked")]
-    public class AutoLinked : SimpleCustomComponent, IOnItemGrabbed, IMechValidate, IOnInstalled, IAdjustValidateDrop, IClearInventory
+    public class AutoLinked : SimpleCustomComponent, IOnItemGrabbed, IOnInstalled, IAdjustValidateDrop, IClearInventory
     {
 
         public Link[] Links { get; set; }
@@ -35,19 +36,59 @@ namespace CustomComponents
             }
         }
 
-        public void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
+        public static void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors, MechValidationLevel validationLevel, MechDef mechDef)
         {
-            if (Links?.Any(link => !mechDef.Inventory.Any(i =>
-                    i.MountedLocation == link.Location && i.ComponentDefID == link.ComponentDefId)) == true)
+            var linked = mechDef.Inventory
+                .Select(i => i.GetComponent<AutoLinked>())
+                .Where(i => i != null && i.Links != null)
+                .SelectMany(i => i.Links, (a,b) => new { custom = a, link = b}).ToList();
+
+            if (linked.Count > 0)
             {
-                errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text($"{Def.Description.Name} have critical errors, reinstall it to fix"));
+                var inv = mechDef.Inventory.ToList();
+
+                foreach (var item in linked)
+                {
+                    var found = inv.FirstOrDefault(i =>
+                        i.ComponentDefID == item.link.ComponentDefId && i.MountedLocation == item.link.Location);
+
+                    if (found == null)
+                        errors[MechValidationType.InvalidInventorySlots].Add(new Text(
+                            Control.Settings.Message.Linked_Validate,
+                            mechDef.Description.UIName, item.custom.Def.Description.Name,
+                            item.custom.Def.Description.UIName,
+                            item.link.Location));
+                    else
+                        inv.Remove(found);
+                }
             }
         }
 
-        public bool ValidateMechCanBeFielded(MechDef mechDef, MechComponentRef componentRef)
+        public static bool CanBeFielded(MechDef mechDef)
         {
-            return Links == null || Links.All(link => mechDef.Inventory.Any(i => i.MountedLocation == link.Location && i.ComponentDefID == link.ComponentDefId));
+            var linked = mechDef.Inventory
+                .Select(i => i.GetComponent<AutoLinked>())
+                .Where(i => i != null && i.Links != null)
+                .SelectMany(i => i.Links, (a, b) => new { custom = a, link = b }).ToList();
+
+            if (linked.Count > 0)
+            {
+                var inv = mechDef.Inventory.ToList();
+
+                foreach (var item in linked)
+                {
+                    var found = inv.FirstOrDefault(i =>
+                        i.ComponentDefID == item.link.ComponentDefId && i.MountedLocation == item.link.Location);
+
+                    if (found == null)
+                        return false;
+
+                }
+            }
+
+            return true;
         }
+
 
         public void OnInstalled(WorkOrderEntry_InstallComponent order, SimGameState state, MechDef mech)
         {
@@ -131,5 +172,7 @@ namespace CustomComponents
             }
             return result;
         }
+
+     
     }
 }

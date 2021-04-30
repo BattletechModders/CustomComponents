@@ -54,7 +54,7 @@
 		"TagRestrictionDropValidateRequiredTags":  false,
 		"TagRestrictionDropValidateIncompatibleTags":  true,
 		"UseDefaultFixedColor": false,
-
+		"AddWeightToCategory" : true,
         "BaseECMValidation" : true,
 		
 		"DefaultFlagBackgroundColor": "UpgradeColor",

@@ -12,7 +12,7 @@ namespace CustomComponents
         private static readonly List<ICustomFactory> Factories = new List<ICustomFactory>();
         private static readonly HashSet<string> SimpleIdentifiers = new HashSet<string>();
 
-        private static Dictionary<Type, CustomComponentAttribute> attributes = new Dictionary<Type, CustomComponentAttribute>() ;
+        private static Dictionary<Type, CustomComponentAttribute> attributes = new Dictionary<Type, CustomComponentAttribute>();
 
         public static CustomComponentAttribute GetAttributeByType(Type type)
         {
@@ -141,7 +141,7 @@ namespace CustomComponents
 
                     Control.LogDebug(DType.CCLoading, $"Created {component} for {identifier}");
 
-                    if (Database.SetCustomWithIdentifier(identifier, component, replace) )
+                    if (Database.SetCustomWithIdentifier(identifier, component, replace))
                     {
                         if (component is IAfterLoad load)
                         {
@@ -151,7 +151,7 @@ namespace CustomComponents
 
                         if (component is IAdjustDescription ed)
                         {
-                            Control.DelayLoading(ed.AdjustDescription);
+                            ed.AdjustDescription();
                         }
                     }
                 }

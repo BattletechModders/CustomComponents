@@ -120,6 +120,11 @@ namespace CustomComponents
         public string Base_ValidateNotEnoughHardpoints = "Unit dont have enough {1} hardpoints in {5}";
 
         public string Base_AddInventorySize = "Can't install {0} - not enough free space at {1}";
+
+        /// <summary>
+        /// 0 - mech.Uiname, 1 - item.Name, 2 - item.Uiname, 3 - location
+        /// </summary>
+        public string Linked_Validate = "{1} installed wrong, reinstall it";
     }
     public class CustomComponentSettings
     {
@@ -166,6 +171,7 @@ namespace CustomComponents
         public bool TagRestrictionDropValidateIncompatibleTags = true;
         public bool CheckCriticalComponent = true;
         public bool UseDefaultFixedColor = false;
+        public bool AddWeightToCategory = true;
 
         public UIColor DefaultFlagBackgroundColor = UIColor.UpgradeColor;
         public UIColor InvalidFlagBackgroundColor = UIColor.Red;
