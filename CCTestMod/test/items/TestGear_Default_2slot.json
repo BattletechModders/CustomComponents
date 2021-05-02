@@ -1,6 +1,6 @@
 {
     "Custom" : {
-		"Flags" : { "flags" : ["default"] },
+		"Flags" : ["cat_default"],
 		"Category" : { "CategoryID" : "TestCategory1", "Weight" : 2 }
     },
 

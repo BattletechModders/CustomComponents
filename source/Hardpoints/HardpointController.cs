@@ -120,7 +120,7 @@ namespace CustomComponents
                 return string.Empty;
 
             var weapon = item.ComponentRef.Def as WeaponDef;
-            
+
             Control.LogDebug(DType.Hardpoints, $"PreValidateDrop {weapon.Description.Id}[{weapon.WeaponCategoryValue.Name}]");
 
             var lhepler = MechLabHelper.CurrentMechLab.GetLocationHelper(location);
@@ -174,7 +174,7 @@ namespace CustomComponents
 
             foreach (var slotitem in lhepler.LocalInventory.Where(i => i.ComponentRef.ComponentDefType == ComponentType.Weapon))
             {
-                if(removed.Any(i => i.slot == slotitem))
+                if (removed.Any(i => i.slot == slotitem))
                     continue;
 
                 var w = slotitem.ComponentRef.Def as WeaponDef;
@@ -192,10 +192,10 @@ namespace CustomComponents
                 else if (Hardpoints[weapon.WeaponCategoryValue.Name].AcceptOmni && omni > 0)
                 {
                     omni--;
-                    if(hpinfo.AcceptOmni)
+                    if (hpinfo.AcceptOmni)
                         candidants.Add(slotitem);
                 }
-                else if(!Control.Settings.AllowMechlabWrongHardpoints)
+                else if (!Control.Settings.AllowMechlabWrongHardpoints)
                 {
                     return new Localize.Text(Control.Settings.Message.Base_AddNotEnoughHardpoints,
                         MechLabHelper.CurrentMechLab.ActiveMech.Description.UIName, weapon.Description.Name, weapon.Description.UIName,
@@ -207,10 +207,11 @@ namespace CustomComponents
 
             if (hardpoints.Count > 0 && hardpoints.Any(i => i.Compatible.Contains(hpinfo.ID)))
                 return string.Empty;
-            else if (hpinfo.AcceptOmni && omni > 0)
+            if (hpinfo.AcceptOmni && omni > 0)
                 return string.Empty;
 
-            candidants.RemoveAll(i => i.ComponentRef.IsDefault() && i.ComponentRef.HasFlag(CCF.NoRemove));
+            candidants.RemoveAll(i => i.ComponentRef.IsFixed);
+
             if (candidants.Count == 0)
             {
                 return new Localize.Text(Control.Settings.Message.Base_AddNotEnoughHardpoints,
@@ -221,7 +222,7 @@ namespace CustomComponents
             }
 
             var toremove = candidants
-                .OrderBy(i => i.ComponentRef.IsDefault() ? 0 : 20 + i.ComponentRef.Def.InventorySize)
+                .OrderBy(i => i.ComponentRef.Def.InventorySize)
                 .First();
             changes.Enqueue(new RemoveChange(location, toremove));
 
@@ -261,11 +262,11 @@ namespace CustomComponents
                                 hardpoints.Remove(nearest);
                         }
                         else
-                          return new Localize.Text(Control.Settings.Message.Base_ValidateNotEnoughHardpoints,
-                                mechdef.Description.UIName, item.Description.Name, item.Description.UIName,
-                                item.WeaponCategoryValue.Name, item.WeaponCategoryValue.FriendlyName,
-                                w_location.location
-                            ).ToString();
+                            return new Localize.Text(Control.Settings.Message.Base_ValidateNotEnoughHardpoints,
+                                  mechdef.Description.UIName, item.Description.Name, item.Description.UIName,
+                                  item.WeaponCategoryValue.Name, item.WeaponCategoryValue.FriendlyName,
+                                  w_location.location
+                              ).ToString();
 
                     }
                 }
@@ -348,24 +349,24 @@ namespace CustomComponents
             return true;
         }
 
-    private (int, List<HardpointInfo>) GetHardpointsPerLocation(MechDef mechDef, ChassisLocations location)
-    {
-        var locationdef = mechDef.GetChassisLocationDef(location);
-        int omni = 0;
-        var hpinfos = new List<HardpointInfo>();
-        foreach (var hp in locationdef.Hardpoints)
+        private (int, List<HardpointInfo>) GetHardpointsPerLocation(MechDef mechDef, ChassisLocations location)
         {
-            if (hp.Omni)
-                omni += 1;
-            else if (Hardpoints.TryGetValue(hp.WeaponMountValue.Name, out var hpinfo))
-                hpinfos.Add(hpinfo);
-            else
-                Control.LogError($"Unknown Hardpoint type {hp.WeaponMountValue.Name} for {mechDef.ChassisID}");
+            var locationdef = mechDef.GetChassisLocationDef(location);
+            int omni = 0;
+            var hpinfos = new List<HardpointInfo>();
+            foreach (var hp in locationdef.Hardpoints)
+            {
+                if (hp.Omni)
+                    omni += 1;
+                else if (Hardpoints.TryGetValue(hp.WeaponMountValue.Name, out var hpinfo))
+                    hpinfos.Add(hpinfo);
+                else
+                    Control.LogError($"Unknown Hardpoint type {hp.WeaponMountValue.Name} for {mechDef.ChassisID}");
+            }
+
+            hpinfos.Sort((a, b) => a.Compatible.Length.CompareTo(b.Compatible.Length));
+
+            return (omni, hpinfos);
         }
-
-        hpinfos.Sort((a, b) => a.Compatible.Length.CompareTo(b.Compatible.Length));
-
-        return (omni, hpinfos);
     }
-}
 }

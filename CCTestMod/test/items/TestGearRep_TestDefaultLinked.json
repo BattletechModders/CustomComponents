@@ -1,7 +1,7 @@
 {
     "Custom" : {
 		"Category" : { "CategoryID" : "TestCategory1"  },
-		"Flags" : { "flags" : ["default", "noremove"] }
+		"Flags" : ["default", "noremove"] 
     },
 
    "Description" : {

@@ -1,7 +1,7 @@
 {
     "Custom" : {
 		"Category" : [{ "CategoryID" : "TestCategory1", "Weight" : 2 }, { "CategoryID" : "rep_test" } ],
-		"Flags" : { "flags" : ["default", "noremove"] }
+		"Flags" : ["default", "noremove"] 
     },
 
    "Description" : {

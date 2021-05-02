@@ -1,7 +1,7 @@
 {
     "Custom" : {
 		"Category" : { "CategoryID" : "rep_test"  },
-		"Flags" : { "flags" : ["default"] }
+		"Flags" : ["cat_default"]
     },
 
    "Description" : {

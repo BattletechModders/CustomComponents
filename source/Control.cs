@@ -80,11 +80,12 @@ namespace CustomComponents
                 Logger.Log("- ShowLoadedCategory: " + Settings.DEBUG_ShowLoadedCategory);
                 Logger.Log("- ShowLoadedDefaults: " + Settings.DEBUG_ShowLoadedDefaults);
                 Logger.Log("- ShowLoadedAlLocations: " + Settings.DEBUG_ShowLoadedAlLocations);
+                Logger.Log("- ShowFlags: " + Settings.DEBUG_ShowFlags);
 
 
                 Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);
                 Validator.RegisterMechValidator(TagRestrictionsHandler.Shared.ValidateMech, TagRestrictionsHandler.Shared.ValidateMechCanBeFielded);
-                Validator.RegisterMechValidator(FlagsController.Instance.ValidateMech, FlagsController.Instance.CanBeFielded);
+                Validator.RegisterMechValidator(CCFlags.ValidateMech,CCFlags.CanBeFielded);
                 Validator.RegisterMechValidator(EquipLocationController.Instance.ValidateMech, EquipLocationController.Instance.CanBeFielded);
                 Validator.RegisterMechValidator(HardpointController.Instance.ValidateMech, HardpointController.Instance.CanBeFielded);
                 Validator.RegisterMechValidator(AutoLinked.ValidateMech, AutoLinked.CanBeFielded);
@@ -112,16 +113,6 @@ namespace CustomComponents
 
                 Validator.RegisterClearInventory(CategoryController.ClearInventory);
                 Validator.RegisterOnInstalled(DefaultFixer.Instance.OnInstalled);
-
-                FlagsController.Instance.RegisterFlag(CCF.AutoRepair);
-                FlagsController.Instance.RegisterFlag(CCF.NoRemove);
-                FlagsController.Instance.RegisterFlag(CCF.HideFromInv);
-                FlagsController.Instance.RegisterFlag(CCF.NoSalvage);
-                FlagsController.Instance.RegisterFlag(CCF.Default, (item) => item.Is<IDefault>(), new[] { CCF.AutoRepair, CCF.NoRemove, CCF.HideFromInv, CCF.NoSalvage });
-                FlagsController.Instance.RegisterFlag(CCF.NotBroken);
-                FlagsController.Instance.RegisterFlag(CCF.NotDestroyed);
-                FlagsController.Instance.RegisterFlag(CCF.Invalid);
-                FlagsController.Instance.RegisterFlag(CCF.Vital);
 
                 if (Settings.UnitTypes != null && Settings.UnitTypes.Length > 0)
                     foreach (var tagUnitType in Settings.UnitTypes)

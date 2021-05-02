@@ -27,9 +27,8 @@ namespace CustomComponents
             if (def.MechComponentDef == null)
                 return true;
 
-            var flags = def.MechComponentDef.Flags();
 
-            if (!flags[CCF.NoSalvage])
+            if (!def.MechComponentDef.Flags<CCFlags>().NoSalvage)
                 return true;
 
             var lootable = def.MechComponentDef.GetComponent<LootableDefault>();
@@ -66,8 +65,7 @@ namespace CustomComponents
                     break;
             }
 
-            var flags2 = component.Flags();
-            if (component == null || flags2 == null || flags2[CCF.NoSalvage])
+            if (component == null || component.Flags<CCFlags>().NoSalvage)
                 return false;
 
             SalvageDef salvageDef = new SalvageDef();

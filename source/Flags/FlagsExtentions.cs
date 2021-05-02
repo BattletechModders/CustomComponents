@@ -9,36 +9,52 @@ namespace CustomComponents
 {
     public static class FlagsExtentions
     {
-        public static bool HasFlag(this MechComponentDef item, string flag)
+        public static T Flags<T>(this MechComponentDef item)
+            where T : class, new()
         {
-            return item == null ? false : FlagsController.Instance[item, flag];
+            return FlagsController<T>.Shared[item];
         }
-        public static bool HasFlag(this MechComponentRef item, string flag)
+        public static T Flags<T>(this MechComponentRef item)
+            where T : class, new()
         {
-            return item == null ? false : FlagsController.Instance[item.Def, flag];
-        }
-
-        public static FlagsController.Flag Flags(this MechComponentDef item)
-        {
-            return item == null ? null : FlagsController.Instance[item];
-        }
-        public static FlagsController.Flag Flags(this MechComponentRef item)
-        {
-            return item == null ? null : FlagsController.Instance[item.Def];
+            return FlagsController<T>.Shared[item?.Def];
         }
 
+        public static T Flags<T>(this BaseComponentRef item)
+            where T : class, new()
+        {
+            return FlagsController<T>.Shared[item?.Def];
+        }
 
-        public static bool IsDefault(this MechComponentDef cdef)
+        public static bool IsDefault(this MechComponentDef item)
         {
-            return FlagsController.Instance[cdef].Default;
+            if (item == null)
+                return false;
+            var f = item.Flags<CCFlags>();
+            if (f == null)
+                return false;
+            return f.Default;
+
         }
-        public static bool IsDefault(this MechComponentRef cref)
+        public static bool IsDefault(this MechComponentRef item)
         {
-            return FlagsController.Instance[cref.Def].Default;
+            if (item?.Def == null)
+                return false;
+            var f = item.Flags<CCFlags>();
+            if (f == null)
+                return false;
+            return f.Default;
         }
-        public static bool IsDefault(this BaseComponentRef cref)
+
+        public static bool IsDefault(this BaseComponentRef item)
         {
-            return FlagsController.Instance[cref.Def].Default;
+            if (item?.Def == null)
+                return false;
+            var f = item.Flags<CCFlags>();
+            if (f == null)
+                return false;
+            return f.Default;
         }
+
     }
 }

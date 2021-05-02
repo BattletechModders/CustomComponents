@@ -3,6 +3,7 @@ using Localize;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,65 +11,124 @@ namespace CustomComponents
 {
     public delegate bool CheckFlagDelegate(MechComponentDef item);
 
-    public class FlagsController
+    public class FlagsController<T>
+        where T : class, new()
     {
-        public class Flag
+        private class FlagInfo
         {
-            private Dictionary<string, bool> flags;
+            public string Name { get; set; }
+            public string[] ChildFlags { get; set; }
 
-            public Flag(Dictionary<string, bool> flags)
+            public List<FlagInfo> Childs { get; set; }
+            public SetterDelegate Setter { get; set; }
+
+            public CustomSetterDelegate CustomSetter { get; set; }
+        }
+
+        private static Dictionary<string, FlagInfo> flags;
+
+        static FlagsController()
+        {
+            flags = new Dictionary<string, FlagInfo>();
+
+            var type = typeof(T);
+
+            foreach (var propertyInfo in type.GetProperties())
             {
-                this.flags = flags;
-                if (flags.TryGetValue(CCF.Default, out var v))
-                    Default = v;
-                else
-                    Default = false;
-            }
-        
-            public bool this[string flag]
-            {
-                get
+                var flag_attribute = propertyInfo.GetCustomAttribute<CustomFlagAttribute>();
+                if (flag_attribute == null)
+                    continue;
+
+                var child_attribute = propertyInfo.GetCustomAttribute<SubFlagsAttribute>();
+
+                var flag = new FlagInfo()
                 {
-                    if (flags.TryGetValue(flag, out var v))
-                        return v;
-                    return false;
+                    Name = flag_attribute.FlagName,
+                    Setter = (obj, value) => propertyInfo.SetValue(obj, value),
+                    ChildFlags = child_attribute?.Childs
+                };
+
+                flags[flag.Name] = flag;
+            }
+
+            if (flags.Count == 0)
+                Control.LogError($"{type} cannot be used as CustomFlags, no flags");
+
+            foreach (var flagInfo in flags)
+            {
+                var child = flagInfo.Value.ChildFlags;
+                if (child == null || child.Length == 0)
+                    flagInfo.Value.Childs = null;
+                else
+                    flagInfo.Value.Childs = child
+                        .Select(i => flags.TryGetValue(i, out var f) ? f : null)
+                        .Where(i => i != null)
+                        .ToList();
+            }
+
+            foreach (var minfo in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic))
+            {
+                var setter_attribute = minfo.GetCustomAttribute<CustomSetterAttribute>();
+                if (setter_attribute == null)
+                    continue;
+
+                if(!flags.TryGetValue(setter_attribute.Flag, out var f))
+                {
+                    Control.LogError(
+                        $"{minfo.Name} marked as setter for {setter_attribute.Flag} but there is not such tag");
+                    continue;
                 }
-            }
 
-            public bool Default { get; internal set; }
-        }
+                if (minfo.ReturnType != typeof(bool))
+                {
+                    Control.LogError(
+                        $"{minfo.Name} marked as setter for {setter_attribute.Flag} but not return Boolean");
+                    continue;
+                }
 
-        private class flag_record
-        {
-            public string name;
+                var prams = minfo.GetParameters();
+                if(prams.Length != 1)
+                {
+                    Control.LogError(
+                        $"{minfo.Name} marked as setter for {setter_attribute.Flag} but have wrong parameters");
+                    continue;
+                }
 
-            public CheckFlagDelegate check_flag;
-            public flag_record parent_flag;
-            public bool has_parent { get => parent_flag == null; }
-            public flag_record[] child_flags;
-            public bool has_children { get => child_flags != null && child_flags.Length != 0; }
-        }
+                if (prams[0].ParameterType != typeof(MechComponentDef))
+                {
+                    Control.LogError(
+                        $"{minfo.Name} marked as setter for {setter_attribute.Flag} but have wrong parameters");
+                    continue;
+                }
 
-        private static FlagsController _instance;
-        private Dictionary<string, Flag> flags_database = new Dictionary<string, Flag>();
-        private HashSet<string> all_flags = new HashSet<string>();
-        private List<flag_record> flag_records = new List<flag_record>();
-
-
-        public static FlagsController Instance
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = new FlagsController();
-                return _instance;
+                f.CustomSetter = (obj, item) => (bool)minfo.Invoke(obj, new[] {item});
             }
         }
 
-        public Flag this[MechComponentDef item]
+        private delegate void SetterDelegate(T obj, bool value);
+        private delegate bool CustomSetterDelegate(T obj, MechComponentDef item);
+
+        private static Dictionary<string, T> flags_database = new Dictionary<string, T>();
+
+
+        private static FlagsController<T> _shared;
+        public static FlagsController<T> Shared
         {
             get
             {
+                if(_shared == null)
+                    _shared = new FlagsController<T>();
+                return _shared;
+            }
+        }
+
+        public T this[MechComponentDef item]
+        {
+            get
+            {
+                if (item == null)
+                    return null;
+
                 if (!flags_database.TryGetValue(item.Description.Id, out var flags))
                 {
                     flags = BuildFlags(item);
@@ -79,125 +139,46 @@ namespace CustomComponents
             }
         }
 
-        public bool this[MechComponentDef item, string flag]
+        private T BuildFlags(MechComponentDef item)
         {
-            get
+            void set_recursive(FlagInfo flag, Dictionary<string, bool> values)
             {
-                if (!all_flags.Contains(flag) || item == null)
-                    return false;
-
-                if (!flags_database.TryGetValue(item.Description.Id, out var flags))
-                {
-                    flags = BuildFlags(item);
-                    flags_database[item.Description.Id] = flags;
-                }
-
-                return flags[flag];
+                values[flag.Name] = true;
+                if(flag.Childs != null)
+                    foreach (var flagChild in flag.Childs)
+                        set_recursive(flagChild, values);
             }
-        }
 
-        private Flag BuildFlags(MechComponentDef item)
-        {
             Control.LogDebug(DType.Flags, "BuildFlags for " + item.Description.Id);
-            var result = new Dictionary<string, bool>();
-            foreach (var record in flag_records)
-            {
-                var v= record.check_flag(item);
-                result[record.name] = v;
-                Control.LogDebug(DType.Flags, $"-- {record.name} : {v}");
+            var result = new T();
+            var f = item.GetComponent<Flags>();
 
+            var temp_f = flags.ToDictionary(i => i.Key, i => false);
+
+            if (f != null)
+                foreach (var flag in flags)
+                    temp_f[flag.Key] = f.flags.Contains(flag.Key);
+
+            foreach (var flag in flags)
+            {
+                var value = temp_f[flag.Key];
+                if (!value && flag.Value.CustomSetter != null)
+                    value = flag.Value.CustomSetter(result, item);
+
+                if(value)
+                    set_recursive(flag.Value, temp_f);
             }
 
-            foreach (var record in flag_records.Where(i => i.has_children))
+            foreach (var flag in flags)
             {
-                Control.LogDebug(DType.Flags, $"- {record.name} : ChildFlags check");
-                if (result[record.name])
-                {
-                    foreach (var subrecord in record.child_flags)
-                        result[subrecord.name] = true;
-                    Control.LogDebug(DType.Flags, $"-- true : set all childs");
-                }
-                else
-                {
-                    var r = true;
-                    foreach (var subrecord in record.child_flags)
-                    {
-                        if (!result[subrecord.name])
-                        {
-                            r = false;
-                            break;
-                        }
-                    }
-                    result[record.name] = r;
-                    Control.LogDebug(DType.Flags, $"-- false : set to {r} by childs");
-                }
+                flag.Value.Setter(result, temp_f[flag.Key]);
             }
 
-            return new Flag(result);
+            if(Control.Settings.DEBUG_ShowFlags)
+                Control.LogDebug(DType.Flags, $"Flags for {item.Description.Id}: [{result.ToString()}]");
+
+            return result;
         }
 
-        internal bool CanBeFielded(MechDef mechDef)
-        {
-            foreach (var item in mechDef.Inventory)
-            {
-                var f = item.Flags();
-
-                if (f[CCF.Invalid])
-                    return false;
-
-                if (item.DamageLevel == ComponentDamageLevel.Destroyed && (f[CCF.NotBroken] || f[CCF.NotDestroyed]))
-                    return false;
-
-                if (item.DamageLevel == ComponentDamageLevel.Penalized && f[CCF.NotBroken])
-                    return false;
-            }
-            return true;
-        }
-
-        internal void ValidateMech(Dictionary<MechValidationType, List<Text>> errors, MechValidationLevel validationLevel, MechDef mechDef)
-        {
-            foreach (var item in mechDef.Inventory)
-            {
-                var f = item.Flags();
-
-                if (f[CCF.Invalid])
-                    errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(
-                        Control.Settings.Message.Flags_InvaildComponent,  item.Def.Description.Name));
-
-                if (item.DamageLevel == ComponentDamageLevel.Destroyed && (f[CCF.NotBroken] || f[CCF.NotDestroyed]))
-                {
-                    errors[MechValidationType.StructureDestroyed].Add(new Localize.Text(
-                        Control.Settings.Message.Flags_DestroyedComponent, item.Def.Description.Name));
-                }
-
-                if (item.DamageLevel == ComponentDamageLevel.Penalized && f[CCF.NotBroken])
-                {
-                    errors[MechValidationType.StructureDestroyed].Add(new Localize.Text(
-                        Control.Settings.Message.Flags_DamagedComponent, item.Def.Description.Name));
-                }
-            }
-        }
-
-        public void RegisterFlag(string name, CheckFlagDelegate check_delegate = null, string[] subflags = null)
-        {
-            var record = new flag_record();
-            record.name = name;
-            
-            if(check_delegate == null)
-                record.check_flag = (item) => item.Is<Flags>(out var f) && f.flags.Contains(name);
-            else
-                record.check_flag = (item) => item.Is<Flags>(out var f) && f.flags.Contains(name) || check_delegate(item);
-
-            if (subflags != null)
-            {
-                record.child_flags = flag_records.Where(i => subflags.Contains(i.name)).ToArray();
-                foreach (var item in record.child_flags)
-                    item.parent_flag = record;
-            }
-
-            flag_records.Add(record);
-            all_flags.Add(record.name);
-            Control.Log("Flag " + name + " registred");
-        }
     }
 }

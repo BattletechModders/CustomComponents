@@ -20,6 +20,12 @@ namespace CustomComponents.Patches
 
                 foreach (var grab_handler in item.ComponentRef.Def.GetComponents<IOnItemGrab>())
                 {
+                    if (item.ComponentRef.Flags<CCFlags>().NoRemove)
+                    {
+                        __result = false;
+                        return false;
+                    }
+
                     if (!grab_handler.OnItemGrab(item, ___mechLab, out var error))
                     {
                         if (!string.IsNullOrEmpty(error))

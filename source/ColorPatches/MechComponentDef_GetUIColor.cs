@@ -15,8 +15,8 @@ namespace CustomComponents
         {
             try
             {
-                var f = componentDef.Flags();
-                    if (f[CCF.Invalid])
+                var f = componentDef.Flags<CCFlags>();
+                    if (f.Invalid)
                     {
                         __result = Control.Settings.InvalidFlagBackgroundColor;
                     }

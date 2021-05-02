@@ -206,8 +206,6 @@ namespace CustomComponents
             mechLab.ValidateLoadout(false);
         }
 
-
-
         public void AdjustDescription()
         {
             if (this.CategoryDescriptor.AddCategoryToDescription)
@@ -232,16 +230,16 @@ namespace CustomComponents
         }
         public bool ValidateDropOnAdd(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes, List<SlotInvItem> inventory)
         {
-            if (CategoryDescriptor[MechLabHelper.CurrentMechLab.ActiveMech].MinLimited && (!Def.IsDefault() || Def.HasFlag(CCF.NoRemove)))
+            if (CategoryDescriptor[MechLabHelper.CurrentMechLab.ActiveMech].MinLimited && !Def.Flags<CCFlags>().CategoryDefault)
                 changes.Enqueue(new CategoryDefaultsAdjust(CategoryID));
 
             return false;
-
         }
 
         public bool ValidateDropOnRemove(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes, List<SlotInvItem> inventory)
         {
-            if (CategoryDescriptor[MechLabHelper.CurrentMechLab.ActiveMech].MinLimited && (!Def.IsDefault() || Def.HasFlag(CCF.NoRemove)))
+            var f = Def.Flags<CCFlags>();
+            if (CategoryDescriptor[MechLabHelper.CurrentMechLab.ActiveMech].MinLimited && !Def.Flags<CCFlags>().CategoryDefault)
                 changes.Enqueue(new CategoryDefaultsAdjust(CategoryID));
 
             return false;

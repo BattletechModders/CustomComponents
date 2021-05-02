@@ -194,9 +194,9 @@ namespace CustomComponents
                             Control.LogError($"{mech.ChassisID} default {default_record.DefID} dont have category {item.CategoryID}");
                             continue;
                         }
-                        if (!def.HasFlag(CCF.NoRemove))
+                        if (!def.Flags<CCFlags>().CategoryDefault)
                         {
-                            Control.LogError($"{mech.ChassisID} default {default_record.DefID} dont have `{CCF.NoRemove}` flag");
+                            Control.LogError($"{mech.ChassisID} default {default_record.DefID} dont have `cat_default` flag");
                             continue;
                         }
 

@@ -41,7 +41,7 @@ namespace CustomComponents.Patches
                     var mechlab = __instance.ParentDropTarget as MechLabPanel;
                     if (item.ComponentRef != null)
                     {
-                        if(item.ComponentRef.HasFlag(CCF.HideFromInv))
+                        if(item.ComponentRef.Flags<CCFlags>().HideFromInv)
                         {
                             item.gameObject.SetActive(false);
                             Control.LogDebug(DType.Filter, $"---- filterd, hide from inventory/default");

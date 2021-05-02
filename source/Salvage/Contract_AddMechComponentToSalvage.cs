@@ -30,9 +30,7 @@ namespace CustomComponents
             }
 
 
-            var flags = def.Flags();
-
-            if (!flags.Default && !flags[CCF.NoSalvage])
+            if (!def.Flags<CCFlags>().NoSalvage)
                 return true;
 
             var lootable = def.GetComponent<LootableDefault>();
@@ -73,9 +71,7 @@ namespace CustomComponents
                     break;
             }
 
-            var flags2 = component.Flags();
-
-            if (component == null || flags2 == null || flags2[CCF.NoSalvage])
+            if (component == null || component.Flags<CCFlags>().NoSalvage)
             {
                 Control.LogDebug(DType.SalvageProccess, $"---- default, lootable {lootable.ItemID} not found or notsalvagable - skipped");
                 return false;

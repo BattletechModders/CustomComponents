@@ -5,6 +5,8 @@ using HBS.Util;
 
 namespace CustomComponents
 {
+
+
     public class SimpleCustomFactory<TCustom, TDef> : ICustomFactory
         where TCustom : SimpleCustom<TDef>, new()
         where TDef : class

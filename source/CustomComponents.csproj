@@ -107,6 +107,7 @@
     <Compile Include="Categories\CategoriesExtentions.cs" />
     <Compile Include="Categories\Category.cs" />
     <Compile Include="Categories\ChassisCategory.cs" />
+    <Compile Include="CCLight\Factories\ListCustomFactory.cs" />
     <Compile Include="CCLight\Factories\SimpleCustomChassis.cs" />
     <Compile Include="CCLight\IReplaceIdentifier.cs" />
     <Compile Include="CCLight\Factories\IPreProcessor.cs" />
@@ -122,7 +123,8 @@
     <Compile Include="AllowedLocations\EquipLocations.cs" />
     <Compile Include="ExtendedDetails\ExtendedDetails.cs" />
     <Compile Include="Fixes\WeaponsCountFix.cs" />
-    <Compile Include="Flags\CCF.cs" />
+    <Compile Include="Flags\CCFlags.cs" />
+    <Compile Include="Flags\FlagsAttributes.cs" />
     <Compile Include="Flags\FlagsController.cs" />
     <Compile Include="Flags\FlagsExtentions.cs" />
     <Compile Include="Hardpoints\HardpointController.cs" />

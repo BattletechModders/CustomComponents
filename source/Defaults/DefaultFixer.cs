@@ -121,7 +121,7 @@ namespace CustomComponents
                                                      && i.Location == invItem.location);
                 if (item != null)
                     item.item = invItem.item;
-                else if (item.item.IsModuleFixed(mech) || !item.item.IsDefault() || item.item.HasFlag(CCF.NoRemove))
+                else if (item.item.IsModuleFixed(mech) || !item.item.Flags<CCFlags>().CategoryDefault)
                 {
                     foreach (var catid in defaults.Multi.UsedCategories.Keys)
                         if (invItem.item.IsCategory(catid, out var cat))
@@ -188,7 +188,7 @@ namespace CustomComponents
             {
                 //Control.Log($"- empty defaults list, clearing");
                 return inventory
-                    .Where(i => i.item.IsCategory(category) && i.item.IsDefault() && !i.item.HasFlag(CCF.NoRemove))
+                    .Where(i => i.item.IsCategory(category) && i.item.Flags<CCFlags>().CategoryDefault && !i.item.IsModuleFixed(mech))
                     .Select(i => inv_change.Remove(i.item.ComponentDefID, i.location))
                     .ToList();
             }

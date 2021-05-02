@@ -12,7 +12,7 @@
 	
 	"Settings" : {
 		"LogLevel": "Debug",
-		"DebugInfo" : "AutofixValidate, CustomResource, ComponentInstall, Hardpoints",
+		"DebugInfo" : "AutofixValidate, CustomResource, ComponentInstall, Hardpoints, Flags",
 
 		"DEBUG_ValidateMechDefs": false,
         "DEBUG_ShowOnlyErrors": false,
@@ -23,6 +23,7 @@
 		"DEBUG_ShowLoadedDefaults" : true,
 		"DEBUG_ShowLoadedAlLocations" : true,
 		"DEBUG_EnableAllTags" : false,
+		"DEBUG_ShowFlags" : true,
 		
 		"Message" : {
 		
