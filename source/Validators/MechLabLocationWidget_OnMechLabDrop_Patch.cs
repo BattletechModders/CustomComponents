@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using BattleTech;
 using BattleTech.UI;
+using CustomComponents.Changes;
 using Harmony;
 using HBS.Extensions;
 using Localize;
@@ -37,21 +38,14 @@ namespace CustomComponents
 
                 Control.LogDebug(DType.ComponentInstall, $"OnMechLabDrop: Adding {newComponentDef.Description.Id}");
 
-                bool do_cancel(string error, IEnumerable<IChange> allchanges)
+                bool do_cancel(string error)
                 {
                     if (string.IsNullOrEmpty(error))
                         return false;
 
                     Control.LogDebug(DType.ComponentInstall, $"- Canceled: {error}");
 
-                    if (allchanges != null)
-                    {
-                        foreach (ICancelChange change in allchanges)
-                        {
-                            change.CancelChange();
-                        }
-                    }
-
+                    ___mechLab.ForceItemDrop(dragItem);
                     ___mechLab.OnDrop(eventData);
                     ___mechLab.ShowDropErrorMessage(new Text(error));
                     return true;
@@ -62,7 +56,7 @@ namespace CustomComponents
                 foreach (var pre_validator in Validator.GetPre(newComponentDef))
                 {
 
-                    if (do_cancel(pre_validator(dragItem, location), null))
+                    if (do_cancel(pre_validator(dragItem, location)))
                         return false;
                 }
 
@@ -70,11 +64,13 @@ namespace CustomComponents
 
                 var changes = new Queue<IChange>();
 
-                changes.Enqueue(new AddFromInventoryChange(__instance.loadout.Location, dragItem));
+                changes.Enqueue(new ChangeAdd(dragItem, __instance.loadout.Location));
 
                 foreach (ReplaceValidateDropDelegate rep_validator in Validator.GetReplace(newComponentDef))
-                    if (do_cancel(rep_validator(dragItem, location, changes), changes))
+                    if (do_cancel(rep_validator(dragItem, location, changes)))
                         return false;
+
+
 
 #if CCDEBUG
                 if (Control.Settings.DebugInfo.HasFlag(DType.ComponentInstall))
@@ -84,13 +80,13 @@ namespace CustomComponents
                     else
                         foreach (var replace in changes)
                         {
-                            if (replace is AddChange add)
+                            if (replace is ChangeAdd add)
                                 Control.LogDebug(DType.ComponentInstall,
-                                    $"-- add {add.item.ComponentRef.ComponentDefID}");
+                                    $"-- add {add.ItemID} to {add.Location}");
 
-                            else if (replace is RemoveChange remove)
+                            else if (replace is ChangeRemove remove)
                                 Control.LogDebug(DType.ComponentInstall,
-                                    $"-- remove {remove.item.ComponentRef.ComponentDefID}");
+                                    $"-- remove {remove.ItemID} from {remove.Location}");
 
                         }
                 }
@@ -99,36 +95,21 @@ namespace CustomComponents
 
                 Control.LogDebug(DType.ComponentInstall, $"- adjusting");
 
-                List<IChange> to_execute = new List<IChange>();
-                List<SlotInvItem> inventory = GetInventory(to_execute.Concat(changes));
-
-                while (changes.Count > 0)
-                {
-                    var change = changes.Dequeue();
-
-                    if (change is IApplyChange)
-                        to_execute.Add(change);
-                    
-                    if (change is IDelayChange adjust)
-                    {
-                        if(changes.Any(i => i is IDelayChange ch2 && ch2.ChangeID == adjust.ChangeID))
-                            continue;
-                    }
-
-                    if (change.DoAdjust(changes, inventory))
-                        inventory = GetInventory(to_execute.Concat(changes));
-
-                }
+                var state = new InventoryOperationState(changes, ___mechLab.activeMechDef);
+                state.DoChanges();
+                var inv = state.Inventory;
 
                 Control.LogDebug(DType.ComponentInstall, $"- post validation");
-                var inv = inventory.ToList<InvItem>();
 
                 foreach (var pst_validator in Validator.GetPost(newComponentDef))
                 {
                     int n = changes.Count;
-                    if (do_cancel(pst_validator(dragItem, inv), to_execute))
+                    if (do_cancel(pst_validator(dragItem, state.Inventory)))
                         return false;
                 }
+
+                var to_execute = state.GetResults();
+
                 Control.LogDebug(DType.ComponentInstall, $"- apply changes");
                 if(Control.Settings.DebugInfo.HasFlag(DType.ComponentInstall))
                     foreach (var change in to_execute)
@@ -137,9 +118,9 @@ namespace CustomComponents
                     }
 
 
-                foreach (IApplyChange change in to_execute)
+                foreach (var change in to_execute)
                 {
-                    change?.DoChange();
+                    change.ApplyToMechlab();
                 }
 
 
@@ -157,19 +138,5 @@ namespace CustomComponents
             return true;
         }
 
-        private static List<SlotInvItem> GetInventory(IEnumerable<IChange> changes)
-        {
-            List<SlotInvItem> new_inventory = MechLabHelper.CurrentMechLab
-                .GetLocationHelpers()
-                .SelectMany(i => i.LocalInventory.Select(a => new SlotInvItem(a, i.widget.loadout.Location)))
-                .ToList<SlotInvItem>();
-
-            foreach (IApplyChange change in changes)
-            {
-                change.PreviewChange(new_inventory);
-            }
-
-            return new_inventory;
-        }
     }
 }

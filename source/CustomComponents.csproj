@@ -118,7 +118,7 @@
     <Compile Include="Defaults\DefaultsInfo.cs" />
     <Compile Include="Defaults\IDefaultComponent.cs" />
     <Compile Include="Defaults\IMultiCategoryDefault.cs" />
-    <Compile Include="DropResults\CategoryDefaultsAdjust.cs" />
+    <Compile Include="InventoryOperations\Changes\CategoryDefaultsAdjust.cs" />
     <Compile Include="AllowedLocations\EquipLocationController.cs" />
     <Compile Include="AllowedLocations\EquipLocations.cs" />
     <Compile Include="ExtendedDetails\ExtendedDetails.cs" />
@@ -136,6 +136,14 @@
     <Compile Include="Interfaces\IAdjustDescription.cs" />
     <Compile Include="Interfaces\IIsDestroyed.cs" />
     <Compile Include="AllowedLocations\EquipLocationTag.cs" />
+    <Compile Include="InventoryOperations\Changes\ChangeAdd.cs" />
+    <Compile Include="InventoryOperations\Changes\ChangeRemove.cs" />
+    <Compile Include="InventoryOperations\Changes\IAdjustChange.cs" />
+    <Compile Include="InventoryOperations\Changes\IChange.cs" />
+    <Compile Include="InventoryOperations\Changes\IInvChange.cs" />
+    <Compile Include="InventoryOperations\Changes\IOptimisableChange.cs" />
+    <Compile Include="InventoryOperations\InventoryOperationState.cs" />
+    <Compile Include="InventoryOperations\InvItem.cs" />
     <Compile Include="Patches\MechLabPanel_ExitMechLab.cs" />
     <Compile Include="Patches\MechLabPanel_LoadMech.cs" />
     <Compile Include="Tags\Tags.cs" />
@@ -152,8 +160,6 @@
     <Compile Include="Components\Lootable.cs" />
     <Compile Include="Components\TagColorComponent.cs" />
     <Compile Include="Defaults\DefaultFixer.cs" />
-    <Compile Include="DropResults\AddDefaultChange.cs" />
-    <Compile Include="DropResults\AddFromInventoryChange.cs" />
     <Compile Include="Fixes\BTLoadUtils.cs" />
     <Compile Include="Fixes\ReflectionCache_Patch.cs" />
     <Compile Include="Fixes\MechDef_InsertFixedEquipmentIntoInventory.cs" />
@@ -192,8 +198,6 @@
     <Compile Include="Components\DEBUGTOOLS\DEBUGTOOLS.cs" />
     <Compile Include="TagRestrictions\TagRestrictions.cs" />
     <Compile Include="TagRestrictions\TagRestrictionsHandler.cs" />
-    <Compile Include="DropResults\IChange.cs" />
-    <Compile Include="DropResults\InvItem.cs" />
     <Compile Include="Interfaces\IPreValidateDrop.cs" />
     <Compile Include="Categories\CategoryController.cs" />
     <Compile Include="Categories\CategoryDescriptor.cs" />
@@ -207,9 +211,6 @@
     <Compile Include="Interfaces\IAfterLoad.cs" />
     <Compile Include="CCLight\Patches\JSONSerializationUtility_RehydrateObjectFromDictionary_Patch.cs" />
     <Compile Include="CCLight\Registry.cs" />
-    <Compile Include="DropResults\AddChange.cs" />
-    <Compile Include="DropResults\RemoveChange.cs" />
-    <Compile Include="DropResults\SlotChange.cs" />
     <Compile Include="Interfaces\IMechLabFilter.cs" />
     <Compile Include="Salvage\Contract_AddToFilnaSalvagePatch.cs" />
     <Compile Include="Flags\Flags.cs" />

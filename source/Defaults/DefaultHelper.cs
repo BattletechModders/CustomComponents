@@ -47,11 +47,27 @@ namespace CustomComponents
 
         #endregion
 
-        public static MechComponentRef CreateRef(string id, ComponentType type, DataManager datamanager, SimGameState state)
+        public static MechComponentRef CreateRef(string id, ComponentType type)
         {
             var component_ref = new MechComponentRef(id, string.Empty, type, ChassisLocations.None);
-            component_ref.DataManager = datamanager;
+            component_ref.DataManager = UnityGameInstance.BattleTechGame.DataManager;
             component_ref.RefreshComponentDef();
+
+            var state = UnityGameInstance.BattleTechGame.Simulation;
+            if (state != null)
+                component_ref.SetSimGameUID(state.GenerateSimGameUID());
+            return component_ref;
+        }
+
+        public static MechComponentRef CreateRef(string id, ComponentType type, ChassisLocations location)
+        {
+            var component_ref = new MechComponentRef(id, string.Empty, type, ChassisLocations.None);
+            component_ref.DataManager = UnityGameInstance.BattleTechGame.DataManager;
+            component_ref.SetData(location,0, ComponentDamageLevel.Functional, false);
+            component_ref.RefreshComponentDef();
+
+
+            var state = UnityGameInstance.BattleTechGame.Simulation;
             if (state != null)
                 component_ref.SetSimGameUID(state.GenerateSimGameUID());
             return component_ref;
@@ -96,7 +112,7 @@ namespace CustomComponents
 
         public static void AddInventory(string defaultID, MechDef mech, ChassisLocations location, ComponentType type, SimGameState state)
         {
-            var r = CreateRef(defaultID, type, mech.DataManager, state);
+            var r = CreateRef(defaultID, type);
             if (r != null)
             {
                 r.SetData(location, -1, ComponentDamageLevel.Functional, true);

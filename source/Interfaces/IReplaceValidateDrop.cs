@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using BattleTech;
 using BattleTech.UI;
+using CustomComponents.Changes;
 
 namespace CustomComponents
 {

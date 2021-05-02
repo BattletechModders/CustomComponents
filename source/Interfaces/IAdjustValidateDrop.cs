@@ -1,24 +1,18 @@
 ﻿using BattleTech.UI;
 using System.Collections.Generic;
 using BattleTech;
+using CustomComponents.Changes;
 
 namespace CustomComponents
 {
-    /// <summary>
-    /// component check if it can be dropped to this location
-    /// </summary>
-    public interface IAdjustValidateDrop
+
+    public interface IOnAdd
     {
-        /// <summary>
-        /// validation drop check
-        /// </summary>
-        /// <param name="widget">location, where check</param>
-        /// <param name="element">element being dragged</param>
-        /// <returns></returns>
-        bool ValidateDropOnAdd(MechLabItemSlotElement item, ChassisLocations location,Queue<IChange> changes, List<SlotInvItem> inventory);
-        bool ValidateDropOnRemove(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes, List<SlotInvItem> inventory);
+        void OnAdd(ChassisLocations location, InventoryOperationState state);
     }
 
-    //public delegate IEnumerable<IChange> ValidateAdjustDelegate(MechLabItemSlotElement item, ChassisLocations location, Queue<InvItem> changes);
-
+    public interface IOnRemove
+    {
+        void OnRemove(ChassisLocations location, InventoryOperationState state);
+    }
 }
