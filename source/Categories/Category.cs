@@ -70,6 +70,8 @@ namespace CustomComponents
 
         public string ReplaceValidateDrop(MechLabItemSlotElement drop_item, ChassisLocations location, Queue<IChange> changes)
         {
+            return string.Empty;
+
             bool check_removed(InvItem item, List<Change_Remove> removed)
             {
                 var found = removed.FirstOrDefault(i =>
@@ -236,14 +238,15 @@ namespace CustomComponents
         {
             var defaults = DefaultsDatabase.Instance[state.Mech];
 
-            if (CategoryDescriptor[state.Mech].MaxLimited && !defaults.IsSingleCatDefault(Def.Description.Id))
+
+            if (CategoryDescriptor[state.Mech].Limited && !defaults.IsSingleCatDefault(Def.Description.Id))
                 state.AddChange(new Change_CategoryAdjust(CategoryID));
         }
 
         public void OnRemove(ChassisLocations location, InventoryOperationState state)
         {
             var defaults = DefaultsDatabase.Instance[state.Mech];
-            if (CategoryDescriptor[state.Mech].MinLimited && !defaults.IsSingleCatDefault(Def.Description.Id))
+            if (CategoryDescriptor[state.Mech].Limited && !defaults.IsSingleCatDefault(Def.Description.Id))
                 state.AddChange(new Change_CategoryAdjust(CategoryID));
         }
 

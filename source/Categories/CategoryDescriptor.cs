@@ -85,6 +85,9 @@ namespace CustomComponents
         [Newtonsoft.Json.JsonIgnore]
         public bool MaxLimited { get; set; }
 
+        [Newtonsoft.Json.JsonIgnore] public bool Limited => MaxLimited || MinLimited;
+
+
         public void Complete()
         {
             if(LocationLimits == null)

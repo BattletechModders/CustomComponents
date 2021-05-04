@@ -80,7 +80,6 @@ namespace CustomComponents
                 Logger.Log("- ShowLoadedCategory: " + Settings.DEBUG_ShowLoadedCategory);
                 Logger.Log("- ShowLoadedDefaults: " + Settings.DEBUG_ShowLoadedDefaults);
                 Logger.Log("- ShowLoadedAlLocations: " + Settings.DEBUG_ShowLoadedAlLocations);
-                Logger.Log("- ShowFlags: " + Settings.DEBUG_ShowFlags);
 
 
                 Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);
@@ -97,7 +96,7 @@ namespace CustomComponents
 
                 Validator.RegisterDropValidator(check: CategoryController.Shared.ValidateDrop);
                 Validator.RegisterDropValidator(pre: TagRestrictionsHandler.Shared.ValidateDrop);
-                Validator.RegisterDropValidator(HardpointController.Instance.PreValidateDrop, HardpointController.Instance.ReplaceValidatorDrop, HardpointController.Instance.PostValidatorDrop);
+                Validator.RegisterDropValidator(pre: HardpointController.Instance.PreValidateDrop, check: HardpointController.Instance.PostValidatorDrop);
                 Validator.RegisterDropValidator(EquipLocationController.Instance.PreValidateDrop);
 
 
