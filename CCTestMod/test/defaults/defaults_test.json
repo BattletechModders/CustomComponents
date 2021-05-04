@@ -28,7 +28,25 @@
 			"Defaults" : [
 				{ "Location" : "Head", "DefID" : "TestGearRep_HeadDefault", "Type" : "Upgrade" },
 			],
-		}
+		},
+		{
+			"CategoryID" : "mtest1",
+			"Defaults" : [
+				{ "Location" : "CenterTorso", "DefID" : "test1_default", "Type" : "Upgrade" },
+			],
+		},
+		{
+			"CategoryID" : "mtest2",
+			"Defaults" : [
+				{ "Location" : "CenterTorso", "DefID" : "test2_default", "Type" : "Upgrade" },
+			],
+		},
+		{
+			"CategoryID" : "mtest3",
+			"Defaults" : [
+				{ "Location" : "CenterTorso", "DefID" : "test3_default", "Type" : "Upgrade" },
+			],
+		},
 		
 	]
 }

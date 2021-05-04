@@ -15,8 +15,8 @@ namespace CustomComponents
 
     }
 
-    [CustomComponent("MultyDefaults", true)]
-    public class MultyDefaults : SimpleCustomChassis, IMultiCategoryDefault
+    [CustomComponent("MultiDefaults", true)]
+    public class MultiDefaults : SimpleCustomChassis, IMultiCategoryDefault
     {
         public ChassisLocations Location { get; set; }
         public string DefID { get; set; }
@@ -24,7 +24,7 @@ namespace CustomComponents
         public ComponentType ComponentType { get; set; }
         public override string ToString()
         {
-            return $"MultyDefaults: {DefID}";
+            return $"MultiDefaults: {DefID}";
         }
     }
 }

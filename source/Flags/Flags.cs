@@ -9,7 +9,7 @@ namespace CustomComponents
     [CustomComponent("Flags")]
     public class Flags : SimpleCustomComponent, IListComponent
     {
-        public List<string> flags;
+        public HashSet<string> flags;
 
         public override string ToString()
         {
@@ -18,7 +18,7 @@ namespace CustomComponents
 
         public void LoadList(IEnumerable<object> items)
         {
-            flags = items.Select(i => i.ToString()).ToList();
+            flags = items.Select(i => i.ToString()).ToHashSet();
         }
     }
 }

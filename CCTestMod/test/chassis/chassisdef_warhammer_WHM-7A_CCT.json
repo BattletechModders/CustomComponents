@@ -1,4 +1,14 @@
 {
+	"Custom" : {
+		"MultiDefaults" : [
+			{
+				"Location" : "CenterTorso",
+				"DefID" : "test123_default",
+				"ComponentType" : "Upgrade",
+				"Categories" : [ "mtest1", "mtest2", "mtest3" ]
+			}
+		]
+	},
     "Description": {
         "Cost": 12300000,
         "Rarity": 1,

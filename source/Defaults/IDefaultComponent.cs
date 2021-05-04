@@ -4,10 +4,4 @@
     {
         
     }
-
-    [CustomComponent("Default")]
-    public class DefaultComponent : SimpleCustomComponent, IDefaultComponent
-    {
-
-    }
 }

@@ -1,0 +1,40 @@
+{
+    "Custom" : {
+		"RGBColor" : "#10a0a0",
+		"Category" :[
+			{ "CategoryID" : "mtest2" },
+			{ "CategoryID" : "mtest3" }
+		]
+    },
+
+   "Description" : {
+      "Id" : "test23_non_default",
+      "Name" : "[x23]",
+      "UIName" : "[x23]",
+      "Details" : "This 2 category item",
+      "Icon" : "uixSvgIcon_quantity",
+      "Cost" : 0,
+      "Rarity" : 99,
+      "Purchasable" : false
+	},
+   "BonusValueA" : "",
+   "BonusValueB" : "",
+   "ComponentType" : "Upgrade",
+   "ComponentSubType" : "NotSet",
+   "PrefabIdentifier" : "",
+   "BattleValue" : 0,
+   "InventorySize" : 2,
+   "Tonnage" : 0,
+   "AllowedLocations" : "All",
+   "DisallowedLocations" : "None",
+   "CriticalComponent" : false,
+   "ComponentTags": {
+      "items": [
+         "component_type_stock"
+      ],
+      "tagSetSourceFile": ""
+   },
+   "statusEffects" : [
+      
+   ]
+}

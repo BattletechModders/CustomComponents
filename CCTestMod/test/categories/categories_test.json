@@ -56,7 +56,7 @@
 			"BaseLimits" : [ { "Location" : "All", "Min" : 1, "Max" : 1 } ],
 			"DefaultCustoms" : {
 				"Sorter" : 1,
-				"RGBColor" : "red"
+				"RGBColor" : "#a01010"
 			}
 		},
 		{
@@ -66,8 +66,8 @@
 			"AddCategoryToDescription" : true,
 			"BaseLimits" : [ { "Location" : "All", "Min" : 1, "Max" : 1 } ],
 			"DefaultCustoms" : {
-				"Sorter" : 1,
-				"RGBColor" : "green"
+				"Sorter" : 2,
+				"RGBColor" : "#10a010"
 			}
 		},
 		{
@@ -77,8 +77,8 @@
 			"AddCategoryToDescription" : true,
 			"BaseLimits" : [ { "Location" : "All", "Min" : 1, "Max" : 1 } ],
 			"DefaultCustoms" : {
-				"Sorter" : 1,
-				"RGBColor" : "blue"
+				"Sorter" : 3,
+				"RGBColor" : "1010a0"
 			}
 		}
 	]

@@ -118,7 +118,7 @@
 		},
 		{
 			"Type" : "UpgradeDef",
-			"Path" : "CCTestMod/test/items"
+			"Path" : "CCTestMod/test/upgrade"
 		},
 		{
 			"Type" : "CCCEquipLocationTag",

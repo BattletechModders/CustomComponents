@@ -1,0 +1,36 @@
+{
+    "Custom" : {
+		"Category" : { "CategoryID" : "mtest2" }
+    },
+
+   "Description" : {
+      "Id" : "test2_non_default",
+      "Name" : "<[x2x]>",
+      "UIName" : "<[x2x]>",
+      "Details" : "This 1 category item",
+      "Icon" : "uixSvgIcon_quantity",
+      "Cost" : 0,
+      "Rarity" : 99,
+      "Purchasable" : false
+	},
+   "BonusValueA" : "",
+   "BonusValueB" : "",
+   "ComponentType" : "Upgrade",
+   "ComponentSubType" : "NotSet",
+   "PrefabIdentifier" : "",
+   "BattleValue" : 0,
+   "InventorySize" : 1,
+   "Tonnage" : 0,
+   "AllowedLocations" : "All",
+   "DisallowedLocations" : "None",
+   "CriticalComponent" : false,
+   "ComponentTags": {
+      "items": [
+         "component_type_stock"
+      ],
+      "tagSetSourceFile": ""
+   },
+   "statusEffects" : [
+      
+   ]
+}
