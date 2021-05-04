@@ -1,21 +1,18 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace CustomComponents
 {
-
-
-    public interface IListComponent
+    public interface IValueComponent
     {
-        void LoadList(IEnumerable<object> items);
+        void LoadValue(object value);
     }
 
-    public class ListCustomFactory<TCustom, TDef> : ICustomFactory
-        where TCustom : SimpleCustom<TDef>, IListComponent, new()
+    public class ValueCustomFactory<TCustom, TDef> : ICustomFactory
+        where TCustom : SimpleCustom<TDef>, IValueComponent, new()
         where TDef : class
     {
         public string CustomName { get; }
-        public ListCustomFactory(string customName)
+        public ValueCustomFactory(string customName)
         {
             CustomName = customName;
         }
@@ -43,17 +40,10 @@ namespace CustomComponents
                 yield break;
             }
 
-            if (!(componentSettingsObject is IEnumerable<object> compList))
-            {
-                yield break;
-            }
-
             var obj = new TCustom();
-            obj.LoadList(compList);
+            obj.LoadValue(componentSettingsObject);
 
             yield return obj;
         }
-
-
     }
 }

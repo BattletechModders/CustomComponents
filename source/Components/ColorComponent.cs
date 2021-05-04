@@ -1,4 +1,5 @@
-﻿using BattleTech.UI;
+﻿using System;
+using BattleTech.UI;
 using fastJSON;
 using UnityEngine;
 
@@ -8,15 +9,23 @@ namespace CustomComponents
     /// component has specific color
     /// </summary>
     [CustomComponent("Color", group: "ColorType")]
-    public class ColorComponent : SimpleCustomComponent, IColorComponent
+    public class ColorComponent : SimpleCustomComponent, IColorComponent, IValueComponent
     {
         /// <summary>
         /// color of component
         /// </summary>
-        public UIColor UIColor { get; set; }
+        public UIColor UIColor { get; set; } = UIColor.Red;
 
         [JsonIgnore]
         public Color RGBColor => Color.black;
+
+        public void LoadValue(object value)
+        {
+            if (value is string str && Enum.TryParse(str, true, out UIColor color))
+            {
+                UIColor = color;
+            }
+        }
     }
 
 

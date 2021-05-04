@@ -19,15 +19,7 @@ namespace CustomComponents
     {
         public Link[] Links { get; set; }
 
-        public void RemoveLinked(IMechLabDraggableItem item, MechLabPanel mechLab)
-        {
-            foreach (var r_link in Links)
-            {
-                Control.LogDebug(DType.ComponentInstall, $"{r_link.ComponentDefId} from {r_link.Location}");
-                DefaultHelper.RemoveMechLab(r_link.ComponentDefId, r_link.ComponentDefType ?? Def.ComponentType, r_link.Location);
-            }
-        }
-
+        
         public static void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors, MechValidationLevel validationLevel, MechDef mechDef)
         {
             var linked = mechDef.Inventory

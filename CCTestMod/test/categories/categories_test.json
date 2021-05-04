@@ -12,7 +12,7 @@
 				{ "Location" : "LeftTorso", "Min" : 2, "Max" : 2 }
 			],
 			"DefaultCustoms" : {
-				"Sorter" : { "Order" : 0  },
+				"Sorter" : 0,
 				"AllowedLocations" : { "Tag" : "TestCategory1" }		
 			},
 			"UnitLimits" : [
@@ -47,6 +47,39 @@
 			"AddCategoryToDescription" : true,
 			"BaseLimits" : [ { "Location" : "All", "Min" : 1, "Max" : 1 } ],
 			
+		},
+		{
+			"Name" : "mtest1",
+			"DisplayName" : "test1",
+			"AutoReplace" : true,
+			"AddCategoryToDescription" : true,
+			"BaseLimits" : [ { "Location" : "All", "Min" : 1, "Max" : 1 } ],
+			"DefaultCustoms" : {
+				"Sorter" : 1,
+				"RGBColor" : "red"
+			}
+		},
+		{
+			"Name" : "mtest2",
+			"DisplayName" : "test2",
+			"AutoReplace" : true,
+			"AddCategoryToDescription" : true,
+			"BaseLimits" : [ { "Location" : "All", "Min" : 1, "Max" : 1 } ],
+			"DefaultCustoms" : {
+				"Sorter" : 1,
+				"RGBColor" : "green"
+			}
+		},
+		{
+			"Name" : "mtest3",
+			"DisplayName" : "test3",
+			"AutoReplace" : true,
+			"AddCategoryToDescription" : true,
+			"BaseLimits" : [ { "Location" : "All", "Min" : 1, "Max" : 1 } ],
+			"DefaultCustoms" : {
+				"Sorter" : 1,
+				"RGBColor" : "blue"
+			}
 		}
 	]
 }

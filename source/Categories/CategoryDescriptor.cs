@@ -126,7 +126,7 @@ namespace CustomComponents
             set => displayName = value;
         }
 
-        public bool AllowMaxOverflow = true;
+        public bool AllowMaxOverflow = false;
         public bool AllowMinOverflow = true;
         public bool AllowMixTagsMechlab = true;
         public bool ReplaceDefaultsFirst = true;

@@ -1,7 +1,7 @@
 {
     "Custom" : {
 		"Category" : { "CategoryID" : "TestCategory1", "Weight" : 2  },
-		"Color" : { "UIColor" : "Gold" }
+		"Color" : "Gold" 
     },
 
    "Description" : {

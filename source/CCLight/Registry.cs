@@ -61,10 +61,16 @@ namespace CustomComponents
 
                 var typeWithGenericType = tuple.typeWithGenericType;
                 var defType = typeWithGenericType.GetGenericArguments()[0];
+                Type factoryGenericType;
 
-                var islist = typeof(IListComponent).IsAssignableFrom(type);
+                if (typeof(IValueComponent).IsAssignableFrom(type))
+                    factoryGenericType = typeof(ValueCustomFactory<,>);
+                else if (typeof(IListComponent).IsAssignableFrom(type))
+                    factoryGenericType = typeof(ListCustomFactory<, >);
+                else
+                    factoryGenericType = typeof(SimpleCustomFactory<,>);
 
-                var factoryGenericType = islist ? typeof(ListCustomFactory<,>) : typeof(SimpleCustomFactory<,>);
+
                 var genericTypes = new[] { type, defType };
                 var factoryType = factoryGenericType.MakeGenericType(genericTypes);
                 var factory = Activator.CreateInstance(factoryType, name) as ICustomFactory;

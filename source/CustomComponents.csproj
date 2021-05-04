@@ -109,6 +109,7 @@
     <Compile Include="Categories\ChassisCategory.cs" />
     <Compile Include="CCLight\Factories\ListCustomFactory.cs" />
     <Compile Include="CCLight\Factories\SimpleCustomChassis.cs" />
+    <Compile Include="CCLight\Factories\ValueCustomFactory.cs" />
     <Compile Include="CCLight\IReplaceIdentifier.cs" />
     <Compile Include="CCLight\Factories\IPreProcessor.cs" />
     <Compile Include="CCLight\Factories\SimpleCustom.cs" />

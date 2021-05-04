@@ -70,7 +70,6 @@ namespace CustomComponents
 
         public string ReplaceValidateDrop(MechLabItemSlotElement drop_item, ChassisLocations location, Queue<IChange> changes)
         {
-            return string.Empty;
 
             bool check_removed(InvItem item, List<Change_Remove> removed)
             {
@@ -112,7 +111,7 @@ namespace CustomComponents
                 .Select(i => new
                 {
                     item = i,
-                    canfree =  defaults?.IsCatDefault(i.Item.ComponentDefID) ?? false,
+                    canfree = defaults?.IsCatDefault(i.Item.ComponentDefID) ?? false,
                     fixd = i.Item.IsModuleFixed(mech),
                     def = i.Item.IsDefault(),
                     cat = i.Item.IsCategory(CategoryID, out var c) ? c : null
