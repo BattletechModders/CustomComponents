@@ -1,6 +1,8 @@
 ﻿using BattleTech;
 using Harmony;
 using System;
+using System.Collections.Generic;
+using CustomComponents.Changes;
 
 
 namespace CustomComponents.Patches
@@ -20,17 +22,16 @@ namespace CustomComponents.Patches
                 if (mech == null)
                     return;
 
-                foreach (var handler in order.MechComponentRef.GetComponents<IOnInstalled>())
-                {
-                    handler.OnInstalled(order, __instance, mech);
-                }
+                var changes = new Queue<IChange>();
+                if (order.PreviousLocation != ChassisLocations.None)
+                    changes.Enqueue(new Change_Remove(order.MechComponentRef, order.PreviousLocation, true));
+                if (order.DesiredLocation != ChassisLocations.None)
+                    changes.Enqueue(new Change_Add(order.MechComponentRef, order.DesiredLocation, true));
+                var state = new InventoryOperationState(changes, mech);
+                state.DoChanges();
+                state.ApplyInventory();
 
-                foreach (var onInstalledDelegate in Validator.GetOnInstalled())
-                {
-                    onInstalledDelegate(order, __instance, mech);
-                }
                 Control.LogDebug(DType.ComponentInstall, $"ML_InstallComponent complete");
-
             }
             catch (Exception e)
             {

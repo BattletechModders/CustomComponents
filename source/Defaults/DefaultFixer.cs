@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime;
 using BattleTech;
 using BattleTech.UI;
+using CustomComponents.Changes;
 using HBS.Extensions;
 
 namespace CustomComponents
@@ -92,14 +93,53 @@ namespace CustomComponents
             }
         }
 
-        public List<inv_change> GetMultiChange(MechDef mech, IEnumerable<InvItem> inventory)
+        internal void FixMechs(List<MechDef> mechDefs, SimGameState simgame)
         {
+            foreach (var mechDef in mechDefs)
+            {
+                try
+                {
+                    FixMech(simgame, mechDef);
+                }
+                catch (Exception e)
+                {
+                    Control.LogError($"Error in Default autofixer for {mechDef.Description.Id}", e);
+                }
+            }
+        }
+
+        private void FixMech(SimGameState simgame, MechDef mechDef)
+        {
+            var defaults = DefaultsDatabase.Instance[mechDef];
+            if (defaults == null)
+                return;
+
+            var changes = new Queue<IChange>();
+            var used = new List<string>();
+            if(defaults.Multi != null && defaults.Multi.HasRecords)
+                used.AddRange(defaults.Multi.UsedCategories.Keys);
+            
+            if(defaults.Defaults != null && defaults.Defaults.Count > 0)
+                used.AddRange(defaults.Defaults.Keys);
+
+            foreach (var category in used.Distinct())
+                changes.Enqueue(new Change_CategoryAdjust(category));
+            
+            if (changes.Count == 0)
+                return;
+
+            var state = new InventoryOperationState(changes, mechDef);
+            state.DoChanges();
+            state.ApplyInventory();
+        }
+
+        public void DoMultiChange(InventoryOperationState state)
+        {
+            var mech = state.Mech;
             var defaults = DefaultsDatabase.Instance[mech];
 
             if (defaults?.Multi == null || !defaults.Multi.HasRecords)
-                return null;
-
-            var result = new List<inv_change>();
+                return;
 
             var usage = defaults.Multi.Defaults
                 .Select(i => new usage_record(i));
@@ -115,16 +155,16 @@ namespace CustomComponents
                     }).ToArray());
 
 
-            foreach (var invItem in inventory)
+            foreach (var invItem in state.Inventory)
             {
-                var item = usage.FirstOrDefault(i => !i.used_now && i.DefId == invItem.item.ComponentDefID
-                                                     && i.Location == invItem.location);
+                var item = usage.FirstOrDefault(i => !i.used_now && i.DefId == invItem.Item.ComponentDefID
+                                                     && i.Location == invItem.Location);
                 if (item != null)
-                    item.item = invItem.item;
+                    item.item = invItem.Item;
                 else if (item.item.IsModuleFixed(mech) || !item.item.Flags<CCFlags>().CategoryDefault)
                 {
                     foreach (var catid in defaults.Multi.UsedCategories.Keys)
-                        if (invItem.item.IsCategory(catid, out var cat))
+                        if (invItem.Item.IsCategory(catid, out var cat))
                             foreach (var freeRecord in free[catid].Where(i => i.location.HasFlag(item.Location)))
                                 freeRecord.free -= cat.Weight;
                 }
@@ -155,8 +195,6 @@ namespace CustomComponents
 
                     if (!fit)
                         break;
-
-
                 }
 
                 usageRecord.used_after = fit;
@@ -166,31 +204,36 @@ namespace CustomComponents
                         value.record.free -= value.value;
                     }
 
-                //if (usageRecord.used_after != usageRecord.used_now)
+                if (usageRecord.used_after != usageRecord.used_now)
                 {
                     var d = usageRecord.mrecord;
                     if (usageRecord.used_after)
-                        result.Add(inv_change.Add(d.DefID, d.ComponentType, d.Location));
+                        state.AddChange(new Change_Add(d.DefID, d.ComponentType, d.Location));
                     else
-                        result.Add(inv_change.Remove(d.DefID, d.Location));
+                        state.AddChange(new Change_Remove(d.DefID, d.Location));
                 }
             }
-            return result;
         }
-        public List<inv_change> GetDefaultsChange(MechDef mech, IEnumerable<InvItem> inventory, string category)
-        {
-            //Control.Log($"GetDefaultsChange {category} {mech.ChassisID}");
 
+        public void DoDefaultsChange(InventoryOperationState state, string categoryId)
+        {
+            var mech = state.Mech;
             var record = DefaultsDatabase.Instance[mech];
 
 
-            if (!record.Defaults.TryGetValue(category, out var defaults) || defaults?.Defaults == null)
+            if (!record.Defaults.TryGetValue(categoryId, out var defaults) || defaults?.Defaults == null)
             {
                 //Control.Log($"- empty defaults list, clearing");
-                return inventory
-                    .Where(i => i.item.IsCategory(category) && i.item.Flags<CCFlags>().CategoryDefault && !i.item.IsModuleFixed(mech))
-                    .Select(i => inv_change.Remove(i.item.ComponentDefID, i.location))
-                    .ToList();
+                foreach (var item in state.Inventory)
+                {
+                    if (item.Item.IsCategory(categoryId) && item.Item.Flags<CCFlags>().CategoryDefault &&
+                        !item.Item.IsModuleFixed(mech))
+                    {
+                        state.AddChange(new Change_Remove(item.Item.ComponentDefID, item.Location));
+                    }
+                }
+
+                return;
             }
 
             //Control.Log($"- usage create");
@@ -215,25 +258,24 @@ namespace CustomComponents
 
 
             //Control.Log($"- start inventory");
-            foreach (var invItem in inventory)
+            foreach (var invItem in state.Inventory)
             {
-                var item = usage.FirstOrDefault(i => i.DefId == invItem.item.ComponentDefID
-                                                     && i.Location == invItem.location && !i.used_now);
+                var item = usage.FirstOrDefault(i => i.DefId == invItem.Item.ComponentDefID
+                                                     && i.Location == invItem.Location && !i.used_now);
                 if (item != null)
                 {
                     //Control.Log($"-- {invItem.item.ComponentDefID} is in defaults, added");
-                    item.item = invItem.item;
+                    item.item = invItem.Item;
                 }
-                else if (invItem.item.IsCategory(category, out var cat))
+                else if (invItem.Item.IsCategory(categoryId, out var cat))
                 {
                     //Control.Log($"-- {invItem.item.ComponentDefID} not in defaults, decrease free space");
-                    foreach (var freeRecord in free.Where(i => i.location.HasFlag(invItem.location)))
+                    foreach (var freeRecord in free.Where(i => i.location.HasFlag(invItem.Location)))
                         freeRecord.free -= cat.Weight;
                 }
             }
             //Control.Log($"- end inventory");
             var used_records = new List<(free_record record, int value)>();
-            var result = new List<inv_change>();
 
             //Control.Log($"- start usage");
             foreach (var usageRecord in usage)
@@ -269,86 +311,12 @@ namespace CustomComponents
                 {
                     //Control.Log($"-- create change");
                     if (usageRecord.used_after)
-                        result.Add(inv_change.Add(usageRecord.DefId, usageRecord.Type, usageRecord.Location));
+                        state.AddChange(new Change_Add(usageRecord.DefId, usageRecord.Type, usageRecord.Location));
                     else
-                        result.Add(inv_change.Remove(usageRecord.DefId, usageRecord.Location));
+                        state.AddChange(new Change_Remove(usageRecord.DefId, usageRecord.Location));
                 }
             }
             //Control.Log($"- done");
-
-
-            return result;
-        }
-
-
-        internal void FixMechs(List<MechDef> mechDefs, SimGameState simgame)
-        {
-            foreach (var mechDef in mechDefs)
-            {
-                try
-                {
-                    FixMech(simgame, mechDef);
-                }
-                catch (Exception e)
-                {
-                    Control.LogError($"Error in Default autofixer for {mechDef.Description.Id}", e);
-                }
-            }
-        }
-
-        private void FixMech(SimGameState simgame, MechDef mechDef)
-        {
-            var defaults = DefaultsDatabase.Instance[mechDef];
-            if (defaults == null)
-                return;
-
-            var inv = mechDef.Inventory.ToInvItems().ToList();
-            bool changed = false;
-            var changes = GetMultiChange(mechDef, inv);
-            if (changes != null && changes.Count > 0)
-            {
-                changed = true;
-                apply_changes(changes, inv, simgame);
-            }
-
-            foreach (var cat_id in defaults.Defaults.Keys)
-            {
-                changes = GetDefaultsChange(mechDef, inv, cat_id);
-                if (changes != null && changes.Count > 0)
-                {
-                    changed = true;
-                    apply_changes(changes, inv, simgame);
-                }
-            }
-
-            if (changed)
-                mechDef.SetInventory(inv.Select(i => i.item).ToArray());
-        }
-
-        private void apply_changes(List<inv_change> changes, List<InvItem> inv, SimGameState simgame)
-        {
-            var dm = UnityGameInstance.BattleTechGame.DataManager;
-            foreach (var invChange in changes)
-            {
-                if (invChange.IsAdd)
-                {
-                    var r = DefaultHelper.CreateRef(invChange.Id, invChange.Type, dm, simgame);
-                    r.SetData(invChange.Location, 0, ComponentDamageLevel.Functional, true);
-                    inv.Add(new RefInvItem(r, r.MountedLocation));
-                }
-                else if (invChange.IsRemove)
-                {
-                    var to_remove = inv.FirstOrDefault(i =>
-                        i.location == invChange.Location && i.item.ComponentDefID == invChange.Id);
-                    if (to_remove != null)
-                        inv.Remove(to_remove);
-                }
-            }
-        }
-
-        public void OnInstalled(WorkOrderEntry_InstallComponent order, SimGameState state, MechDef mech)
-        {
-            FixMech(state, mech);
         }
     }
 }

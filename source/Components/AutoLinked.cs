@@ -2,6 +2,7 @@
 using BattleTech;
 using BattleTech.UI;
 using System.Linq;
+using CustomComponents.Changes;
 using Localize;
 
 namespace CustomComponents
@@ -14,18 +15,9 @@ namespace CustomComponents
     }
 
     [CustomComponent("Linked")]
-    public class AutoLinked : SimpleCustomComponent, IOnItemGrabbed, IOnInstalled, IAdjustValidateDrop, IClearInventory
+    public class AutoLinked : SimpleCustomComponent, IOnAdd, IOnRemove
     {
-
         public Link[] Links { get; set; }
-
-        public void OnItemGrabbed(IMechLabDraggableItem item, MechLabPanel mechLab, ChassisLocations location)
-        {
-            if (Links != null && Links.Length > 0)
-            {
-                RemoveLinked(item, mechLab);
-            }
-        }
 
         public void RemoveLinked(IMechLabDraggableItem item, MechLabPanel mechLab)
         {
@@ -89,90 +81,23 @@ namespace CustomComponents
             return true;
         }
 
-
-        public void OnInstalled(WorkOrderEntry_InstallComponent order, SimGameState state, MechDef mech)
+        
+        public void OnAdd(ChassisLocations location, InventoryOperationState state)
         {
-            Control.LogDebug(DType.ComponentInstall, $"- AutoLinked");
-
-            if (order.PreviousLocation != ChassisLocations.None)
-                foreach (var link in Links)
-                {
-                    Control.LogDebug(DType.ComponentInstall, $"-- removing {link.ComponentDefId} from {link.Location}");
-                    DefaultHelper.RemoveInventory(link.ComponentDefId, mech, link.Location, link.ComponentDefType ?? Def.ComponentType);
-                }
-
-            if (order.DesiredLocation != ChassisLocations.None)
-                foreach (var link in Links)
-                {
-                    Control.LogDebug(DType.ComponentInstall, $"-- adding {link.ComponentDefId} to {link.Location}");
-                    DefaultHelper.AddInventory(link.ComponentDefId, mech, link.Location, link.ComponentDefType ?? Def.ComponentType, state);
-                }
-
-        }
-
-        public void ClearInventory(MechDef mech, List<MechComponentRef> result, SimGameState state, MechComponentRef source)
-        {
-            foreach (var l in Links)
-            {
-                result.RemoveAll(item => item.ComponentDefID == l.ComponentDefId && item.MountedLocation == l.Location);
-            }
-        }
-
-        public bool ValidateDropOnAdd(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes, List<SlotInvItem> inventory)
-        {
-            Control.LogDebug(DType.ComponentInstall, "--- AutoLinked Add");
-
             if (Links == null || Links.Length == 0)
-                return false;
+                return;
 
-            var result = false;
             foreach (var link in Links)
-            {
-                Control.LogDebug(DType.ComponentInstall, $"---- {link.ComponentDefId} to {link.Location}");
-                var slot = DefaultHelper.CreateSlot(link.ComponentDefId, link.ComponentDefType ?? Def.ComponentType);
-
-                if (slot != null)
-                {
-                    Control.LogDebug(DType.ComponentInstall, $"----- added");
-                    changes.Enqueue(new AddDefaultChange(link.Location, slot));
-                    result = true;
-                }
-                else
-                    Control.LogDebug(DType.ComponentInstall, $"----- not found");
-            }
-
-            return result;
+                state.AddChange(new Change_Add(link.ComponentDefId, link.ComponentDefType.HasValue ? link.ComponentDefType.Value : Def.ComponentType, link.Location ));
         }
 
-        public bool ValidateDropOnRemove(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes, List<SlotInvItem> inventory)
+        public void OnRemove(ChassisLocations location, InventoryOperationState state)
         {
-            Control.LogDebug(DType.ComponentInstall, "--- AutoLinked Remove");
-
             if (Links == null || Links.Length == 0)
-                return false;
+                return;
 
-            var result = false;
-
-            var to_remove = new List<SlotInvItem>();
             foreach (var link in Links)
-            {
-                Control.LogDebug(DType.ComponentInstall, $"---- {link.ComponentDefId} from {link.Location}");
-
-                var remove = inventory.FirstOrDefault(i => i.item.ComponentDefID == link.ComponentDefId && i.location == link.Location && !to_remove.Contains(i));
-                if (remove != null)
-                {
-                    Control.LogDebug(DType.ComponentInstall, $"----- removed");
-                    to_remove.Add(remove);
-                    changes.Enqueue(new RemoveChange(link.Location, remove.slot));
-                    result = true;
-
-                }
-                else
-                    Control.LogDebug(DType.ComponentInstall, $"----- not found");
-            }
-            return result;
+                state.AddChange(new Change_Remove(link.ComponentDefId, link.Location));
         }
-
-     
     }
 }

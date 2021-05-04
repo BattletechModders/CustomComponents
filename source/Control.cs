@@ -95,6 +95,7 @@ namespace CustomComponents
                 }
 
 
+                Validator.RegisterDropValidator(check: CategoryController.Shared.ValidateDrop);
                 Validator.RegisterDropValidator(pre: TagRestrictionsHandler.Shared.ValidateDrop);
                 Validator.RegisterDropValidator(HardpointController.Instance.PreValidateDrop, HardpointController.Instance.ReplaceValidatorDrop, HardpointController.Instance.PostValidatorDrop);
                 Validator.RegisterDropValidator(EquipLocationController.Instance.PreValidateDrop);
@@ -111,8 +112,6 @@ namespace CustomComponents
                 }
 
 
-                Validator.RegisterClearInventory(CategoryController.ClearInventory);
-                Validator.RegisterOnInstalled(DefaultFixer.Instance.OnInstalled);
 
                 if (Settings.UnitTypes != null && Settings.UnitTypes.Length > 0)
                     foreach (var tagUnitType in Settings.UnitTypes)

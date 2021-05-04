@@ -14,7 +14,7 @@ namespace CustomComponents.Patches
             {
                 if (__instance.Def == null)
                     return;
-                if (__instance.Def.IsDefault())
+                if (__instance.Def.Flags<CCFlags>().NoRemove)
                 {
                     var trav = Traverse.Create(__instance).Property<bool>("IsFixed");
                     trav.Value = true;

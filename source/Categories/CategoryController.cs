@@ -51,7 +51,7 @@ namespace CustomComponents
                 Categories[category.Name] = category;
 
             category.Init();
-            if(Control.Settings.DEBUG_ShowLoadedCategory)
+            if (Control.Settings.DEBUG_ShowLoadedCategory)
                 Control.Log(category.ToString());
         }
 
@@ -110,37 +110,37 @@ namespace CustomComponents
                 {
                     Control.LogError($"mech: {mechDef.Description.Id}, category: {category.Name}", nre);
                     continue;
-                    
+
                 }
 
                 if (record == null || record.LocationLimits.Count == 0)
                     continue;
 
                 items_by_category.TryGetValue(category, out var items);
-                
-                foreach(var pair in record.LocationLimits)
+
+                foreach (var pair in record.LocationLimits)
                 {
-                    if(pair.Value.Min > 0)
+                    if (pair.Value.Min > 0)
                     {
                         var count = items == null ? 0 : items.Where(i => pair.Key.HasFlag(i.location)).Sum(i => i.num);
-                        
-                        if(count < pair.Value.Min)
+
+                        if (count < pair.Value.Min)
                             errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(category.ValidateMinimum,
-                                category.DisplayName, pair.Value.Min, count, mechDef.Description.UIName, 
+                                category.DisplayName, pair.Value.Min, count, mechDef.Description.UIName,
                                 mechDef.Description.Name, pair.Key == ChassisLocations.All ? "All Locations" : pair.Key.ToString()));
                     }
 
-                    if(pair.Value.Max >= 0)
+                    if (pair.Value.Max >= 0)
                     {
                         var count = items == null ? 0 : items.Where(i => pair.Key.HasFlag(i.location)).Sum(i => i.num);
-                        
+
                         if (count > pair.Value.Max)
                             errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(category.ValidateMaximum,
                                 category.DisplayName, pair.Value.Max, count, mechDef.Description.UIName,
                                 mechDef.Description.Name, pair.Key == ChassisLocations.All ? "All Locations" : pair.Key.ToString()));
                     }
                 }
-    
+
             }
 
             foreach (var pair in items_by_category)
@@ -155,7 +155,7 @@ namespace CustomComponents
                     string first_tag = pair.Value
                         .Select(i => i.mix == null ? "!null!" : i.mix)
                         .FirstOrDefault(i => i != "*");
-                    
+
                     if (first_tag != null)
                     {
                         bool mixed = pair.Value.Any(i => i.mix != "*" && i.mix != null && i.mix != first_tag);
@@ -250,8 +250,102 @@ namespace CustomComponents
             return true;
         }
 
-        public static void ClearInventory(MechDef mech, List<MechComponentRef> result, SimGameState state)
+        public string ValidateDrop(MechLabItemSlotElement drop_item, List<InvItem> new_inventory)
         {
+            var mechDef = MechLabHelper.CurrentMechLab.ActiveMech;
+
+            var items_by_category = new_inventory
+                .Select(iitem => new { iitem, def = iitem.Item.Def.GetComponents<Category>() })
+                .Where(i => i.def != null)
+                .SelectMany(i => i.def.Select(item => new
+                {
+                    category = item.CategoryDescriptor,
+                    itemdef = i.iitem.Item.Def,
+                    itemref = i.iitem,
+                    location = i.iitem.Location,
+                    mix = item.GetTag(),
+                    num = item.Weight
+                }))
+                .GroupBy(i => i.category)
+                .ToDictionary(i => i.Key, i => i.ToList());
+
+
+
+            //check all minimum values
+            foreach (var category in GetCategories())
+            {
+                CategoryDescriptorRecord record;
+
+                if (category.AllowMinOverflow && category.AllowMaxOverflow)
+                    continue;
+
+                try
+                {
+                    record = category[mechDef];
+                }
+                catch (NullReferenceException nre)
+                {
+                    Control.LogError($"mech: {mechDef.Description.Id}, category: {category.Name}", nre);
+                    continue;
+
+                }
+
+                if (record == null || record.LocationLimits.Count == 0)
+                    continue;
+
+                items_by_category.TryGetValue(category, out var items);
+
+                foreach (var pair in record.LocationLimits)
+                {
+                    if (!category.AllowMinOverflow && pair.Value.Min > 0)
+                    {
+                        var count = items == null ? 0 : items.Where(i => pair.Key.HasFlag(i.location)).Sum(i => i.num);
+
+                        if (count < pair.Value.Min)
+                            return (new Localize.Text(category.ValidateMinimum,
+                                 category.DisplayName, pair.Value.Min, count, mechDef.Description.UIName,
+                                 mechDef.Description.Name, pair.Key == ChassisLocations.All ? "All Locations" : pair.Key.ToString())).ToString();
+                    }
+
+                    if (!category.AllowMaxOverflow && pair.Value.Max >= 0)
+                    {
+                        var count = items == null ? 0 : items.Where(i => pair.Key.HasFlag(i.location)).Sum(i => i.num);
+
+                        if (count > pair.Value.Max)
+                            return (new Localize.Text(category.ValidateMaximum,
+                                 category.DisplayName, pair.Value.Max, count, mechDef.Description.UIName,
+                                 mechDef.Description.Name, pair.Key == ChassisLocations.All ? "All Locations" : pair.Key.ToString())).ToString();
+                    }
+                }
+
+            }
+
+            foreach (var pair in items_by_category)
+            {
+                var record = pair.Key[mechDef];
+                if (record == null)
+                    continue;
+
+                //check if cateory mix tags
+                if (pair.Key.AllowMixTags || pair.Key.AllowMixTagsMechlab)
+                    continue;
+
+                string first_tag = pair.Value
+                    .Select(i => i.mix ?? "*")
+                    .FirstOrDefault(i => i != "*");
+
+                if (first_tag != null)
+                {
+                    bool mixed = pair.Value.Any(i => i.mix != "*" && i.mix != null && i.mix != first_tag);
+                    if (mixed)
+                    {
+                        return (new Localize.Text(pair.Key.ValidateMixed,
+                            pair.Key.DisplayName)).ToString();
+                    }
+                }
+            }
+
+            return string.Empty;
         }
     }
 }

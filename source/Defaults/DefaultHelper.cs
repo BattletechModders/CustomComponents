@@ -1,11 +1,10 @@
-﻿using System;
+﻿using BattleTech;
+using BattleTech.UI;
+using CustomComponents.Changes;
+using Harmony;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using BattleTech;
-using BattleTech.Data;
-using BattleTech.UI;
-using Harmony;
-using HBS.Extensions;
 
 
 namespace CustomComponents
@@ -261,16 +260,16 @@ namespace CustomComponents
         {
             try
             {
-
                 Control.LogDebug(DType.DefaultHandle, $"Repair-Remove for {item.ComponentRef.ComponentDefID}");
                 if (repair_state)
                 {
-                    foreach (var validator in item.ComponentRef.Def.GetComponents<IOnItemGrabbed>())
+                    var changes = new Queue<IChange>();
+                    changes.Add(new Change_Remove(item.ComponentRef, item.MountedLocation));
+                    var state = new InventoryOperationState(changes, mechlab.activeMechDef);
+                    foreach (var invChange in state.GetResults())
                     {
-                        Control.LogDebug(DType.DefaultHandle, $" -  {validator.GetType()}");
-                        validator.OnItemGrabbed(item, mechlab, repair_widget.loadout.Location);
+                        invChange.ApplyToMechlab();
                     }
-                    mechlab.ForceItemDrop(item);
                 }
             }
             catch (Exception e)
@@ -316,72 +315,39 @@ namespace CustomComponents
             Control.LogDebug(DType.DefaultHandle, $"Dropping {item.ComponentRef.Def.Description.Id} ");
             if (strip_state)
             {
-                foreach (var validator in item.ComponentRef.Def.GetComponents<IOnItemGrabbed>())
-                {
-                    validator.OnItemGrabbed(item, mechlab, strip_widget.loadout.Location);
-                }
-                mechlab.ForceItemDrop(item);
+                var changes = new Queue<IChange>();
+                changes.Add(new Change_Remove(item.ComponentRef, item.MountedLocation));
+                var state = new InventoryOperationState(changes, mechlab.activeMechDef);
+                foreach (var invChange in state.GetResults())
+                    invChange.ApplyToMechlab();
             }
         }
 
-        public static MechComponentRef[] ClearInventory(MechDef source, SimGameState state)
+        public static MechComponentRef[] ClearInventory(MechDef source_mech, SimGameState state)
         {
 
             Control.LogDebug(DType.ClearInventory, "Clearing Inventory");
 
-            var list = source.Inventory.ToList();
-            var result_list = source.Inventory
-                .Where(i => i.IsFixed || i.IsDefault() ||
-                            (i.SimGameUID != null && i.SimGameUID.StartsWith("FixedEquipment")))
-                .Select(i =>
-                    {
-                        var result = new MechComponentRef(i, i.SimGameUID);
-                        result.DataManager = i.DataManager;
-                        result.RefreshComponentDef();
-                        if (i.IsFixed || i.IsDefault() ||
-                           i.SimGameUID != null && i.SimGameUID.StartsWith("FixedEquipment"))
-                            result.SetData(i.HardpointSlot, ComponentDamageLevel.Functional, true);
-                        return result;
-                    }
-                    ).ToList();
+            var list = source_mech.Inventory.ToList();
+            var changes = new Queue<IChange>();
+            foreach (var mechComponentRef in list.Where(i => !i.IsFixed ))
+                changes.Enqueue(new Change_Remove(mechComponentRef, mechComponentRef.MountedLocation));
 
-
-            for (int i = list.Count - 1; i >= 0; i--)
-            {
-                Control.LogDebug(DType.ClearInventory, $"- {list[i].ComponentDefID} - {(list[i].Def == null ? "NULL" : list[i].SimGameUID)}");
-
-                if (list[i].Def == null)
-                {
-                    list[i].RefreshComponentDef();
-                    list[i].SetSimGameUID(state.GenerateSimGameUID());
-                }
-
-                if (list[i].IsFixed || list[i].IsDefault() || list[i].SimGameUID != null && list[i].SimGameUID.StartsWith("FixedEquipment"))
-                {
-                    Control.LogDebug(DType.ClearInventory, "-- fixed - skipping");
-                    continue;
-                }
-
-                foreach (var clear in list[i].GetComponents<IClearInventory>())
-                {
-                    clear.ClearInventory(source, result_list, state, list[i]);
-                }
-            }
-
-            foreach (var clearInventoryDelegate in Validator.clear_inventory)
-            {
-                clearInventoryDelegate(source, result_list, state);
-            }
+            var inv_state = new InventoryOperationState(changes, source_mech);
+            inv_state.DoChanges();
+            var to_apply = inv_state.GetResults();
+            foreach (var invChange in to_apply)
+                invChange.ApplyToInventory(source_mech, list);
 
             Control.LogDebug(DType.ClearInventory, $"- setting guids");
-            foreach (var item in result_list)
+            foreach (var item in list)
             {
                 if (string.IsNullOrEmpty(item.SimGameUID))
                     item.SetSimGameUID(state.GenerateSimGameUID());
                 Control.LogDebug(DType.ClearInventory, $"-- {item.ComponentDefID} - {item.SimGameUID}");
             }
 
-            return result_list.ToArray();
+            return list.ToArray();
         }
 
 

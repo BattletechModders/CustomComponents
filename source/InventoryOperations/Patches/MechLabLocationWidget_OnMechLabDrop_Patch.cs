@@ -1,15 +1,12 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using BattleTech;
-using BattleTech.UI;
+﻿using BattleTech.UI;
 using CustomComponents.Changes;
 using Harmony;
-using HBS.Extensions;
 using Localize;
+using System;
+using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
-namespace CustomComponents
+namespace CustomComponents.Patches
 {
     [HarmonyPatch(typeof(MechLabLocationWidget), "OnMechLabDrop")]
     internal static class MechLabLocationWidget_OnMechLabDrop_Patch
@@ -64,7 +61,7 @@ namespace CustomComponents
 
                 var changes = new Queue<IChange>();
 
-                changes.Enqueue(new ChangeAdd(dragItem, __instance.loadout.Location));
+                changes.Enqueue(new Change_Add(dragItem, __instance.loadout.Location));
 
                 foreach (ReplaceValidateDropDelegate rep_validator in Validator.GetReplace(newComponentDef))
                     if (do_cancel(rep_validator(dragItem, location, changes)))
@@ -80,11 +77,11 @@ namespace CustomComponents
                     else
                         foreach (var replace in changes)
                         {
-                            if (replace is ChangeAdd add)
+                            if (replace is Change_Add add)
                                 Control.LogDebug(DType.ComponentInstall,
                                     $"-- add {add.ItemID} to {add.Location}");
 
-                            else if (replace is ChangeRemove remove)
+                            else if (replace is Change_Remove remove)
                                 Control.LogDebug(DType.ComponentInstall,
                                     $"-- remove {remove.ItemID} from {remove.Location}");
 
@@ -108,20 +105,18 @@ namespace CustomComponents
                         return false;
                 }
 
-                var to_execute = state.GetResults();
-
                 Control.LogDebug(DType.ComponentInstall, $"- apply changes");
-                if(Control.Settings.DebugInfo.HasFlag(DType.ComponentInstall))
+                if (Control.Settings.DebugInfo.HasFlag(DType.ComponentInstall))
+                {
+                    var to_execute = state.GetResults();
+
                     foreach (var change in to_execute)
                     {
                         Control.LogDebug(DType.ComponentInstall, $"-- " + change.ToString());
                     }
-
-
-                foreach (var change in to_execute)
-                {
-                    change.ApplyToMechlab();
                 }
+                
+                state.ApplyMechlab();
 
 
                 ___mechLab.ClearDragItem(true);

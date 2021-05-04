@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 using BattleTech.UI;
+using CustomComponents.Changes;
 using HBS;
 using Localize;
 using Harmony;
@@ -160,11 +161,7 @@ namespace CustomComponents
                 return "INVALID WEAPON, REPORT TO DISCORD!";
             }
 
-            var removed = changes
-                .OfType<RemoveChange>()
-                .Where(i => i.item.ComponentRef.ComponentDefType == ComponentType.Weapon && i.location == location)
-                .Select(i => new { weapon = (i.item.ComponentRef.Def as WeaponDef), slot = i.item })
-                .ToArray();
+            var removed = changes.OfType<Change_Remove>().ToList();
 
             var lhepler = MechLabHelper.CurrentMechLab.GetLocationHelper(location);
 
@@ -174,8 +171,16 @@ namespace CustomComponents
 
             foreach (var slotitem in lhepler.LocalInventory.Where(i => i.ComponentRef.ComponentDefType == ComponentType.Weapon))
             {
-                if (removed.Any(i => i.slot == slotitem))
+
+                var already_removed = removed.FirstOrDefault(i =>
+                    i.ItemID == slotitem.ComponentRef.ComponentDefID && i.Location == slotitem.MountedLocation);
+
+                if (already_removed != null)
+                {
+                    removed.Remove(already_removed);
                     continue;
+                    ;
+                }
 
                 var w = slotitem.ComponentRef.Def as WeaponDef;
 
@@ -224,7 +229,7 @@ namespace CustomComponents
             var toremove = candidants
                 .OrderBy(i => i.ComponentRef.Def.InventorySize)
                 .First();
-            changes.Enqueue(new RemoveChange(location, toremove));
+            changes.Enqueue(new Change_Remove(toremove.ComponentRef.ComponentDefID, location));
 
             return string.Empty;
         }
@@ -235,8 +240,8 @@ namespace CustomComponents
                 return string.Empty;
 
             var weapons_per_location = new_inventory
-                .Where(i => i.item.ComponentDefType == ComponentType.Weapon)
-                .Select(i => new { location = i.location, weapon = i.item.Def as WeaponDef })
+                .Where(i => i.Item.ComponentDefType == ComponentType.Weapon)
+                .Select(i => new { location = i.Location, weapon = i.Item.Def as WeaponDef })
                 .Where(i => i.weapon != null)
 
                 .GroupBy(i => i.location)

@@ -5,11 +5,11 @@ using UIWidgetsSamples.Shops;
 
 namespace CustomComponents.Changes
 {
-    public class ChangeAdd : IInvChange, IOptimizableChange
+    public class Change_Add : IChange_Apply, IChange_Optimize
     {
-        private InvItem item;
+        private MechComponentRef item;
         private MechLabItemSlotElement slot;
-
+        private bool Applied;
         public string ItemID { get; set; }
         public ComponentType Type { get; set; }
         public ChassisLocations Location { get; set; }
@@ -17,7 +17,7 @@ namespace CustomComponents.Changes
         public void AdjustChange(InventoryOperationState state)
         {
             if (item == null) return;
-            foreach (var add_handler in item.Item.GetComponents<IOnAdd>())
+            foreach (var add_handler in item.GetComponents<IOnAdd>())
             {
                 add_handler.OnAdd(Location, state);
             }
@@ -25,13 +25,21 @@ namespace CustomComponents.Changes
 
         public void PreviewApply(InventoryOperationState state)
         {
-            item = new InvItem(DefaultHelper.CreateRef(ItemID, Type, Location), Location);
+            InvItem i = null;
+            if (!Applied)
+            {
+                i = new InvItem(DefaultHelper.CreateRef(ItemID, Type, Location), Location);
+                item = i.Item;
+            }
 
-            state.Inventory.Add(item);
+            if(i != null)
+                state.Inventory.Add(i);
         }
 
         public void ApplyToInventory(MechDef mech, List<MechComponentRef> inventory)
         {
+            if (Applied)
+                return;
             var r = DefaultHelper.CreateRef(ItemID, Type, Location);
             if (r.IsDefault())
                 inventory.Add(r);
@@ -39,6 +47,8 @@ namespace CustomComponents.Changes
 
         public void ApplyToMechlab()
         {
+            if (Applied)
+                return;
             var mechLab = MechLabHelper.CurrentMechLab;
             var lhelper = mechLab.GetLocationHelper(Location);
             if (lhelper == null)
@@ -62,12 +72,12 @@ namespace CustomComponents.Changes
 
         }
 
-        public void DoOptimization(List<IInvChange> current)
+        public void DoOptimization(List<IChange_Apply> current)
         {
             for (int i = current.Count - 2; i >= 0; i--)
             {
                 var change = current[i];
-                if (change is ChangeRemove remove && remove.Location == Location && remove.ItemID == ItemID)
+                if (change is Change_Remove remove && remove.Location == Location && remove.ItemID == ItemID)
                 {
                     current.RemoveAt(i);
                     current.Remove(this);
@@ -76,19 +86,31 @@ namespace CustomComponents.Changes
             }
         }
 
-        public ChangeAdd()
+        public Change_Add()
         {
 
         }
 
-        public ChangeAdd(string id, ComponentType type, ChassisLocations location)
+        public Change_Add(MechComponentRef item, ChassisLocations location, bool already_applied = false)
+        {
+            ItemID = item.ComponentDefID;
+            Type = item.ComponentDefType;
+            Location = location;
+            if (already_applied)
+            {
+                this.item = item;
+                Applied = true;
+            }
+        }
+
+        public Change_Add(string id, ComponentType type, ChassisLocations location)
         {
             ItemID = id;
             Type = type;
             Location = location;
         }
 
-        public ChangeAdd(MechLabItemSlotElement slot, ChassisLocations location)
+        public Change_Add(MechLabItemSlotElement slot, ChassisLocations location)
         {
             this.slot = slot;
             ItemID = slot.ComponentRef.ComponentDefID;

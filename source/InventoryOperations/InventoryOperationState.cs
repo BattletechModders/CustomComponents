@@ -8,17 +8,17 @@ namespace CustomComponents
 {
     public class InventoryOperationState
     {
-        private List<IInvChange> done_changes;
+        private List<IChange_Apply> done_changes;
         private Queue<IChange> pending_changes;
         public List<InvItem> Inventory { get; private set; }
 
         public MechDef Mech { get; private set; }
 
-        public InventoryOperationState(Queue<IChange> start_changes, MechDef mech)
+        public InventoryOperationState(Queue<IChange> start_changes, MechDef mech, IEnumerable<InvItem> inventory = null)
         {
-            done_changes = new List<IInvChange>();
+            done_changes = new List<IChange_Apply>();
             Mech = mech;
-            Inventory = mech.Inventory.ToInvItems().ToList();
+            Inventory = (inventory ?? mech.Inventory.ToInvItems()).ToList();
 
             pending_changes = start_changes;
 
@@ -28,28 +28,28 @@ namespace CustomComponents
         {
             foreach (var change in pending_changes)
             {
-                if (change is IInvChange iichange)
+                if (change is IChange_Apply iichange)
                     iichange.PreviewApply(this);
             }
 
             while (pending_changes.Count > 0)
             {
                 var change = pending_changes.Dequeue();
-                if (change is IAdjustChange adj && pending_changes.Any(i => i is IAdjustChange adj2 && adj2.ChangeID == adj.ChangeID))
+                if (change is IChange_Adjust adj && pending_changes.Any(i => i is IChange_Adjust adj2 && adj2.ChangeID == adj.ChangeID))
                     continue;
 
                 change.AdjustChange(this);
 
-                if (change is IInvChange iichange)
+                if (change is IChange_Apply iichange)
                 {
                     done_changes.Add(iichange);
-                    if(iichange is IOptimizableChange ioc)
+                    if(iichange is IChange_Optimize ioc)
                         ioc.DoOptimization(done_changes);
                 }
             }
         }
 
-        public IEnumerable<IInvChange> GetResults()
+        public IEnumerable<IChange_Apply> GetResults()
         {
             return done_changes;
         }
@@ -57,8 +57,26 @@ namespace CustomComponents
         public void AddChange(IChange change)
         {
             pending_changes.Enqueue(change);
-            if(change is IInvChange iichange)
+            if(change is IChange_Apply iichange)
                 iichange.PreviewApply(this);
+        }
+
+        public void ApplyInventory()
+        {
+            var inv = Mech.Inventory.ToList();
+            foreach (var change in done_changes)
+            {
+                change.ApplyToInventory(Mech, inv);
+            }
+            Mech.SetInventory(inv.ToArray());
+        }
+
+        public void ApplyMechlab()
+        {
+            foreach (var changeApply in done_changes)
+            {
+                changeApply.ApplyToMechlab();
+            }
         }
     }
 }

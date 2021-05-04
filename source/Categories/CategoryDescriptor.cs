@@ -123,6 +123,11 @@ namespace CustomComponents
             set => displayName = value;
         }
 
+        public bool AllowMaxOverflow = true;
+        public bool AllowMinOverflow = true;
+        public bool AllowMixTagsMechlab = true;
+        public bool ReplaceDefaultsFirst = true;
+
         public bool AutoReplace = false;
         public bool AddCategoryToDescription = true;
         public bool AllowMixTags = true;
@@ -269,8 +274,9 @@ namespace CustomComponents
             var sb = new StringBuilder("Category: " + Name + "(" + DisplayName + ")");
             sb.AppendLine();
             sb.AppendLine(
-                $"- AutoReplace: {AutoReplace}, AddCategoryToDescription: {AddCategoryToDescription},  AllowMixTags: {AllowMixTags}");
-
+                $"- AutoReplace: {AutoReplace}, AddToDescription: {AddCategoryToDescription},  AllowMixTags/Mechlab: {AllowMixTags}/{AllowMixTagsMechlab}");
+            sb.AppendLine(
+                $"- MinOverflow: {AllowMinOverflow}, MaxOverflow: {AllowMaxOverflow}, DefaultsFirst: {ReplaceDefaultsFirst}");
             sb.AppendLine("- Errors");
             sb.AppendLine("-- AddMaximumReached: " + AddMaximumReached);
             sb.AppendLine("-- AddMixed: " + AddMixed);

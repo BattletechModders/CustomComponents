@@ -66,11 +66,11 @@ namespace CustomComponents
             return all_helpers;
         }
 
-        public IEnumerable<SlotInvItem> FullInventory
+        public IEnumerable<InvItem> FullInventory
         {
             get
             {
-                return all_helpers.SelectMany(i => i.LocalInventory, (a,b) => new SlotInvItem(b, a.widget.loadout.Location));
+                return all_helpers.SelectMany(i => i.LocalInventory, (a,b) => new InvItem(b.ComponentRef, a.widget.loadout.Location));
             }
         }
 

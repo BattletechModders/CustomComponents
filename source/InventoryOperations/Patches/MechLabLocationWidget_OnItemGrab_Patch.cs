@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using BattleTech;
 using BattleTech.UI;
+using CustomComponents.Changes;
 using Harmony;
 using Localize;
 
@@ -43,17 +45,20 @@ namespace CustomComponents.Patches
             return true;
         }
 
-        public static void Postfix(IMechLabDraggableItem item, ref bool __result, MechComponentRef __state, MechLabPanel ___mechLab, MechLabLocationWidget __instance)
+        public static void Postfix(IMechLabDraggableItem item, ref bool __result, MechComponentRef __state,
+            MechLabPanel ___mechLab, MechLabLocationWidget __instance)
         {
             try
             {
                 if (!__result)
                     return;
 
-                foreach (var grab_handler in item.ComponentRef.Def.GetComponents<IOnItemGrabbed>())
-                {
-                    grab_handler.OnItemGrabbed(item, ___mechLab, __instance.loadout.Location);
-                }
+
+                var changes = new Queue<IChange>();
+                changes.Enqueue(new Change_Remove(item.ComponentRef, __instance.loadout.Location, true));
+                var state = new InventoryOperationState(changes, MechLabHelper.CurrentMechLab.ActiveMech);
+                state.DoChanges();
+                state.ApplyMechlab();
 
                 ___mechLab.ValidateLoadout(false);
 

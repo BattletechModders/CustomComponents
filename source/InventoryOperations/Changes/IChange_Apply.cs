@@ -3,7 +3,7 @@ using BattleTech;
 
 namespace CustomComponents.Changes
 {
-    public interface IInvChange : IChange
+    public interface IChange_Apply : IChange
     {
         void PreviewApply(InventoryOperationState state);
         void ApplyToInventory(MechDef mech, List<MechComponentRef> inventory);

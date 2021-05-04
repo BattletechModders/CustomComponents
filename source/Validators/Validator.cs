@@ -17,14 +17,7 @@ namespace CustomComponents
         public static List<ValidateMechDelegate> mech_validators = new List<ValidateMechDelegate>();
         private static List<ValidateMechCanBeFieldedDelegate> field_validators =
             new List<ValidateMechCanBeFieldedDelegate>();
-        internal static List<ClearInventoryDelegate> clear_inventory = new List<ClearInventoryDelegate>();
-        private static List<OnInstalledDelegate> on_onstalled = new List<OnInstalledDelegate>();
 
-        public static void RegisterOnInstalled(OnInstalledDelegate onInstalled)
-        {
-            if(onInstalled != null)
-                on_onstalled.Add(onInstalled);
-        }
         /// <summary>
         /// register new AddValidator
         /// </summary>
@@ -48,15 +41,6 @@ namespace CustomComponents
             if (fieldvalidator != null) field_validators.Add(fieldvalidator);
         }
 
-        public static void RegisterClearInventory(ClearInventoryDelegate clear)
-        {
-            if (clear != null) clear_inventory.Add(clear);
-        }
-
-        public static IEnumerable<OnInstalledDelegate> GetOnInstalled()
-        {
-            return on_onstalled;
-        }
 
         internal static IEnumerable<PreValidateDropDelegate> GetPre(MechComponentDef component)
         {
@@ -135,8 +119,8 @@ namespace CustomComponents
         private static string ValidateSize(MechLabItemSlotElement drop_item,List<InvItem> new_inventory)
         {
             var items_by_location = new_inventory
-                .GroupBy(i => i.location)
-                .Select(i => new { location = i.Key, size = i.Sum(a => a.item.Def.InventorySize) });
+                .GroupBy(i => i.Location)
+                .Select(i => new { location = i.Key, size = i.Sum(a => a.Item.Def.InventorySize) });
             var mech = MechLabHelper.CurrentMechLab.ActiveMech;
 
             foreach(var record in items_by_location)
@@ -150,7 +134,7 @@ namespace CustomComponents
 
         private static string ValidateJumpJets(MechLabItemSlotElement drop_item, List<InvItem> new_inventory)
         {
-            var total = new_inventory.Count(i => i.item.ComponentDefType == ComponentType.JumpJet);
+            var total = new_inventory.Count(i => i.Item.ComponentDefType == ComponentType.JumpJet);
             var max = MechLabHelper.CurrentMechLab.ActiveMech.Chassis.MaxJumpjets;
             if (total > max)
                 return $"Cannot add {drop_item.ComponentRef.Def.Description.Name}: Max number of jumpjets for 'Mech reached";

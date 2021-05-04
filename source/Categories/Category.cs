@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 using BattleTech.UI;
+using CustomComponents.Changes;
 using CustomComponents.ExtendedDetails;
 using fastJSON;
+using Localize;
 
 namespace CustomComponents
 {
@@ -12,9 +14,8 @@ namespace CustomComponents
     /// component use category logic
     /// </summary>
     [CustomComponent("Category", true)]
-    public class Category : SimpleCustomComponent, IAfterLoad,  IReplaceValidateDrop,
-        IReplaceIdentifier, IAdjustDescription, IOnItemGrabbed,
-        IAdjustValidateDrop
+    public class Category : SimpleCustomComponent, IAfterLoad, IReplaceValidateDrop,
+        IReplaceIdentifier, IAdjustDescription, IOnRemove, IOnAdd, IPreValidateDrop
     {
 
         private class free_record
@@ -23,17 +24,18 @@ namespace CustomComponents
             public CategoryLimit limit;
             public int free;
             public int can_free;
-            public List<(SlotInvItem item, int weight)> items = new List<(SlotInvItem item, int weight)>();
+            public List<(InvItem item, int weight)> items = new List<(InvItem item, int weight)>();
         }
 
         /// <summary>
         /// name of category
         /// </summary>
         public string CategoryID { get; set; }
+
         /// <summary>
         /// optional tag for AllowMixTags, if not set defid will used
         /// </summary>
-        public string Tag { get; set; }
+        public string Tag { get; set; } = "*";
 
         public int Weight { get; set; } = 1;
 
@@ -68,10 +70,23 @@ namespace CustomComponents
 
         public string ReplaceValidateDrop(MechLabItemSlotElement drop_item, ChassisLocations location, Queue<IChange> changes)
         {
+            bool check_removed(InvItem item, List<Change_Remove> removed)
+            {
+                var found = removed.FirstOrDefault(i =>
+                    i.ItemID == item.Item.ComponentDefID && i.Location == item.Location);
+                if (found != null)
+                {
+                    removed.Remove(found);
+                    return false;
+                }
+
+                return true;
+            }
+
             Control.LogDebug(DType.ComponentInstall, $"-- Category {CategoryID}");
 
 
-            var mech = MechLabHelper.CurrentMechLab.MechLab.activeMechDef ;
+            var mech = MechLabHelper.CurrentMechLab.MechLab.activeMechDef;
 
 
             var record = CategoryDescriptor[mech];
@@ -84,17 +99,19 @@ namespace CustomComponents
             }
 
 
-            var removed = changes.OfType<RemoveChange>().Select(i => i.item).ToList();
+            var removed = changes.OfType<Change_Remove>().ToList();
 
             var limits = record.LocationLimits.Where(i => i.Key.HasFlag(location) && i.Value.Max >= 0).ToList();
+            
+            
             var inventory = MechLabHelper.CurrentMechLab.FullInventory
-                .Where(i => !removed.Contains(i.slot))
+                .Where(i => check_removed(i, removed))
                 .Select(i => new
                 {
-                    item = i, 
-                    def = i.slot.ComponentRef.IsDefault(), 
-                    fixd = i.slot.ComponentRef.IsModuleFixed(mech), 
-                    cat = i.slot.ComponentRef.IsCategory(CategoryID, out var c) ? c : null
+                    item = i,
+                    def = i.Item.IsDefault(),
+                    fixd = i.Item.IsModuleFixed(mech),
+                    cat = i.Item.IsCategory(CategoryID, out var c) ? c : null
                 })
                 .Where(i => i.cat != null)
                 .ToList();
@@ -107,7 +124,7 @@ namespace CustomComponents
                 free.free = limit.Value.Max;
                 free.locations = limit.Key;
                 free.limit = limit.Value;
-                foreach (var item_info in inventory.Where(i => limit.Key.HasFlag(i.item.location)))
+                foreach (var item_info in inventory.Where(i => limit.Key.HasFlag(i.item.Location)))
                 {
                     if (item_info.fixd)
                         free.free -= item_info.cat.Weight;
@@ -115,18 +132,18 @@ namespace CustomComponents
                     {
                         free.free -= item_info.cat.Weight;
                         free.can_free += item_info.cat.Weight;
-                        free.items.Add( (item_info.item, item_info.cat.Weight) );
+                        free.items.Add((item_info.item, item_info.cat.Weight));
                     }
                 }
-                free.items.Sort((a,b) => a.weight.CompareTo(b.weight));
+                free.items.Sort((a, b) => a.weight.CompareTo(b.weight));
                 free_places.Add(free);
             }
 
-            var to_remove = new List<(SlotInvItem item, int weight)>();
+            var to_remove = new List<(InvItem item, int weight)>();
 
             foreach (var free in free_places)
             {
-                foreach (var item in to_remove.Where(i => free.locations.HasFlag(i.item.location)))
+                foreach (var item in to_remove.Where(i => free.locations.HasFlag(i.item.Location)))
                 {
                     free.free += item.weight;
                     free.can_free -= item.weight;
@@ -148,7 +165,7 @@ namespace CustomComponents
                 }
 
                 int need_free = Weight - free.free;
-                foreach(var item in free.items)
+                foreach (var item in free.items)
                 {
                     if (need_free <= 0)
                         break;
@@ -160,7 +177,7 @@ namespace CustomComponents
 
             foreach (var item in to_remove.Select(i => i.item))
             {
-                changes.Enqueue(new RemoveChange(item.location, item.slot));
+                changes.Enqueue(new Change_Remove(item.Item.ComponentDefID, location));
             }
 
             return string.Empty;
@@ -168,43 +185,22 @@ namespace CustomComponents
 
         public override string ToString()
         {
-            return "Category: " + CategoryID;
+            return "Category: " + CategoryID + (Weight > 1 ? $":{Weight}" : "") + ":" + Tag;
         }
 
-        public void OnItemGrabbed(IMechLabDraggableItem item, MechLabPanel mechLab, ChassisLocations location)
+        public string PreValidateDrop(MechLabItemSlotElement item, ChassisLocations location)
         {
-            void apply_changes(List<DefaultFixer.inv_change> changes)
-            {
+            if (CategoryDescriptor.AllowMixTagsMechlab || CategoryDescriptor.AllowMixTags || Tag == "*")
+                return string.Empty;
 
-                foreach (var invChange in changes)
-                {
-                    if(invChange.IsAdd)
-                        DefaultHelper.AddMechLab(invChange.Id, invChange.Type, invChange.Location);
+            var check = MechLabHelper.CurrentMechLab.ActiveMech.Inventory
+                .Select(i => i.GetCategory(CategoryID))
+                .Where(i => i != null)
+                .Any(i => i.Tag != "*" && i.Tag != Tag);
 
-                    else if (invChange.IsRemove)
-                        DefaultHelper.RemoveMechLab(invChange.Id, invChange.Type, invChange.Location);
-                }
-            }
-
-            Control.LogDebug(DType.ComponentInstall, $"- Category {CategoryID}");
-            Control.LogDebug(DType.ComponentInstall, $"-- search replace for {item.ComponentRef.ComponentDefID}");
-
-            var mechlab = MechLabHelper.CurrentMechLab;
-            var mech = mechlab.ActiveMech;
-
-        var record = CategoryDescriptor[mech];
-            if (record?.MinLimited != true)
-                return;
-
-            var changes = DefaultFixer.Instance.GetMultiChange(mech, mech.Inventory.ToInvItems());
-            if (changes != null)
-                apply_changes(changes);
-            changes = DefaultFixer.Instance.GetDefaultsChange(mech, mech.Inventory.ToInvItems(), CategoryID);
-            if (changes != null)
-                apply_changes(changes);
-
-            mechLab.ValidateLoadout(false);
+            return !check ? string.Empty : (new Text(CategoryDescriptor.ValidateMixed, CategoryDescriptor.DisplayName)).ToString();
         }
+
 
         public void AdjustDescription()
         {
@@ -217,32 +213,31 @@ namespace CustomComponents
                     new ExtendedDetailList()
                     {
                         Index = 10,
-                        Identifier =  "Category",
+                        Identifier = "Category",
                         OpenBracket = $"\n<b><color={Control.Settings.CategoryDescriptionColor}>[",
                         CloseBracket = "]</color></b>\n"
                     };
 
-                detail.AddUnique((Control.Settings.AddWeightToCategory && Weight > 1) 
-                    ? this.CategoryDescriptor.DisplayName + ":" + Weight.ToString() 
+                detail.AddUnique((Control.Settings.AddWeightToCategory && Weight > 1)
+                    ? this.CategoryDescriptor.DisplayName + ":" + Weight.ToString()
                     : this.CategoryDescriptor.DisplayName);
                 ed.AddDetail(detail);
             }
         }
-        public bool ValidateDropOnAdd(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes, List<SlotInvItem> inventory)
-        {
-            if (CategoryDescriptor[MechLabHelper.CurrentMechLab.ActiveMech].MinLimited && !Def.Flags<CCFlags>().CategoryDefault)
-                changes.Enqueue(new CategoryDefaultsAdjust(CategoryID));
 
-            return false;
+
+        public void OnAdd(ChassisLocations location, InventoryOperationState state)
+        {
+            if (CategoryDescriptor[MechLabHelper.CurrentMechLab.ActiveMech].MaxLimited && !Def.Flags<CCFlags>().CategoryDefault)
+                state.AddChange(new Change_CategoryAdjust(CategoryID));
         }
 
-        public bool ValidateDropOnRemove(MechLabItemSlotElement item, ChassisLocations location, Queue<IChange> changes, List<SlotInvItem> inventory)
+        public void OnRemove(ChassisLocations location, InventoryOperationState state)
         {
             var f = Def.Flags<CCFlags>();
             if (CategoryDescriptor[MechLabHelper.CurrentMechLab.ActiveMech].MinLimited && !Def.Flags<CCFlags>().CategoryDefault)
-                changes.Enqueue(new CategoryDefaultsAdjust(CategoryID));
-
-            return false;
+                state.AddChange(new Change_CategoryAdjust(CategoryID));
         }
+
     }
 }

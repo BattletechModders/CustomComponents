@@ -2,8 +2,8 @@
 
 namespace CustomComponents.Changes
 {
-    public interface IOptimizableChange : IInvChange
+    public interface IChange_Optimize : IChange_Apply
     {
-        void DoOptimization(List<IInvChange> current);
+        void DoOptimization(List<IChange_Apply> current);
     }
 }

@@ -90,7 +90,7 @@ namespace CustomComponents
         public string Category_ValidateMinimum = "MISSING {0}: This unit must mount at least {1} in {5}";
         public string Category_ValidateMaximum = "EXCESS {0}: This mech can't mount more then {1} in {5}";
         // 0 - Display Name
-        public string Category_ValidateMixed = "WRONG {0}: Mech can have only one type of {0}";
+        public string Category_ValidateMixed = "Mech can have only one type of {0}";
 
         /// 0 - item Name, 1 - Location name, 2 - item.uiname
         public string Base_LocationDestroyed = "Cannot add {0} to {1}: The location is Destroyed.";
