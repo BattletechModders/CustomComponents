@@ -9,10 +9,12 @@ namespace CustomComponents.Changes
     {
         private MechComponentRef item;
         private MechLabItemSlotElement slot;
-        private bool Applied;
+        public bool Applied { get; private set; }
         public string ItemID { get; set; }
         public ComponentType Type { get; set; }
         public ChassisLocations Location { get; set; }
+
+        public bool Initial { get; set; }
 
         public void AdjustChange(InventoryOperationState state)
         {
@@ -77,7 +79,7 @@ namespace CustomComponents.Changes
             for (int i = current.Count - 2; i >= 0; i--)
             {
                 var change = current[i];
-                if (change is Change_Remove remove && remove.Location == Location && remove.ItemID == ItemID)
+                if (!change.Initial && change is Change_Remove remove && !remove.Applied && remove.Location == Location && remove.ItemID == ItemID)
                 {
                     current.RemoveAt(i);
                     current.Remove(this);
@@ -116,6 +118,11 @@ namespace CustomComponents.Changes
             ItemID = slot.ComponentRef.ComponentDefID;
             Type = slot.ComponentRef.ComponentDefType;
             Location = location;
+        }
+
+        public override string ToString()
+        {
+            return $"Change_Add {ItemID} => {Location}";
         }
     }
 }

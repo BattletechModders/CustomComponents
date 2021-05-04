@@ -23,7 +23,7 @@
 		"DEBUG_ShowLoadedDefaults" : true,
 		"DEBUG_ShowLoadedAlLocations" : true,
 		"DEBUG_EnableAllTags" : false,
-		"DEBUG_ShowFlags" : true,
+		"DEBUG_ShowFlags" : false,
 		
 		"Message" : {
 		

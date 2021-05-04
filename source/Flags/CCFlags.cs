@@ -21,9 +21,6 @@ namespace CustomComponents
         [CustomFlag("default")]
         [SubFlags("autorepair", "no_remove", "hide", "no_salvage")]
         public bool Default { get; set; } = false;
-        [CustomFlag("cat_default")]
-        [SubFlags("default")]
-        public bool CategoryDefault { get; set; } = false;
 
         [CustomFlag("not_broken")]
         public bool NotBroken { get; set; } = false;
@@ -89,8 +86,6 @@ namespace CustomComponents
         public override string ToString()
         {
             var result = "";
-            if (CategoryDefault)
-                result += "CategoryDefault ";
             if (Default)
                 result += "Default ";
             if (NoRemove)

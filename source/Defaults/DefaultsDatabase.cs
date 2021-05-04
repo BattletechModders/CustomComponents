@@ -64,6 +64,33 @@ namespace CustomComponents
         {
             public MultiRecord Multi { get; set; }
             public Dictionary<string, CategoryDefault> Defaults { get; set; }
+
+            private HashSet<string> all_id;
+            private HashSet<string> single_id;
+
+            public void Complete()
+            {
+                single_id = new HashSet<string>();
+                all_id = new HashSet<string>();
+                if (Multi != null && Multi.HasRecords)
+                    foreach (var d in Multi.Defaults)
+                        all_id.Add(d.DefID);
+                if (Defaults != null && Defaults.Count > 0)
+                    foreach (var def in Defaults.SelectMany(i => i.Value.Defaults))
+                    {
+                        all_id.Add(def.Item.Description.Id);
+                        single_id.Add(def.Item.Description.Id);
+                    }
+            }
+
+            public bool IsCatDefault(string id)
+            {
+                return all_id?.Contains(id) ?? false;
+            }
+            public bool IsSingleCatDefault(string id)
+            {
+                return single_id?.Contains(id) ?? false;
+            }
         }
 
         public class MultiRecord
@@ -194,9 +221,9 @@ namespace CustomComponents
                             Control.LogError($"{mech.ChassisID} default {default_record.DefID} dont have category {item.CategoryID}");
                             continue;
                         }
-                        if (!def.Flags<CCFlags>().CategoryDefault)
+                        if (!def.Flags<CCFlags>().Default)
                         {
-                            Control.LogError($"{mech.ChassisID} default {default_record.DefID} dont have `cat_default` flag");
+                            Control.LogError($"{mech.ChassisID} default {default_record.DefID} dont have `default` flag");
                             continue;
                         }
 
@@ -307,6 +334,7 @@ namespace CustomComponents
                         CategoryID = i.Key
                     }));
 
+            result.Complete();
             return result;
         }
 

@@ -8,8 +8,8 @@ namespace CustomComponents
 {
     public class InventoryOperationState
     {
-        private List<IChange_Apply> done_changes;
-        private Queue<IChange> pending_changes;
+        private List<IChange_Apply > done_changes;
+        private Queue<IChange > pending_changes;
         public List<InvItem> Inventory { get; private set; }
 
         public MechDef Mech { get; private set; }
@@ -20,8 +20,12 @@ namespace CustomComponents
             Mech = mech;
             Inventory = (inventory ?? mech.Inventory.ToInvItems()).ToList();
 
-            pending_changes = start_changes;
-
+            pending_changes = new Queue<IChange>();
+            foreach (var change in start_changes)
+            {
+                change.Initial = true;
+                pending_changes.Enqueue(change);
+            }
         }
 
         public void DoChanges()
@@ -56,6 +60,7 @@ namespace CustomComponents
 
         public void AddChange(IChange change)
         {
+            change.Initial = false;
             pending_changes.Enqueue(change);
             if(change is IChange_Apply iichange)
                 iichange.PreviewApply(this);

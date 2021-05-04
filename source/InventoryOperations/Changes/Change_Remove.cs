@@ -9,7 +9,8 @@ namespace CustomComponents.Changes
     {
         private MechComponentRef item;
 
-        private bool applied = false;
+        public bool Initial { get; set; }
+        public bool Applied { get; private set; } = false;
         public string ItemID { get; set; }
         public ChassisLocations Location { get; set; }
         public void AdjustChange(InventoryOperationState state)
@@ -25,13 +26,12 @@ namespace CustomComponents.Changes
         {
             InvItem i = null;
 
-            if (!applied)
+            if (!Applied)
             {
                 i = state.Inventory.FirstOrDefault(i => i.Location == Location && i.Item.ComponentDefID == ItemID);
                 item = i?.Item;
             }
 
-            applied = true;
             if (i == null)
                 return;
 
@@ -40,7 +40,7 @@ namespace CustomComponents.Changes
 
         public void ApplyToInventory(MechDef mech, List<MechComponentRef> inventory)
         {
-            if (applied)
+            if (Applied)
                 return;
             var item = inventory.FirstOrDefault(i => i.MountedLocation == Location && i.ComponentDefID == ItemID);
             if (item != null)
@@ -49,7 +49,7 @@ namespace CustomComponents.Changes
 
         public void ApplyToMechlab()
         {
-            if (applied)
+            if (Applied)
                 return;
             var lhelper = MechLabHelper.CurrentMechLab.GetLocationHelper(Location);
             if (lhelper == null)
@@ -77,7 +77,7 @@ namespace CustomComponents.Changes
             for (int i = current.Count - 2; i >= 0; i--)
             {
                 var change = current[i];
-                if (change is Change_Add add && add.Location == Location && add.ItemID == ItemID)
+                if (!change.Initial && change is Change_Add add && !add.Applied && add.Location == Location && add.ItemID == ItemID)
                 {
                     current.RemoveAt(i);
                     current.Remove(this);
@@ -96,7 +96,7 @@ namespace CustomComponents.Changes
             this.Location = Location;
             if (already_applied)
             {
-                applied = true;
+                Applied = true;
                 this.item = item;
             }
         }
@@ -105,6 +105,11 @@ namespace CustomComponents.Changes
         {
             this.ItemID = defid;
             this.Location = location;
+        }
+
+        public override string ToString()
+        {
+            return $"Change_Remove {ItemID} =X {Location}";
         }
     }
 }

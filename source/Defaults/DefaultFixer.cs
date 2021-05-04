@@ -161,7 +161,8 @@ namespace CustomComponents
                                                      && i.Location == invItem.Location);
                 if (item != null)
                     item.item = invItem.Item;
-                else if (item.item.IsModuleFixed(mech) || !item.item.Flags<CCFlags>().CategoryDefault)
+
+                else if (invItem.Item.IsModuleFixed(mech) || !defaults.IsCatDefault(invItem.Item.ComponentDefID))
                 {
                     foreach (var catid in defaults.Multi.UsedCategories.Keys)
                         if (invItem.Item.IsCategory(catid, out var cat))
@@ -226,7 +227,7 @@ namespace CustomComponents
                 //Control.Log($"- empty defaults list, clearing");
                 foreach (var item in state.Inventory)
                 {
-                    if (item.Item.IsCategory(categoryId) && item.Item.Flags<CCFlags>().CategoryDefault &&
+                    if (item.Item.IsCategory(categoryId) && record.IsSingleCatDefault(item.Item.ComponentDefID) &&
                         !item.Item.IsModuleFixed(mech))
                     {
                         state.AddChange(new Change_Remove(item.Item.ComponentDefID, item.Location));

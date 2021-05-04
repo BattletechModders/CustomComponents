@@ -6,6 +6,7 @@
 			"AutoReplace" : true,
 			"AddCategoryToDescription" : true,
 			"AllowMixTags" : true,
+			"AllowMaxOverflow" : false,
 			"BaseLimits" : [
 				{ "Location" : "RightTorso", "Min" : 2, "Max" : 2 },
 				{ "Location" : "LeftTorso", "Min" : 2, "Max" : 2 }
@@ -42,6 +43,7 @@
 			"Name" : "rep_test",
 			"DisplayName" : "DefaultReplacementTest",
 			"AutoReplace" : true,
+			"AllowMaxOverflow" : false,
 			"AddCategoryToDescription" : true,
 			"BaseLimits" : [ { "Location" : "All", "Min" : 1, "Max" : 1 } ],
 			

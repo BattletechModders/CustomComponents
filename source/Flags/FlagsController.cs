@@ -174,7 +174,7 @@ namespace CustomComponents
                 flag.Value.Setter(result, temp_f[flag.Key]);
             }
 
-            if(Control.Settings.DEBUG_ShowFlags)
+            if(Control.Settings.DebugInfo.HasFlag(DType.Flags))
                 Control.LogDebug(DType.Flags, $"Flags for {item.Description.Id}: [{result.ToString()}]");
 
             return result;

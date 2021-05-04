@@ -102,14 +102,15 @@ namespace CustomComponents
             var removed = changes.OfType<Change_Remove>().ToList();
 
             var limits = record.LocationLimits.Where(i => i.Key.HasFlag(location) && i.Value.Max >= 0).ToList();
-            
-            
+
+            var defaults = DefaultsDatabase.Instance[mech];
+
             var inventory = MechLabHelper.CurrentMechLab.FullInventory
                 .Where(i => check_removed(i, removed))
                 .Select(i => new
                 {
                     item = i,
-                    def = i.Item.IsDefault(),
+                    canfree = defaults?.IsCatDefault(i.Item.ComponentDefID) ?? false,
                     fixd = i.Item.IsModuleFixed(mech),
                     cat = i.Item.IsCategory(CategoryID, out var c) ? c : null
                 })
@@ -128,7 +129,7 @@ namespace CustomComponents
                 {
                     if (item_info.fixd)
                         free.free -= item_info.cat.Weight;
-                    else if (!item_info.def)
+                    else if (!item_info.canfree)
                     {
                         free.free -= item_info.cat.Weight;
                         free.can_free += item_info.cat.Weight;
@@ -165,6 +166,7 @@ namespace CustomComponents
                 }
 
                 int need_free = Weight - free.free;
+
                 foreach (var item in free.items)
                 {
                     if (need_free <= 0)
@@ -228,14 +230,16 @@ namespace CustomComponents
 
         public void OnAdd(ChassisLocations location, InventoryOperationState state)
         {
-            if (CategoryDescriptor[MechLabHelper.CurrentMechLab.ActiveMech].MaxLimited && !Def.Flags<CCFlags>().CategoryDefault)
+            var defaults = DefaultsDatabase.Instance[state.Mech];
+
+            if (CategoryDescriptor[state.Mech].MaxLimited && !defaults.IsSingleCatDefault(Def.Description.Id))
                 state.AddChange(new Change_CategoryAdjust(CategoryID));
         }
 
         public void OnRemove(ChassisLocations location, InventoryOperationState state)
         {
-            var f = Def.Flags<CCFlags>();
-            if (CategoryDescriptor[MechLabHelper.CurrentMechLab.ActiveMech].MinLimited && !Def.Flags<CCFlags>().CategoryDefault)
+            var defaults = DefaultsDatabase.Instance[state.Mech];
+            if (CategoryDescriptor[state.Mech].MinLimited && !defaults.IsSingleCatDefault(Def.Description.Id))
                 state.AddChange(new Change_CategoryAdjust(CategoryID));
         }
 

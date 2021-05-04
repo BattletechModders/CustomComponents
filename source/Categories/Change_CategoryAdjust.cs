@@ -7,6 +7,7 @@ namespace CustomComponents.Changes
     {
         public string CategoryID { get; private set; }
         public string ChangeID => "Category_" + CategoryID;
+        public bool Initial { get; set; }
 
         public Change_CategoryAdjust(string categoryId)
         {
