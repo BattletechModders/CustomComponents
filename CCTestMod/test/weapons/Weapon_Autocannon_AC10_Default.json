@@ -1,7 +1,7 @@
 {
 	"Custom" : {
 		"Category" : { "CategoryID" : "bal_test" },
-		"Flags" : [ "cat_default" ]
+		"Flags" : [ "default" ]
 	},
 
     "Category" : "Ballistic",

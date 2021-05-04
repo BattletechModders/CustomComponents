@@ -110,8 +110,9 @@ namespace CustomComponents
                 .Select(i => new
                 {
                     item = i,
-                    canfree = defaults?.IsCatDefault(i.Item.ComponentDefID) ?? false,
+                    canfree =  defaults?.IsCatDefault(i.Item.ComponentDefID) ?? false,
                     fixd = i.Item.IsModuleFixed(mech),
+                    def = i.Item.IsDefault(),
                     cat = i.Item.IsCategory(CategoryID, out var c) ? c : null
                 })
                 .Where(i => i.cat != null)
@@ -132,8 +133,11 @@ namespace CustomComponents
                     else if (!item_info.canfree)
                     {
                         free.free -= item_info.cat.Weight;
-                        free.can_free += item_info.cat.Weight;
-                        free.items.Add((item_info.item, item_info.cat.Weight));
+                        if (!item_info.def)
+                        {
+                            free.items.Add((item_info.item, item_info.cat.Weight));
+                            free.can_free += item_info.cat.Weight;
+                        }
                     }
                 }
                 free.items.Sort((a, b) => a.weight.CompareTo(b.weight));

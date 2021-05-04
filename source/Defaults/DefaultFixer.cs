@@ -265,12 +265,12 @@ namespace CustomComponents
                                                      && i.Location == invItem.Location && !i.used_now);
                 if (item != null)
                 {
-                    //Control.Log($"-- {invItem.item.ComponentDefID} is in defaults, added");
+                    //Control.Log($"-- {invItem.Item.ComponentDefID} is in defaults, added");
                     item.item = invItem.Item;
                 }
                 else if (invItem.Item.IsCategory(categoryId, out var cat))
                 {
-                    //Control.Log($"-- {invItem.item.ComponentDefID} not in defaults, decrease free space");
+                    //Control.Log($"-- {invItem.Item.ComponentDefID} not in defaults, decrease free space");
                     foreach (var freeRecord in free.Where(i => i.location.HasFlag(invItem.Location)))
                         freeRecord.free -= cat.Weight;
                 }
