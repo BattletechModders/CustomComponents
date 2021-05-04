@@ -84,7 +84,7 @@ namespace CustomComponents
 
                 Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);
                 Validator.RegisterMechValidator(TagRestrictionsHandler.Shared.ValidateMech, TagRestrictionsHandler.Shared.ValidateMechCanBeFielded);
-                Validator.RegisterMechValidator(CCFlags.ValidateMech,CCFlags.CanBeFielded);
+                Validator.RegisterMechValidator(CCFlags.ValidateMech, CCFlags.CanBeFielded);
                 Validator.RegisterMechValidator(EquipLocationController.Instance.ValidateMech, EquipLocationController.Instance.CanBeFielded);
                 Validator.RegisterMechValidator(HardpointController.Instance.ValidateMech, HardpointController.Instance.CanBeFielded);
                 Validator.RegisterMechValidator(AutoLinked.ValidateMech, AutoLinked.CanBeFielded);
@@ -130,7 +130,7 @@ namespace CustomComponents
         public static void FinishedLoading(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
 
-             var Manifests = customResources;
+            var Manifests = customResources;
 
             Control.LogDebug(DType.CustomResource, "Custom Resource Load started");
             CategoryController.Shared.Setup(Manifests);
@@ -160,7 +160,12 @@ namespace CustomComponents
             if (Settings.DebugInfo.HasFlag(type))
                 Logger.LogDebug(LogPrefix + message, e);
         }
-
+        [Conditional("CCDEBUG")]
+        public static void LogDebug(DType type, string message, params object[] objs)
+        {
+            if (Settings.DebugInfo.HasFlag(type))
+                Logger.LogDebug(LogPrefix + string.Format(message, objs));
+        }
         public static void LogError(string message)
         {
             Logger.LogError(LogPrefix + message);

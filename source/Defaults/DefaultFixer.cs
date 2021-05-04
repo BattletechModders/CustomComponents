@@ -3,10 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime;
+using System.Threading;
 using BattleTech;
 using BattleTech.UI;
 using CustomComponents.Changes;
 using HBS.Extensions;
+using UnityEngine;
 
 namespace CustomComponents
 {
@@ -116,15 +118,15 @@ namespace CustomComponents
 
             var changes = new Queue<IChange>();
             var used = new List<string>();
-            if(defaults.Multi != null && defaults.Multi.HasRecords)
+            if (defaults.Multi != null && defaults.Multi.HasRecords)
                 used.AddRange(defaults.Multi.UsedCategories.Keys);
-            
-            if(defaults.Defaults != null && defaults.Defaults.Count > 0)
+
+            if (defaults.Defaults != null && defaults.Defaults.Count > 0)
                 used.AddRange(defaults.Defaults.Keys);
 
             foreach (var category in used.Distinct())
                 changes.Enqueue(new Change_CategoryAdjust(category));
-            
+
             if (changes.Count == 0)
                 return;
 
@@ -132,6 +134,9 @@ namespace CustomComponents
             state.DoChanges();
             state.ApplyInventory();
         }
+
+
+        //private static int count = 0;
 
         public void DoMultiChange(InventoryOperationState state)
         {
@@ -142,32 +147,44 @@ namespace CustomComponents
                 return;
 
             var usage = defaults.Multi.Defaults
-                .Select(i => new usage_record(i));
+                .Select(i => new usage_record(i))
+                .ToList();
 
             var free = defaults.Multi.UsedCategories.ToDictionary(
                 i => i.Key,
                 i => i.Value.LocationLimits.Where(a => a.Value.Min > 0)
                     .Select(a => new free_record()
                     {
-                        free = a.Value.Min == 0 ? 9999 : a.Value.Min,
+                        free = a.Value.Min,
                         location = a.Key,
                         limit = a.Value
                     }).ToArray());
 
+
+            //Control.Log("-- Inv Scan");
 
             foreach (var invItem in state.Inventory)
             {
                 var item = usage.FirstOrDefault(i => !i.used_now && i.DefId == invItem.Item.ComponentDefID
                                                      && i.Location == invItem.Location);
                 if (item != null)
+                {
                     item.item = invItem.Item;
-
+                    //Control.Log($"--- Found {item.DefId} {item.used_now} {item.item}");
+                }
                 else if (invItem.Item.IsModuleFixed(mech) || !defaults.IsCatDefault(invItem.Item.ComponentDefID))
                 {
+                    //Control.Log($"--- Not Found {invItem.Item.ComponentDefID}");
                     foreach (var catid in defaults.Multi.UsedCategories.Keys)
                         if (invItem.Item.IsCategory(catid, out var cat))
-                            foreach (var freeRecord in free[catid].Where(i => i.location.HasFlag(item.Location)))
+                        {
+                            foreach (var freeRecord in free[catid].Where(i => i.location.HasFlag(invItem.Location)))
                                 freeRecord.free -= cat.Weight;
+                        }
+                }
+                else
+                {
+                    //Control.Log($"--- Skipped {invItem.Item.ComponentDefID}");
                 }
             }
 
@@ -178,19 +195,29 @@ namespace CustomComponents
                 var fit = true;
 
                 used_records.Clear();
+                ////Control.Log($"-- before {usageRecord.DefId} - {usageRecord.Location} - now:{usageRecord.used_now} - after:{usageRecord.used_after}");
+                //foreach (var pair in free)
+                //{
+                //    //Control.Log("--- " + pair.Key);
+                //    foreach (var freeRecord in pair.Value)
+                //    {
+                //        Control.Log($"---- {freeRecord.location}: {freeRecord.free}");
+                //    }
+                //}
 
                 foreach (var pair in usageRecord.mrecord.CategoryRecords)
                 {
                     var freerecords = free[pair.Key];
                     var num = pair.Value.category.Weight;
 
-                    foreach (var record in freerecords)
+                    foreach (var record in freerecords.Where(i => i.location.HasFlag(usageRecord.Location)))
                     {
-                        if (record.free > num)
+                        if (record.free < num)
                         {
                             fit = false;
                             break;
                         }
+
                         used_records.Add((record, num));
                     }
 
@@ -199,25 +226,37 @@ namespace CustomComponents
                 }
 
                 usageRecord.used_after = fit;
+                //Control.Log($"--- used records : {used_records.Count}");
+
                 if (fit)
                     foreach (var value in used_records)
                     {
+                        //Control.Log($"---- {value.record.location}: {value.record.free}-{value.value}");
                         value.record.free -= value.value;
                     }
 
+                //Control.Log($"-- after {usageRecord.DefId} - {usageRecord.Location} - now:{usageRecord.used_now} - after:{usageRecord.used_after}");
                 if (usageRecord.used_after != usageRecord.used_now)
                 {
                     var d = usageRecord.mrecord;
                     if (usageRecord.used_after)
+                    {
+                        //Control.Log($"-- Add {d.DefID} => {d.Location}");
                         state.AddChange(new Change_Add(d.DefID, d.ComponentType, d.Location));
+                    }
                     else
+                    {
+                        //Control.Log($"-- Remove {d.DefID} =X {d.Location}");
                         state.AddChange(new Change_Remove(d.DefID, d.Location));
+                    }
                 }
+
             }
         }
 
         public void DoDefaultsChange(InventoryOperationState state, string categoryId)
         {
+            //Control.Log($"- DoDefaultsChange");
             var mech = state.Mech;
             var record = DefaultsDatabase.Instance[mech];
 
@@ -227,7 +266,7 @@ namespace CustomComponents
                 //Control.Log($"- empty defaults list, clearing");
                 foreach (var item in state.Inventory)
                 {
-                    if (item.Item.IsCategory(categoryId) && record.IsSingleCatDefault(item.Item.ComponentDefID) &&
+                    if (item.Item.IsCategory(categoryId) && record.IsSingleCatDefault(item.Item.ComponentDefID, categoryId) &&
                         !item.Item.IsModuleFixed(mech))
                     {
                         state.AddChange(new Change_Remove(item.Item.ComponentDefID, item.Location));
@@ -312,9 +351,15 @@ namespace CustomComponents
                 {
                     //Control.Log($"-- create change");
                     if (usageRecord.used_after)
+                    {
+                        //Control.Log($"-- Add {usageRecord.DefId} => {usageRecord.Location}");
                         state.AddChange(new Change_Add(usageRecord.DefId, usageRecord.Type, usageRecord.Location));
+                    }
                     else
+                    {
+                        //Control.Log($"-- Remove {usageRecord.DefId} =X {usageRecord.Location}");
                         state.AddChange(new Change_Remove(usageRecord.DefId, usageRecord.Location));
+                    }
                 }
             }
             //Control.Log($"- done");

@@ -111,7 +111,7 @@ namespace CustomComponents
                 .Select(i => new
                 {
                     item = i,
-                    canfree = defaults?.IsCatDefault(i.Item.ComponentDefID) ?? false,
+                    canfree = defaults?.IsCatDefault(i.Item.ComponentDefID, CategoryID) ?? false,
                     fixd = i.Item.IsModuleFixed(mech),
                     def = i.Item.IsDefault(),
                     cat = i.Item.IsCategory(CategoryID, out var c) ? c : null
@@ -238,14 +238,14 @@ namespace CustomComponents
             var defaults = DefaultsDatabase.Instance[state.Mech];
 
 
-            if (CategoryDescriptor[state.Mech].Limited && !defaults.IsSingleCatDefault(Def.Description.Id))
+            if (CategoryDescriptor[state.Mech].Limited && !defaults.IsSingleCatDefault(Def.Description.Id, CategoryID))
                 state.AddChange(new Change_CategoryAdjust(CategoryID));
         }
 
         public void OnRemove(ChassisLocations location, InventoryOperationState state)
         {
             var defaults = DefaultsDatabase.Instance[state.Mech];
-            if (CategoryDescriptor[state.Mech].Limited && !defaults.IsSingleCatDefault(Def.Description.Id))
+            if (CategoryDescriptor[state.Mech].Limited && !defaults.IsSingleCatDefault(Def.Description.Id, CategoryID))
                 state.AddChange(new Change_CategoryAdjust(CategoryID));
         }
 

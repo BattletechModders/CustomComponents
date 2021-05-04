@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using BattleTech;
+using Harmony;
 using Newtonsoft.Json;
+using UnityEngine.Playables;
 
 namespace CustomComponents
 {
@@ -65,31 +67,87 @@ namespace CustomComponents
             public MultiRecord Multi { get; set; }
             public Dictionary<string, CategoryDefault> Defaults { get; set; }
 
-            private HashSet<string> all_id;
-            private HashSet<string> single_id;
+            private Dictionary<string, HashSet<string>> all_id;
+            private Dictionary<string, HashSet<string>> single_id;
 
             public void Complete()
             {
-                single_id = new HashSet<string>();
-                all_id = new HashSet<string>();
+                single_id = new Dictionary<string, HashSet<string>>();
+                all_id = new Dictionary<string, HashSet<string>>();
+                
                 if (Multi != null && Multi.HasRecords)
                     foreach (var d in Multi.Defaults)
-                        all_id.Add(d.DefID);
-                if (Defaults != null && Defaults.Count > 0)
-                    foreach (var def in Defaults.SelectMany(i => i.Value.Defaults))
                     {
-                        all_id.Add(def.Item.Description.Id);
-                        single_id.Add(def.Item.Description.Id);
+                        foreach (var cat in d.Categories)
+                        {
+                            if (!all_id.TryGetValue(cat, out var h))
+                            {
+                                h = new HashSet<string>();
+                                all_id[cat] = h;
+                            }
+
+                            h.Add(d.DefID);
+                        }
+                    }
+
+                if (Defaults != null && Defaults.Count > 0)
+                    foreach (var def in Defaults.Where(def => def.Value.Defaults != null && def.Value.Defaults.Count > 0))
+                    {
+                        if (!all_id.TryGetValue(def.Key, out var ha))
+                        {
+                            ha = new HashSet<string>();
+                            all_id[def.Key] = ha;
+                        }
+
+                        var hs = new HashSet<string>();
+                        single_id[def.Key] = hs;
+                        foreach (var cdr in def.Value.Defaults)
+                        {
+                            ha.Add(cdr.Item.Description.Id);
+                            hs.Add(cdr.Item.Description.Id);
+                        }
                     }
             }
 
             public bool IsCatDefault(string id)
             {
-                return all_id?.Contains(id) ?? false;
+                return all_id.Any(i => i.Value.Contains(id));
             }
-            public bool IsSingleCatDefault(string id)
+
+            public bool IsCatDefault(string id, string catid)
             {
-                return single_id?.Contains(id) ?? false;
+                return all_id.TryGetValue(catid, out var hash) && hash.Contains(id);
+            }
+
+            public bool IsSingleCatDefault(string id, string catid)
+            {
+                return single_id.TryGetValue(catid, out var hash) && hash.Contains(id);
+            }
+
+            public override string ToString()
+            {
+                string result = "MechDefaultInfo:";
+                if (Multi != null && Multi.HasRecords)
+                {
+                    result += "\n- MultiRecords";
+                    foreach (var mcd in Multi.Defaults)
+                        result += $"\n-- {mcd.DefID} => {mcd.Location}";
+                    result += "\n--- Categories: " + Multi.UsedCategories.Keys.Join();
+                }
+
+                if (Defaults != null)
+                {
+                    result += "\n- Defaults";
+                    foreach (var cd in Defaults)
+                    {
+                        result += $"\n-- {cd.Key}";
+                        foreach (var cdr in cd.Value.Defaults)
+                        {
+                            result += $"\n--- {cdr.Item.Description.Id} => {cdr.Location}";
+                        }
+                    }
+                }
+                return result;
             }
         }
 
@@ -162,6 +220,8 @@ namespace CustomComponents
 
         private MechDefaultInfo CreateDefaultRecord(MechDef mech)
         {
+            Control.LogDebug(DType.DefaultsBuild, "CreateDefaultRecord for {0}", mech?.ChassisID);
+
             void process_defaults(MechDefaultInfo result, IEnumerable<IDefault> defaults)
             {
                 if(defaults == null)
@@ -251,15 +311,21 @@ namespace CustomComponents
             var mech_multi = GetMechMultiDefauls(mech);
 
             if (mech_multi != null)
+            {
+                Control.LogDebug(DType.DefaultsBuild, "- MultiRecords");
+
                 foreach (var m in mech_multi)
                 {
+                    Control.LogDebug(DType.DefaultsBuild, "-- {0} => {1}", m.DefID, m.Location);
+
                     var info = new MultiCategoryDefault
                     {
                         Categories = m.Categories,
                         DefID = m.DefID,
                         ComponentType = m.ComponentType,
                         Location = m.Location,
-                        CategoryRecords = new Dictionary<string, (Category category, CategoryDescriptorRecord record)>(),
+                        CategoryRecords =
+                            new Dictionary<string, (Category category, CategoryDescriptorRecord record)>(),
                         Component = DefaultHelper.GetComponentDef(m.DefID, m.ComponentType)
 
                     };
@@ -267,13 +333,15 @@ namespace CustomComponents
 
                     if (info.Categories == null || info.Categories.Length == 0)
                     {
-                        Control.LogError($"MultiDefault _record for {mech.Description.Id} have empty category list for {m.DefID}");
+                        Control.LogError(
+                            $"MultiDefault _record for {mech.Description.Id} have empty category list for {m.DefID}");
                         continue;
                     }
 
                     if (info.Component == null)
                     {
-                        Control.LogError($"MultiDefault _record for {mech.Description.Id} have unknown component {m.DefID}");
+                        Control.LogError(
+                            $"MultiDefault _record for {mech.Description.Id} have unknown component {m.DefID}");
                         continue;
                     }
 
@@ -284,7 +352,8 @@ namespace CustomComponents
                             var cr = c.CategoryDescriptor[mech];
                             if (cr == null || !cr.MinLimited)
                             {
-                                Control.LogError($"MultiDefault _record for {mech.Description.Id}, component {m.DefID}, category {category} dont have minimum limit, so defaults will be ignored");
+                                Control.LogError(
+                                    $"MultiDefault _record for {mech.Description.Id}, component {m.DefID}, category {category} dont have minimum limit, so defaults will be ignored");
                                 continue;
                             }
 
@@ -293,28 +362,37 @@ namespace CustomComponents
                         }
                         else
                         {
-                            Control.LogError($"MultiDefault _record for {mech.Description.Id} have unknown category [{category}] for {m.DefID}");
+                            Control.LogError(
+                                $"MultiDefault _record for {mech.Description.Id} have unknown category [{category}] for {m.DefID}");
                             continue;
                         }
                     }
 
                     if (info.CategoryRecords.Count == 0)
                     {
-                        Control.LogError($"MultiDefault _record for {mech.Description.Id} have no applicable categories for {m.DefID}");
+                        Control.LogError(
+                            $"MultiDefault _record for {mech.Description.Id} have no applicable categories for {m.DefID}");
                         continue;
                     }
 
                     multi.Defaults.Add(info);
                 }
+            }
 
             if (multi.HasRecords)
             {
+                Control.LogDebug(DType.DefaultsBuild, "- Build UsedCategories");
                 multi.UsedCategories = multi.Defaults
                     .SelectMany(i => i.CategoryRecords)
                     .GroupBy(i => i.Key)
                     .ToDictionary(a => a.Key, a => a.First().Value.record);
 
                 result.Multi = multi;
+                Control.LogDebug(DType.DefaultsBuild, "- done");
+            }
+            else
+            {
+                Control.LogDebug(DType.DefaultsBuild, "- No MultiRecords");
             }
 
             result.Defaults = new Dictionary<string, CategoryDefault>();
@@ -335,6 +413,9 @@ namespace CustomComponents
                     }));
 
             result.Complete();
+            if(Control.Settings.DEBUG_ShowLoadedDefaults)
+                Control.LogDebug(DType.DefaultsBuild, "result: {0}", result);
+
             return result;
         }
 

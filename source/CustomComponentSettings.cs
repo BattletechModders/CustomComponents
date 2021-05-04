@@ -43,7 +43,7 @@ namespace CustomComponents
         NONE = 0,
         SalvageProccess = 1,
         Hardpoints = 1 << 1,
-        RESERVED0 = 1 << 2,
+        DefaultsBuild = 1 << 2,
         ComponentInstall = 1 << 3,
         MechValidation = 1 << 4,
         CCLoading = 1 << 5,
