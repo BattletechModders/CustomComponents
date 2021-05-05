@@ -57,7 +57,7 @@ namespace CustomComponents
             var work_list = new List<MechDef>();
             foreach (var mechDef in mechDefs)
             {
-                var ut = UnitTypeDatabase.Instance[mechDef];
+                var ut = mechDef.GetUnitTypes();
                 if(ut == null || !ut.Contains(Control.Settings.IgnoreAutofixUnitType))
                     work_list.Add(mechDef);
             }
@@ -80,7 +80,7 @@ namespace CustomComponents
                 work_list.Clear();
                 foreach (var mechDef in mechDefs)
                 {
-                    var ut = UnitTypeDatabase.Instance[mechDef];
+                    var ut = mechDef.GetUnitTypes();
                     if (ut == null || !ut.Contains(Control.Settings.IgnoreAutofixUnitType))
                         work_list.Add(mechDef);
                 }
@@ -93,7 +93,7 @@ namespace CustomComponents
 
                 foreach (var mechDef in mechDefs)
                 {
-                    var ut = UnitTypeDatabase.Instance[mechDef];
+                    var ut = mechDef.GetUnitTypes();
                     Control.LogDebug(DType.UnitType, $"{mechDef.Description.Id}: [{ (ut == null ? "null" : ut.Join(null, ", "))}]");
                 }
             }
@@ -120,7 +120,7 @@ namespace CustomComponents
             var work_list = new List<MechDef>();
             foreach (var mechDef in mechDefs)
             {
-                var ut = UnitTypeDatabase.Instance[mechDef];
+                var ut = mechDef.GetUnitTypes();
                 if (ut == null || !ut.Contains(Control.Settings.IgnoreAutofixUnitType))
                     work_list.Add(mechDef);
             }

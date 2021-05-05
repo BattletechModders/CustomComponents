@@ -46,14 +46,45 @@ namespace CustomComponents
             Control.Log("UnitType " + unitType.Name + " Registred");
         }
 
-        public HashSet<string> this[MechDef mech] => GetUnitTypes(mech);
+        public HashSet<string> GetUnitTypes(ChassisDef chassis)
+        {
+            if (chassis == null)
+                return new HashSet<string>();
+
+            if (known.TryGetValue(chassis.Description.Id, out var result))
+                return result;
+
+            var mechid = GetMechIDFromChassisID(chassis.Description.Id);
+            var mech = UnityGameInstance.BattleTechGame.DataManager.MechDefs.Get(mechid);
+            if(mech == null)
+                return new HashSet<string>();
+
+            return BuildUnitTypes(mech);
+        }
+
+
 
         public HashSet<string> GetUnitTypes(MechDef mech)
         {
+            if (mech == null)
+                return new HashSet<string>();
+
+            if (known.TryGetValue(mech.ChassisID, out var result))
+                return result;
+
+            return BuildUnitTypes(mech);
+        }
+
+        //FOR PATCHES!!!
+        public string GetMechIDFromChassisID(string descriptionId)
+        {
+            return descriptionId.Replace("mechdef_", "chassisdef_");
+        }
+
+        private HashSet<string> BuildUnitTypes(MechDef mech)
+        {
             HashSet<string> result;
 
-            if (known.TryGetValue(mech.ChassisID, out result))
-                return result;
 
             result = CheckCustom(mech);
 
@@ -70,7 +101,7 @@ namespace CustomComponents
 
             var add = CheckCustomAdd(mech);
 
-            known[mech.Name] = result;
+            known[mech.ChassisID] = result;
             return result;
         }
 

@@ -20,7 +20,7 @@ namespace CustomComponents
         {
             if (Control.Settings.DEBUG_ShowMechUT)
             {
-                var ut = UnitTypeDatabase.Instance[mechlab.activeMechDef];
+                var ut = mechlab.activeMechDef.GetUnitTypes();
                 if(ut == null)
                     Control.Log($"Enter MechLab for {mechlab.activeMechDef.Description.Id}, UT:[ ]");
                 else

@@ -50,7 +50,7 @@ namespace CustomComponents
                             if (Tags.TryGetValue(el.Tag, out var record))
                             {
 
-                                var ut = UnitTypeDatabase.Instance[mechdef];
+                                var ut = mechdef.GetUnitTypes();
                                 if (record.UnitTypes == null || record.UnitTypes.Length == 0 || ut == null)
                                     location = itemdef.AllowedLocations & record.Default;
                                 else

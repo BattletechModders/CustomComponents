@@ -191,6 +191,7 @@
     <Compile Include="UnitTypes\UnitTypeDatabase.cs" />
     <Compile Include="UnitTypes\IUnitType.cs" />
     <Compile Include="UnitTypes\UnitTypeCustom.cs" />
+    <Compile Include="UnitTypes\UnitTypeExtentions.cs" />
     <Compile Include="WorkOrderCosts\Utils\Adapter.cs" />
     <Compile Include="Interfaces\IColorComponent.cs" />
     <Compile Include="Components\RGBColorComponent.cs" />
