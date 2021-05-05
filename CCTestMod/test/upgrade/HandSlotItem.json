@@ -1,0 +1,39 @@
+{
+    "Custom" : {
+		"Category" : [
+			{ "CategoryID" : "maxtest1" }
+			{ "CategoryID" : "maxtest2" }
+		]
+    },
+
+   "Description" : {
+      "Id" : "HandSlotItem",
+      "Name" : "HandItem",
+      "UIName" : "HandItem",
+      "Details" : "This is test slot default 1 size",
+      "Icon" : "uixSvgIcon_quantity",
+      "Cost" : 0,
+      "Rarity" : 99,
+      "Purchasable" : false
+	},
+   "BonusValueA" : "",
+   "BonusValueB" : "",
+   "ComponentType" : "Upgrade",
+   "ComponentSubType" : "NotSet",
+   "PrefabIdentifier" : "",
+   "BattleValue" : 0,
+   "InventorySize" : 1,
+   "Tonnage" : 0,
+   "AllowedLocations" : "Arms",
+   "DisallowedLocations" : "None",
+   "CriticalComponent" : false,
+   "ComponentTags": {
+      "items": [
+         "component_type_stock"
+      ],
+      "tagSetSourceFile": ""
+   },
+   "statusEffects" : [
+      
+   ]
+}

@@ -132,7 +132,7 @@ namespace CustomComponents
         public bool AllowMixTagsMechlab = true;
         public bool ReplaceDefaultsFirst = true;
 
-        public bool AutoReplace = false;
+        //public bool AutoReplace = false;
         public bool AddCategoryToDescription = true;
         public bool AllowMixTags = true;
         public Dictionary<string, object> DefaultCustoms = null;
@@ -208,7 +208,6 @@ namespace CustomComponents
         {
             _DisplayName = source._DisplayName;
             AllowMixTags = source.AllowMixTags;
-            AutoReplace = source.AutoReplace;
             DefaultCustoms = source.DefaultCustoms;
             AddCategoryToDescription = source.AddCategoryToDescription;
 
@@ -278,7 +277,7 @@ namespace CustomComponents
             var sb = new StringBuilder("Category: " + Name + "(" + _DisplayName + ")");
             sb.AppendLine();
             sb.AppendLine(
-                $"- AutoReplace: {AutoReplace}, AddToDescription: {AddCategoryToDescription},  AllowMixTags/Mechlab: {AllowMixTags}/{AllowMixTagsMechlab}");
+                $"- AddToDescription: {AddCategoryToDescription},  AllowMixTags/Mechlab: {AllowMixTags}/{AllowMixTagsMechlab}");
             sb.AppendLine(
                 $"- MinOverflow: {AllowMinOverflow}, MaxOverflow: {AllowMaxOverflow}, DefaultsFirst: {ReplaceDefaultsFirst}");
             sb.AppendLine("- Errors");

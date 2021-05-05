@@ -9,18 +9,7 @@
 				{ "Location" : "LeftTorso", "DefID" : "TestGear_Default_3slot", "Type" : "Upgrade" },				
 				{ "Location" : "LeftTorso", "DefID" : "TestGear_Default_2slot", "Type" : "Upgrade" },				
 				{ "Location" : "LeftTorso", "DefID" : "TestGear_Default_1slot", "Type" : "Upgrade" },				
-			],
-			"UnitTypes" : [
-				{
-					"UnitType" : "LightMech",
-					"Defaults" : [
-						{ "Location" : "RightTorso", "DefID" : "TestGear_Default_1slot", "Type" : "Upgrade" },
-						{ "Location" : "CenterTorso", "DefID" : "TestGear_Default_1slot", "Type" : "Upgrade" },
-						{ "Location" : "LeftTorso", "DefID" : "TestGear_Default_1slot", "Type" : "Upgrade" },				
-					],
-					
-					
-				}
+				{ "Location" : "CenterTorso", "DefID" : "TestGear_Default_1slot", "Type" : "Upgrade" },				
 			]
 		},
 		{
@@ -47,6 +36,17 @@
 				{ "Location" : "CenterTorso", "DefID" : "test3_default", "Type" : "Upgrade" },
 			],
 		},
-		
+		{
+			"CategoryID" : "maxtest1",
+			"Defaults" : [
+				{ "Location" : "LeftArm", "DefID" : "HandSlot_Default", "Type" : "Upgrade" },
+			],
+		},
+		{
+			"CategoryID" : "maxtest2",
+			"Defaults" : [
+				{ "Location" : "RightArm", "DefID" : "HandSlot_Default", "Type" : "Upgrade" },
+			],
+		}
 	]
 }

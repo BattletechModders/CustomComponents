@@ -3,10 +3,7 @@
 		{
 			"Name" : "TestCategory1",
 			"DisplayName" : "First Test Category",
-			"AutoReplace" : true,
-			"AddCategoryToDescription" : true,
 			"AllowMixTags" : true,
-			"AllowMaxOverflow" : false,
 			"BaseLimits" : [
 				{ "Location" : "RightTorso", "Min" : 2, "Max" : 2 },
 				{ "Location" : "LeftTorso", "Min" : 2, "Max" : 2 }
@@ -36,23 +33,16 @@
 		{
 			"Name" : "bal_test",
 			"DisplayName" : "Weapon Test Category",
-			"AutoReplace" : true,
-			"AddCategoryToDescription" : true
 		},
 		{
 			"Name" : "rep_test",
 			"DisplayName" : "DefaultReplacementTest",
-			"AutoReplace" : true,
-			"AllowMaxOverflow" : false,
-			"AddCategoryToDescription" : true,
 			"BaseLimits" : [ { "Location" : "All", "Min" : 1, "Max" : 1 } ],
 			
 		},
 		{
 			"Name" : "mtest1",
 			"DisplayName" : "test1",
-			"AutoReplace" : true,
-			"AddCategoryToDescription" : true,
 			"BaseLimits" : [ { "Location" : "All", "Min" : 1, "Max" : 1 } ],
 			"DefaultCustoms" : {
 				"Sorter" : 1,
@@ -62,8 +52,6 @@
 		{
 			"Name" : "mtest2",
 			"DisplayName" : "test2",
-			"AutoReplace" : true,
-			"AddCategoryToDescription" : true,
 			"BaseLimits" : [ { "Location" : "All", "Min" : 1, "Max" : 1 } ],
 			"DefaultCustoms" : {
 				"Sorter" : 2,
@@ -73,13 +61,22 @@
 		{
 			"Name" : "mtest3",
 			"DisplayName" : "test3",
-			"AutoReplace" : true,
-			"AddCategoryToDescription" : true,
 			"BaseLimits" : [ { "Location" : "All", "Min" : 1, "Max" : 1 } ],
 			"DefaultCustoms" : {
 				"Sorter" : 3,
 				"RGBColor" : "1010a0"
 			}
+		},
+		{
+			"Name" : "maxtest1",
+			"DisplayName" : "LeftHand",
+			"BaseLimits" : [ { "Location" : "LeftArm", "Min" : 1, "Max" : 2 } ]
+		},
+		{
+			"Name" : "maxtest2",
+			"DisplayName" : "RightHand",
+			"ReplaceDefaultsFirst" : false,
+			"BaseLimits" : [ { "Location" : "RightArm", "Min" : 1, "Max" : 2 } ]
 		}
 	]
 }

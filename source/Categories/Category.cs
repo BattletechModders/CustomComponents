@@ -92,8 +92,7 @@ namespace CustomComponents
 
             var record = CategoryDescriptor[mech];
 
-            if (!CategoryDescriptor.AutoReplace || record == null ||
-                !record.MaxLimited)
+            if (record == null || !record.MaxLimited)
             {
                 Control.LogDebug(DType.ComponentInstall, $"--- no replace needed");
                 return String.Empty;
