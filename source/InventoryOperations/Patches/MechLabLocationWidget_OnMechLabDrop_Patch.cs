@@ -105,17 +105,7 @@ namespace CustomComponents.Patches
                         return false;
                 }
 
-                Control.LogDebug(DType.ComponentInstall, $"- apply changes");
-                if (Control.Settings.DebugInfo.HasFlag(DType.ComponentInstall))
-                {
-                    var to_execute = state.GetResults();
-
-                    foreach (var change in to_execute)
-                    {
-                        Control.LogDebug(DType.ComponentInstall, $"-- " + change.ToString());
-                    }
-                }
-                
+              
                 state.ApplyMechlab();
 
 

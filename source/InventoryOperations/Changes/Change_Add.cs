@@ -81,6 +81,8 @@ namespace CustomComponents.Changes
                 var change = current[i];
                 if (!change.Initial && change is Change_Remove remove && !remove.Applied && remove.Location == Location && remove.ItemID == ItemID)
                 {
+                    Control.LogDebug(DType.InventoryOperaions, "--- OPT {0}, {1}", this, current[i]);
+
                     current.RemoveAt(i);
                     current.Remove(this);
                     return;

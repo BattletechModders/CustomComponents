@@ -80,6 +80,7 @@ namespace CustomComponents
                 Logger.Log("- ShowLoadedCategory: " + Settings.DEBUG_ShowLoadedCategory);
                 Logger.Log("- ShowLoadedDefaults: " + Settings.DEBUG_ShowLoadedDefaults);
                 Logger.Log("- ShowLoadedAlLocations: " + Settings.DEBUG_ShowLoadedAlLocations);
+                Logger.Log("- ShowMechUT: " + Settings.DEBUG_ShowMechUT);
 
 
                 Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);

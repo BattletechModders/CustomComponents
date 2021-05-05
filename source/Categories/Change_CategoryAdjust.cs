@@ -23,9 +23,19 @@ namespace CustomComponents.Changes
                 return;
 
             if (record.Multi != null)
-                DefaultFixer.Instance.DoMultiChange(state);
+            {
+                Control.LogDebug(DType.InventoryOperaions, "--- DoMultiChange");
 
+                DefaultFixer.Instance.DoMultiChange(state);
+            }
+
+            Control.LogDebug(DType.InventoryOperaions, "--- DoDefaultsChange");
             DefaultFixer.Instance.DoDefaultsChange(state, CategoryID);
+        }
+
+        public override string ToString()
+        {
+            return "Change_CategoryAdjust_" + CategoryID;
         }
     }
 }

@@ -51,8 +51,7 @@ namespace CustomComponents
                             {
 
                                 var ut = UnitTypeDatabase.Instance[mechdef];
-                                if (record.UnitTypes == null || record.UnitTypes.Length == 0 || ut == null ||
-                                    ut.Length == 0)
+                                if (record.UnitTypes == null || record.UnitTypes.Length == 0 || ut == null)
                                     location = itemdef.AllowedLocations & record.Default;
                                 else
                                 {

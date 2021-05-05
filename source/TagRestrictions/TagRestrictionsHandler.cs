@@ -282,7 +282,7 @@ namespace CustomComponents
                 var categoryDescriptor = CategoryController.Shared.GetCategory(tag);
                 if (categoryDescriptor != null)
                 {
-                    return categoryDescriptor.DisplayName;
+                    return categoryDescriptor._DisplayName;
                 }
             }
 

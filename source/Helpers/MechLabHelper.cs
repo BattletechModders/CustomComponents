@@ -18,7 +18,17 @@ namespace CustomComponents
 
         internal static void EnterMechLab(MechLabPanel mechlab)
         {
+            if (Control.Settings.DEBUG_ShowMechUT)
+            {
+                var ut = UnitTypeDatabase.Instance[mechlab.activeMechDef];
+                if(ut == null)
+                    Control.Log($"Enter MechLab for {mechlab.activeMechDef.Description.Id}, UT:[ ]");
+                else
+                    Control.Log($"Enter MechLab for {mechlab.activeMechDef.Description.Id}, UT:[{ut.Join()}]");
+            }
+
             mechlab_instance = new MechLabHelper(mechlab);
+
             mechlab_instance.MakeLocations();
         }
 

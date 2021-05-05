@@ -9,7 +9,7 @@ namespace CustomComponents
         private static UnitTypeDatabase _instance;
 
         List<IUnitType> types = new List<IUnitType>();
-        Dictionary<string, string[]> known = new Dictionary<string, string[]>();
+        Dictionary<string, HashSet<string>> known =new Dictionary<string, HashSet<string>>();
 
 
         public static UnitTypeDatabase Instance
@@ -46,35 +46,45 @@ namespace CustomComponents
             Control.Log("UnitType " + unitType.Name + " Registred");
         }
 
-        public string[] this[MechDef mech] => GetUnitTypes(mech);
+        public HashSet<string> this[MechDef mech] => GetUnitTypes(mech);
 
-        public string[] GetUnitTypes(MechDef mech)
+        public HashSet<string> GetUnitTypes(MechDef mech)
         {
-            string[] result;
+            HashSet<string> result;
 
             if (known.TryGetValue(mech.ChassisID, out result))
                 return result;
 
             result = CheckCustom(mech);
 
-            var tags = new List<string>();
-
-            foreach (var unitType in types)
+            if (result == null)
             {
-                if (unitType.IsThisType(mech))
-                    tags.Add(unitType.Name);
+                result = new HashSet<string>();
+
+                foreach (var unitType in types)
+                {
+                    if (unitType.IsThisType(mech))
+                        result.Add(unitType.Name);
+                }
             }
 
-            result = tags.ToArray();
+            var add = CheckCustomAdd(mech);
+
             known[mech.Name] = result;
             return result;
         }
 
         //Method to patch with other custom type
-        public string[] CheckCustom(MechDef mech)
+        public HashSet<string> CheckCustom(MechDef mech)
         {
-            return mech.Is<UnitTypeCustom>(out var ut) ? ut.Types : null;
+            return mech.Is<UnitTypeCustom>(out var ut) ? ut.Types?.ToHashSet() : null;
         }
+
+        public HashSet<string> CheckCustomAdd(MechDef mech)
+        {
+            return mech.Is<UnitTypeAddCustom>(out var ut) ? ut.Types?.ToHashSet() : null;
+        }
+
 
         public void ShowRegistredTypes()
         {

@@ -46,12 +46,12 @@ namespace CustomComponents
 
         private class free_record
         {
-            public CategoryLimit limit { get; set; }
+//            public CategoryLimit limit { get; set; }
             public int free { get; set; }
 
             public ChassisLocations location { get; set; }
 
-            public bool HaveMin => limit.Min > 0;
+ //           public bool HaveMin => limit.Min > 0;
         }
 
         private class usage_record
@@ -152,12 +152,12 @@ namespace CustomComponents
 
             var free = defaults.Multi.UsedCategories.ToDictionary(
                 i => i.Key,
-                i => i.Value.LocationLimits.Where(a => a.Value.Min > 0)
+                i => i.Value.LocationLimits
+                    .Where(a => a.Value.Limited)
                     .Select(a => new free_record()
                     {
-                        free = a.Value.Min,
+                        free = a.Value.Limit,
                         location = a.Key,
-                        limit = a.Value
                     }).ToArray());
 
 
@@ -225,6 +225,8 @@ namespace CustomComponents
                         break;
                 }
 
+                fit = fit && used_records.Count > 0;
+
                 usageRecord.used_after = fit;
                 //Control.Log($"--- used records : {used_records.Count}");
 
@@ -285,12 +287,12 @@ namespace CustomComponents
 
             //Control.Log($"- free create");
             var free = defaults.CategoryRecord.LocationLimits
-                .Where(i => i.Value.Min > 0)
+                .Where(i => i.Value.Limited)
                 .Select(i =>
                     new free_record
                     {
                         location = i.Key,
-                        free = i.Value.Min
+                        free = i.Value.Limit
                     })
                 .ToList();
 
@@ -338,6 +340,8 @@ namespace CustomComponents
                     //Control.Log($"-- category {(usageRecord.crecord.Category.Weight)}");
                 }
                 //Control.Log($"-- {usageRecord.DefId} fit: {fit}");
+
+                fit = fit && used_records.Count > 0;
 
                 usageRecord.used_after = fit;
                 if (fit)

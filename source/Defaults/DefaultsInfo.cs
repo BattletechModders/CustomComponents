@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 using fastJSON;
+using Org.BouncyCastle.Utilities.Collections;
 using UnityEngine;
 
 namespace CustomComponents
@@ -70,11 +72,11 @@ namespace CustomComponents
             }
         }
 
-        public DefaultsInfoRecord[] GetDefault(string[] unit_types)
+        public DefaultsInfoRecord[] GetDefault(HashSet<string> unit_types)
         {
             try
             {
-                if (unit_types == null || unit_types.Length == 0 || UnitTypes == null || UnitTypes.Length == 0)
+                if (unit_types == null || UnitTypes == null || UnitTypes.Length == 0)
                     return Defaults;
 
                 foreach (var record in UnitTypes)

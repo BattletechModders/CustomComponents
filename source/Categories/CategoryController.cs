@@ -35,7 +35,7 @@ namespace CustomComponents
             foreach (var category in SettingsResourcesTools.Enumerate<CategoryDescriptor>("CCCategories", customResources))
             {
                 AddCategory(category);
-                Control.Log($"Category {category.Name}({category.DisplayName}) registered");
+                Control.Log($"Category {category.Name}({category._DisplayName}) registered");
             }
         }
 
@@ -126,7 +126,7 @@ namespace CustomComponents
 
                         if (count < pair.Value.Min)
                             errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(category.ValidateMinimum,
-                                category.DisplayName, pair.Value.Min, count, mechDef.Description.UIName,
+                                category._DisplayName, pair.Value.Min, count, mechDef.Description.UIName,
                                 mechDef.Description.Name, pair.Key == ChassisLocations.All ? "All Locations" : pair.Key.ToString()));
                     }
 
@@ -136,7 +136,7 @@ namespace CustomComponents
 
                         if (count > pair.Value.Max)
                             errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(category.ValidateMaximum,
-                                category.DisplayName, pair.Value.Max, count, mechDef.Description.UIName,
+                                category._DisplayName, pair.Value.Max, count, mechDef.Description.UIName,
                                 mechDef.Description.Name, pair.Key == ChassisLocations.All ? "All Locations" : pair.Key.ToString()));
                     }
                 }
@@ -162,7 +162,7 @@ namespace CustomComponents
                         if (mixed)
                         {
                             errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(pair.Key.ValidateMixed,
-                                pair.Key.DisplayName));
+                                pair.Key._DisplayName));
                         }
                     }
                 }
@@ -303,7 +303,7 @@ namespace CustomComponents
 
                         if (count < pair.Value.Min)
                             return (new Localize.Text(category.ValidateMinimum,
-                                 category.DisplayName, pair.Value.Min, count, mechDef.Description.UIName,
+                                 category._DisplayName, pair.Value.Min, count, mechDef.Description.UIName,
                                  mechDef.Description.Name, pair.Key == ChassisLocations.All ? "All Locations" : pair.Key.ToString())).ToString();
                     }
 
@@ -313,7 +313,7 @@ namespace CustomComponents
 
                         if (count > pair.Value.Max)
                             return (new Localize.Text(category.ValidateMaximum,
-                                 category.DisplayName, pair.Value.Max, count, mechDef.Description.UIName,
+                                 category._DisplayName, pair.Value.Max, count, mechDef.Description.UIName,
                                  mechDef.Description.Name, pair.Key == ChassisLocations.All ? "All Locations" : pair.Key.ToString())).ToString();
                     }
                 }
@@ -340,7 +340,7 @@ namespace CustomComponents
                     if (mixed)
                     {
                         return (new Localize.Text(pair.Key.ValidateMixed,
-                            pair.Key.DisplayName)).ToString();
+                            pair.Key._DisplayName)).ToString();
                     }
                 }
             }

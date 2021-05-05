@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BattleTech;
 using BattleTech.UI;
 
@@ -45,7 +46,7 @@ namespace CustomComponents
 
         public void LoadValue(object value)
         {
-            Tonnage = value is int i ? i : 0;
+            Tonnage = value is Int64 i ? (int)i : 0;
         }
     }
 }

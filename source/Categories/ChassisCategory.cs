@@ -38,10 +38,12 @@ namespace CustomComponents
 
         public void OnLoaded(Dictionary<string, object> values)
         {
+            var desc = CategoryController.Shared.GetCategory(Category);
+
             if (Limits == null || Limits.Length == 0)
                 LocationLimits = new Dictionary<ChassisLocations, CategoryLimit>();
             else
-                LocationLimits = Limits.Distinct().ToDictionary(i => i.Location, i => new CategoryLimit(i.Min, i.Max));
+                LocationLimits = Limits.Distinct().ToDictionary(i => i.Location, i => new CategoryLimit(i.Min, i.Max, desc?.ReplaceDefaultsFirst ?? true));
 
         }
     }

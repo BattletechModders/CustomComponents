@@ -60,7 +60,7 @@ namespace CustomComponents
         Icons = 1 << 16,
         AutoFixFAKE = 1 << 17,
         AutoFixBase = 1 << 18,
-        RESERVED1 = 1 << 19,
+        InventoryOperaions = 1 << 19,
         AutofixValidate = 1 << 20,
         UnitType = 1 << 21,
         FULL = 0xffffff,
@@ -140,8 +140,7 @@ namespace CustomComponents
         public bool DEBUG_ShowLoadedCategory = true;
         public bool DEBUG_ShowLoadedDefaults = true;
         public bool DEBUG_ShowLoadedAlLocations = true;
-        public bool DEBUG_ShowFlags = false;
-
+        public bool DEBUG_ShowMechUT = false;
 
         public LogLevel LogLevel = LogLevel.Debug;
         public List<TagColor> ColorTags = new List<TagColor>();

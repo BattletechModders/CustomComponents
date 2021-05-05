@@ -10,15 +10,20 @@ namespace CustomComponents
 {
     public struct CategoryLimit
     {
-        public CategoryLimit(int min, int max)
+        public CategoryLimit(int min, int max, bool snapToMin)
         {
             Min = min;
             Max = max;
+            SnapToMin = snapToMin;
         }
 
+        public bool SnapToMin { get; set; }
 
         public int Max { get; set; }
         public int Min { get; set; }
+
+        public int Limit => SnapToMin ? Min : Max;
+        public bool Limited => SnapToMin ? Min > 0 : Max >= 0;
     }
 
 
@@ -80,21 +85,18 @@ namespace CustomComponents
             this.Limits = baseLimits;
         }
 
-        [Newtonsoft.Json.JsonIgnore]
-        public bool MinLimited { get; set; }
-        [Newtonsoft.Json.JsonIgnore]
-        public bool MaxLimited { get; set; }
-
+        [Newtonsoft.Json.JsonIgnore] public bool MinLimited { get; set; }
+        [Newtonsoft.Json.JsonIgnore] public bool MaxLimited { get; set; }
         [Newtonsoft.Json.JsonIgnore] public bool Limited => MaxLimited || MinLimited;
 
 
-        public void Complete()
+        public void Complete(CategoryDescriptor cat_info)
         {
-            if(LocationLimits == null)
+            if (LocationLimits == null)
                 if (Limits == null || Limits.Length == 0)
                     LocationLimits = new Dictionary<ChassisLocations, CategoryLimit>();
                 else
-                    LocationLimits = Limits.Distinct().ToDictionary(i => i.Location, i => new CategoryLimit(i.Min, i.Max));
+                    LocationLimits = Limits.Distinct().ToDictionary(i => i.Location, i => new CategoryLimit(i.Min, i.Max, cat_info?.ReplaceDefaultsFirst ?? true));
 
             MinLimited = LocationLimits.Count > 0 && LocationLimits.Values.Any(i => i.Min > 0);
             MaxLimited = LocationLimits.Count > 0 && LocationLimits.Values.Any(i => i.Max >= 0);
@@ -106,10 +108,9 @@ namespace CustomComponents
             if (!string.IsNullOrEmpty(UnitType))
                 sb.Append(UnitType + ": ");
             sb.AppendLine($"MinL: {MinLimited}, MaxL: {MaxLimited}");
-            if(LocationLimits == null)
-                Complete();
-            foreach (var pair in LocationLimits)
-                sb.AppendLine($"--- {pair.Key}: min: {pair.Value.Min}, max: {pair.Value.Max}");
+            if (LocationLimits != null)
+                foreach (var pair in LocationLimits)
+                    sb.AppendLine($"--- {pair.Key}: min: {pair.Value.Min}, max: {pair.Value.Max}, limit:{pair.Value.Limit}");
 
             return sb.ToString();
         }
@@ -117,13 +118,13 @@ namespace CustomComponents
 
     public class CategoryDescriptor
     {
-        public string displayName = "";
+        public string DisplayName = "";
         public string Name { get; set; }
         [Newtonsoft.Json.JsonIgnore]
-        public string DisplayName
+        public string _DisplayName
         {
-            get => string.IsNullOrEmpty(displayName) ? Name : displayName;
-            set => displayName = value;
+            get => string.IsNullOrEmpty(DisplayName) ? Name : DisplayName;
+            set => DisplayName = value;
         }
 
         public bool AllowMaxOverflow = false;
@@ -168,7 +169,7 @@ namespace CustomComponents
                     {
                         LocationLimits = chassis_limits
                     };
-                    result.Complete();
+                    result.Complete(this);
 
                     if (Control.Settings.DEBUG_ShowLoadedCategory)
                         Control.Log($"CategoryLimits for {Name} on {mech.Description.Id}\n" + result.ToString());
@@ -184,7 +185,7 @@ namespace CustomComponents
                         result = DefaultLimits;
 
                     if (result.LocationLimits == null)
-                        result.Complete();
+                        result.Complete(this);
                 }
 
                 records[mech.ChassisID] = result;
@@ -205,7 +206,7 @@ namespace CustomComponents
 
         public void Apply(CategoryDescriptor source)
         {
-            DisplayName = source.DisplayName;
+            _DisplayName = source._DisplayName;
             AllowMixTags = source.AllowMixTags;
             AutoReplace = source.AutoReplace;
             DefaultCustoms = source.DefaultCustoms;
@@ -274,7 +275,7 @@ namespace CustomComponents
 
         public override string ToString()
         {
-            var sb = new StringBuilder("Category: " + Name + "(" + DisplayName + ")");
+            var sb = new StringBuilder("Category: " + Name + "(" + _DisplayName + ")");
             sb.AppendLine();
             sb.AppendLine(
                 $"- AutoReplace: {AutoReplace}, AddToDescription: {AddCategoryToDescription},  AllowMixTags/Mechlab: {AllowMixTags}/{AllowMixTagsMechlab}");
@@ -289,7 +290,7 @@ namespace CustomComponents
             if (DefaultLimits != null)
             {
                 if (DefaultLimits.LocationLimits == null)
-                    DefaultLimits.Complete();
+                    DefaultLimits.Complete(this);
                 sb.Append("- DefaultLimits: " + DefaultLimits.ToString());
             }
 
@@ -297,7 +298,7 @@ namespace CustomComponents
                 foreach (var record in UnitLimits)
                 {
                     if (record.LocationLimits == null)
-                        record.Complete();
+                        record.Complete(this);
                     sb.Append("-- " + record.ToString());
                 }
 

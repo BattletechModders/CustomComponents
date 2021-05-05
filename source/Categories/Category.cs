@@ -163,7 +163,7 @@ namespace CustomComponents
                 {
                     // 0 - Display Name, 1 - maximum, 2 - Mech Uiname, 3 - Mech Name
                     // 4 - Location, 5 - item name, 6 - item uiname
-                    return new Localize.Text(CategoryDescriptor.AddMaximumReached, CategoryDescriptor.DisplayName,
+                    return new Localize.Text(CategoryDescriptor.AddMaximumReached, CategoryDescriptor._DisplayName,
                         free.limit.Max, mech.Description.UIName, mech.Description.Name,
                         free.locations == ChassisLocations.All ? "All Locations" : free.locations.ToString(),
                         drop_item.ComponentRef.Def.Description.Name, drop_item.ComponentRef.Def.Description.UIName
@@ -205,7 +205,7 @@ namespace CustomComponents
                 .Where(i => i != null)
                 .Any(i => i.Tag != "*" && i.Tag != Tag);
 
-            return !check ? string.Empty : (new Text(CategoryDescriptor.ValidateMixed, CategoryDescriptor.DisplayName)).ToString();
+            return !check ? string.Empty : (new Text(CategoryDescriptor.ValidateMixed, CategoryDescriptor._DisplayName)).ToString();
         }
 
 
@@ -226,8 +226,8 @@ namespace CustomComponents
                     };
 
                 detail.AddUnique((Control.Settings.AddWeightToCategory && Weight > 1)
-                    ? this.CategoryDescriptor.DisplayName + ":" + Weight.ToString()
-                    : this.CategoryDescriptor.DisplayName);
+                    ? this.CategoryDescriptor._DisplayName + ":" + Weight.ToString()
+                    : this.CategoryDescriptor._DisplayName);
                 ed.AddDetail(detail);
             }
         }
