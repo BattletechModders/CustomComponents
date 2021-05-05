@@ -78,7 +78,7 @@ namespace CustomComponents
         //FOR PATCHES!!!
         public string GetMechIDFromChassisID(string descriptionId)
         {
-            return descriptionId.Replace("mechdef_", "chassisdef_");
+            return descriptionId.Replace("chassisdef_", "mechdef_");
         }
 
         private HashSet<string> BuildUnitTypes(MechDef mech)
