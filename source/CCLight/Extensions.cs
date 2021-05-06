@@ -1,5 +1,4 @@
 ﻿using BattleTech;
-using HBS.Collections;
 using System;
 using System.Collections.Generic;
 
@@ -93,31 +92,25 @@ namespace CustomComponents
             return Database.Is<T>(target);
         }
 
-        public static bool IgnoreAutofix(this MechDef def)
+        public static bool IsBroken(this MechDef def)
         {
-            //Control.LogError("start check");
             try
             {
-
-                //Control.LogError("1.mech");
                 if (def == null)
                 {
                     Control.LogError("MECHDEF IS NULL!");
                     return true;
                 }
-                //Control.LogError("2.chassis");
                 if (def.Chassis == null)
                 {
                     Control.LogError($"Chassis of {def.Description.Id} IS NULL!");
                     return true;
                 }
-                //Control.LogError("3.mech tags");
                 if (def.MechTags == null)
                 {
                     Control.LogError($"Mechtags of {def.Description.Id} IS NULL!");
                     return true;
                 }
-                //Control.LogError("4.chassis tags");
                 if (def.Chassis.ChassisTags == null)
                 {
                     Control.LogError($"Chassistags of {def.Description.Id} IS NULL!");
@@ -176,28 +169,6 @@ namespace CustomComponents
             }
 
             return result ?? target.AddComponent(factory.Invoke());
-        }
-
-        public static bool IgnoreAutofix(this ChassisDef def)
-        {
-            return def.ChassisTags.IgnoreAutofix();
-        }
-    }
-
-    public static class TagSetExtensions
-    {
-        public static bool IgnoreAutofix(this TagSet set)
-        {
-            if (set == null)
-            {
-                Control.LogError("Found empty tagset! disabling autofixer");
-                throw new NullReferenceException();
-            }
-
-            if (Control.Settings.ignoreAutofixTags == null)
-                return false;
-
-            return set.ContainsAny(Control.Settings.ignoreAutofixTags);
         }
     }
 

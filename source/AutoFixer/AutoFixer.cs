@@ -115,7 +115,7 @@ namespace CustomComponents
                     mechDef.Refresh();
             }
 
-            mechDefs = mechDefs.Where(i => i.Chassis != null).Where(i => !i.IgnoreAutofix()).ToList();
+            mechDefs = mechDefs.Where(i => i.Chassis != null).Where(i => !i.IsBroken()).ToList();
 
             var work_list = new List<MechDef>();
             foreach (var mechDef in mechDefs)

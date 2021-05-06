@@ -195,9 +195,6 @@ namespace CustomComponents
         public bool CheckWeaponCount = false;
         public int MaxWeaponCount = 14;
 
-        public string[] IgnoreAutofixTags = { "ignore_autofix", "noautofix" };
-        internal TagSet ignoreAutofixTags;
-
         public string IgnoreAutofixUnitType = "IgnoreAutofix";
         public string IgnoreValidateUnitType = "IgnoreValidate";
 
@@ -223,7 +220,6 @@ namespace CustomComponents
                     if (!ColorTagsDictionary.ContainsKey(colorTag.Tag))
                         ColorTagsDictionary.Add(colorTag.Tag, colorTag.ToColor());
                 }
-            ignoreAutofixTags = new TagSet(IgnoreAutofixTags);
         }
     }
 }
