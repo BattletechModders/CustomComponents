@@ -178,6 +178,27 @@ namespace CustomComponents
             return result ?? target.AddComponent(factory.Invoke());
         }
 
+        public static bool IgnoreAutofix(this ChassisDef def)
+        {
+            return def.ChassisTags.IgnoreAutofix();
+        }
+    }
+
+    public static class TagSetExtensions
+    {
+        public static bool IgnoreAutofix(this TagSet set)
+        {
+            if (set == null)
+            {
+                Control.LogError("Found empty tagset! disabling autofixer");
+                throw new NullReferenceException();
+            }
+
+            if (Control.Settings.ignoreAutofixTags == null)
+                return false;
+
+            return set.ContainsAny(Control.Settings.ignoreAutofixTags);
+        }
     }
 
     public static class MechComponentRefExtensions
