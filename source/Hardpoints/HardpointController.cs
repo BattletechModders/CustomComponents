@@ -154,12 +154,11 @@ namespace CustomComponents
                 return string.Empty;
 
             var weapons_per_location = new_inventory
-                .Where(i => i.Item.ComponentDefType == ComponentType.Weapon)
-                .Select(i => new { location = i.Location, weapon = i.Item.Def as WeaponDef })
-                .Where(i => i.weapon != null)
+                .Select(i => new { location = i.Location, item = i.Item, wcat = i.Item.GetWeaponCategory() })
+                .Where(i => !i.wcat.Is_NotSet )
 
                 .GroupBy(i => i.location)
-                .Select(i => new { location = i.Key, items = i.Select(i => i.weapon).ToList() })
+                .Select(i => new { location = i.Key, items = i.ToList() })
                 .ToList();
 
             var mechdef = MechLabHelper.CurrentMechLab.ActiveMech;
@@ -168,9 +167,9 @@ namespace CustomComponents
             {
                 var (omni, hardpoints) = GetHardpointsPerLocation(mechdef, w_location.location);
 
-                foreach (var item in w_location.items)
+                foreach (var recrd in w_location.items)
                 {
-                    if (Hardpoints.TryGetValue(item.WeaponCategoryValue.Name, out var hpInfo))
+                    if (Hardpoints.TryGetValue(recrd.wcat.Name, out var hpInfo))
                     {
                         var nearest = hardpoints.FirstOrDefault(i => i.Compatible.Contains(hpInfo.ID));
                         if (nearest != null || hpInfo.AcceptOmni && omni > 0)
@@ -182,8 +181,8 @@ namespace CustomComponents
                         }
                         else
                             return new Localize.Text(Control.Settings.Message.Base_AddNotEnoughHardpoints,
-                                  mechdef.Description.UIName, item.Description.Name, item.Description.UIName,
-                                  item.WeaponCategoryValue.Name, item.WeaponCategoryValue.FriendlyName,
+                                  mechdef.Description.UIName, recrd.item.Def.Description.Name, recrd.item.Def.Description.UIName,
+                                  recrd.wcat.Name, recrd.wcat.FriendlyName,
                                   w_location.location
                               ).ToString();
 
@@ -197,21 +196,21 @@ namespace CustomComponents
         public void ValidateMech(Dictionary<MechValidationType, List<Text>> errors, MechValidationLevel validationlevel, MechDef mechdef)
         {
             var weapons_per_location = mechdef.Inventory
-                .Where(i => i.ComponentDefType == ComponentType.Weapon)
-                .Select(i => new { location = i.MountedLocation, weapon = i.Def as WeaponDef })
-                .Where(i => i.weapon != null)
+                .Select(i => new { location = i.MountedLocation, item = i, wcat = i.GetWeaponCategory() })
+                .Where(i => !i.wcat.Is_NotSet)
 
                 .GroupBy(i => i.location)
-                .Select(i => new { location = i.Key, items = i.Select(i => i.weapon).ToList() })
+                .Select(i => new { location = i.Key, items = i.ToList() })
                 .ToList();
+
 
             foreach (var w_location in weapons_per_location)
             {
                 var (omni, hardpoints) = GetHardpointsPerLocation(mechdef, w_location.location);
 
-                foreach (var item in w_location.items)
+                foreach (var recrd in w_location.items)
                 {
-                    if (Hardpoints.TryGetValue(item.WeaponCategoryValue.Name, out var hpInfo))
+                    if (Hardpoints.TryGetValue(recrd.wcat.Name, out var hpInfo))
                     {
                         var nearest = hardpoints.FirstOrDefault(i => i.Compatible.Contains(hpInfo.ID));
                         if (nearest != null || hpInfo.AcceptOmni && omni > 0)
@@ -222,9 +221,11 @@ namespace CustomComponents
                                 hardpoints.Remove(nearest);
                         }
                         else
-                            errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(Control.Settings.Message.Base_ValidateNotEnoughHardpoints,
-                                mechdef.Description.UIName, item.Description.Name, item.Description.UIName,
-                                item.WeaponCategoryValue.Name, item.WeaponCategoryValue.FriendlyName,
+                            errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(
+                                Control.Settings.Message.Base_AddNotEnoughHardpoints,
+                                mechdef.Description.UIName, recrd.item.Def.Description.Name,
+                                recrd.item.Def.Description.UIName,
+                                recrd.wcat.Name, recrd.wcat.FriendlyName,
                                 w_location.location
                             ));
 
@@ -236,21 +237,21 @@ namespace CustomComponents
         internal bool CanBeFielded(MechDef mechDef)
         {
             var weapons_per_location = mechDef.Inventory
-                .Where(i => i.ComponentDefType == ComponentType.Weapon)
-                .Select(i => new { location = i.MountedLocation, weapon = i.Def as WeaponDef })
-                .Where(i => i.weapon != null)
+                .Select(i => new { location = i.MountedLocation, item = i, wcat = i.GetWeaponCategory() })
+                .Where(i => !i.wcat.Is_NotSet)
 
                 .GroupBy(i => i.location)
-                .Select(i => new { location = i.Key, items = i.Select(i => i.weapon).ToList() })
+                .Select(i => new { location = i.Key, items = i.ToList() })
                 .ToList();
+
 
             foreach (var w_location in weapons_per_location)
             {
                 var (omni, hardpoints) = GetHardpointsPerLocation(mechDef, w_location.location);
 
-                foreach (var item in w_location.items)
+                foreach (var recrd in w_location.items)
                 {
-                    if (Hardpoints.TryGetValue(item.WeaponCategoryValue.Name, out var hpInfo))
+                    if (Hardpoints.TryGetValue(recrd.wcat.Name, out var hpInfo))
                     {
                         var nearest = hardpoints.FirstOrDefault(i => i.Compatible.Contains(hpInfo.ID));
                         if (nearest != null || hpInfo.AcceptOmni && omni > 0)
@@ -262,9 +263,11 @@ namespace CustomComponents
                         }
                         else
                             return false;
+
                     }
                 }
             }
+
             return true;
         }
 
