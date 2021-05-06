@@ -28,13 +28,6 @@ namespace CustomComponents.ExtendedDetails
             return def.GetOrCreate(() => new ExtendedDetails(def.Description));
         }
 
-        //[Obsolete] // remove
-        //public ExtendedDetails(MechComponentDef def) : this(def.Description)
-        [Obsolete] // remove
-        public ExtendedDetails(MechComponentDef def) : this(def.Description)
-        {
-        }
-
         //[Obsolete] // make private
         private ExtendedDetails(DescriptionDef def)
         {

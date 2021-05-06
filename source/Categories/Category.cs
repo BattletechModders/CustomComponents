@@ -17,7 +17,6 @@ namespace CustomComponents
     public class Category : SimpleCustomComponent, IAfterLoad, IReplaceValidateDrop,
         IReplaceIdentifier, IAdjustDescription, IOnRemove, IOnAdd, IPreValidateDrop
     {
-
         private class free_record
         {
             public ChassisLocations locations;
