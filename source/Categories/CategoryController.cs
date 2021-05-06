@@ -250,10 +250,8 @@ namespace CustomComponents
             return true;
         }
 
-        public string ValidateDrop(MechLabItemSlotElement drop_item, List<InvItem> new_inventory)
+        public string ValidateDrop(MechLabItemSlotElement drop_item, MechDef mechDef, List<InvItem> new_inventory)
         {
-            var mechDef = MechLabHelper.CurrentMechLab.ActiveMech;
-
             var items_by_category = new_inventory
                 .Select(iitem => new { iitem, def = iitem.Item.Def.GetComponents<Category>() })
                 .Where(i => i.def != null)

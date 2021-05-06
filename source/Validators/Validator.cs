@@ -116,26 +116,25 @@ namespace CustomComponents
             return string.Empty;
         }
 
-        private static string ValidateSize(MechLabItemSlotElement drop_item,List<InvItem> new_inventory)
+        private static string ValidateSize(MechLabItemSlotElement drop_item, MechDef mechDef, List<InvItem> new_inventory)
         {
             var items_by_location = new_inventory
                 .GroupBy(i => i.Location)
                 .Select(i => new { location = i.Key, size = i.Sum(a => a.Item.Def.InventorySize) });
-            var mech = MechLabHelper.CurrentMechLab.ActiveMech;
 
             foreach(var record in items_by_location)
             {
-                if (record.size > mech.Chassis.GetLocationDef(record.location).InventorySlots)
+                if (record.size > mechDef.Chassis.GetLocationDef(record.location).InventorySlots)
                     return (new Localize.Text(Control.Settings.Message.Base_AddInventorySize,drop_item.ComponentRef.Def.Description.Name, record.location)).ToString();
             }
 
             return string.Empty;
         }
 
-        private static string ValidateJumpJets(MechLabItemSlotElement drop_item, List<InvItem> new_inventory)
+        private static string ValidateJumpJets(MechLabItemSlotElement drop_item, MechDef mechDef, List<InvItem> new_inventory)
         {
             var total = new_inventory.Count(i => i.Item.ComponentDefType == ComponentType.JumpJet);
-            var max = MechLabHelper.CurrentMechLab.ActiveMech.Chassis.MaxJumpjets;
+            var max = mechDef.Chassis.MaxJumpjets;
             if (total > max)
                 return $"Cannot add {drop_item.ComponentRef.Def.Description.Name}: Max number of jumpjets for 'Mech reached";
             return string.Empty;
