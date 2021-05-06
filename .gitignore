@@ -4,6 +4,7 @@
 # DynModLib specific ignores
 log.txt
 /*.dll
+/dist
 
 # User-specific files
 *.suo
