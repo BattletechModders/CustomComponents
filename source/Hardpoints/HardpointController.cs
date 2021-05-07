@@ -148,7 +148,7 @@ namespace CustomComponents
             return string.Empty;
         }
 
-        public string PostValidatorDrop(MechLabItemSlotElement drop_item, List<InvItem> new_inventory)
+        public string PostValidatorDrop(MechLabItemSlotElement drop_item, MechDef mechDef, List<InvItem> new_inventory)
         {
             if (Control.Settings.AllowMechlabWrongHardpoints)
                 return string.Empty;
@@ -161,11 +161,9 @@ namespace CustomComponents
                 .Select(i => new { location = i.Key, items = i.ToList() })
                 .ToList();
 
-            var mechdef = MechLabHelper.CurrentMechLab.ActiveMech;
-
             foreach (var w_location in weapons_per_location)
             {
-                var (omni, hardpoints) = GetHardpointsPerLocation(mechdef, w_location.location);
+                var (omni, hardpoints) = GetHardpointsPerLocation(mechDef, w_location.location);
 
                 foreach (var recrd in w_location.items)
                 {
@@ -181,7 +179,7 @@ namespace CustomComponents
                         }
                         else
                             return new Localize.Text(Control.Settings.Message.Base_AddNotEnoughHardpoints,
-                                  mechdef.Description.UIName, recrd.item.Def.Description.Name, recrd.item.Def.Description.UIName,
+                                  mechDef.Description.UIName, recrd.item.Def.Description.Name, recrd.item.Def.Description.UIName,
                                   recrd.wcat.Name, recrd.wcat.FriendlyName,
                                   w_location.location
                               ).ToString();

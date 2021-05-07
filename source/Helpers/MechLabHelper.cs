@@ -129,7 +129,7 @@ namespace CustomComponents
             }
         }
 
-        private MechLabHelper(MechLabPanel mechLab)
+        public MechLabHelper(MechLabPanel mechLab) // !TODO PONE FIX IT
         {
             MechLab = mechLab;
             main = Traverse.Create(mechLab);
