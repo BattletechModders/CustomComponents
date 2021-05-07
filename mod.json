@@ -107,35 +107,4 @@
 			{	"Name" : "IgnoreValidate", "AnyTags" : [  "ignore_validate", "novalidate", "fake_vehicle_chassis" ]	},
 		]
 	},
-	
-	"Manifest": [
-		{
-			"Type" : "CCCategories",
-			"Path" : "CCTestMod/test/categories"
-		},
-		{
-			"Type" : "CCDefaults",
-			"Path" : "CCTestMod/test/defaults"
-		},
-		{
-			"Type" : "UpgradeDef",
-			"Path" : "CCTestMod/test/upgrade"
-		},
-		{
-			"Type" : "CCCEquipLocationTag",
-			"Path" : "CCTestMod/test/equiplocation"
-		},
-		{
-			"Type" : "ChassisDef",
-			"Path" : "CCTestMod/test/chassis"
-		},
-		{
-			"Type" : "MechDef",
-			"Path" : "CCTestMod/test/mech"
-		},
-		{
-			"Type" : "WeaponDef",
-			"Path" : "CCTestMod/test/weapons"
-		}
-	]
 }
