@@ -271,6 +271,92 @@ namespace CustomComponents
             return true;
         }
 
+        public string ReplaceValidatorDrop(MechLabItemSlotElement drop_item, ChassisLocations location, Queue<IChange> changes)
+        {
+            if (drop_item.ComponentRef.ComponentDefType != ComponentType.Weapon)
+                return string.Empty;
+
+            var weapon = drop_item.ComponentRef.Def as WeaponDef;
+
+            if (!Hardpoints.TryGetValue(weapon.WeaponCategoryValue.Name, out var hpinfo))
+            {
+                Control.LogError($"Invalid weapon category {weapon.WeaponCategoryValue.Name} for {weapon.Description.Id}");
+                return "INVALID WEAPON, REPORT TO DISCORD!";
+            }
+
+            var removed = changes.OfType<Change_Remove>().ToList();
+
+            var lhepler = MechLabHelper.CurrentMechLab.GetLocationHelper(location);
+
+            var hardpoints = lhepler.Hardpoints.ToList();
+            var omni = lhepler.OmniHardpoints;
+            var candidants = new List<MechLabItemSlotElement>();
+
+            foreach (var slotitem in lhepler.LocalInventory.Where(i => i.ComponentRef.ComponentDefType == ComponentType.Weapon))
+            {
+
+                var already_removed = removed.FirstOrDefault(i =>
+                    i.ItemID == slotitem.ComponentRef.ComponentDefID && i.Location == slotitem.MountedLocation);
+
+                if (already_removed != null)
+                {
+                    removed.Remove(already_removed);
+                    continue;
+                    ;
+                }
+
+                var w = slotitem.ComponentRef.Def as WeaponDef;
+
+                var hardpoint = hardpoints.FirstOrDefault(i => i.Compatible.Contains(w.WeaponCategoryValue.Name));
+
+                if (hardpoint != null)
+                {
+                    hardpoints.Remove(hardpoint);
+                    if (hardpoint.Compatible.Contains(weapon.WeaponCategoryValue.Name))
+                    {
+                        candidants.Add(slotitem);
+                    }
+                }
+                else if (Hardpoints[weapon.WeaponCategoryValue.Name].AcceptOmni && omni > 0)
+                {
+                    omni--;
+                    if (hpinfo.AcceptOmni)
+                        candidants.Add(slotitem);
+                }
+                else if (!Control.Settings.AllowMechlabWrongHardpoints)
+                {
+                    return new Localize.Text(Control.Settings.Message.Base_AddNotEnoughHardpoints,
+                        MechLabHelper.CurrentMechLab.ActiveMech.Description.UIName, weapon.Description.Name, weapon.Description.UIName,
+                        hpinfo.DisplayName, weapon.WeaponCategoryValue.FriendlyName,
+                        location
+                    ).ToString();
+                }
+            }
+
+            if (hardpoints.Count > 0 && hardpoints.Any(i => i.Compatible.Contains(hpinfo.ID)))
+                return string.Empty;
+            if (hpinfo.AcceptOmni && omni > 0)
+                return string.Empty;
+
+            candidants.RemoveAll(i => i.ComponentRef.IsFixed);
+
+            if (candidants.Count == 0)
+            {
+                return new Localize.Text(Control.Settings.Message.Base_AddNotEnoughHardpoints,
+                    MechLabHelper.CurrentMechLab.ActiveMech.Description.UIName, weapon.Description.Name, weapon.Description.UIName,
+                    hpinfo.DisplayName, weapon.WeaponCategoryValue.FriendlyName,
+                    location
+                ).ToString();
+            }
+
+            var toremove = candidants
+                .OrderBy(i => i.ComponentRef.Def.InventorySize)
+                .First();
+            changes.Enqueue(new Change_Remove(toremove.ComponentRef.ComponentDefID, location));
+
+            return string.Empty;
+        }
+
         private (int, List<HardpointInfo>) GetHardpointsPerLocation(MechDef mechDef, ChassisLocations location)
         {
             var locationdef = mechDef.GetChassisLocationDef(location);

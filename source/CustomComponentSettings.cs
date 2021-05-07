@@ -70,7 +70,7 @@ namespace CustomComponents
     {
         public string WrongWeaponCount = "Cannot equip more then {0} weapons";
         
-        public string Flags_InvaildComponent = "{0} is placeholder, remove it";
+        public string Flags_InvaildComponent = "{0} has to be replaced";
         public string Flags_DestroyedComponent = "{0} is destroyed, replace it";
         public string Flags_DamagedComponent = "{0} is damaged, repair it";
 

@@ -97,7 +97,7 @@ namespace CustomComponents
 
                 Validator.RegisterDropValidator(check: CategoryController.Shared.ValidateDrop);
                 Validator.RegisterDropValidator(pre: TagRestrictionsHandler.Shared.ValidateDrop);
-                Validator.RegisterDropValidator(pre: HardpointController.Instance.PreValidateDrop, check: HardpointController.Instance.PostValidatorDrop);
+                Validator.RegisterDropValidator(pre: HardpointController.Instance.PreValidateDrop, replace: HardpointController.Instance.ReplaceValidatorDrop, check: HardpointController.Instance.PostValidatorDrop);
                 Validator.RegisterDropValidator(EquipLocationController.Instance.PreValidateDrop);
 
 
