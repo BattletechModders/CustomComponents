@@ -91,7 +91,7 @@ namespace CustomComponents
                     }
 
                 if (Defaults != null && Defaults.Count > 0)
-                    foreach (var def in Defaults.Where(def => def.Value.Defaults != null && def.Value.Defaults.Count > 0))
+                    foreach (var def in Defaults.Where(def => def.Value?.Defaults != null && def.Value.Defaults.Count > 0))
                     {
                         if (!all_id.TryGetValue(def.Key, out var ha))
                         {
@@ -299,8 +299,7 @@ namespace CustomComponents
 
                     if (category.Defaults.Count > 0)
                         result.Defaults[item.CategoryID] = category;
-                    else
-                        result.Defaults[item.CategoryID] = null;
+
                 }
             }
 
