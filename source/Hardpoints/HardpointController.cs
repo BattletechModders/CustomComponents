@@ -148,10 +148,13 @@ namespace CustomComponents
             return string.Empty;
         }
 
-        public string PostValidatorDrop(MechLabItemSlotElement drop_item, MechDef mechDef, List<InvItem> new_inventory)
+        public string PostValidatorDrop(MechLabItemSlotElement drop_item, List<InvItem> new_inventory)
         {
             if (Control.Settings.AllowMechlabWrongHardpoints)
                 return string.Empty;
+
+            var mechDef = MechLabHelper.CurrentMechLab.ActiveMech;
+
 
             var weapons_per_location = new_inventory
                 .Select(i => new { location = i.Location, item = i.Item, wcat = i.Item.GetWeaponCategory() })

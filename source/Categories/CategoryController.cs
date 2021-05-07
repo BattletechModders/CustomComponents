@@ -250,7 +250,7 @@ namespace CustomComponents
             return true;
         }
 
-        public string ValidateDrop(MechLabItemSlotElement drop_item, MechDef mechDef, List<InvItem> new_inventory)
+        public string ValidateDrop(MechLabItemSlotElement drop_item, List<InvItem> new_inventory)
         {
             var items_by_category = new_inventory
                 .Select(iitem => new { iitem, def = iitem.Item.Def.GetComponents<Category>() })
@@ -267,7 +267,7 @@ namespace CustomComponents
                 .GroupBy(i => i.category)
                 .ToDictionary(i => i.Key, i => i.ToList());
 
-
+            var mechDef = MechLabHelper.CurrentMechLab.ActiveMech;
 
             //check all minimum values
             foreach (var category in GetCategories())

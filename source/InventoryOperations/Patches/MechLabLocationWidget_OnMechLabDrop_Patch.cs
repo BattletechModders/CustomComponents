@@ -101,7 +101,7 @@ namespace CustomComponents.Patches
                 foreach (var pst_validator in Validator.GetPost(newComponentDef))
                 {
                     int n = changes.Count;
-                    if (do_cancel(pst_validator(dragItem, ___mechLab.activeMechDef, state.Inventory)))
+                    if (do_cancel(pst_validator(dragItem, state.Inventory)))
                         return false;
                 }
 

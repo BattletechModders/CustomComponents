@@ -299,7 +299,8 @@ namespace CustomComponents
 
                     if (category.Defaults.Count > 0)
                         result.Defaults[item.CategoryID] = category;
-
+                    else
+                        result.Defaults[item.CategoryID] = null;
                 }
             }
 
