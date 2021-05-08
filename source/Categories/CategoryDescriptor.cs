@@ -73,6 +73,8 @@ namespace CustomComponents
 
         private _record[] Limits;
 
+        public bool MergeWithBaseLimits = false;
+
         [Newtonsoft.Json.JsonIgnore]
         public Dictionary<ChassisLocations, CategoryLimit> LocationLimits;
 
@@ -97,6 +99,16 @@ namespace CustomComponents
                     LocationLimits = new Dictionary<ChassisLocations, CategoryLimit>();
                 else
                     LocationLimits = Limits.Distinct().ToDictionary(i => i.Location, i => new CategoryLimit(i.Min, i.Max, cat_info?.ReplaceDefaultsFirst ?? true));
+
+            // !TODO PONE FIX IT // is this the correct
+            if (MergeWithBaseLimits && cat_info?.DefaultLimits?.LocationLimits != null)
+            {
+                var defaultLocationLimits = cat_info.DefaultLimits.LocationLimits;
+                foreach (var location in defaultLocationLimits.Keys.Where(location => !LocationLimits.ContainsKey(location)))
+                {
+                    LocationLimits[location] = defaultLocationLimits[location];
+                }
+            }
 
             MinLimited = LocationLimits.Count > 0 && LocationLimits.Values.Any(i => i.Min > 0);
             MaxLimited = LocationLimits.Count > 0 && LocationLimits.Values.Any(i => i.Max >= 0);
