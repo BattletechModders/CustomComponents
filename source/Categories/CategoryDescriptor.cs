@@ -71,9 +71,9 @@ namespace CustomComponents
 
         public string UnitType;
 
-        private _record[] Limits;
+        internal _record[] Limits;
 
-        public bool MergeWithBaseLimits = false;
+        public bool PartialOverride = false;
 
         [Newtonsoft.Json.JsonIgnore]
         public Dictionary<ChassisLocations, CategoryLimit> LocationLimits;
@@ -99,16 +99,6 @@ namespace CustomComponents
                     LocationLimits = new Dictionary<ChassisLocations, CategoryLimit>();
                 else
                     LocationLimits = Limits.Distinct().ToDictionary(i => i.Location, i => new CategoryLimit(i.Min, i.Max, cat_info?.ReplaceDefaultsFirst ?? true));
-
-            // !TODO PONE FIX IT // is this the correct
-            if (MergeWithBaseLimits && cat_info?.DefaultLimits?.LocationLimits != null)
-            {
-                var defaultLocationLimits = cat_info.DefaultLimits.LocationLimits;
-                foreach (var location in defaultLocationLimits.Keys.Where(location => !LocationLimits.ContainsKey(location)))
-                {
-                    LocationLimits[location] = defaultLocationLimits[location];
-                }
-            }
 
             MinLimited = LocationLimits.Count > 0 && LocationLimits.Values.Any(i => i.Min > 0);
             MaxLimited = LocationLimits.Count > 0 && LocationLimits.Values.Any(i => i.Max >= 0);
@@ -181,24 +171,52 @@ namespace CustomComponents
                     {
                         LocationLimits = chassis_limits
                     };
-                    result.Complete(this);
-
-                    if (Control.Settings.DEBUG_ShowLoadedCategory)
-                        Control.Log($"CategoryLimits for {Name} on {mech.Description.Id}\n" + result.ToString());
                 }
                 else
                 {
                     var ut = UnitTypeDatabase.Instance.GetUnitTypes(mech);
-                    if (ut == null)
-                        return DefaultLimits;
-                    result = UnitLimits.FirstOrDefault(i => ut.Contains(i.UnitType));
+                    if (ut != null)
+                    {
+                        var candidates = UnitLimits.Where(i => ut.Contains(i.UnitType)).ToList();
 
-                    if (result == null)
-                        result = DefaultLimits;
-
-                    if (result.LocationLimits == null)
-                        result.Complete(this);
+                        if (candidates.Count > 0 && candidates.All(x => x.PartialOverride) && DefaultLimits != null)
+                        {
+                            { // copy default limits into result
+                                result = new CategoryDescriptorRecord(DefaultLimits.Limits);
+                                result.Complete(this);
+                            }
+                            // overwrite values and last one wins
+                            foreach (var limit in candidates)
+                            {
+                                limit.Complete(this);
+                                foreach (var locationLimit in limit.LocationLimits)
+                                {
+                                    result.LocationLimits[locationLimit.Key] = locationLimit.Value;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            result = candidates.FirstOrDefault();
+                        }
+                    }
                 }
+                
+                if (result == null)
+                    result = DefaultLimits;
+
+                if (result != null)
+                {
+                    result.Complete(this);
+
+                    foreach (var limit in result.LocationLimits)
+                    {
+                        Control.Log($"Limit Name={Name} ChassisID={mech.ChassisID} limitKey={limit.Key} Limit={limit.Value.Limit} Max={limit.Value.Max}");
+                    }
+                }
+
+                if (Control.Settings.DEBUG_ShowLoadedCategory)
+                    Control.Log($"CategoryLimits for {Name} on {mech.Description.Id}\n" + result.ToString());
 
                 records[mech.ChassisID] = result;
 
