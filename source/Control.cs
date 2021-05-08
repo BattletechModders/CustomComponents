@@ -111,14 +111,6 @@ namespace CustomComponents
                         AutoFixer.Shared.RegisterMechFixer(DefaultFixer.Instance.FixMechs);
                 }
 
-
-
-                if (Settings.UnitTypes != null && Settings.UnitTypes.Length > 0)
-                    foreach (var tagUnitType in Settings.UnitTypes)
-                    {
-                        UnitTypeDatabase.Instance.RegisterUnitType(tagUnitType);
-                    }
-
                 Logger.LogDebug("done");
             }
             catch (Exception e)
@@ -134,6 +126,8 @@ namespace CustomComponents
             var Manifests = customResources;
 
             Control.LogDebug(DType.CustomResource, "Custom Resource Load started");
+            
+            UnitTypeDatabase.Instance.Setup(Manifests);
             CategoryController.Shared.Setup(Manifests);
             DefaultsDatabase.Instance.Setup(Manifests);
             TagRestrictionsHandler.Shared.Setup(Manifests);

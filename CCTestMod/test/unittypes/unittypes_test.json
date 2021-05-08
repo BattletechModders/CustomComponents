@@ -1,0 +1,8 @@
+{
+	"Settings" : [
+        {	"Name" : "LightMech", "RequiredTags" : [ "unit_mech", "unit_light" ]	},
+		{	"Name" : "MediumMech", "RequiredTags" : [ "unit_mech", "unit_medium" ]	},
+		{	"Name" : "HeavyMech", "RequiredTags" : [ "unit_mech", "unit_heavy" ]	},
+		{	"Name" : "AssaultMech", "RequiredTags" : [ "unit_mech", "unit_assault" ]	}
+    ]
+}
