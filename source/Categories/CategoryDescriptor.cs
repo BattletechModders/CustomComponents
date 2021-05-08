@@ -179,7 +179,9 @@ namespace CustomComponents
                     {
                         var candidates = UnitLimits.Where(i => ut.Contains(i.UnitType)).ToList();
 
-                        if (candidates.Count > 0 && candidates.All(x => x.PartialOverride) && DefaultLimits != null)
+                        result = candidates.FirstOrDefault(x => !x.PartialOverride);
+
+                        if (result == null && candidates.Count > 0 && DefaultLimits != null)
                         {
                             { // copy default limits into result
                                 result = new CategoryDescriptorRecord(DefaultLimits.Limits);
@@ -194,10 +196,6 @@ namespace CustomComponents
                                     result.LocationLimits[locationLimit.Key] = locationLimit.Value;
                                 }
                             }
-                        }
-                        else
-                        {
-                            result = candidates.FirstOrDefault();
                         }
                     }
                 }
