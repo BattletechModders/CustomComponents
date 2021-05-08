@@ -9,7 +9,7 @@ namespace CustomComponents
 {
     internal class TagRestrictionsHandler
     {
-        internal static TagRestrictionsHandler Shared = new TagRestrictionsHandler();
+        internal static TagRestrictionsHandler Shared = new();
 
         private Dictionary<string, TagRestrictions> _restrictions { get; set;  }
         internal static Dictionary<string, TagRestrictions> Restrictions => Shared._restrictions;
@@ -31,21 +31,19 @@ namespace CustomComponents
 
         internal bool ValidateMechCanBeFielded(MechDef mechDef)
         {
-            var checker = new TagsChecker(mechDef.Chassis, mechDef.Inventory.ToList());
+            var checker = new TagsChecker(mechDef);
             return checker.Validate() == null;
         }
 
         internal void ValidateMech(Dictionary<MechValidationType, List<Text>> errors, MechValidationLevel validationLevel, MechDef mechDef)
         {
-            var checker = new TagsChecker(mechDef.Chassis, mechDef.Inventory.ToList(), errors);
-            checker.Validate();
+            var checker = new TagsChecker(mechDef);
+            checker.Validate(errors);
         }
 
         public string ValidateDrop(MechLabItemSlotElement drop_item, ChassisLocations location)
         {
-            var mechDef = MechLabHelper.CurrentMechLab.ActiveMech;
-
-            var checker = new TagsChecker(mechDef.Chassis, mechDef.Inventory.ToList());
+            var checker = new TagsChecker(MechLabHelper.CurrentMechLab.ActiveMech);
             return checker.ValidateDrop(
                 Control.Settings.TagRestrictionDropValidateRequiredTags,
                 Control.Settings.TagRestrictionDropValidateIncompatibleTags,

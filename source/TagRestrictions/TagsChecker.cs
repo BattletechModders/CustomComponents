@@ -9,28 +9,27 @@ namespace CustomComponents
     internal class TagsChecker
     {
         private readonly ChassisDef chassisDef;
-        private readonly Dictionary<MechValidationType, List<Text>> errors;
         private readonly List<MechComponentRef> inventory;
 
         private readonly Dictionary<ChassisLocations, HashSet<string>> tagsOnLocations = new();
         private readonly HashSet<string> tagsOnMech = new();
         private string error;
+        private Dictionary<MechValidationType, List<Text>> errors;
 
-        internal TagsChecker(
-            ChassisDef chassisDef,
-            List<MechComponentRef> inventory,
-            Dictionary<MechValidationType, List<Text>> errors = null)
+        internal TagsChecker(MechDef mechDef)
         {
-            this.chassisDef = chassisDef;
-            this.inventory = inventory;
-            this.errors = errors;
+            chassisDef = mechDef.Chassis;
+            inventory = mechDef.Inventory.ToList();
 
             CollectChassisTags();
             CollectComponentTags();
         }
 
-        internal string Validate()
+        internal string Validate(Dictionary<MechValidationType, List<Text>> errors = null)
         {
+            this.errors = errors;
+            error = null;
+
             if (RequiredAnyCheck(tagsOnMech, tagsOnMech)) return error;
             if (RequiredCheck(tagsOnMech, tagsOnMech)) return error;
             if (RequiredOnSameLocationCheck(tagsOnMech, ChassisLocations.None)) return error;
@@ -47,6 +46,9 @@ namespace CustomComponents
             ChassisLocations location
         )
         {
+            errors = null;
+            error = null;
+
             var componentTags = ProcessComponent(mechComponentRef, location);
 
             if (requiredChecks)
