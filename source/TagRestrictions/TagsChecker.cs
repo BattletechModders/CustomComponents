@@ -32,9 +32,10 @@ namespace CustomComponents
 
             if (RequiredAnyCheck(tagsOnMech, tagsOnMech)) return error;
             if (RequiredCheck(tagsOnMech, tagsOnMech)) return error;
-            if (RequiredOnSameLocationCheck(tagsOnMech, ChassisLocations.None)) return error;
+            if (RequiredOnSameLocationCheck()) return error;
 
             if (IncompatiblesCheck(tagsOnMech, tagsOnMech)) return error;
+            if (IncompatiblesCheckInLocation()) return error;
 
             return null;
         }
@@ -59,8 +60,12 @@ namespace CustomComponents
             }
 
             if (incompatiblesChecks)
-                if (IncompatiblesCheck(tagsOnMech, componentTags))
-                    return error;
+            {
+                if (IncompatiblesCheck(componentTags, tagsOnMech)) return error;
+                if (IncompatiblesCheck(tagsOnMech, componentTags)) return error;
+                if (IncompatiblesCheckInLocation(componentTags, null, location)) return error;
+                if (IncompatiblesCheckInLocation(null, componentTags, location)) return error;
+            }
 
             return null;
         }
@@ -95,9 +100,10 @@ namespace CustomComponents
             return false;
         }
 
-        private bool RequiredOnSameLocationCheck(HashSet<string> sourceTags, ChassisLocations location)
+        private bool RequiredOnSameLocationCheck(HashSet<string> sourceTags = null,
+            ChassisLocations location = ChassisLocations.None)
         {
-            if (location != ChassisLocations.None)
+            if (sourceTags != null && location != ChassisLocations.None)
             {
                 if (!tagsOnLocations.TryGetValue(location, out var tags)) tags = new HashSet<string>();
                 if (RequiredCheck(sourceTags, tags, RequiredTagsOnSameLocation, location)) return true;
@@ -135,17 +141,47 @@ namespace CustomComponents
             return false;
         }
 
-        private bool IncompatiblesCheck(HashSet<string> sourceTags, HashSet<string> targetTags)
+        private bool IncompatiblesCheck(
+            HashSet<string> sourceTags,
+            HashSet<string> targetTags)
+        {
+            return IncompatiblesCheck(sourceTags, targetTags, IncompatibleTags);
+        }
+
+        private bool IncompatiblesCheckInLocation(
+            HashSet<string> sourceTags = null,
+            HashSet<string> targetTags = null,
+            ChassisLocations location = ChassisLocations.None)
+        {
+            var locations = location == ChassisLocations.None ? tagsOnLocations.Keys : Enumerable.Repeat(location, 1);
+
+            foreach (var loc in locations)
+            {
+                if (!tagsOnLocations.TryGetValue(location, out var tags)) tags = new HashSet<string>();
+                if (IncompatiblesCheck(sourceTags ?? tags, targetTags ?? tags, IncompatibleTagsOnSameLocation, loc)) return true;
+            }
+
+            return false;
+        }
+
+        private bool IncompatiblesCheck(
+            HashSet<string> sourceTags,
+            HashSet<string> targetTags,
+            Func<string, IEnumerable<string>> incompatibleTags,
+            ChassisLocations location = ChassisLocations.None)
         {
             foreach (var tag in sourceTags)
-            foreach (var incompatibleTag in IncompatibleTags(tag))
+            foreach (var incompatibleTag in incompatibleTags(tag))
             {
                 if (!targetTags.Contains(incompatibleTag)) continue;
 
                 var tagName = NameForTag(tag);
                 var incompatibleTagName = NameForTag(incompatibleTag);
-
-                if (AddError($"{tagName} can't be used with {incompatibleTagName}")) return true;
+                    
+                var message = location == ChassisLocations.None
+                    ? $"{tagName} can't be used with {incompatibleTagName}"
+                    : $"{tagName} can't be used with {incompatibleTagName} at {Mech.GetLongChassisLocation(location)}";
+                if (AddError(message)) return true;
             }
 
             return false;
@@ -252,6 +288,15 @@ namespace CustomComponents
             if (restriction.IncompatibleTags == null) yield break;
 
             foreach (var incompatibleTag in restriction.IncompatibleTags) yield return incompatibleTag;
+        }
+
+        private IEnumerable<string> IncompatibleTagsOnSameLocation(string tag)
+        {
+            if (!TagRestrictionsHandler.Restrictions.TryGetValue(tag, out var restriction)) yield break;
+
+            if (restriction.IncompatibleTagsOnSameLocation == null) yield break;
+
+            foreach (var incompatibleTag in restriction.IncompatibleTagsOnSameLocation) yield return incompatibleTag;
         }
 
         private static string NameForTag(string tag)
