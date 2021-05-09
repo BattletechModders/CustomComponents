@@ -65,7 +65,7 @@ namespace CustomComponents
             return c;
         }
 
-        internal CategoryDescriptor GetCategory(string name)
+        public CategoryDescriptor GetCategory(string name)
         {
             return Categories.TryGetValue(name, out var c) ? c : null;
         }
