@@ -26,7 +26,7 @@ namespace CustomComponents
     /// </summary>
     public class CategoryController
     {
-        internal static CategoryController Shared = new CategoryController();
+        public static CategoryController Shared = new();
 
         private readonly Dictionary<string, CategoryDescriptor> Categories = new Dictionary<string, CategoryDescriptor>();
 
