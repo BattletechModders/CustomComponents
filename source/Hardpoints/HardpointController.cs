@@ -111,6 +111,7 @@ namespace CustomComponents
             }
 
         }
+        
         public void Setup(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
             SetupDefaults();
@@ -126,8 +127,7 @@ namespace CustomComponents
 
             HardpointsList = Hardpoints.Values.OrderBy(i => i.Compatible.Length).ToList();
         }
-
-
+        
         public string PostValidatorDrop(MechLabItemSlotElement drop_item, List<InvItem> new_inventory)
         {
             if (Control.Settings.AllowMechlabWrongHardpoints)
@@ -183,7 +183,6 @@ namespace CustomComponents
                 .GroupBy(i => i.location)
                 .Select(i => new { location = i.Key, items = i.ToList() })
                 .ToList();
-
 
             foreach (var w_location in weapons_per_location)
             {
@@ -244,93 +243,11 @@ namespace CustomComponents
                         }
                         else
                             return false;
-
                     }
                 }
             }
 
             return true;
-        }
-
-        public string ReplaceValidatorDrop(MechLabItemSlotElement drop_item, ChassisLocations location, Queue<IChange> changes)
-        {
-            var use_hp = drop_item.ComponentRef.Def.GetComponent<UseHardpointCustom>();
-
-            if (use_hp == null || use_hp.WeaponCategory.Is_NotSet || use_hp.hpInfo == null)
-                return string.Empty;
-
-            var hpinfo = use_hp.hpInfo;
-
-            var removed = changes.OfType<Change_Remove>().ToList();
-
-            var lhepler = MechLabHelper.CurrentMechLab.GetLocationHelper(location);
-
-            var hardpoints = lhepler.Hardpoints.ToList();
-            var omni = lhepler.OmniHardpoints;
-            var candidants = new List<MechLabItemSlotElement>();
-
-            foreach (var slotitem in lhepler.LocalInventory.Where(i => i.ComponentRef.ComponentDefType == ComponentType.Weapon))
-            {
-
-                var already_removed = removed.FirstOrDefault(i =>
-                    i.ItemID == slotitem.ComponentRef.ComponentDefID && i.Location == slotitem.MountedLocation);
-
-                if (already_removed != null)
-                {
-                    removed.Remove(already_removed);
-                    continue;
-                }
-
-                if (slotitem.ComponentRef.Is<UseHardpointCustom>(out var oth_use_hp))
-                    continue;
-
-                var hardpoint = hardpoints.FirstOrDefault(i => i.Compatible.Contains(oth_use_hp.WeaponCategory.Name));
-
-                if (hardpoint != null)
-                {
-                    hardpoints.Remove(hardpoint);
-                    if (hardpoint.Compatible.Contains(use_hp.WeaponCategory.Name))
-                    {
-                        candidants.Add(slotitem);
-                    }
-                }
-                else if (Hardpoints[use_hp.WeaponCategory.Name].AcceptOmni && omni > 0)
-                {
-                    omni--;
-                    if (hpinfo.AcceptOmni)
-                        candidants.Add(slotitem);
-                }
-                else if (!Control.Settings.AllowMechlabWrongHardpoints)
-                {
-                    return new Localize.Text(Control.Settings.Message.Base_AddNotEnoughHardpoints,
-                        MechLabHelper.CurrentMechLab.ActiveMech.Description.UIName, drop_item.ComponentRef.Def.Description.Name,
-                        drop_item.ComponentRef.Def.Description.UIName, hpinfo.DisplayName, use_hp.WeaponCategory.FriendlyName,
-                        location
-                    ).ToString();
-                }
-            }
-
-            if (hardpoints.Count > 0 && hardpoints.Any(i => i.Compatible.Contains(hpinfo.ID)))
-                return string.Empty;
-            if (hpinfo.AcceptOmni && omni > 0)
-                return string.Empty;
-
-            candidants.RemoveAll(i => i.ComponentRef.IsFixed);
-
-            if (candidants.Count == 0)
-            {
-                return new Localize.Text(Control.Settings.Message.Base_AddNotEnoughHardpoints,
-                    MechLabHelper.CurrentMechLab.ActiveMech.Description.UIName, drop_item.ComponentRef.Def.Description.Name,
-                    drop_item.ComponentRef.Def.Description.UIName, use_hp.WeaponCategory.Name, use_hp.WeaponCategory.FriendlyName,
-                    location
-                ).ToString();
-            }
-
-            var toremove = candidants
-                .OrderBy(i => i.ComponentRef.Def.InventorySize)
-                .First();
-            changes.Enqueue(new Change_Remove(toremove.ComponentRef.ComponentDefID, location));
-            return string.Empty;
         }
 
         private (int, List<HardpointInfo>) GetHardpointsPerLocation(MechDef mechDef, ChassisLocations location)

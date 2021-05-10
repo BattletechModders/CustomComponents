@@ -40,11 +40,25 @@ namespace CustomComponents
                 yield break;
             }
 
-            var obj = new TCustom();
-            obj.Def = def;
-            obj.LoadValue(componentSettingsObject);
+            if ((componentSettingsObject is IEnumerable<object> compList))
+            {
+                foreach (var item in compList)
+                {
+                    var obj = new TCustom();
+                    obj.Def = def;
+                    obj.LoadValue(componentSettingsObject);
 
-            yield return obj;
+                    yield return obj;
+                }
+            }
+            else
+            {
+                var obj = new TCustom();
+                obj.Def = def;
+                obj.LoadValue(componentSettingsObject);
+
+                yield return obj;
+            }
         }
     }
 }
