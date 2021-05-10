@@ -49,6 +49,7 @@ namespace CustomComponents
             }
 
             var obj = new TCustom();
+            obj.Def = def;
             obj.LoadList(compList);
 
             yield return obj;

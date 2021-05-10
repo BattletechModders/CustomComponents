@@ -15,7 +15,7 @@ namespace CustomComponents.Patches
     public static class MechLabLocationWidget_ShowHighlightFrame
     {
         [HarmonyPrefix]
-        public static bool ShowHighlightFrame(MechLabLocationWidget __instance, MechComponentRef cRef, WeaponDef wDef, bool isOriginalLocation, bool canBeAdded)
+        public static bool ShowHighlightFrame(MechLabLocationWidget __instance, MechComponentRef cRef, bool isOriginalLocation, bool canBeAdded)
         {
             if (cRef == null)
             {
@@ -28,12 +28,14 @@ namespace CustomComponents.Patches
             var allowed = cRef.Is<IAllowedLocations>(out var al) ? al.GetLocationsFor(mech) : cRef.Def.AllowedLocations;
 
             var show = (allowed & __instance.loadout.Location) > ChassisLocations.None;
-            if (wDef != null && show)
+            var use_hp = cRef.Def.GetComponent<UseHardpointCustom>();
+
+            if (use_hp != null && !use_hp.WeaponCategory.Is_NotSet && show)
             {
                 var lhelper = MechLabHelper.CurrentMechLab.GetLocationHelper(__instance.loadout.Location);
 
-                show &= (lhelper.OmniHardpoints > 0 ||
-                         lhelper.Hardpoints.Any(i => i.Compatible.Contains(wDef.WeaponCategoryValue.Name)));
+                show &= ( use_hp.hpInfo.AcceptOmni && lhelper.OmniHardpoints > 0 ||
+                         lhelper.Hardpoints.Any(i => i.Compatible.Contains(use_hp.WeaponCategory.Name)));
             }
 
             __instance.ShowHighlightFrame(show, isOriginalLocation ? UIColor.Blue : UIColor.Gold);

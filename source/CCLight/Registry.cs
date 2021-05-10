@@ -168,8 +168,9 @@ namespace CustomComponents
             if (target is WeaponDef weapon)
             {
                 var hp = new UseHardpointCustom();
+                weapon.AddComponent(hp);
                 hp.LoadValue(weapon.WeaponCategoryValue.Name);
-                weapon.AddComponent(new UseHardpointCustom());
+                hp.AdjustDescription();
             }
 
 #if CCDEBUG

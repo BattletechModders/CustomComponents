@@ -10,7 +10,7 @@ using SVGImporter;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace CustomComponents
+namespace CustomComponents.Patches
 {
     [HarmonyPatch(typeof(MechLabItemSlotElement), "RefreshItemColor")]
     public static class MechLabSlotItem_RefreshItemColor

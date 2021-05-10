@@ -41,6 +41,7 @@ namespace CustomComponents
             }
 
             var obj = new TCustom();
+            obj.Def = def;
             obj.LoadValue(componentSettingsObject);
 
             yield return obj;

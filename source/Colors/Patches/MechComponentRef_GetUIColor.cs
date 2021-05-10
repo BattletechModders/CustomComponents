@@ -3,7 +3,7 @@ using BattleTech.UI;
 using Harmony;
 using System;
 
-namespace CustomComponents
+namespace CustomComponents.Patches
 {
     [HarmonyPatch(typeof(MechComponentRef), "GetUIColor")]
     internal static class MechComponentRef_GetUIColor

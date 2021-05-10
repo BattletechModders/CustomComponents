@@ -3,7 +3,7 @@ using BattleTech;
 using BattleTech.UI;
 using Harmony;
 
-namespace CustomComponents
+namespace CustomComponents.Patches
 {
     [HarmonyPatch(typeof(LanceMechEquipmentListItem), "SetData")]
     internal static class LanceMechEquipmentListItem_SetData

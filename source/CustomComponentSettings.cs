@@ -180,7 +180,6 @@ namespace CustomComponents
         public UIColor DefaultOverlayColor = UIColor.DarkGrayEighth;
         public CCColor PreinstalledOverlayCColor = new CCColor() { A = 12, R = 255, B = 180, G = 180 };
         public CCColor DefaultFlagOverlayCColor = new CCColor() { A = 12, R = 180, B = 180, G = 255 };
-        public string CategoryDescriptionColor = "#008000";
 
         [JsonIgnore] public Color PreinstalledOverlayColor;
         [JsonIgnore] public Color DefaultFlagOverlayColor;
@@ -198,7 +197,10 @@ namespace CustomComponents
         public string IgnoreAutofixUnitType = "IgnoreAutofix";
         public string IgnoreValidateUnitType = "IgnoreValidate";
 
-
+        public int CategoryDescriptionInsex = 10;
+        public int HardpointDescriptionIndex = 11;
+        public string HardpointDescriptionColor = "#008000";
+        public string CategoryDescriptionColor = "#008000";
 
         public string[] IgnoreValidationTags = null;
         public TagUnitType[] UnitTypes = null;

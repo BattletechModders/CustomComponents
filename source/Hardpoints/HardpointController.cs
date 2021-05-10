@@ -25,7 +25,7 @@ namespace CustomComponents
             }
         }
 
-        public Dictionary<string, HardpointInfo> Hardpoints { get; private set; } = new Dictionary<string, HardpointInfo>();
+        private Dictionary<string, HardpointInfo> Hardpoints { get; set; } = new Dictionary<string, HardpointInfo>();
         public List<HardpointInfo> HardpointsList { get; private set; }
 
         public void SetupDefaults()
@@ -98,7 +98,19 @@ namespace CustomComponents
 
         }
 
+        public HardpointInfo this[WeaponCategoryValue wc] => wc == null ? null : this[wc.Name];
 
+        public HardpointInfo this[string wcname]
+        {
+            get
+            {
+                if (Hardpoints.TryGetValue(wcname, out var result))
+                    return result;
+                Control.LogError($"{wcname} - dont have weapon category info!");
+                return null;
+            }
+
+        }
         public void Setup(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
             SetupDefaults();
@@ -115,38 +127,6 @@ namespace CustomComponents
             HardpointsList = Hardpoints.Values.OrderBy(i => i.Compatible.Length).ToList();
         }
 
-        public string PreValidateDrop(MechLabItemSlotElement item, ChassisLocations location)
-        {
-            if (item.ComponentRef.ComponentDefType != ComponentType.Weapon)
-                return string.Empty;
-
-            var weapon = item.ComponentRef.Def as WeaponDef;
-
-            Control.LogDebug(DType.Hardpoints, $"PreValidateDrop {weapon.Description.Id}[{weapon.WeaponCategoryValue.Name}]");
-
-            var lhepler = MechLabHelper.CurrentMechLab.GetLocationHelper(location);
-            if (lhepler.OmniHardpoints == 0 &&
-                lhepler.Hardpoints.All(i => !i.Compatible.Contains(weapon.WeaponCategoryValue.Name)))
-            {
-                if (Control.Settings.DebugInfo.HasFlag(DType.Hardpoints))
-                {
-                    Control.LogDebug(DType.Hardpoints, $"- omni: {lhepler.OmniHardpoints}");
-                    foreach (var hp in lhepler.Hardpoints)
-                    {
-                        Control.LogDebug(DType.Hardpoints,
-                            $"- id:{hp.ID} omni:{hp.AcceptOmni} comp:{hp.Compatible.Join()}");
-                    }
-                }
-
-                var mech = MechLabHelper.CurrentMechLab.ActiveMech;
-                return new Localize.Text(Control.Settings.Message.Base_AddNoHardpoins, mech.Description.UIName,
-                    weapon.Description.Name, weapon.Description.UIName, weapon.WeaponCategoryValue.Name, weapon.WeaponCategoryValue.FriendlyName,
-                    location
-                    ).ToString();
-            }
-
-            return string.Empty;
-        }
 
         public string PostValidatorDrop(MechLabItemSlotElement drop_item, List<InvItem> new_inventory)
         {
@@ -158,7 +138,7 @@ namespace CustomComponents
 
             var weapons_per_location = new_inventory
                 .Select(i => new { location = i.Location, item = i.Item, wcat = i.Item.GetWeaponCategory() })
-                .Where(i => !i.wcat.Is_NotSet )
+                .Where(i => !i.wcat.Is_NotSet)
 
                 .GroupBy(i => i.location)
                 .Select(i => new { location = i.Key, items = i.ToList() })
@@ -274,16 +254,12 @@ namespace CustomComponents
 
         public string ReplaceValidatorDrop(MechLabItemSlotElement drop_item, ChassisLocations location, Queue<IChange> changes)
         {
-            if (drop_item.ComponentRef.ComponentDefType != ComponentType.Weapon)
+            var use_hp = drop_item.ComponentRef.Def.GetComponent<UseHardpointCustom>();
+
+            if (use_hp == null || use_hp.WeaponCategory.Is_NotSet || use_hp.hpInfo == null)
                 return string.Empty;
 
-            var weapon = drop_item.ComponentRef.Def as WeaponDef;
-
-            if (!Hardpoints.TryGetValue(weapon.WeaponCategoryValue.Name, out var hpinfo))
-            {
-                Control.LogError($"Invalid weapon category {weapon.WeaponCategoryValue.Name} for {weapon.Description.Id}");
-                return "INVALID WEAPON, REPORT TO DISCORD!";
-            }
+            var hpinfo = use_hp.hpInfo;
 
             var removed = changes.OfType<Change_Remove>().ToList();
 
@@ -303,22 +279,22 @@ namespace CustomComponents
                 {
                     removed.Remove(already_removed);
                     continue;
-                    ;
                 }
 
-                var w = slotitem.ComponentRef.Def as WeaponDef;
+                if (slotitem.ComponentRef.Is<UseHardpointCustom>(out var oth_use_hp))
+                    continue;
 
-                var hardpoint = hardpoints.FirstOrDefault(i => i.Compatible.Contains(w.WeaponCategoryValue.Name));
+                var hardpoint = hardpoints.FirstOrDefault(i => i.Compatible.Contains(oth_use_hp.WeaponCategory.Name));
 
                 if (hardpoint != null)
                 {
                     hardpoints.Remove(hardpoint);
-                    if (hardpoint.Compatible.Contains(weapon.WeaponCategoryValue.Name))
+                    if (hardpoint.Compatible.Contains(use_hp.WeaponCategory.Name))
                     {
                         candidants.Add(slotitem);
                     }
                 }
-                else if (Hardpoints[weapon.WeaponCategoryValue.Name].AcceptOmni && omni > 0)
+                else if (Hardpoints[use_hp.WeaponCategory.Name].AcceptOmni && omni > 0)
                 {
                     omni--;
                     if (hpinfo.AcceptOmni)
@@ -327,8 +303,8 @@ namespace CustomComponents
                 else if (!Control.Settings.AllowMechlabWrongHardpoints)
                 {
                     return new Localize.Text(Control.Settings.Message.Base_AddNotEnoughHardpoints,
-                        MechLabHelper.CurrentMechLab.ActiveMech.Description.UIName, weapon.Description.Name, weapon.Description.UIName,
-                        hpinfo.DisplayName, weapon.WeaponCategoryValue.FriendlyName,
+                        MechLabHelper.CurrentMechLab.ActiveMech.Description.UIName, drop_item.ComponentRef.Def.Description.Name,
+                        drop_item.ComponentRef.Def.Description.UIName, hpinfo.DisplayName, use_hp.WeaponCategory.FriendlyName,
                         location
                     ).ToString();
                 }
@@ -344,8 +320,8 @@ namespace CustomComponents
             if (candidants.Count == 0)
             {
                 return new Localize.Text(Control.Settings.Message.Base_AddNotEnoughHardpoints,
-                    MechLabHelper.CurrentMechLab.ActiveMech.Description.UIName, weapon.Description.Name, weapon.Description.UIName,
-                    hpinfo.DisplayName, weapon.WeaponCategoryValue.FriendlyName,
+                    MechLabHelper.CurrentMechLab.ActiveMech.Description.UIName, drop_item.ComponentRef.Def.Description.Name,
+                    drop_item.ComponentRef.Def.Description.UIName, use_hp.WeaponCategory.Name, use_hp.WeaponCategory.FriendlyName,
                     location
                 ).ToString();
             }
@@ -354,7 +330,6 @@ namespace CustomComponents
                 .OrderBy(i => i.ComponentRef.Def.InventorySize)
                 .First();
             changes.Enqueue(new Change_Remove(toremove.ComponentRef.ComponentDefID, location));
-
             return string.Empty;
         }
 

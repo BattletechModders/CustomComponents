@@ -14,7 +14,9 @@ namespace CustomComponents
         private Traverse location_name;
 
         public MechLabLocationWidget widget { get; private set; }
-        public MechLabPanel mechLab { get
+        public MechLabPanel mechLab
+        {
+            get
             {
                 return widget.parentDropTarget as MechLabPanel;
             }
@@ -169,9 +171,8 @@ namespace CustomComponents
                 {
                     if (hp.Omni)
                         OmniHardpoints += 1;
-                    else if (HardpointController.Instance.Hardpoints.TryGetValue(hp.WeaponMountValue.Name,
-                        out var hpinfo))
-                        hplist.Add(hpinfo);
+                    else if (HardpointController.Instance[hp.WeaponMountValue.Name] != null)
+                        hplist.Add(HardpointController.Instance[hp.WeaponMountValue.Name]);
                     else
                         Control.LogError($"{mech.ChassisID} have unknown hardpoint type {hp.WeaponMountValue.Name}");
                 }

@@ -3,7 +3,7 @@ using BattleTech;
 using BattleTech.UI;
 using Harmony;
 
-namespace CustomComponents
+namespace CustomComponents.Patches
 {
     [HarmonyPatch(typeof(InventoryDataObject_InventoryGear), "RefreshItemColor")]
     public class InventoryDataObject_InventoryGear_RefreshItemColor
