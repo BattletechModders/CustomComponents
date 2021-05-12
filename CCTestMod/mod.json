@@ -1,0 +1,42 @@
+{
+	"Name": "CCTestMod",
+	"Author": "Denadan",
+	"Website": "https://github.com/BattletechModders/CustomComponents",
+
+	"Enabled": false,
+
+	"Manifest": [
+		{
+			"Type": "CCCategories",
+			"Path": "CCTestMod/test/categories"
+		},
+		{
+			"Type": "CCDefaults",
+			"Path": "CCTestMod/test/defaults"
+		},
+		{
+			"Type": "UpgradeDef",
+			"Path": "CCTestMod/test/upgrade"
+		},
+		{
+			"Type": "CCCEquipLocationTag",
+			"Path": "CCTestMod/test/equiplocation"
+		},
+		{
+			"Type": "ChassisDef",
+			"Path": "CCTestMod/test/chassis"
+		},
+		{
+			"Type": "CCUnitTypes",
+            "Path": "CCTestMod/test/unittypes"
+        },
+		{
+			"Type": "MechDef",
+			"Path": "CCTestMod/test/mech"
+		},
+		{
+			"Type": "WeaponDef",
+			"Path": "CCTestMod/test/weapons"
+		}
+	]
+}

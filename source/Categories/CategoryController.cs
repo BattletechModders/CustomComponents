@@ -26,7 +26,7 @@ namespace CustomComponents
     /// </summary>
     public class CategoryController
     {
-        internal static CategoryController Shared = new CategoryController();
+        public static CategoryController Shared = new();
 
         private readonly Dictionary<string, CategoryDescriptor> Categories = new Dictionary<string, CategoryDescriptor>();
 
@@ -65,7 +65,7 @@ namespace CustomComponents
             return c;
         }
 
-        internal CategoryDescriptor GetCategory(string name)
+        public CategoryDescriptor GetCategory(string name)
         {
             return Categories.TryGetValue(name, out var c) ? c : null;
         }

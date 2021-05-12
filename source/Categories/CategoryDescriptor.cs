@@ -71,7 +71,9 @@ namespace CustomComponents
 
         public string UnitType;
 
-        private _record[] Limits;
+        internal _record[] Limits;
+
+        public bool PartialOverride = false;
 
         [Newtonsoft.Json.JsonIgnore]
         public Dictionary<ChassisLocations, CategoryLimit> LocationLimits;
@@ -169,24 +171,50 @@ namespace CustomComponents
                     {
                         LocationLimits = chassis_limits
                     };
-                    result.Complete(this);
-
-                    if (Control.Settings.DEBUG_ShowLoadedCategory)
-                        Control.Log($"CategoryLimits for {Name} on {mech.Description.Id}\n" + result.ToString());
                 }
                 else
                 {
                     var ut = UnitTypeDatabase.Instance.GetUnitTypes(mech);
-                    if (ut == null)
-                        return DefaultLimits;
-                    result = UnitLimits.FirstOrDefault(i => ut.Contains(i.UnitType));
+                    if (ut != null)
+                    {
+                        var candidates = UnitLimits.Where(i => ut.Contains(i.UnitType)).ToList();
 
-                    if (result == null)
-                        result = DefaultLimits;
+                        result = candidates.FirstOrDefault(x => !x.PartialOverride);
 
-                    if (result.LocationLimits == null)
-                        result.Complete(this);
+                        if (result == null && candidates.Count > 0 && DefaultLimits != null)
+                        {
+                            { // copy default limits into result
+                                result = new CategoryDescriptorRecord(DefaultLimits.Limits);
+                                result.Complete(this);
+                            }
+                            // overwrite values and last one wins
+                            foreach (var limit in candidates)
+                            {
+                                limit.Complete(this);
+                                foreach (var locationLimit in limit.LocationLimits)
+                                {
+                                    result.LocationLimits[locationLimit.Key] = locationLimit.Value;
+                                }
+                            }
+                        }
+                    }
                 }
+                
+                if (result == null)
+                    result = DefaultLimits;
+
+                if (result != null)
+                {
+                    result.Complete(this);
+
+                    foreach (var limit in result.LocationLimits)
+                    {
+                        Control.Log($"Limit Name={Name} ChassisID={mech.ChassisID} limitKey={limit.Key} Limit={limit.Value.Limit} Max={limit.Value.Max}");
+                    }
+                }
+
+                if (Control.Settings.DEBUG_ShowLoadedCategory)
+                    Control.Log($"CategoryLimits for {Name} on {mech.Description.Id}\n" + result.ToString());
 
                 records[mech.ChassisID] = result;
 

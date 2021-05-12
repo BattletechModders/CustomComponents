@@ -10,6 +10,9 @@ namespace CustomComponents
         public string[] RequiredAnyTags;
         public string[] IncompatibleTags;
 
+        public string[] RequiredTagsOnSameLocation;
+        public string[] IncompatibleTagsOnSameLocation;
+
         //public string ShortText = null;
         //public string FullText = null;
 

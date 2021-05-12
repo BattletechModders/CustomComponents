@@ -28,6 +28,14 @@ namespace CustomComponents
 
         }
 
+        public void Setup(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
+        {
+            foreach (var unitType in SettingsResourcesTools.Enumerate<TagUnitType>("CCUnitTypes", customResources))
+            {
+                RegisterUnitType(unitType);
+            }
+        }
+
         public void RegisterUnitType(IUnitType unitType)
         {
             if (unitType == null)
