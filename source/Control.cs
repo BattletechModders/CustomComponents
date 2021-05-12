@@ -108,7 +108,10 @@ namespace CustomComponents
                     if (Settings.FixSaveGameMech)
                         AutoFixer.Shared.RegisterSaveMechFixer(AutoFixer.Shared.ReAddFixed);
                     if (Settings.FixDefaults)
+                    {
                         AutoFixer.Shared.RegisterMechFixer(DefaultFixer.Instance.FixMechs);
+                        AutoFixer.Shared.RegisterMechFixer(HardpointController.Instance.FixMechs);
+                    }
                 }
 
 

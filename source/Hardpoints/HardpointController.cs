@@ -269,5 +269,29 @@ namespace CustomComponents
 
             return (omni, hpinfos);
         }
+
+
+        public void FixMechs(List<MechDef> mechdefs, SimGameState simgame)
+        {
+            foreach (var mechdef in mechdefs)
+            {
+                var defaults =mechdef.GetWeaponDefaults();
+                if(defaults == null)
+                    continue;
+
+                var def_list = defaults.ToList();
+
+                if(def_list.Count == 0)
+                    continue;
+                
+                var changes = new Queue<IChange>();
+                foreach (var weaponDefault in defaults)
+                    changes.Enqueue(new Change_WeaponAdjust(weaponDefault.Location));
+                
+                var state = new InventoryOperationState(changes, mechdef);
+                state.DoChanges();
+                state.ApplyInventory();
+            }
+        }
     }
 }

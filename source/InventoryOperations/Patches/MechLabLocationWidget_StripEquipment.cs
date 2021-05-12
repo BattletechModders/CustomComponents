@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using BattleTech.UI;
+using CustomComponents.Changes;
 using Harmony;
 
 namespace CustomComponents.Patches
@@ -7,15 +8,20 @@ namespace CustomComponents.Patches
     [HarmonyPatch(typeof(MechLabLocationWidget), "StripEquipment")]
     internal static class MechLabLocationWidget_StripEquipment_Patch
     {
-        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        public static bool StripLocation(MechLabLocationWidget __instance)
         {
-            return instructions.MethodReplacer(
-                AccessTools.Method(typeof(MechLabLocationWidget), "OnRemoveItem"),
-                AccessTools.Method(typeof(DefaultHelper), "OnRemoveItemStrip")
-            ).MethodReplacer(
-                AccessTools.Method(typeof(MechLabPanel), "ForceItemDrop"),
-                AccessTools.Method(typeof(DefaultHelper), "ForceItemDropStrip")
-            );
+            var lhelper = MechLabHelper.CurrentMechLab.GetLocationHelper(__instance.loadout.Location);
+
+            var changes = new Queue<IChange>();
+
+            foreach (var item in lhelper.LocalInventory)
+                if (!item.ComponentRef.IsFixed)
+                    changes.Add(new Change_Remove(item.ComponentRef.ComponentDefID, __instance.loadout.Location));
+
+            var state = new InventoryOperationState(changes, MechLabHelper.CurrentMechLab.ActiveMech);
+            state.ApplyMechlab();
+
+            return false;
         }
     }
 }
