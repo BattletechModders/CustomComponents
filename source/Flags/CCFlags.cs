@@ -16,6 +16,8 @@ namespace CustomComponents
         public bool NoRemove { get; set; } = false;
         [CustomFlag("hide")]
         public bool HideFromInv { get; set; } = false;
+        [CustomFlag("hide_equip")]
+        public bool HideFromEquip { get; set; } = false;
         [CustomFlag("no_salvage")]
         public bool NoSalvage { get; set; } = false;
         [CustomFlag("default")]
