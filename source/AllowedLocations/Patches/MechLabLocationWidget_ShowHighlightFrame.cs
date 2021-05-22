@@ -26,6 +26,11 @@ namespace CustomComponents.Patches
             var show = !cRef.Flags<CCFlags>().NoRemove;
             if (show)
             {
+                show = !cRef.IsFixed;
+            }
+
+            if (show)
+            {
                 var mech = MechLabHelper.CurrentMechLab.ActiveMech;
                 var allowed = cRef.Is<IAllowedLocations>(out var al) ? al.GetLocationsFor(mech) : cRef.Def.AllowedLocations;
                 show = (allowed & __instance.loadout.Location) > ChassisLocations.None;
