@@ -7,7 +7,7 @@ using BattleTech;
 namespace CustomComponents
 {
     [CustomComponent("Flags")]
-    public class Flags : SimpleCustomComponent, IListComponent
+    public class Flags : SimpleCustomComponent, IListComponent<string>
     {
         public HashSet<string> flags;
 
@@ -16,9 +16,9 @@ namespace CustomComponents
             return flags.Aggregate("Flags: [", (current, flag) => current + flag + " ") + "]";
         }
 
-        public void LoadList(IEnumerable<object> items)
+        public void LoadList(IEnumerable<string> items)
         {
-            flags = items.Select(i => i.ToString()).ToHashSet();
+            flags = items.ToHashSet();
         }
     }
 }

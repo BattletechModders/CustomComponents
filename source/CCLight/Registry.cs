@@ -41,10 +41,13 @@ namespace CustomComponents
         public static void RegisterSimpleCustomComponents(params Type[] types)
         {
             var scGenericType = typeof(SimpleCustom<>);
-            foreach (var tuple in types.Select(t => new { type = t, typeWithGenericType = GetTypeWithGenericType(t, scGenericType) }).Where(t => t.typeWithGenericType != null))
+            foreach (var tuple in types
+                .Select(t => new { type = t, typeWithGenericType = GetTypeWithGenericType(t, scGenericType) })
+                .Where(t => t.typeWithGenericType != null))
             {
                 var type = tuple.type;
-                var customAttribute = type.GetCustomAttributes(false).OfType<CustomComponentAttribute>().FirstOrDefault();
+                var customAttribute =
+                    type.GetCustomAttributes(false).OfType<CustomComponentAttribute>().FirstOrDefault();
                 if (customAttribute == null)
                 {
                     continue;
@@ -61,17 +64,33 @@ namespace CustomComponents
 
                 var typeWithGenericType = tuple.typeWithGenericType;
                 var defType = typeWithGenericType.GetGenericArguments()[0];
-                Type factoryGenericType;
+                Type factoryGenericType = null;
+                Type[] genericTypes = null;
 
-                if (typeof(IValueComponent).IsAssignableFrom(type))
-                    factoryGenericType = typeof(ValueCustomFactory<,>);
-                else if (typeof(IListComponent).IsAssignableFrom(type))
-                    factoryGenericType = typeof(ListCustomFactory<, >);
-                else
+                foreach (var intType in type.GetInterfaces().Where(i => i.IsGenericType))
+                {
+                    if (intType.GetGenericTypeDefinition() == typeof(IValueComponent<>))
+                    {
+                        var argument = intType.GetGenericArguments()[0];
+                        factoryGenericType = argument.IsEnum ? typeof(EnumValueCustomFactory<,,>) : typeof(ValueCustomFactory<,,>);
+                        genericTypes = new[] { type, defType,argument };
+                        break;
+                    }
+                    else if (intType.GetGenericTypeDefinition() == typeof(IListComponent<>))
+                    {
+                        var argument = intType.GetGenericArguments()[0];
+                        factoryGenericType = argument.IsEnum ? typeof(EnumListCustomFactory<,,>) : typeof(ListCustomFactory<,,>);
+                        genericTypes = new[] { type, defType, argument };
+                        break;
+                    }
+                }
+
+                if(factoryGenericType == null)
+                {
                     factoryGenericType = typeof(SimpleCustomFactory<,>);
+                    genericTypes = new[] { type, defType };
+                }
 
-
-                var genericTypes = new[] { type, defType };
                 var factoryType = factoryGenericType.MakeGenericType(genericTypes);
                 var factory = Activator.CreateInstance(factoryType, name) as ICustomFactory;
                 Factories.Add(factory);

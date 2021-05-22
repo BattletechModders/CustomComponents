@@ -3,12 +3,12 @@
 namespace CustomComponents
 {
     [CustomComponent("Sorter")]
-    public class Sorter : SimpleCustomComponent, ISorter, IValueComponent
+    public class Sorter : SimpleCustomComponent, ISorter, IValueComponent<int>
     {
         public int Order { get; set; }
-        public void LoadValue(object value)
+        public void LoadValue(int value)
         {
-            Order = value is Int64 i ? (int)i : 0;
+            Order = value;
         }
     }
 }

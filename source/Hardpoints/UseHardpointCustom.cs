@@ -12,17 +12,17 @@ using JetBrains.Annotations;
 namespace CustomComponents
 {
     [CustomComponent("UseHardpoint")]
-    public class UseHardpointCustom : SimpleCustomComponent, IValueComponent, IOnAdd, IOnRemove, IAdjustDescription,
+    public class UseHardpointCustom : SimpleCustomComponent, IValueComponent<string>, IOnAdd, IOnRemove, IAdjustDescription,
         IPreValidateDrop, IReplaceValidateDrop
     {
         public WeaponCategoryValue WeaponCategory { get; private set; } = WeaponCategoryEnumeration.GetNotSetValue();
         public HardpointInfo hpInfo { get; private set; }
 
-        public void LoadValue(object value)
+        public void LoadValue(string value)
         {
             Control.LogDebug(DType.Hardpoints, $"UseHardpoint LoadValue for {Def.Description.Id}: {value}");
 
-            var cat = WeaponCategoryEnumeration.GetWeaponCategoryByName(value.ToString());
+            var cat = WeaponCategoryEnumeration.GetWeaponCategoryByName(value);
             WeaponCategory = cat ?? WeaponCategoryEnumeration.GetNotSetValue();
 
             hpInfo = WeaponCategory.Is_NotSet ? null : HardpointController.Instance[WeaponCategory];

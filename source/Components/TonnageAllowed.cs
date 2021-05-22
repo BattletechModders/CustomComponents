@@ -6,7 +6,7 @@ using BattleTech.UI;
 namespace CustomComponents
 {
     [CustomComponent("TonnageAllowed")]
-    public class TonnageAllowed : SimpleCustomComponent, IMechLabFilter, IMechValidate, IPreValidateDrop, IValueComponent
+    public class TonnageAllowed : SimpleCustomComponent, IMechLabFilter, IMechValidate, IPreValidateDrop, IValueComponent<int>
     {
         public int Tonnage { get; set; }
 
@@ -44,9 +44,9 @@ namespace CustomComponents
         }
 
 
-        public void LoadValue(object value)
+        public void LoadValue(int value)
         {
-            Tonnage = value is Int64 i ? (int)i : 0;
+            Tonnage = value;
         }
     }
 }

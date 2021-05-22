@@ -6,16 +6,15 @@ using UnityEngine;
 namespace CustomComponents
 {
     [CustomComponent("ColorTag", group: "ColorType")]
-    public class TagColorComponent : SimpleCustomComponent, IColorComponent, IValueComponent
+    public class TagColorComponent : SimpleCustomComponent, IColorComponent, IValueComponent<string>
     {
         [JsonIgnore] public UIColor UIColor => UIColor.Custom;
         [JsonIgnore]
         public Color RGBColor { get; private set; }
 
-        public void LoadValue(object value)
+        public void LoadValue(string value)
         {
-            var Tag = value.ToString();
-            if (Control.Settings.ColorTagsDictionary.TryGetValue(Tag, out var color))
+            if (Control.Settings.ColorTagsDictionary.TryGetValue(value, out var color))
                 RGBColor = color;
             else
                 RGBColor = Color.magenta;

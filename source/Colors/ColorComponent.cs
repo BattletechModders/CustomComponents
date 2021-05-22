@@ -9,7 +9,7 @@ namespace CustomComponents
     /// component has specific color
     /// </summary>
     [CustomComponent("Color", group: "ColorType")]
-    public class ColorComponent : SimpleCustomComponent, IColorComponent, IValueComponent
+    public class ColorComponent : SimpleCustomComponent, IColorComponent, IValueComponent<UIColor>
     {
         /// <summary>
         /// color of component
@@ -19,12 +19,9 @@ namespace CustomComponents
         [JsonIgnore]
         public Color RGBColor => Color.black;
 
-        public void LoadValue(object value)
+        public void LoadValue(UIColor value)
         {
-            if (value is string str && Enum.TryParse(str, true, out UIColor color))
-            {
-                UIColor = color;
-            }
+                UIColor = value;
         }
     }
 

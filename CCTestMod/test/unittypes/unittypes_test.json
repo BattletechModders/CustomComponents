@@ -1,8 +1,11 @@
 {
 	"Settings" : [
-        {	"Name" : "LightMech", "RequiredTags" : [ "unit_mech", "unit_light" ]	},
-		{	"Name" : "MediumMech", "RequiredTags" : [ "unit_mech", "unit_medium" ]	},
-		{	"Name" : "HeavyMech", "RequiredTags" : [ "unit_mech", "unit_heavy" ]	},
-		{	"Name" : "AssaultMech", "RequiredTags" : [ "unit_mech", "unit_assault" ]	}
+			{	"Name" : "Mech", "RequiredTags" : [ "unit_mech" ]	},
+			{	"Name" : "LightMech", "RequiredTags" : [ "unit_mech", "unit_light" ]	},
+			{	"Name" : "MediumMech", "RequiredTags" : [ "unit_mech", "unit_medium" ]	},
+			{	"Name" : "HeavyMech", "RequiredTags" : [ "unit_mech", "unit_heavy" ]	},
+			{	"Name" : "AssaultMech", "RequiredTags" : [ "unit_mech", "unit_assault" ]	},
+			{	"Name" : "IgnoreAutofix", "AnyTags" : [  "ignore_autofix", "noautofix", "fake_vehicle_chassis" ]	},
+			{	"Name" : "IgnoreValidate", "AnyTags" : [  "ignore_validate", "novalidate", "fake_vehicle_chassis" ]	},
     ]
 }

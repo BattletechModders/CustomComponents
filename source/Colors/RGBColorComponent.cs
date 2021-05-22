@@ -6,18 +6,16 @@ using UnityEngine;
 namespace CustomComponents
 {
     [CustomComponent("RGBColor", group: "ColorType")]
-    public class RGBColorComponent : SimpleCustomComponent, IColorComponent, IValueComponent
+    public class RGBColorComponent : SimpleCustomComponent, IColorComponent, IValueComponent<string>
     {
         [JsonIgnore]
         public UIColor UIColor => UIColor.Custom;
         [JsonIgnore]
         public Color RGBColor { get; set; }
 
-        public void LoadValue(object value)
+        public void LoadValue(string value)
         {
-            var Color = value.ToString();
-
-            if (ColorUtility.TryParseHtmlString(Color, out var color))
+            if (ColorUtility.TryParseHtmlString(value, out var color))
             {
                 RGBColor = color;
             }

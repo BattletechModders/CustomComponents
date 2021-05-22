@@ -32,8 +32,6 @@ namespace CustomComponents
         public bool Invalid { get; set; } = false;
 
 
-
-
         [CustomSetter("default")]
         private bool SetDefault(MechComponentDef item)
         {

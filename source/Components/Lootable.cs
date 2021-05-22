@@ -1,12 +1,12 @@
 ﻿namespace CustomComponents
 {
     [CustomComponent("Lootable")]
-    public class LootableDefault : SimpleCustomComponent, IValueComponent
+    public class LootableDefault : SimpleCustomComponent, IValueComponent<string>
     {
         public string ItemID { get; set; }
-        public void LoadValue(object value)
+        public void LoadValue(string value)
         {
-            ItemID = value.ToString();
+            ItemID = value;
         }
     }
 }
