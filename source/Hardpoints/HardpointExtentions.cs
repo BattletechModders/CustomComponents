@@ -27,6 +27,7 @@ namespace CustomComponents
         {
             if (mech == null)
                 return false;
+
             if (!have_defaults.TryGetValue(mech.ChassisID, out var result))
             {
                 result = ChassisLocations.None;
@@ -41,12 +42,16 @@ namespace CustomComponents
                 }
                 have_defaults[mech.ChassisID] = result;
             }
+
+            //Control.Log($"HasWeaponDefaults {result} - {location} - {result.HasFlag(location)}");
+
             return result.HasFlag(location);
         }
         public static bool HasWeaponDefaults(this ChassisDef chassis, ChassisLocations location)
         {
             if (chassis == null)
                 return false;
+
             if (!have_defaults.TryGetValue(chassis.Description.Id, out var result))
             {
                 result = ChassisLocations.None;

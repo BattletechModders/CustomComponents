@@ -33,7 +33,9 @@ namespace CustomComponents
         public void OnAdd(ChassisLocations location, InventoryOperationState state)
         {
             if (!Def.IsDefault() && state.Mech.HasWeaponDefaults(location))
+            {
                 state.AddChange(new Change_WeaponAdjust(location));
+            }
         }
 
         public void OnRemove(ChassisLocations location, InventoryOperationState state)
@@ -129,7 +131,7 @@ namespace CustomComponents
                 if (!slotitem.ComponentRef.Is<UseHardpointCustom>(out var oth_use_hp))
                     continue;
 
-                if(slotitem.ComponentRef.IsDefault() && !slotitem.ComponentRef.IsModuleFixed(MechLabHelper.CurrentMechLab.ActiveMech))
+                if (slotitem.ComponentRef.IsDefault() && !slotitem.ComponentRef.IsModuleFixed(MechLabHelper.CurrentMechLab.ActiveMech))
                     continue;
 
                 var hardpoint = hardpoints.FirstOrDefault(i => i.Compatible.Contains(oth_use_hp.WeaponCategory.Name));

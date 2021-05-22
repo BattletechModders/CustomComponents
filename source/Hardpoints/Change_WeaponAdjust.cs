@@ -28,6 +28,9 @@ namespace CustomComponents
         public void AdjustChange(InventoryOperationState state)
         {
             var defaults = state.Mech.GetWeaponDefaults();
+            if (defaults == null)
+                return;
+
             var usage = defaults
                 .Where(i => i.Location == Location)
                 .Select(i => new usage_record(i))

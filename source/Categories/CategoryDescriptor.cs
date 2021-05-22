@@ -207,14 +207,11 @@ namespace CustomComponents
                 {
                     result.Complete(this);
 
-                    foreach (var limit in result.LocationLimits)
-                    {
-                        Control.Log($"Limit Name={Name} ChassisID={mech.ChassisID} limitKey={limit.Key} Limit={limit.Value.Limit} Max={limit.Value.Max}");
-                    }
+                    //foreach (var limit in result.LocationLimits)
+                    //{
+                    //    Control.Log($"Limit Name={Name} ChassisID={mech.ChassisID} limitKey={limit.Key} Limit={limit.Value.Limit} Max={limit.Value.Max}");
+                    //}
                 }
-
-                if (Control.Settings.DEBUG_ShowLoadedCategory)
-                    Control.Log($"CategoryLimits for {Name} on {mech.Description.Id}\n" + result.ToString());
 
                 records[mech.ChassisID] = result;
 

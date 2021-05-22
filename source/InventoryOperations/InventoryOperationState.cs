@@ -30,7 +30,7 @@ namespace CustomComponents
 
         public void DoChanges()
         {
-            Control.LogDebug(DType.InventoryOperaions, "DoChanges for {0}", Mech.Description.UIName);
+            Control.LogDebug(DType.InventoryOperaions, "DoChanges for {0}", Mech.Description.Id);
             Control.LogDebug(DType.InventoryOperaions, "- Initial preview");
 
             foreach (var change in pending_changes)

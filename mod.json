@@ -12,7 +12,7 @@
 
 	"Settings": {
 		"LogLevel": "Debug",
-		"DebugInfo" : "AutofixValidate, CustomResource",
+		"DebugInfo" : "AutofixValidate, CustomResource, InventoryOperaions",
 
 		"DEBUG_ValidateMechDefs": false,
 		"DEBUG_ShowOnlyErrors": false,
@@ -23,7 +23,7 @@
 		"DEBUG_ShowLoadedDefaults": true,
 		"DEBUG_ShowLoadedAlLocations": true,
 		"DEBUG_EnableAllTags": false,
-		"DEBUG_ShowMechUT": true,
+		"DEBUG_ShowMechUT": false,
 
 		"Message": {
 
