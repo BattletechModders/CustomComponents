@@ -129,6 +129,7 @@
     <Compile Include="InventoryOperations\InvItem.cs" />
     <Compile Include="Helpers\Patches\MechLabPanel_ExitMechLab.cs" />
     <Compile Include="Helpers\Patches\MechLabPanel_LoadMech.cs" />
+    <Compile Include="Patches\LanceMechEquipmentList_SetLoadout_Patch.cs" />
     <Compile Include="TagRestrictions\TagsChecker.cs" />
     <Compile Include="Tags\Tags.cs" />
     <Compile Include="Cheats\Patches\JSONSerializationUtility_RehydrateObjectFromDictionary_Patch2.cs" />

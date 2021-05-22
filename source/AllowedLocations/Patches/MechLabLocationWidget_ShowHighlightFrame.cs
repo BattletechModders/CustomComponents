@@ -19,23 +19,34 @@ namespace CustomComponents.Patches
         {
             if (cRef == null)
             {
-                __instance.ShowHighlightFrame(false, UIColor.Gold);
+                __instance.ShowHighlightFrame(false);
                 return false;
             }
 
-            var mech = MechLabHelper.CurrentMechLab.ActiveMech;
-
-            var allowed = cRef.Is<IAllowedLocations>(out var al) ? al.GetLocationsFor(mech) : cRef.Def.AllowedLocations;
-
-            var show = (allowed & __instance.loadout.Location) > ChassisLocations.None;
-            var use_hp = cRef.Def.GetComponent<UseHardpointCustom>();
-
-            if (use_hp != null && !use_hp.WeaponCategory.Is_NotSet && show)
+            var show = !cRef.Flags<CCFlags>().NoRemove;
+            if (show)
             {
-                var lhelper = MechLabHelper.CurrentMechLab.GetLocationHelper(__instance.loadout.Location);
+                show = !cRef.IsFixed;
+            }
 
-                show &= ( use_hp.hpInfo.AcceptOmni && lhelper.OmniHardpoints > 0 ||
-                         lhelper.Hardpoints.Any(i => i.Compatible.Contains(use_hp.WeaponCategory.Name)));
+            if (show)
+            {
+                var mech = MechLabHelper.CurrentMechLab.ActiveMech;
+                var allowed = cRef.Is<IAllowedLocations>(out var al) ? al.GetLocationsFor(mech) : cRef.Def.AllowedLocations;
+                show = (allowed & __instance.loadout.Location) > ChassisLocations.None;
+            }
+
+            if (show)
+            {
+                var use_hp = cRef.Def.GetComponent<UseHardpointCustom>();
+
+                if (use_hp != null && !use_hp.WeaponCategory.Is_NotSet)
+                {
+                    var lhelper = MechLabHelper.CurrentMechLab.GetLocationHelper(__instance.loadout.Location);
+
+                    show = use_hp.hpInfo.AcceptOmni && lhelper.OmniHardpoints > 0 || 
+                           lhelper.Hardpoints.Any(i => i.Compatible.Contains(use_hp.WeaponCategory.Name));
+                }
             }
 
             __instance.ShowHighlightFrame(show, isOriginalLocation ? UIColor.Blue : UIColor.Gold);
