@@ -18,6 +18,20 @@ namespace CustomComponents.Patches
         )]
     public static class LanceMechEquipmentList_SetLoadout_Patch
     {
+        public static void Postfix(LocalizableText headerLabel)
+        {
+            try
+            {
+                // hides empty locations by default
+                var container = headerLabel.transform.parent;
+                container.gameObject.SetActive(container.transform.childCount > 2);
+            }
+            catch (Exception e)
+            {
+                Control.LogError(e);
+            }
+        }
+
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             return instructions.MethodReplacer(
