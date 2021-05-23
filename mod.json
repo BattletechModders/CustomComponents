@@ -97,7 +97,7 @@
 		"SalvageTorsoWeight": 1,
 		"SalvageHeadWeight": 0.5
 	},
-	"Manifest_" : [
+	"Manifest" : [
 		{
 			"Type" : "CCCategories",
 			"Path" : "CCTestMod/test/categories"
@@ -133,7 +133,7 @@
 	],
 
 
-    "Manifest": [
+    "Manifest_": [
         {
             "Type": "CCUnitTypes",
             "Path": "data/unittypes"
