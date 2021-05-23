@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 using fastJSON;
 using FluffyUnderware.DevTools.Extensions;
-using SVGImporter;
 using UnityEngine;
 
 namespace CustomComponents
@@ -11,13 +11,11 @@ namespace CustomComponents
     public class HardpointInfo
     {
         public string ID { get; set; }
-        public string IconColor { get; set; }
         public bool Visible { get; set; }
-        public string Short { get; set; }
-        public string DisplayName { get; set; }
-        public string[] Compatible { get; set; }
-        public bool AcceptOmni { get; set; }
+        private string [] Compatible { get; set; }
+        public bool AllowOnWeapon { get; set; } = true;
 
+        [JsonIgnore] public HashSet<int> CompatibleID { get; set; }
         [JsonIgnore] public WeaponCategoryValue WeaponCategory { get; set; }
         [JsonIgnore] public Color Color { get; set; }
 
@@ -38,14 +36,6 @@ namespace CustomComponents
                 return false;
             }
 
-            if (Visible)
-            {
-                if (string.IsNullOrEmpty(Short))
-                    Short = ID.Substring(0, 2);
-                if (string.IsNullOrEmpty(DisplayName))
-                    DisplayName = ID;
-            }
-
             if (Compatible == null || Compatible.Length == 0)
             {
                 Compatible = new[] { ID };
@@ -56,7 +46,12 @@ namespace CustomComponents
                     Compatible.Add(ID);
             }
 
-            Compatible = Compatible.Distinct().ToArray();
+            CompatibleID = Compatible
+                .Distinct()
+                .Select(i => WeaponCategoryEnumeration.GetWeaponCategoryByName(i))
+                .Where(i => i != null)
+                .Select(i => i.ID)
+                .ToHashSet();
 
             return true;
         }

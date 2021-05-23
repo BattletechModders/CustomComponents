@@ -106,11 +106,13 @@
     <Compile Include="Flags\FlagsAttributes.cs" />
     <Compile Include="Flags\FlagsController.cs" />
     <Compile Include="Flags\FlagsExtentions.cs" />
+    <Compile Include="Hardpoints\AddHardpoint.cs" />
     <Compile Include="Hardpoints\Change_WeaponAdjust.cs" />
     <Compile Include="Hardpoints\HardpointController.cs" />
     <Compile Include="Hardpoints\HardpointExtentions.cs" />
     <Compile Include="Hardpoints\HardpointInfo.cs" />
     <Compile Include="Hardpoints\Patches\MechValidationRules_ValidateMechInventorySlots.cs" />
+    <Compile Include="Hardpoints\Patches\MechLabLocationWidget_RefreshHardpointData.cs" />
     <Compile Include="Hardpoints\UseHardpointCustom.cs" />
     <Compile Include="Hardpoints\WeaponDefault.cs" />
     <Compile Include="Icons\IconController.cs" />

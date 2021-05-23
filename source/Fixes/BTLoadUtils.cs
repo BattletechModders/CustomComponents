@@ -1,6 +1,7 @@
 ﻿using BattleTech;
 using BattleTech.Data;
 using System;
+using SVGImporter;
 
 namespace CustomComponents
 {
@@ -14,6 +15,7 @@ namespace CustomComponents
             loadRequest.AddAllOfTypeBlindLoadRequest(GetResourceType(nameof(BattleTechResourceType.WeaponDef)), true);
             loadRequest.AddAllOfTypeBlindLoadRequest(GetResourceType(nameof(BattleTechResourceType.AmmunitionBoxDef)), true);
             loadRequest.AddAllOfTypeBlindLoadRequest(GetResourceType(nameof(BattleTechResourceType.JumpJetDef)), true);
+            loadRequest.AddLoadRequest<SVGAsset>(BattleTechResourceType.SVGAsset, Control.Settings.OmniWeaponIcon, null);
             return loadRequest;
         }
 

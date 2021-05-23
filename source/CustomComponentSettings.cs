@@ -210,6 +210,7 @@ namespace CustomComponents
 
         public ErrorMessages Message = new ErrorMessages();
 
+        public bool ColorHardpoints = true;
 
         public void Complete()
         {

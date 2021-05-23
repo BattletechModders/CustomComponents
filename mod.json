@@ -12,16 +12,16 @@
 
 	"Settings": {
 		"LogLevel": "Debug",
-		"DebugInfo" : "None",
+		"DebugInfo" : "NONE",
 
 		"DEBUG_ValidateMechDefs": false,
 		"DEBUG_ShowOnlyErrors": false,
 		"DEBUG_ShowAllUnitTypes": false,
 		"DEBUG_ShowConfig": false,
-		"DEBUG_ShowLoadedCategory": true,
-		"DEBUG_ShowLoadedDefaults": true,
-		"DEBUG_ShowLoadedDefaults": true,
-		"DEBUG_ShowLoadedAlLocations": true,
+		"DEBUG_ShowLoadedCategory": false,
+		"DEBUG_ShowLoadedDefaults": false,
+		"DEBUG_ShowLoadedDefaults": false,
+		"DEBUG_ShowLoadedAlLocations": false,
 		"DEBUG_EnableAllTags": false,
 		"DEBUG_ShowMechUT": false,
 
@@ -97,7 +97,7 @@
 		"SalvageTorsoWeight": 1,
 		"SalvageHeadWeight": 0.5
 	},
-	"Manifest_test" : [
+	"Manifest" : [
 		{
 			"Type" : "CCCategories",
 			"Path" : "CCTestMod/test/categories"
@@ -129,10 +129,16 @@
 		{
             "Type": "CCUnitTypes",
             "Path": "data/unittypes"
+        },
+		{
+            "Type": "SVGAsset",
+            "Path": "CCTestMod/test/icons"
         }
 	],
-
-
-    "Manifest": [
-    ]
+	"DataAddendumEntries": [
+        {
+            "name": "BattleTech.WeaponCategoryEnumeration",
+            "path": "CCTestMod/WeaponCategory.json"
+        }
+	]
 }

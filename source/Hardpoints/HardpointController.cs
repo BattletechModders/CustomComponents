@@ -33,10 +33,8 @@ namespace CustomComponents
             var hp = new HardpointInfo()
             {
                 ID = "Ballistic",
-                Short = "B",
-                DisplayName = "Ballistic",
                 Visible = true,
-                AcceptOmni = true
+                AllowOnWeapon = true
             };
             hp.Complete();
             Hardpoints["Ballistic"] = hp;
@@ -44,10 +42,8 @@ namespace CustomComponents
             hp = new HardpointInfo()
             {
                 ID = "Energy",
-                Short = "E",
-                DisplayName = "Energy",
                 Visible = true,
-                AcceptOmni = true
+                AllowOnWeapon = true
             };
             hp.Complete();
             Hardpoints["Energy"] = hp;
@@ -55,10 +51,8 @@ namespace CustomComponents
             hp = new HardpointInfo()
             {
                 ID = "Missile",
-                Short = "M",
-                DisplayName = "Missile",
                 Visible = true,
-                AcceptOmni = true
+                AllowOnWeapon = true
             };
             hp.Complete();
             Hardpoints["Missile"] = hp;
@@ -66,10 +60,8 @@ namespace CustomComponents
             hp = new HardpointInfo()
             {
                 ID = "AntiPersonnel",
-                Short = "S",
-                DisplayName = "Support",
                 Visible = true,
-                AcceptOmni = true
+                AllowOnWeapon = true
             };
             hp.Complete();
             Hardpoints["AntiPersonnel"] = hp;
@@ -77,10 +69,8 @@ namespace CustomComponents
             hp = new HardpointInfo()
             {
                 ID = "AMS",
-                Short = "AM",
-                DisplayName = "AMS",
                 Visible = false,
-                AcceptOmni = false
+                AllowOnWeapon = true
             };
             hp.Complete();
             Hardpoints["AMS"] = hp;
@@ -88,10 +78,8 @@ namespace CustomComponents
             hp = new HardpointInfo()
             {
                 ID = "Melee",
-                Short = "Ml",
-                DisplayName = "Melee",
                 Visible = false,
-                AcceptOmni = false
+                AllowOnWeapon = true
             };
             hp.Complete();
             Hardpoints["Melee"] = hp;
@@ -120,12 +108,12 @@ namespace CustomComponents
             {
                 if (hp.Complete())
                 {
-                    Control.LogDebug(DType.Hardpoints, $"Hardpoint info: {hp.ID}, [{hp.Compatible.Aggregate((last, next) => last + " " + next)}]");
+                    Control.LogDebug(DType.Hardpoints, $"Hardpoint info: {hp.ID}, [{hp.CompatibleID.Aggregate("", (last, next) => last + " " + WeaponCategoryEnumeration.GetWeaponCategoryByID(next).FriendlyName)}]");
                     Hardpoints[hp.ID] = hp;
                 }
             }
 
-            HardpointsList = Hardpoints.Values.OrderBy(i => i.Compatible.Length).ToList();
+            HardpointsList = Hardpoints.Values.OrderBy(i => i.CompatibleID.Count).ToList();
         }
         
         public string PostValidatorDrop(MechLabItemSlotElement drop_item, List<InvItem> new_inventory)
@@ -269,7 +257,6 @@ namespace CustomComponents
 
             return (omni, hpinfos);
         }
-
 
         public void FixMechs(List<MechDef> mechdefs, SimGameState simgame)
         {

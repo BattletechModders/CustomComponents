@@ -154,7 +154,7 @@ namespace CustomComponents
                 {
                     return new Localize.Text(Control.Settings.Message.Base_AddNotEnoughHardpoints,
                         MechLabHelper.CurrentMechLab.ActiveMech.Description.UIName, drop_item.ComponentRef.Def.Description.Name,
-                        drop_item.ComponentRef.Def.Description.UIName, hpInfo.DisplayName, WeaponCategory.FriendlyName,
+                        drop_item.ComponentRef.Def.Description.UIName, WeaponCategory.Name, WeaponCategory.FriendlyName,
                         location
                     ).ToString();
                 }

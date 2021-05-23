@@ -1,0 +1,31 @@
+{
+	"Settings" : [
+		{
+			"ID" : "Omni",
+			"Visible" : true,
+			"AllowOnWeapon" : true,
+			"Compatible" : [ "Ballistic", "Energy", "Missile", "AntiPersonnel", "Test1", "Test2" ]
+		},
+		{
+			"ID" : "Test1",
+			"Visible" : true,
+			"AllowOnWeapon" : true
+		},
+		{
+			"ID" : "Test2",
+			"Visible" : true,
+			"AllowOnWeapon" : true
+		},
+		{
+			"ID" : "Test3",
+			"Visible" : true,
+			"AllowOnWeapon" : false
+			"Compatible" : [ "Ballistic", "Test2" ]
+		},
+		{
+			"ID" : "Test4",
+			"Visible" : false,
+			"AllowOnWeapon" : true
+		}
+	]
+}
