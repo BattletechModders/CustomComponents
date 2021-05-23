@@ -1,19 +1,10 @@
 {
 	"Custom" : {
-		"ChassisCategory" : [
+		"WeaponDefault" : [
 			{
-				"Category" : "bal_test",
-				"Limits" : [
-					{ "Location" : "RightTorso", "Min" : 1 }
-				]
-			}
-		],
-		"ChassisDefaults" : [
-			{
-				"CategoryID" : "bal_test",
-				"Defaults" : [
-					{ "Location" : "RightTorso", "DefID" : "Weapon_Autocannon_AC10_Default", "Type" : "Weapon" },
-				]
+				"DefID" : "Weapon_Autocannon_AC10_Default",
+				"Location" : "RightTorso"
+				"ReplaceCategories" : [ "bal_test" ]
 			}
 		],
 		"MultiDefaults" : [

@@ -30,6 +30,8 @@ namespace CustomComponents
 
             if (!have_defaults.TryGetValue(mech.ChassisID, out var result))
             {
+            
+                Control.LogDebug(DType.WeaponDefaults, $"Build Weapon Defaults for {mech.ChassisID}");
                 result = ChassisLocations.None;
 
                 var defs = mech.GetWeaponDefaults();
@@ -37,13 +39,22 @@ namespace CustomComponents
                 {
                     var list = defs.ToList();
                     foreach (var wd in list)
-                        result.Set(wd.Location);
+                    {
+                        Control.LogDebug(DType.WeaponDefaults, $"-- add {wd.Location}");
+                        result = result.Set(wd.Location);
+                    }
 
+                    Control.LogDebug(DType.WeaponDefaults, $"- complete - {result}");
                 }
+                else
+                {
+                    Control.LogDebug(DType.WeaponDefaults, $"- no defaults - {result}");
+                }
+
                 have_defaults[mech.ChassisID] = result;
             }
 
-            //Control.Log($"HasWeaponDefaults {result} - {location} - {result.HasFlag(location)}");
+            Control.LogDebug(DType.WeaponDefaults, $"HasWeaponDefaults {result} - {location} - {result.HasFlag(location)}");
 
             return result.HasFlag(location);
         }
@@ -61,7 +72,7 @@ namespace CustomComponents
                 {
                     var list = defs.ToList();
                     foreach (var wd in list)
-                        result.Set(wd.Location);
+                        result = result.Set(wd.Location);
 
                 }
                 have_defaults[chassis.Description.Id] = result;

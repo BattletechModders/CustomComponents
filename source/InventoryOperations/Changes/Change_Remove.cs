@@ -94,7 +94,7 @@ namespace CustomComponents.Changes
         public Change_Remove(MechComponentRef item, ChassisLocations location, bool already_applied = false)
         {
             this.ItemID = item.ComponentDefID;
-            this.Location = Location;
+            this.Location = location;
             if (already_applied)
             {
                 Applied = true;

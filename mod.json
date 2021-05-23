@@ -12,7 +12,7 @@
 
 	"Settings": {
 		"LogLevel": "Debug",
-		"DebugInfo" : "AutofixValidate, CustomResource, InventoryOperaions",
+		"DebugInfo" : "None",
 
 		"DEBUG_ValidateMechDefs": false,
 		"DEBUG_ShowOnlyErrors": false,
@@ -97,7 +97,7 @@
 		"SalvageTorsoWeight": 1,
 		"SalvageHeadWeight": 0.5
 	},
-	"Manifest" : [
+	"Manifest_test" : [
 		{
 			"Type" : "CCCategories",
 			"Path" : "CCTestMod/test/categories"
@@ -133,10 +133,6 @@
 	],
 
 
-    "Manifest_": [
-        {
-            "Type": "CCUnitTypes",
-            "Path": "data/unittypes"
-        }
+    "Manifest": [
     ]
 }

@@ -31,10 +31,14 @@ namespace CustomComponents
             if (defaults == null)
                 return;
 
+            //Control.Log("1");
+
             var usage = defaults
                 .Where(i => i.Location == Location)
                 .Select(i => new usage_record(i))
                 .ToList();
+
+            //Control.Log("2");
 
             var loc_items = state.Inventory
                 .Where(i => i.Location == Location)
@@ -49,7 +53,9 @@ namespace CustomComponents
                 .Where(i => i.usehp != null)
                 .ToList();
 
-            for (int i = loc_items.Count - 1; i >= 0; i++)
+            //Control.Log("3");
+
+            for (int i = loc_items.Count - 1; i >= 0; i--)
             {
                 var invItem = loc_items[i];
                 var item = usage.FirstOrDefault(i => !i.used_now && i.weapon.Def.Description.Id == invItem.item.ComponentDefID);
@@ -59,6 +65,9 @@ namespace CustomComponents
                     loc_items.RemoveAt(i);
                 }
             }
+
+            //Control.Log("4");
+
 
             foreach (var usageRecord in usage)
             {
@@ -89,5 +98,9 @@ namespace CustomComponents
             Location = location;
         }
 
+        public override string ToString()
+        {
+            return "WeaponAdjust => " + Location;
+        }
     }
 }

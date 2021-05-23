@@ -63,6 +63,7 @@ namespace CustomComponents
         InventoryOperaions = 1 << 19,
         AutofixValidate = 1 << 20,
         UnitType = 1 << 21,
+        WeaponDefaults = 1 << 22,
         FULL = 0xffffff,
     }
 
