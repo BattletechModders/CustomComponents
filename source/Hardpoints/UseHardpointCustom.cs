@@ -77,20 +77,11 @@ namespace CustomComponents
             Control.LogDebug(DType.Hardpoints, $"PreValidateDrop {Def.Description.Id}[{WeaponCategory.Name}]");
 
             var lhepler = MechLabHelper.CurrentMechLab.GetLocationHelper(location);
+            var hp = lhepler.HardpointsUsage;
 
-            if ((!hpInfo.AcceptOmni || lhepler.OmniHardpoints == 0) &&
-                lhepler.Hardpoints.All(i => !i.Compatible.Contains(WeaponCategory.Name)))
+
+            if (lhepler.HardpointsUsage.All(i => !i.hpInfo.CompatibleID.Contains(WeaponCategory.ID)))
             {
-                if (Control.Settings.DebugInfo.HasFlag(DType.Hardpoints))
-                {
-                    Control.LogDebug(DType.Hardpoints, $"- omni: {lhepler.OmniHardpoints}");
-                    foreach (var hp in lhepler.Hardpoints)
-                    {
-                        Control.LogDebug(DType.Hardpoints,
-                            $"- id:{hp.ID} omni:{hp.AcceptOmni} comp:{hp.Compatible.Join()}");
-                    }
-                }
-
                 var mech = MechLabHelper.CurrentMechLab.ActiveMech;
                 return new Localize.Text(Control.Settings.Message.Base_AddNoHardpoins, mech.Description.UIName,
                     Def.Description.Name, Def.Description.UIName, WeaponCategory.Name, WeaponCategory.FriendlyName,
@@ -112,13 +103,11 @@ namespace CustomComponents
 
             var lhepler = MechLabHelper.CurrentMechLab.GetLocationHelper(location);
 
-            var hardpoints = lhepler.Hardpoints.ToList();
-            var omni = lhepler.OmniHardpoints;
+            var hardpoints = lhepler.HardpointsUsage.Select(i => new HPUsage(i, true)).ToList();
             var candidants = new List<MechLabItemSlotElement>();
 
             foreach (var slotitem in lhepler.LocalInventory.Where(i => i.ComponentRef.ComponentDefType == ComponentType.Weapon))
             {
-
                 var already_removed = removed.FirstOrDefault(i =>
                     i.ItemID == slotitem.ComponentRef.ComponentDefID && i.Location == slotitem.MountedLocation);
 
@@ -134,21 +123,15 @@ namespace CustomComponents
                 if (slotitem.ComponentRef.IsDefault() && !slotitem.ComponentRef.IsModuleFixed(MechLabHelper.CurrentMechLab.ActiveMech))
                     continue;
 
-                var hardpoint = hardpoints.FirstOrDefault(i => i.Compatible.Contains(oth_use_hp.WeaponCategory.Name));
+                var hardpoint = hardpoints.FirstOrDefault(i => i.Used < i.Total && i.hpInfo.CompatibleID.Contains(oth_use_hp.WeaponCategory.ID));
 
                 if (hardpoint != null)
                 {
-                    hardpoints.Remove(hardpoint);
-                    if (hardpoint.Compatible.Contains(WeaponCategory.Name))
+                    hardpoint.Used +=1;
+                    if (hardpoint.hpInfo.CompatibleID.Contains(WeaponCategory.ID))
                     {
                         candidants.Add(slotitem);
                     }
-                }
-                else if (hpInfo.AcceptOmni && omni > 0)
-                {
-                    omni--;
-                    if (hpInfo.AcceptOmni)
-                        candidants.Add(slotitem);
                 }
                 else if (!Control.Settings.AllowMechlabWrongHardpoints)
                 {
@@ -160,9 +143,7 @@ namespace CustomComponents
                 }
             }
 
-            if (hardpoints.Count > 0 && hardpoints.Any(i => i.Compatible.Contains(hpInfo.ID)))
-                return string.Empty;
-            if (hpInfo.AcceptOmni && omni > 0)
+            if (hardpoints.Any(i => i.Used < i.Total && i.hpInfo.CompatibleID.Contains(hpInfo.WeaponCategory.ID)))
                 return string.Empty;
 
             candidants.RemoveAll(i => i.ComponentRef.IsFixed);

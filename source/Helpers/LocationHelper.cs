@@ -11,13 +11,6 @@ namespace CustomComponents
 {
     public class LocationHelper
     {
-        public class HPUsage
-        {
-            public int Total;
-            public int Used;
-            public HardpointInfo hpInfo;
-        }
-
         private Traverse main = null;
 
         private Traverse maxSlots = null, usedSlots = null;

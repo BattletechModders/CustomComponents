@@ -1,12 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 using FluffyUnderware.DevTools.Extensions;
+using JetBrains.Annotations;
 
 namespace CustomComponents
 {
     public static class HardpointExtentions
     {
+        public enum SortOrder
+        {
+            None, ID, Usage, Totals
+        }
         public class WeaponDefaultRecord
         {
             public MechComponentDef Def { get; set; }
@@ -18,9 +24,11 @@ namespace CustomComponents
 
         }
 
-        private static Dictionary<string, ChassisLocations> have_defaults = new Dictionary<string,ChassisLocations>();
+        private static Dictionary<string, ChassisLocations> have_defaults = new Dictionary<string, ChassisLocations>();
         private static Dictionary<string, WeaponCategoryValue> categories = new Dictionary<string, WeaponCategoryValue>();
         private static Dictionary<string, List<WeaponDefaultRecord>> defaults = new Dictionary<string, List<WeaponDefaultRecord>>();
+        private static Dictionary<string, Dictionary<ChassisLocations, List<HPUsage>>> hp_database = new Dictionary<string, Dictionary<ChassisLocations, List<HPUsage>>>();
+
 
         private static WeaponCategoryValue notSet = WeaponCategoryEnumeration.GetNotSetValue();
         public static bool HasWeaponDefaults(this MechDef mech, ChassisLocations location)
@@ -30,7 +38,7 @@ namespace CustomComponents
 
             if (!have_defaults.TryGetValue(mech.ChassisID, out var result))
             {
-            
+
                 Control.LogDebug(DType.WeaponDefaults, $"Build Weapon Defaults for {mech.ChassisID}");
                 result = ChassisLocations.None;
 
@@ -128,7 +136,6 @@ namespace CustomComponents
             return chassis.GetComponents<IWeaponDefault>();
         }
 
-
         public static IEnumerable<WeaponDefaultRecord> GetWeaponDefaults(this MechDef mech)
         {
             if (mech == null)
@@ -142,8 +149,6 @@ namespace CustomComponents
 
             return result;
         }
-
-
         public static IEnumerable<WeaponDefaultRecord> GetWeaponDefaults(this ChassisDef chassis)
         {
             if (chassis == null)
@@ -159,6 +164,155 @@ namespace CustomComponents
             return result;
         }
 
+        public static List<HPUsage> GetHardpoints(this MechDef mech, ChassisLocations location)
+        {
+            return mech?.Chassis.GetHardpoints(location);
+        }
+        public static List<HPUsage> GetHardpoints(this ChassisDef chassis, ChassisLocations location)
+        {
+            if (chassis == null || !DefaultsDatabase.SingleLocations.Contains(location))
+                return null;
+
+            var id = chassis.Description.Id;
+            if (!hp_database.TryGetValue(id, out var dictionary))
+            {
+                dictionary = new Dictionary<ChassisLocations, List<HPUsage>>();
+
+                foreach (var chassisLocationse in DefaultsDatabase.SingleLocations)
+                {
+                    dictionary = BuildHardpoints(chassis);
+                    hp_database[id] = dictionary;
+                }
+
+                hp_database[id] = dictionary;
+            }
+
+            return dictionary[location];
+        }
+
+        public static List<HPUsage> GetHardpoints(this MechDef mech, SortOrder sort = SortOrder.Usage)
+        {
+            return mech?.Chassis.GetHardpoints(sort);
+        }
+        public static List<HPUsage> GetHardpoints(this ChassisDef chassis, SortOrder sort = SortOrder.Usage)
+        {
+            if (chassis == null)
+                return null;
+
+            var result = new List<HPUsage>();
+            foreach (var location in DefaultsDatabase.SingleLocations)
+            {
+                var usage = GetHardpoints(chassis, location);
+                if (usage != null && usage.Count > 0)
+                    foreach (var hpUsage in usage)
+                        AddToList(result, hpUsage);
+            }
+
+            switch (sort)
+            {
+                case SortOrder.ID:
+                    result.Sort((a, b) => a.WeaponCategoryID.CompareTo(b.WeaponCategoryID));
+                    break;
+                case SortOrder.Usage:
+                    result.Sort();
+                    break;
+                case SortOrder.Totals:
+                    result.Sort((a, b) => a.Total.CompareTo(b.Total));
+                    break;
+            }
+
+            return result;
+        }
+
+        private static void AddToList(List<HPUsage> list, HPUsage hp)
+        {
+            var item = list.FirstOrDefault(i => i.WeaponCategoryID == hp.WeaponCategoryID);
+            if (item != null)
+                item.Total += hp.Total;
+            else
+                list.Add(new HPUsage(hp));
+        }
+
+
+        public static List<HPUsage> GetAllHardpoints(this MechDef mech, ChassisLocations location,
+            IEnumerable<InvItem> inventory)
+        {
+            return mech?.Chassis.GetAllHardpoints(location, inventory);
+        }
+        public static List<HPUsage> GetAllHardpoints(this ChassisDef chassis, ChassisLocations location,
+            IEnumerable<InvItem> inventory)
+        {
+            if (chassis == null)
+                return null;
+
+            var result = chassis.GetHardpoints(location);
+
+            foreach (var invItem in inventory.Where(i => i.Location == location))
+            {
+                if (invItem.Item.Is<AddHardpoint>(out var add) && add.Valid)
+                {
+                    AddToList(result, add.WeaponCategory);
+                }
+                else if (invItem.Item.Is<ReplaceHardpoint>(out var replace) && replace.Valid)
+                {
+                    AddToList(result, replace.AddWeaponCategory);
+                    SubFromList(result, replace.UseWeaponCategory);
+                }
+            }
+
+            return result;
+        }
+
+        private static Dictionary<ChassisLocations, List<HPUsage>> BuildHardpoints(ChassisDef chassis)
+        {
+            var result = new Dictionary<ChassisLocations, List<HPUsage>>();
+
+            foreach (var location in DefaultsDatabase.SingleLocations)
+            {
+                var list = new List<HPUsage>();
+                var def = chassis.GetLocationDef(location);
+                if (def.Hardpoints != null && def.Hardpoints.Length > 0)
+                {
+                    foreach (var hpDef in def.Hardpoints)
+                    {
+                        var wc = hpDef.WeaponMountValue;
+                        if (hpDef.Omni)
+                            wc = WeaponCategoryEnumeration.GetWeaponCategoryByID(Control.Settings.OmniCategoryID);
+                        if (wc == null || wc.Is_NotSet)
+                            continue;
+
+                        AddToList(list, wc);
+                    }
+                    list.Sort();
+                }
+                result[location] = list;
+            }
+
+            return result;
+        }
+
+        private static void AddToList(List<HPUsage> list, WeaponCategoryValue wc)
+        {
+            var item = list.FirstOrDefault(i => i.WeaponCategoryID == wc.ID);
+            if (item != null)
+                item.Total += 1;
+            else
+            {
+                item = new HPUsage(HardpointController.Instance[wc.ID], 1);
+                if (item.hpInfo != null)
+                    list.Add(item);
+            }
+        }
+        private static void SubFromList(List<HPUsage> list, WeaponCategoryValue wc, bool remove = false)
+        {
+            var item = list.FirstOrDefault(i => i.WeaponCategoryID == wc.ID);
+            if (item != null)
+            {
+                item.Total -= 1;
+                if (item.Total <= 0 && remove)
+                    list.Remove(item);
+            }
+        }
 
         public static WeaponCategoryValue GetWeaponCategory(this WeaponDef weapon)
         {

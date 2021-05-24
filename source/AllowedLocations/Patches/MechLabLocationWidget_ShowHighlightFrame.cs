@@ -29,23 +29,26 @@ namespace CustomComponents.Patches
                 show = !cRef.IsFixed;
             }
 
+            var location = __instance.loadout.Location;
             if (show)
             {
                 var mech = MechLabHelper.CurrentMechLab.ActiveMech;
                 var allowed = cRef.Is<IAllowedLocations>(out var al) ? al.GetLocationsFor(mech) : cRef.Def.AllowedLocations;
-                show = (allowed & __instance.loadout.Location) > ChassisLocations.None;
+                show = (allowed & location) > ChassisLocations.None;
             }
 
             if (show)
             {
                 var use_hp = cRef.Def.GetComponent<UseHardpointCustom>();
+                var replace = cRef.GetComponent<ReplaceHardpoint>();
 
-                if (use_hp != null && !use_hp.WeaponCategory.Is_NotSet)
+
+                if (use_hp != null && !use_hp.WeaponCategory.Is_NotSet || replace != null && replace.Valid)
                 {
-                    var lhelper = MechLabHelper.CurrentMechLab.GetLocationHelper(__instance.loadout.Location);
+                    var lhelper = MechLabHelper.CurrentMechLab.GetLocationHelper(location);
+                    var wc = use_hp == null ? replace.UseWeaponCategory : use_hp.WeaponCategory;
 
-                    show = use_hp.hpInfo.AcceptOmni && lhelper.OmniHardpoints > 0 || 
-                           lhelper.Hardpoints.Any(i => i.Compatible.Contains(use_hp.WeaponCategory.Name));
+                    show = lhelper.HardpointsUsage?.Any(i => i.hpInfo.CompatibleID.Contains(wc.ID)) ?? false;
                 }
             }
 

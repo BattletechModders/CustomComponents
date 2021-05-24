@@ -25,7 +25,10 @@ namespace CustomComponents
             }
         }
 
-        private Dictionary<string, HardpointInfo> Hardpoints { get; set; } = new Dictionary<string, HardpointInfo>();
+        private Dictionary<string, HardpointInfo> HardpointsByName { get; set; } = new Dictionary<string, HardpointInfo>();
+        private Dictionary<int, HardpointInfo> HardpointsByID { get; set; } = new Dictionary<int, HardpointInfo>();
+
+
         public List<HardpointInfo> HardpointsList { get; private set; }
 
         public void SetupDefaults()
@@ -37,7 +40,8 @@ namespace CustomComponents
                 AllowOnWeapon = true
             };
             hp.Complete();
-            Hardpoints["Ballistic"] = hp;
+            HardpointsByName[hp.ID] = hp;
+            HardpointsByID[hp.WeaponCategory.ID] = hp;
 
             hp = new HardpointInfo()
             {
@@ -46,7 +50,8 @@ namespace CustomComponents
                 AllowOnWeapon = true
             };
             hp.Complete();
-            Hardpoints["Energy"] = hp;
+            HardpointsByName[hp.ID] = hp;
+            HardpointsByID[hp.WeaponCategory.ID] = hp;
 
             hp = new HardpointInfo()
             {
@@ -55,7 +60,8 @@ namespace CustomComponents
                 AllowOnWeapon = true
             };
             hp.Complete();
-            Hardpoints["Missile"] = hp;
+            HardpointsByName[hp.ID] = hp;
+            HardpointsByID[hp.WeaponCategory.ID] = hp;
 
             hp = new HardpointInfo()
             {
@@ -64,7 +70,8 @@ namespace CustomComponents
                 AllowOnWeapon = true
             };
             hp.Complete();
-            Hardpoints["AntiPersonnel"] = hp;
+            HardpointsByName[hp.ID] = hp;
+            HardpointsByID[hp.WeaponCategory.ID] = hp;
 
             hp = new HardpointInfo()
             {
@@ -73,7 +80,8 @@ namespace CustomComponents
                 AllowOnWeapon = true
             };
             hp.Complete();
-            Hardpoints["AMS"] = hp;
+            HardpointsByName[hp.ID] = hp;
+            HardpointsByID[hp.WeaponCategory.ID] = hp;
 
             hp = new HardpointInfo()
             {
@@ -82,7 +90,8 @@ namespace CustomComponents
                 AllowOnWeapon = true
             };
             hp.Complete();
-            Hardpoints["Melee"] = hp;
+            HardpointsByName[hp.ID] = hp;
+            HardpointsByID[hp.WeaponCategory.ID] = hp;
 
         }
 
@@ -92,14 +101,27 @@ namespace CustomComponents
         {
             get
             {
-                if (Hardpoints.TryGetValue(wcname, out var result))
+                if (HardpointsByName.TryGetValue(wcname, out var result))
                     return result;
                 Control.LogError($"{wcname} - dont have weapon category info!");
                 return null;
             }
 
         }
-        
+
+        public HardpointInfo this[int wcid]
+        {
+            get
+            {
+                if (HardpointsByID.TryGetValue(wcid, out var result))
+                    return result;
+                Control.LogError($"{wcid} - dont have weapon category info!");
+                return null;
+
+            }
+
+        }
+
         public void Setup(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
             SetupDefaults();
@@ -109,13 +131,14 @@ namespace CustomComponents
                 if (hp.Complete())
                 {
                     Control.LogDebug(DType.Hardpoints, $"Hardpoint info: {hp.ID}, [{hp.CompatibleID.Aggregate("", (last, next) => last + " " + WeaponCategoryEnumeration.GetWeaponCategoryByID(next).FriendlyName)}]");
-                    Hardpoints[hp.ID] = hp;
+                    HardpointsByName[hp.ID] = hp;
+                    HardpointsByID[hp.WeaponCategory.ID] = hp;
                 }
             }
 
-            HardpointsList = Hardpoints.Values.OrderBy(i => i.CompatibleID.Count).ToList();
+            HardpointsList = HardpointsByName.Values.OrderBy(i => i.CompatibleID.Count).ToList();
         }
-        
+
         public string PostValidatorDrop(MechLabItemSlotElement drop_item, List<InvItem> new_inventory)
         {
             if (Control.Settings.AllowMechlabWrongHardpoints)
@@ -134,26 +157,22 @@ namespace CustomComponents
 
             foreach (var w_location in weapons_per_location)
             {
-                var (omni, hardpoints) = GetHardpointsPerLocation(mechDef, w_location.location);
+                var hardpoints = mechDef.GetAllHardpoints(w_location.location, new_inventory);
 
                 foreach (var recrd in w_location.items)
                 {
-                    if (Hardpoints.TryGetValue(recrd.wcat.Name, out var hpInfo))
+                    if (HardpointsByID.TryGetValue(recrd.wcat.ID, out var hpInfo))
                     {
-                        var nearest = hardpoints.FirstOrDefault(i => i.Compatible.Contains(hpInfo.ID));
-                        if (nearest != null || hpInfo.AcceptOmni && omni > 0)
-                        {
-                            if (nearest == null)
-                                omni -= 1;
-                            else
-                                hardpoints.Remove(nearest);
-                        }
+                        var nearest = hardpoints.FirstOrDefault(i => i.Total < i.Used && i.hpInfo.CompatibleID.Contains(hpInfo.WeaponCategory.ID));
+                        if (nearest != null)
+                            nearest.Used += 1;
                         else
                             return new Localize.Text(Control.Settings.Message.Base_AddNotEnoughHardpoints,
-                                  mechDef.Description.UIName, recrd.item.Def.Description.Name, recrd.item.Def.Description.UIName,
-                                  recrd.wcat.Name, recrd.wcat.FriendlyName,
-                                  w_location.location
-                              ).ToString();
+                                mechDef.Description.UIName, recrd.item.Def.Description.Name,
+                                recrd.item.Def.Description.UIName,
+                                recrd.wcat.Name, recrd.wcat.FriendlyName,
+                                w_location.location
+                            ).ToString();
 
                     }
                 }
@@ -174,20 +193,15 @@ namespace CustomComponents
 
             foreach (var w_location in weapons_per_location)
             {
-                var (omni, hardpoints) = GetHardpointsPerLocation(mechdef, w_location.location);
+                var hardpoints = mechdef.GetAllHardpoints(w_location.location, mechdef.Inventory.ToInvItems());
 
                 foreach (var recrd in w_location.items)
                 {
-                    if (Hardpoints.TryGetValue(recrd.wcat.Name, out var hpInfo))
+                    if (HardpointsByID.TryGetValue(recrd.wcat.ID, out var hpInfo))
                     {
-                        var nearest = hardpoints.FirstOrDefault(i => i.Compatible.Contains(hpInfo.ID));
-                        if (nearest != null || hpInfo.AcceptOmni && omni > 0)
-                        {
-                            if (nearest == null)
-                                omni -= 1;
-                            else
-                                hardpoints.Remove(nearest);
-                        }
+                        var nearest = hardpoints.FirstOrDefault(i => i.Total < i.Used && i.hpInfo.CompatibleID.Contains(hpInfo.WeaponCategory.ID));
+                        if (nearest != null)
+                            nearest.Used += 1;
                         else
                             errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(
                                 Control.Settings.Message.Base_AddNotEnoughHardpoints,
@@ -215,20 +229,15 @@ namespace CustomComponents
 
             foreach (var w_location in weapons_per_location)
             {
-                var (omni, hardpoints) = GetHardpointsPerLocation(mechDef, w_location.location);
+                var hardpoints = mechDef.GetAllHardpoints(w_location.location, mechDef.Inventory.ToInvItems());
 
                 foreach (var recrd in w_location.items)
                 {
-                    if (Hardpoints.TryGetValue(recrd.wcat.Name, out var hpInfo))
+                    if (HardpointsByID.TryGetValue(recrd.wcat.ID, out var hpInfo))
                     {
-                        var nearest = hardpoints.FirstOrDefault(i => i.Compatible.Contains(hpInfo.ID));
-                        if (nearest != null || hpInfo.AcceptOmni && omni > 0)
-                        {
-                            if (nearest == null)
-                                omni -= 1;
-                            else
-                                hardpoints.Remove(nearest);
-                        }
+                        var nearest = hardpoints.FirstOrDefault(i => i.Total < i.Used && i.hpInfo.CompatibleID.Contains(hpInfo.WeaponCategory.ID));
+                        if (nearest != null)
+                            nearest.Used += 1;
                         else
                             return false;
                     }
@@ -237,44 +246,23 @@ namespace CustomComponents
 
             return true;
         }
-
-        private (int, List<HardpointInfo>) GetHardpointsPerLocation(MechDef mechDef, ChassisLocations location)
-        {
-            var locationdef = mechDef.GetChassisLocationDef(location);
-            int omni = 0;
-            var hpinfos = new List<HardpointInfo>();
-            foreach (var hp in locationdef.Hardpoints)
-            {
-                if (hp.Omni)
-                    omni += 1;
-                else if (Hardpoints.TryGetValue(hp.WeaponMountValue.Name, out var hpinfo))
-                    hpinfos.Add(hpinfo);
-                else
-                    Control.LogError($"Unknown Hardpoint type {hp.WeaponMountValue.Name} for {mechDef.ChassisID}");
-            }
-
-            hpinfos.Sort((a, b) => a.Compatible.Length.CompareTo(b.Compatible.Length));
-
-            return (omni, hpinfos);
-        }
-
         public void FixMechs(List<MechDef> mechdefs, SimGameState simgame)
         {
             foreach (var mechdef in mechdefs)
             {
-                var defaults =mechdef.GetWeaponDefaults();
-                if(defaults == null)
+                var defaults = mechdef.GetWeaponDefaults();
+                if (defaults == null)
                     continue;
 
                 var def_list = defaults.ToList();
 
-                if(def_list.Count == 0)
+                if (def_list.Count == 0)
                     continue;
-                
+
                 var changes = new Queue<IChange>();
                 foreach (var weaponDefault in defaults)
                     changes.Enqueue(new Change_WeaponAdjust(weaponDefault.Location));
-                
+
                 var state = new InventoryOperationState(changes, mechdef);
                 state.DoChanges();
                 state.ApplyInventory();
