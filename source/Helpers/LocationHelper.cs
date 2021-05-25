@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 using BattleTech.UI;
-using BattleTech.UI.TMProWrapper;
 using Harmony;
-using SVGImporter;
-using UnityEngine;
 
 namespace CustomComponents
 {
@@ -17,6 +15,8 @@ namespace CustomComponents
         private Traverse location_name;
 
         public MechLabLocationWidget widget { get; private set; }
+        public ChassisLocations Location => widget?.loadout?.Location ?? ChassisLocations.None;
+
         public MechLabPanel mechLab
         {
             get
@@ -29,9 +29,6 @@ namespace CustomComponents
         public int mb_slots = -1, me_slots = -1, mm_slots = -1, ms_slots = -1;
 
         private List<MechLabItemSlotElement> inventory;
-        private List<HPUsage> base_hp;
-
-        public IReadOnlyList<HardpointInfo> Hardpoints { get; private set; }
 
         public List<HPUsage> HardpointsUsage { get; private set; }
 
@@ -39,28 +36,50 @@ namespace CustomComponents
 
         public void UpdateHardpointUsage()
         {
-            if (base_hp == null)
+            if (MechLabHelper.CurrentMechLab?.ActiveMech == null)
             {
-                base_hp = MechLabHelper.CurrentMechLab.ActiveMech.Chassis.GetLocationDef(widget.loadout.Location)
-                    .Hardpoints
-                    .GroupBy(i => i.WeaponMountValue)
-                    .Select(i => new HPUsage()
-                    {
-                        hpInfo = HardpointController.Instance[i.Key],
-                        Total = i.Count(),
-                        Used = 0
-                    })
-                    .OrderBy(i => i.hpInfo.CompatibleID.Count)
-                    .ToList();
+                HardpointsUsage = null;
+                return;
             }
 
-            HardpointsUsage = base_hp.Select(i => new HPUsage() { hpInfo = i.hpInfo, Total = i.Total, Used = 0}).ToList();
+            HardpointsUsage = mechLab.activeMechDef.GetAllHardpoints(Location, mechLab.activeMechDef.Inventory.ToInvItems());
+            //foreach (var hpUsage in HardpointsUsage)
+            //{
+            //    hpUsage.Used = 0;
+            //}
 
+            foreach (var item in LocalInventory
+                .Select(i => i.ComponentRef.GetComponent<UseHardpointCustom>())
+                .Where(i => i!=null && !i.WeaponCategory.Is_NotSet))
+            {
+                HPUsage first = null;
+                bool found = false;
 
-            HardpointsUsage.RemoveAll(a => a.Total <= 0);
-            HardpointsUsage.Sort((a,b)=>a.hpInfo.CompatibleID.Count.CompareTo(b.hpInfo.CompatibleID.Count));
+                for (int i = 0; i < HardpointsUsage.Count; i++)
+                {
+                    var hp = HardpointsUsage[i];
+
+                    if (!hp.hpInfo.CompatibleID.Contains(item.WeaponCategory.ID))
+                        continue;
+                    if (hp.Used < hp.Total)
+                    {
+                        found = true;
+                        hp.Used += 1;
+                    }
+
+                    first ??= hp;
+                }
+
+                if (!found)
+                    if (first == null)
+                        HardpointsUsage.Add(new HPUsage(item.hpInfo, 0, -1));
+                    else
+                        first.Used += 1;
+            }
         }
-        
+
+        #region old-hardpoints
+
         //public int currentBallisticCount
         //{
         //    get
@@ -145,6 +164,7 @@ namespace CustomComponents
 
         //}
 
+        #endregion
         public List<MechLabItemSlotElement> LocalInventory
         {
             get
@@ -191,19 +211,34 @@ namespace CustomComponents
 
         public void RefreshHardpoints()
         {
-            int active_hp = 0;
-            for (int i = 0; i < 4; i++)
+            try
             {
-                if (HardpointsUsage == null)
-                    HardpointWidgets[i].Hide();
+                if (HardpointWidgets == null || HardpointWidgets.Length != 4)
+                    return;
 
-                while (active_hp < HardpointsUsage.Count && !HardpointsUsage[active_hp].hpInfo.Visible)
+                int active_hp = 0;
+                for (int i = 0; i < 4; i++)
+                {
+                    if (HardpointsUsage == null)
+                    {
+                        HardpointWidgets[i].Hide();
+                        continue;
+                    }
+
+                    while (active_hp < HardpointsUsage.Count && !HardpointsUsage[active_hp].hpInfo.Visible)
+                        active_hp += 1;
+
+                    if (active_hp < HardpointsUsage.Count)
+                        HardpointWidgets[i].SetData(HardpointsUsage[active_hp].hpInfo,
+                            $"{HardpointsUsage[active_hp].Used}/{HardpointsUsage[active_hp].Total}");
+                    else
+                        HardpointWidgets[i].Hide();
                     active_hp += 1;
-
-                if (active_hp < HardpointsUsage.Count)
-                    HardpointWidgets[i].SetData(HardpointsUsage[active_hp].hpInfo, $"{HardpointsUsage[active_hp].Used}/{HardpointsUsage[active_hp].Total}");
-                else
-                    HardpointWidgets[i].Hide();
+                }
+            }
+            catch (Exception e)
+            {
+                Control.LogError(e);
             }
         }
 
@@ -223,64 +258,5 @@ namespace CustomComponents
             RefreshHardpoints();
         }
 
-    }
-
-    public class HardpointHelper
-    {
-        private Traverse traverse;
-        private Traverse<WeaponCategoryValue> weapon_category;
-
-        public WeaponCategoryValue WeaponCategory
-        {
-            get => weapon_category.Value;
-            set => weapon_category.Value = value;
-        }
-
-
-        public MechLabHardpointElement Element { get; private set; }
-        public LocalizableText Text { get; private set; }
-
-        public SVGImage Icon { get; private set; }
-        public CanvasGroup Canvas { get; private set; }
-
-        public UIColorRefTracker TextColor { get; private set; }
-        public UIColorRefTracker IconColor { get; private set; }
-
-        public HardpointHelper(MechLabHardpointElement element)
-        {
-            Element = element;
-            traverse = new Traverse(element);
-            weapon_category = traverse.Field<WeaponCategoryValue>("currentWeaponCategoryValue");
-
-            Text = traverse.Field<LocalizableText>("hardpointText").Value;
-            TextColor = Text.GetComponent<UIColorRefTracker>();
-            Icon = traverse.Field<SVGImage>("hardpointIcon").Value;
-            IconColor = Icon.GetComponent<UIColorRefTracker>();
-            Canvas = traverse.Field<CanvasGroup>("thisCanvasGroup").Value;
-        }
-
-        public void Hide()
-        {
-            Canvas.alpha = 0f;
-        }
-
-        public void SetData(HardpointInfo wc, string text)
-        {
-            if (wc?.WeaponCategory == null || wc.WeaponCategory.Is_NotSet || !wc.Visible)
-            {
-                Hide();
-                return;
-            }
-
-            Canvas.alpha = 1f;
-            Icon.vectorGraphics = wc.WeaponCategory.GetIcon();
-            Text.SetText(text);
-
-            if (Control.Settings.ColorHardpoints)
-            {
-                IconColor.SetUIColor(wc.WeaponCategory.GetUIColor());
-                TextColor.SetUIColor(wc.WeaponCategory.GetUIColor());
-            }
-        }
     }
 }

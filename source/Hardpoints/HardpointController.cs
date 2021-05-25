@@ -159,11 +159,16 @@ namespace CustomComponents
             {
                 var hardpoints = mechDef.GetAllHardpoints(w_location.location, new_inventory);
 
+                foreach (var hardpoint in hardpoints)
+                {
+                    Control.Log($"{w_location.location} - {hardpoint.hpInfo.WeaponCategory.Name} - {hardpoint.Used}/{hardpoint.Total}");
+                }
+
                 foreach (var recrd in w_location.items)
                 {
                     if (HardpointsByID.TryGetValue(recrd.wcat.ID, out var hpInfo))
                     {
-                        var nearest = hardpoints.FirstOrDefault(i => i.Total < i.Used && i.hpInfo.CompatibleID.Contains(hpInfo.WeaponCategory.ID));
+                        var nearest = hardpoints.FirstOrDefault(i => i.Total > i.Used && i.hpInfo.CompatibleID.Contains(hpInfo.WeaponCategory.ID));
                         if (nearest != null)
                             nearest.Used += 1;
                         else
@@ -199,7 +204,7 @@ namespace CustomComponents
                 {
                     if (HardpointsByID.TryGetValue(recrd.wcat.ID, out var hpInfo))
                     {
-                        var nearest = hardpoints.FirstOrDefault(i => i.Total < i.Used && i.hpInfo.CompatibleID.Contains(hpInfo.WeaponCategory.ID));
+                        var nearest = hardpoints.FirstOrDefault(i => i.Total> i.Used && i.hpInfo.CompatibleID.Contains(hpInfo.WeaponCategory.ID));
                         if (nearest != null)
                             nearest.Used += 1;
                         else
@@ -235,7 +240,7 @@ namespace CustomComponents
                 {
                     if (HardpointsByID.TryGetValue(recrd.wcat.ID, out var hpInfo))
                     {
-                        var nearest = hardpoints.FirstOrDefault(i => i.Total < i.Used && i.hpInfo.CompatibleID.Contains(hpInfo.WeaponCategory.ID));
+                        var nearest = hardpoints.FirstOrDefault(i => i.Total > i.Used && i.hpInfo.CompatibleID.Contains(hpInfo.WeaponCategory.ID));
                         if (nearest != null)
                             nearest.Used += 1;
                         else

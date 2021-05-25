@@ -245,7 +245,7 @@ namespace CustomComponents
             if (chassis == null)
                 return null;
 
-            var result = chassis.GetHardpoints(location);
+            var result = chassis.GetHardpoints(location).Select(a => new HPUsage(a, true)).ToList();
 
             foreach (var invItem in inventory.Where(i => i.Location == location))
             {
@@ -300,7 +300,7 @@ namespace CustomComponents
             {
                 item = new HPUsage(HardpointController.Instance[wc.ID], 1);
                 if (item.hpInfo != null)
-                    list.Add(item);
+                    list.Add(new HPUsage(item,true));
             }
         }
         private static void SubFromList(List<HPUsage> list, WeaponCategoryValue wc, bool remove = false)

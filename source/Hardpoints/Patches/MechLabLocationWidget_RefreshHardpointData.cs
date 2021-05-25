@@ -11,7 +11,7 @@ namespace CustomComponents.Patches
         [HarmonyPrefix]
         public static bool RefreshHardpoints(MechLabLocationWidget __instance)
         {
-            if (!MechLabHelper.CurrentMechLab.InMechLab)
+            if (MechLabHelper.CurrentMechLab == null || !MechLabHelper.CurrentMechLab.InMechLab)
                 return false;
 
             var lhelper = MechLabHelper.CurrentMechLab.GetLocationHelper(__instance.loadout.Location);

@@ -100,6 +100,8 @@ namespace CustomComponents
                 Control.LogDebug(DType.ComponentInstall, "- {0}", change);
                 change.ApplyToMechlab();
             }
+
+            MechLabHelper.CurrentMechLab.RefreshHardpoints();
         }
     }
 }

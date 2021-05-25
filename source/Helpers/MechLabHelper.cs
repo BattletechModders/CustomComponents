@@ -202,5 +202,15 @@ namespace CustomComponents
 
             drag_item.SetValue(item);
         }
+
+        public void RefreshHardpoints()
+        {
+
+            foreach (var locationHelper in all_helpers)
+            {
+                locationHelper.UpdateHardpointUsage();
+                locationHelper.RefreshHardpoints();
+            }
+        }
     }
 }
