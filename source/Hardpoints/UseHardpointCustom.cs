@@ -55,17 +55,17 @@ namespace CustomComponents
 
             var ed = ExtendedDetails.ExtendedDetails.GetOrCreate(Def);
             var detail =
-                ed.GetDetails().FirstOrDefault(i => i.Identifier == "Hardpoints") as
+                ed.GetDetails().FirstOrDefault(i => i.Identifier == "UseHardpoints") as
                     ExtendedDetails.ExtendedDetailList ??
-                new ExtendedDetailList()
+                new ExtendedDetail()
                 {
-                    Index = 10,
-                    Identifier = "Hardpoints",
-                    OpenBracket = $"\n<b>Using Hardpoints: <color={Control.Settings.HardpointDescriptionColor}>[",
-                    CloseBracket = "]</color></b>\n"
+                    Index = Control.Settings.HardpointDescriptionIndex,
+                    Identifier = "UseHardpoints",
+                    Text = "\n<b>Using Hardpoint: <color="+ Control.Settings.HardpointDescriptionColor + ">" 
+                           + WeaponCategory.FriendlyName 
+                           + "</color></b>\n"
                 };
 
-            detail.AddUnique(WeaponCategory.FriendlyName);
             ed.AddDetail(detail);
         }
 

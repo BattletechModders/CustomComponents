@@ -126,6 +126,9 @@ namespace CustomComponents
         /// 0 - mech.Uiname, 1 - item.Name, 2 - item.Uiname, 3 - location
         /// </summary>
         public string Linked_Validate = "{1} installed wrong, reinstall it";
+
+        public string Hardpoints_TooManyHardpoints = "Unit can have only 4 type of hardpoints per location";
+        public string Hardpoints_NoReplace = "Unit dont have {0} hardpoint to replace in {1}";
     }
     public class CustomComponentSettings
     {
@@ -141,6 +144,8 @@ namespace CustomComponents
         public bool DEBUG_ShowLoadedCategory = true;
         public bool DEBUG_ShowLoadedDefaults = true;
         public bool DEBUG_ShowLoadedAlLocations = true;
+        public bool DEBUG_ShowLoadedHardpoints = true;
+
         public bool DEBUG_ShowMechUT = false;
 
         public LogLevel LogLevel = LogLevel.Debug;
@@ -198,8 +203,9 @@ namespace CustomComponents
         public string IgnoreAutofixUnitType = "IgnoreAutofix";
         public string IgnoreValidateUnitType = "IgnoreValidate";
 
-        public int CategoryDescriptionInsex = 10;
+        public int CategoryDescriptionIndex = 10;
         public int HardpointDescriptionIndex = 11;
+        public int HardpointAddIndex = 12;
         public string HardpointDescriptionColor = "#008000";
         public string CategoryDescriptionColor = "#008000";
 

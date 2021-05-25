@@ -20,8 +20,8 @@
 		"DEBUG_ShowConfig": false,
 		"DEBUG_ShowLoadedCategory": false,
 		"DEBUG_ShowLoadedDefaults": false,
-		"DEBUG_ShowLoadedDefaults": false,
 		"DEBUG_ShowLoadedAlLocations": false,
+		"DEBUG_ShowLoadedHardpoints": true,
 		"DEBUG_EnableAllTags": false,
 		"DEBUG_ShowMechUT": false,
 
@@ -133,6 +133,10 @@
 		{
             "Type": "SVGAsset",
             "Path": "CCTestMod/test/icons"
+        },
+		{
+            "Type": "CCHardpoints",
+            "Path": "CCTestMod/test/hardpoints"
         }
 	],
 	"DataAddendumEntries": [

@@ -96,11 +96,11 @@
             "Location": "LeftArm",
             "Hardpoints": [
                 {
-                    "WeaponMount": "Energy",
-                    "Omni": false
+                    "weaponMountID": "Energy",
+                    "Omni": true
                 },
                 {
-                    "WeaponMount": "AntiPersonnel",
+                    "weaponMountID": "Omni",
                     "Omni": false
                 }
             ],

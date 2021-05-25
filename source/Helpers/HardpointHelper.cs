@@ -61,7 +61,7 @@ namespace CustomComponents
             if (Control.Settings.ColorHardpoints)
             {
                 IconColor.SetUIColor(wc.WeaponCategory.GetUIColor());
-                TextColor.SetUIColor(wc.WeaponCategory.GetUIColor());
+                //TextColor.SetUIColor(wc.WeaponCategory.GetUIColor());
             }
         }
     }

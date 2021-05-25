@@ -22,7 +22,7 @@
 			"MinVerticalAngle" : 15,
 			"MaxVerticalAngle" : 15,
 			"UIColorRef" : "Gold",
-			"FallbackUIColor" : null,
+			"FallbackUIColor" : "Gold",
 			"Icon" : "weapon_omni",
 			"HardpointPrefabText" : "",
 			"UseHardpointPrefabTextAsSuffix" : false

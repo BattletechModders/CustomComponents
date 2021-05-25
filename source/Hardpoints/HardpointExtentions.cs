@@ -235,9 +235,9 @@ namespace CustomComponents
 
 
         public static List<HPUsage> GetAllHardpoints(this MechDef mech, ChassisLocations location,
-            IEnumerable<InvItem> inventory)
+            IEnumerable<InvItem> inventory = null)
         {
-            return mech?.Chassis.GetAllHardpoints(location, inventory);
+            return mech?.Chassis.GetAllHardpoints(location, inventory ?? mech.Inventory.ToInvItems());
         }
         public static List<HPUsage> GetAllHardpoints(this ChassisDef chassis, ChassisLocations location,
             IEnumerable<InvItem> inventory)

@@ -217,7 +217,7 @@ namespace CustomComponents
                         ExtendedDetails.ExtendedDetailList ??
                     new ExtendedDetailList()
                     {
-                        Index = 10,
+                        Index = Control.Settings.CategoryDescriptionIndex,
                         Identifier = "Category",
                         OpenBracket = $"\n<b><color={Control.Settings.CategoryDescriptionColor}>[",
                         CloseBracket = "]</color></b>\n"

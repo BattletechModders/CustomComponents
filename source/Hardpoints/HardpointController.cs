@@ -130,13 +130,16 @@ namespace CustomComponents
             {
                 if (hp.Complete())
                 {
-                    Control.LogDebug(DType.Hardpoints, $"Hardpoint info: {hp.ID}, [{hp.CompatibleID.Aggregate("", (last, next) => last + " " + WeaponCategoryEnumeration.GetWeaponCategoryByID(next).FriendlyName)}]");
+                    if(Control.Settings.DEBUG_ShowLoadedHardpoints)
+                        Control.Log($"Hardpoint {hp.ID} loaded, [{hp.CompatibleID.Aggregate("", (last, next) => last + " " + WeaponCategoryEnumeration.GetWeaponCategoryByID(next).FriendlyName)}]");
                     HardpointsByName[hp.ID] = hp;
                     HardpointsByID[hp.WeaponCategory.ID] = hp;
                 }
             }
-
+            
             HardpointsList = HardpointsByName.Values.OrderBy(i => i.CompatibleID.Count).ToList();
+            if (Control.Settings.DEBUG_ShowLoadedHardpoints)
+                Control.Log($"Hardpoints: Total {HardpointsList?.Count ?? 0} Loaded");
         }
 
         public string PostValidatorDrop(MechLabItemSlotElement drop_item, List<InvItem> new_inventory)
