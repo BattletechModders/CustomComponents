@@ -131,6 +131,7 @@ namespace CustomComponents
                 {
                     Control.LogError($"- {value.Key}: {value.Value}");
                 }
+                return;
             }
 
             var identifier = Database.Identifier(target);
