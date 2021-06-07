@@ -216,8 +216,10 @@ namespace CustomComponents
 
         public ErrorMessages Message = new ErrorMessages();
 
-        public bool ColorHardpoints = true;
         public int OmniCategoryID = 1000;
+
+        public bool ColorHardpointsIcon = true;
+        public bool ColorHardpointsText = true;
 
         public void Complete()
         {

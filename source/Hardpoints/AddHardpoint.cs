@@ -7,11 +7,12 @@ using CustomComponents.ExtendedDetails;
 namespace CustomComponents
 {
     [CustomComponent("AddHardpoint")]
-    public class AddHardpoint : SimpleCustomComponent, IValueComponent<string>, IPreValidateDrop, IAdjustDescription
+    public class AddHardpoint : SimpleCustomComponent, IValueComponent<string>, IPreValidateDrop, IAdjustDescription, IValid
     {
         public bool Valid => WeaponCategory != null && !WeaponCategory.Is_NotSet;
 
         public WeaponCategoryValue WeaponCategory { get; private set; }
+        public HardpointInfo HPinfo { get; private set; }
 
         public void LoadValue(string value)
         {
@@ -19,6 +20,9 @@ namespace CustomComponents
  
             if (WeaponCategory == null)
                 WeaponCategory = WeaponCategoryEnumeration.GetNotSetValue();
+
+            if (!WeaponCategory.Is_NotSet)
+                HPinfo = HardpointController.Instance[WeaponCategory];
         }
 
         public string PreValidateDrop(MechLabItemSlotElement item, ChassisLocations location)
@@ -74,7 +78,7 @@ namespace CustomComponents
     }
 
     [CustomComponent("ReplaceHardpoint")]
-    public class ReplaceHardpoint : SimpleCustomComponent, IAfterLoad, IPreValidateDrop, IAdjustDescription
+    public class ReplaceHardpoint : SimpleCustomComponent, IAfterLoad, IPreValidateDrop, IAdjustDescription, IValid
     {
         private string UseHardpoint;
         private string AddHardpoint;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using BattleTech;
@@ -38,6 +39,13 @@ namespace CustomComponents
         private bool SetDefault(MechComponentDef item)
         {
             return item.Is<IDefaultComponent>();
+        }
+
+        [CustomSetter("invalid")]
+        private bool SetInvalid(MechComponentDef item)
+        {
+            var comps = item.GetComponents<IValid>();
+            return comps == null || comps.All(i => i.Valid);
         }
 
 

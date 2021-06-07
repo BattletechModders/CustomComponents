@@ -13,7 +13,7 @@ namespace CustomComponents
 {
     [CustomComponent("UseHardpoint")]
     public class UseHardpointCustom : SimpleCustomComponent, IValueComponent<string>, IOnAdd, IOnRemove, IAdjustDescription,
-        IPreValidateDrop, IReplaceValidateDrop
+        IPreValidateDrop, IReplaceValidateDrop, IValid
     {
         public WeaponCategoryValue WeaponCategory { get; private set; } = WeaponCategoryEnumeration.GetNotSetValue();
         public HardpointInfo hpInfo { get; private set; }
@@ -26,6 +26,12 @@ namespace CustomComponents
             WeaponCategory = cat ?? WeaponCategoryEnumeration.GetNotSetValue();
 
             hpInfo = WeaponCategory.Is_NotSet ? null : HardpointController.Instance[WeaponCategory];
+            if (hpInfo != null && hpInfo.AllowOnWeapon)
+            {
+                Control.LogError($"{Def.Description.Id} use {value} weapon category that cannot be used on weapons");
+                hpInfo = null;
+                WeaponCategory = WeaponCategoryEnumeration.GetNotSetValue();
+            }
 
             Control.LogDebug(DType.Hardpoints, $"- {cat.WeaponCategoryID}:{cat.Name}/{cat.FriendlyName}");
         }
@@ -163,5 +169,7 @@ namespace CustomComponents
             changes.Enqueue(new Change_Remove(toremove.ComponentRef.ComponentDefID, location));
             return string.Empty;
         }
+
+        public bool Valid => hpInfo != null;
     }
 }

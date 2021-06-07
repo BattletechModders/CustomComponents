@@ -123,6 +123,7 @@
     <Compile Include="Interfaces\IAdjustDescription.cs" />
     <Compile Include="Interfaces\IIsDestroyed.cs" />
     <Compile Include="AllowedLocations\EquipLocationTag.cs" />
+    <Compile Include="Interfaces\IValid.cs" />
     <Compile Include="InventoryOperations\Changes\Change_Add.cs" />
     <Compile Include="InventoryOperations\Changes\Change_Remove.cs" />
     <Compile Include="InventoryOperations\Changes\IChange_Adjust.cs" />

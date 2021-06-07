@@ -58,11 +58,16 @@ namespace CustomComponents
             Icon.vectorGraphics = wc.WeaponCategory.GetIcon();
             Text.SetText(text);
 
-            if (Control.Settings.ColorHardpoints)
+            if (Control.Settings.ColorHardpointsIcon)
             {
                 IconColor.SetUIColor(wc.WeaponCategory.GetUIColor());
-                //TextColor.SetUIColor(wc.WeaponCategory.GetUIColor());
             }
+
+            if (Control.Settings.ColorHardpointsText)
+            {
+                TextColor.SetUIColor(wc.WeaponCategory.GetUIColor());
+            }
+
         }
     }
 }
