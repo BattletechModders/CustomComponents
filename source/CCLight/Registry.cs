@@ -152,36 +152,16 @@ namespace CustomComponents
                 }
             }
 
-#if CCDEBUG
-            bool loaded = false;
-#endif
+            var loaded = false;
             foreach (var factory in Factories)
             {
-                foreach (var component in factory.Create(target, values))
+                try
                 {
-#if CCDEBUG
-                    loaded = true;
-#endif
-                    if (component == null)
-                    {
-                        continue;
-                    }
-
-                    Control.LogDebug(DType.CCLoading, $"Created {component} for {identifier}");
-
-                    if (Database.SetCustomWithIdentifier(identifier, component, replace))
-                    {
-                        if (component is IAfterLoad load)
-                        {
-                            Control.LogDebug(DType.CCLoading, $"IAfterLoad: {identifier}");
-                            load.OnLoaded(values);
-                        }
-
-                        if (component is IAdjustDescription ed)
-                        {
-                            ed.AdjustDescription();
-                        }
-                    }
+                    ProcessCustomFactory(factory, target, values, replace, identifier, ref loaded);
+                }
+                catch (Exception e)
+                {
+                    Control.LogError($"Error when processing custom factory {factory.CustomName} for {target.GetType()} ({target.GetHashCode()})", e);
                 }
             }
 
@@ -208,8 +188,42 @@ namespace CustomComponents
 
                 Control.LogDebug(DType.CCLoadingSummary, "- done");
             }
-
 #endif
+
+        }
+
+        private static void ProcessCustomFactory(
+            ICustomFactory factory,
+            object target,
+            Dictionary<string, object> values,
+            bool replace,
+            string identifier,
+            ref bool loaded)
+        {
+            foreach (var component in factory.Create(target, values))
+            {
+                loaded = true;
+                if (component == null)
+                {
+                    continue;
+                }
+
+                Control.LogDebug(DType.CCLoading, $"Created {component} for {identifier}");
+
+                if (Database.SetCustomWithIdentifier(identifier, component, replace))
+                {
+                    if (component is IAfterLoad load)
+                    {
+                        Control.LogDebug(DType.CCLoading, $"IAfterLoad: {identifier}");
+                        load.OnLoaded(values);
+                    }
+
+                    if (component is IAdjustDescription ed)
+                    {
+                        ed.AdjustDescription();
+                    }
+                }
+            }
         }
     }
 }
