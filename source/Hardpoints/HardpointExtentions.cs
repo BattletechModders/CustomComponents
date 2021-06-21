@@ -200,6 +200,12 @@ namespace CustomComponents
             return mechdef?.Chassis?.MaxJumpjets ?? 0;
         }
 
+        // returns -1 if JJ max count can't be calculated based on Chassis
+        public static int GetJJMax(this ChassisDef chassisdef)
+        {
+            return chassisdef?.MaxJumpjets ?? 0;
+        }
+
         public static int GetJJCount(this MechDef mechdef)
         {
             return mechdef?.Inventory.Count(i => i.ComponentDefType == ComponentType.JumpJet) ?? 0;
