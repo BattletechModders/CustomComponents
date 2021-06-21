@@ -199,10 +199,6 @@ namespace CustomComponents
         {
             return mechdef?.Chassis?.MaxJumpjets ?? 0;
         }
-        public static int GetJJMax(this ChassisDef chassis)
-        {
-            return chassis?.MaxJumpjets ?? 0;
-        }
 
         public static int GetJJCount(this MechDef mechdef)
         {
