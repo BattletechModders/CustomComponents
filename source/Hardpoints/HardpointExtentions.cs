@@ -206,9 +206,9 @@ namespace CustomComponents
             return def?.MaxJumpjets ?? 0;
         }
 
-        public static int GetJJCount(this MechDef mechdef)
+        public static int GetJJCountByMechDef(this MechDef def)
         {
-            return mechdef?.Inventory.Count(i => i.ComponentDefType == ComponentType.JumpJet) ?? 0;
+            return def?.Inventory.Count(i => i.ComponentDefType == ComponentType.JumpJet) ?? 0;
         }
 
         public static List<HPUsage> GetHardpoints(this ChassisDef chassis, SortOrder sort = SortOrder.Usage)
