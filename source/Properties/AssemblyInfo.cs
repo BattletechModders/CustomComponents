@@ -1,15 +1,4 @@
-﻿using System.Reflection;
-using System.Runtime.InteropServices;
-
-[assembly: AssemblyTitle("CustomComponents")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("CustomComponents")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2018")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+﻿using System.Runtime.InteropServices;
 
 [assembly: ComVisible(false)]
-
 [assembly: Guid("7e755f55-106a-4f0d-a970-0ba7fc6c5662")]
