@@ -6,6 +6,7 @@ log.txt
 /*.dll
 /dist
 Directory.Build.props
+settings.json
 
 # User-specific files
 *.suo

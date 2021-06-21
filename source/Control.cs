@@ -15,7 +15,7 @@ namespace CustomComponents
 
     public static class Control
     {
-        public static CustomComponentSettings Settings = new CustomComponentSettings();
+        public static CustomComponentSettings Settings = new();
 
         private static ILog Logger;
         private static FileLogAppender logAppender;
@@ -23,7 +23,7 @@ namespace CustomComponents
         internal const string CustomSectionName = "Custom";
         internal static string LogPrefix = "[CC]";
 
-        public static void Init(string directory, string settingsJSON)
+        public static void Init(string directory, string defaultsSettingsJson)
         {
             Logger = HBS.Logging.Logger.GetLogger("CustomComponents", LogLevel.Debug);
             SetupLogging(directory);
@@ -32,18 +32,29 @@ namespace CustomComponents
             {
                 try
                 {
-
-                    Settings = new CustomComponentSettings();
-                    JSONSerializationUtility.FromJSON(Settings, settingsJSON);
-                    HBS.Logging.Logger.SetLoggerLevel(Logger.Name, Settings.LogLevel);
+                    JSONSerializationUtility.FromJSON(Settings, defaultsSettingsJson);
                 }
                 catch (Exception e)
                 {
-                    Logger.LogError("Couldn't load settings", e);
+                    Logger.LogError("Couldn't load default settings", e);
                     Settings = new CustomComponentSettings();
                 }
 
+                var settingsPath = Path.Combine(directory, "settings.json");
+                if (File.Exists(settingsPath))
+                {
+                    try
+                    {
+                        var settingsJson = File.ReadAllText(settingsPath);
+                        JSONSerializationUtility.FromJSON(Settings, settingsJson);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.LogError("Couldn't load settings", e);
+                    }
+                }
 
+                HBS.Logging.Logger.SetLoggerLevel(Logger.Name, Settings.LogLevel);
                 Settings.Complete();
 
                 if (Control.Settings.DEBUG_ShowConfig)
@@ -129,7 +140,7 @@ namespace CustomComponents
             var Manifests = customResources;
 
             Control.LogDebug(DType.CustomResource, "Custom Resource Load started");
-            
+
             UnitTypeDatabase.Instance.Setup(Manifests);
             CategoryController.Shared.Setup(Manifests);
             DefaultsDatabase.Instance.Setup(Manifests);
