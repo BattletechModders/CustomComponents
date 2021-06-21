@@ -5,6 +5,7 @@ using BattleTech.UI.TMProWrapper;
 using Harmony;
 using SVGImporter;
 using UnityEngine;
+using UIColor = BattleTech.UI.UIColor;
 
 namespace CustomComponents
 {
@@ -39,6 +40,8 @@ namespace CustomComponents
                 if (uicolor == UIColor.Custom)
                     TextColor.OverrideWithColor(color);
             }
+            else
+                TextColor.SetUIColor(UIColor.White);
         }
 
         private void SetIconColor()
@@ -49,6 +52,9 @@ namespace CustomComponents
                 if (uicolor == UIColor.Custom)
                     IconColor.OverrideWithColor(color);
             }
+            else
+                IconColor.SetUIColor(UIColor.White);
+
         }
 
         public abstract void Hide();

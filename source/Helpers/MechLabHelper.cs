@@ -56,6 +56,8 @@ namespace CustomComponents
                 if (top_layout == null)
                     return;
 
+                
+
                 var hp_layout = top_layout.Find("layout_hardpoints");
                 if (hp_layout == null)
                     return;
@@ -81,7 +83,7 @@ namespace CustomComponents
                 vertical.childControlHeight = true;
                 vertical.childControlWidth = true;
                 vertical.padding = new RectOffset(5, 5, 5, 5);
-                vertical.spacing = 2;
+                vertical.spacing = 1;
                 vertical.childAlignment = TextAnchor.MiddleCenter;
                 vertical.enabled = true;
 
@@ -114,7 +116,11 @@ namespace CustomComponents
 
                 GameObject.Destroy(sample.gameObject);
                 GameObject.Destroy(jj_layout.gameObject);
-               
+
+                var button = top_layout.Find("OBJ_stockBttn");
+                button.SetParent(hp_layout);
+                var l = button.gameObject.AddComponent<LayoutElement>();
+                l.minHeight = 50;
             }
             catch (Exception e)
             {
@@ -129,7 +135,7 @@ namespace CustomComponents
             JJWidget = new JJHardpointHeler(hpLayout.GetChild(0).gameObject);
 
             var list = HardpointController.Instance.HardpointsList.Where(i => i.Visible).ToArray();
-            for (int i = 1; i < hpLayout.childCount; i++)
+            for (int i = 1; i < hpLayout.childCount - 1; i++)
             {
                 var obj = hpLayout.GetChild(i).gameObject;
 
@@ -150,12 +156,18 @@ namespace CustomComponents
             var samlpe = parent.GetChild(0);
 
             var lc = samlpe.gameObject.AddComponent<LayoutElement>();
-            lc.minHeight = 20;
-            lc.minWidth = 40;
+            lc.minHeight = 25;
+            lc.minWidth = 65;
             var rect = samlpe.GetChild(0).GetComponent<RectTransform>();
             rect.sizeDelta = new Vector2(42f, rect.sizeDelta.y);
             var text = samlpe.GetChild(0).GetComponent<LocalizableText>();
             text.alignment = TextAlignmentOptions.Midline;
+            var image = samlpe.gameObject.GetComponent<Image>();
+            image.color = Color.black;
+            var hlg = samlpe.gameObject.AddComponent<HorizontalLayoutGroup>();
+            hlg.childControlWidth = true;
+            hlg.padding = new RectOffset(2,2,0,0);
+            
 
             return samlpe;
         }

@@ -218,7 +218,7 @@ namespace CustomComponents
 
         public int OmniCategoryID = 1000;
         public bool ColorHardpointsIcon = true;
-        public bool ColorHardpointsText = false;
+        public bool ColorHardpointsText = true;
 
         public void Complete()
         {
