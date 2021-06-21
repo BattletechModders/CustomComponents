@@ -15,6 +15,11 @@ namespace CustomComponents
         private string [] Compatible { get; set; }
         public bool AllowOnWeapon { get; set; } = true;
 
+        public bool AllowOmni { get; set; } = true;
+
+        public bool OverrideColor { get; set; } = false;
+        public Color HPColor { get; set; } = UnityEngine.Color.white;
+
         [JsonIgnore] public HashSet<int> CompatibleID { get; set; }
         [JsonIgnore] public WeaponCategoryValue WeaponCategory { get; set; }
         [JsonIgnore] public Color Color { get; set; }

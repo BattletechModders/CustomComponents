@@ -53,7 +53,6 @@ namespace CustomComponents
                 .Where(i => i.usehp != null)
                 .ToList();
 
-            //Control.Log("3");
 
             for (int i = loc_items.Count - 1; i >= 0; i--)
             {
@@ -65,8 +64,6 @@ namespace CustomComponents
                     loc_items.RemoveAt(i);
                 }
             }
-
-            //Control.Log("4");
 
 
             foreach (var usageRecord in usage)

@@ -117,6 +117,7 @@
     <Compile Include="Hardpoints\WeaponDefault.cs" />
     <Compile Include="Helpers\HardpointHelper.cs" />
     <Compile Include="Helpers\LocationHelper.HPUsage.cs" />
+    <Compile Include="Hardpoints\Patches\MechLabMechInfoWidget_GetTotalHardpoints.cs" />
     <Compile Include="Icons\IconController.cs" />
     <Compile Include="Icons\SVGAssets_Contains.cs" />
     <Compile Include="Icons\SVGCache_GetAsset.cs" />

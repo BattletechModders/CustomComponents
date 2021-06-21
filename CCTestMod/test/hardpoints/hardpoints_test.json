@@ -3,8 +3,7 @@
 		{
 			"ID" : "Omni",
 			"Visible" : true,
-			"AllowOnWeapon" : true,
-			"Compatible" : [ "Ballistic", "Energy", "Missile", "AntiPersonnel", "Test1", "Test2" ]
+			"AllowOnWeapon" : false,
 		},
 		{
 			"ID" : "Test1",
@@ -19,13 +18,15 @@
 		{
 			"ID" : "Test3",
 			"Visible" : true,
-			"AllowOnWeapon" : false
+			"AllowOnWeapon" : false,
+			"AllowOmni" : false,
 			"Compatible" : [ "Ballistic", "Test2" ]
 		},
 		{
 			"ID" : "Test4",
 			"Visible" : false,
-			"AllowOnWeapon" : true
+			"AllowOnWeapon" : true,
+			"AllowOmni" : false
 		}
 	]
 }

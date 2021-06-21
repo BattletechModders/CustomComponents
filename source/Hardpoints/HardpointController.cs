@@ -37,7 +37,8 @@ namespace CustomComponents
             {
                 ID = "Ballistic",
                 Visible = true,
-                AllowOnWeapon = true
+                AllowOnWeapon = true,
+                OverrideColor = false,
             };
             hp.Complete();
             HardpointsByName[hp.ID] = hp;
@@ -77,7 +78,8 @@ namespace CustomComponents
             {
                 ID = "AMS",
                 Visible = false,
-                AllowOnWeapon = true
+                AllowOnWeapon = true,
+                AllowOmni = false
             };
             hp.Complete();
             HardpointsByName[hp.ID] = hp;
@@ -87,7 +89,8 @@ namespace CustomComponents
             {
                 ID = "Melee",
                 Visible = false,
-                AllowOnWeapon = true
+                AllowOnWeapon = true,
+                AllowOmni = false
             };
             hp.Complete();
             HardpointsByName[hp.ID] = hp;
@@ -136,10 +139,27 @@ namespace CustomComponents
                     HardpointsByID[hp.WeaponCategory.ID] = hp;
                 }
             }
-            
             HardpointsList = HardpointsByName.Values.OrderBy(i => i.CompatibleID.Count).ToList();
+
+            HardpointInfo omni;
+            if (HardpointsByID.TryGetValue(Control.Settings.OmniCategoryID, out omni))
+            {
+                var list = HardpointsList
+                    .Where(i => i.Visible && i.AllowOnWeapon)
+                    .Select(i => new { name = i.ID, id = i.WeaponCategory.ID })
+                    .ToArray();
+
+                omni.CompatibleID = list.Select(i => i.id).ToHashSet();
+            }
+
             if (Control.Settings.DEBUG_ShowLoadedHardpoints)
+            {
                 Control.Log($"Hardpoints: Total {HardpointsList?.Count ?? 0} Loaded");
+                if(omni != null)
+                    Control.Log($"- omni list [{omni.CompatibleID.Aggregate("", (last, next) => last + " " + WeaponCategoryEnumeration.GetWeaponCategoryByID(next).FriendlyName)}]");
+                else
+                    Control.Log("- no omni hardpoint definition load");
+            }
         }
 
         public string PostValidatorDrop(MechLabItemSlotElement drop_item, List<InvItem> new_inventory)
@@ -162,10 +182,10 @@ namespace CustomComponents
             {
                 var hardpoints = mechDef.GetAllHardpoints(w_location.location, new_inventory);
 
-                foreach (var hardpoint in hardpoints)
-                {
-                    Control.Log($"{w_location.location} - {hardpoint.hpInfo.WeaponCategory.Name} - {hardpoint.Used}/{hardpoint.Total}");
-                }
+                //foreach (var hardpoint in hardpoints)
+                //{
+                //    Control.Log($"{w_location.location} - {hardpoint.hpInfo.WeaponCategory.Name} - {hardpoint.Used}/{hardpoint.Total}");
+                //}
 
                 foreach (var recrd in w_location.items)
                 {

@@ -32,7 +32,7 @@ namespace CustomComponents
 
         public List<HPUsage> HardpointsUsage { get; private set; }
 
-        public HardpointHelper[] HardpointWidgets { get; private set; }
+        public LocationHardpointHelper[] HardpointWidgets { get; private set; }
 
         public void UpdateHardpointUsage()
         {
@@ -50,7 +50,7 @@ namespace CustomComponents
 
             foreach (var item in LocalInventory
                 .Select(i => i.ComponentRef.GetComponent<UseHardpointCustom>())
-                .Where(i => i!=null && !i.WeaponCategory.Is_NotSet))
+                .Where(i => i != null && !i.WeaponCategory.Is_NotSet))
             {
                 HPUsage first = null;
                 bool found = false;
@@ -216,12 +216,17 @@ namespace CustomComponents
                 if (HardpointWidgets == null || HardpointWidgets.Length != 4)
                     return;
 
+                //Control.Log($"{Location} - refresh hardpoints");
+
                 int active_hp = 0;
                 for (int i = 0; i < 4; i++)
                 {
+                    var widget = HardpointWidgets[i];
+
                     if (HardpointsUsage == null)
                     {
-                        HardpointWidgets[i].Hide();
+                        Control.LogError($"- {Location} widget #{i} not exist, skip");
+                        widget.Hide();
                         continue;
                     }
 
@@ -229,10 +234,24 @@ namespace CustomComponents
                         active_hp += 1;
 
                     if (active_hp < HardpointsUsage.Count)
-                        HardpointWidgets[i].SetData(HardpointsUsage[active_hp].hpInfo,
-                            $"{HardpointsUsage[active_hp].Used}/{HardpointsUsage[active_hp].Total}");
+                    {
+                        var hp = HardpointsUsage[active_hp];
+
+                        if (widget == null)
+                        {
+                            //Control.LogError($"- {i} widget null");
+                            break;
+                        }
+
+                        if (widget.WeaponCategory == null || widget.WeaponCategory.ID != HardpointsUsage[active_hp].hpInfo.WeaponCategory.ID)
+                            widget.Init(hp.hpInfo);
+                        //Control.Log($"- {i} set to {hp.Used}/{hp.Total}");
+
+                        widget.SetText(hp.Used, hp.Total);
+                    }
                     else
-                        HardpointWidgets[i].Hide();
+                        widget.Hide();
+
                     active_hp += 1;
                 }
             }
@@ -251,7 +270,7 @@ namespace CustomComponents
             HardpointWidgets = main
                 .Field<MechLabHardpointElement[]>("hardpoints")
                 .Value
-                .Select(i => new HardpointHelper(i))
+                .Select(i => new LocationHardpointHelper(i))
                 .ToArray();
 
             UpdateHardpointUsage();

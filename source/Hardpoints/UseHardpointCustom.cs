@@ -26,7 +26,7 @@ namespace CustomComponents
             WeaponCategory = cat ?? WeaponCategoryEnumeration.GetNotSetValue();
 
             hpInfo = WeaponCategory.Is_NotSet ? null : HardpointController.Instance[WeaponCategory];
-            if (hpInfo != null && hpInfo.AllowOnWeapon)
+            if (hpInfo != null && !hpInfo.AllowOnWeapon)
             {
                 Control.LogError($"{Def.Description.Id} use {value} weapon category that cannot be used on weapons");
                 hpInfo = null;
