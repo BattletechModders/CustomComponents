@@ -5,6 +5,9 @@
 log.txt
 /*.dll
 /dist
+modstate.json
+Directory.Build.props
+settings.json
 
 # User-specific files
 *.suo
@@ -265,4 +268,3 @@ paket-files/
 __pycache__/
 *.pyc
 /readme_images
-/modstate.json

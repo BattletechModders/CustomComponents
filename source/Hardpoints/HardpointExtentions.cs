@@ -195,14 +195,20 @@ namespace CustomComponents
             return mech?.Chassis.GetHardpoints(sort);
         }
 
-        public static int GetJJMax(this MechDef mechdef)
+        public static int GetJJMaxByMechDef(this MechDef def)
         {
-            return mechdef?.Chassis?.MaxJumpjets ?? 0;
+            return GetJJMaxByChassisDef(def?.Chassis);
         }
 
-        public static int GetJJCount(this MechDef mechdef)
+        // returns -1 if JJ max count can't be calculated based on Chassis
+        public static int GetJJMaxByChassisDef(this ChassisDef def)
         {
-            return mechdef?.Inventory.Count(i => i.ComponentDefType == ComponentType.JumpJet) ?? 0;
+            return def?.MaxJumpjets ?? 0;
+        }
+
+        public static int GetJJCountByMechDef(this MechDef def)
+        {
+            return def?.Inventory.Count(i => i.ComponentDefType == ComponentType.JumpJet) ?? 0;
         }
 
         public static List<HPUsage> GetHardpoints(this ChassisDef chassis, SortOrder sort = SortOrder.Usage)

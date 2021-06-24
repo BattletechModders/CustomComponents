@@ -377,7 +377,7 @@ namespace CustomComponents
                 else
                     widget.Value.Hide();
             }
-            JJWidget.SetText(ActiveMech.GetJJCount(), ActiveMech.GetJJMax());
+            JJWidget.SetText(ActiveMech.GetJJCountByMechDef(), ActiveMech.GetJJMaxByMechDef());
         }
     }
 }
