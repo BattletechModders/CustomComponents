@@ -2,7 +2,10 @@
 using BattleTech;
 using BattleTech.UI;
 using BattleTech.UI.TMProWrapper;
+using BattleTech.UI.Tooltips;
+using CustomComponents.Patches;
 using Harmony;
+using Localize;
 using SVGImporter;
 using UnityEngine;
 using UIColor = BattleTech.UI.UIColor;
@@ -14,22 +17,43 @@ namespace CustomComponents
     {
         public HardpointInfo HPInfo { get; protected set; }
 
-        public virtual void InitJJ(SVGAsset JJIcon)
-        {
-            HPInfo = null;
 
-            color = Color.white;
-            init(JJIcon);
-        }
+        public abstract void Hide();
+        public abstract void Show();
 
-        protected void init(SVGAsset image)
+
+        protected UIColor uicolor;
+        protected Color color;
+        
+
+        public LocalizableText Text { get; protected set; }
+        public SVGImage Icon { get; protected set; }
+        public UIColorRefTracker TextColor { get; protected set; }
+        public UIColorRefTracker IconColor { get; protected set; }
+        public HBSTooltip Tooltip { get; protected set; }
+
+        protected void init(SVGAsset image, string tooltip)
         {
             Icon.vectorGraphics = image;
             Text.SetText("-");
 
             SetIconColor();
             SetTextColor();
+            SetTooltip(tooltip);
             Show();
+        }
+
+        protected virtual void SetTooltip(string text)
+        {
+            if (Tooltip == null)
+                return;
+
+            var loctext = new Text(text);
+
+            var desc = new BaseDescriptionDef("hardpoint", "Hardpoint", loctext.ToString(),
+                HPInfo == null ? "" : HPInfo.WeaponCategory.Icon);
+
+            Tooltip.SetDefaultStateData(TooltipUtilities.GetStateDataFromObject(desc));
         }
 
         private void SetTextColor()
@@ -57,18 +81,6 @@ namespace CustomComponents
 
         }
 
-        public abstract void Hide();
-        public abstract void Show();
-
-
-        protected UIColor uicolor;
-        protected Color color;
-
-
-        public LocalizableText Text { get; protected set; }
-        public SVGImage Icon { get; protected set; }
-        public UIColorRefTracker TextColor { get; protected set; }
-        public UIColorRefTracker IconColor { get; protected set; }
 
         public virtual void SetText(int used, int max)
         {
@@ -114,6 +126,7 @@ namespace CustomComponents
             this.Icon = traverse.Field<SVGImage>("hardpointIcon").Value;
             this.IconColor = Icon.GetComponent<UIColorRefTracker>();
             this.Canvas = traverse.Field<CanvasGroup>("thisCanvasGroup").Value;
+            this.Tooltip = element.GetComponent<HBSTooltip>();
         }
 
         public virtual void Init(HardpointInfo hpinfo)
@@ -137,7 +150,7 @@ namespace CustomComponents
             else
                 uicolor = HPInfo.WeaponCategory.GetUIColor();
 
-            init(HPInfo.WeaponCategory.GetIcon());
+            init(HPInfo.WeaponCategory.GetIcon(), $"i am {hpinfo.WeaponCategory.FriendlyName} hardpoint!");
         }
 
         public override void Hide()
@@ -167,8 +180,9 @@ namespace CustomComponents
             TextColor = Text.GetComponent<UIColorRefTracker>();
             IconColor = Icon.GetComponent<UIColorRefTracker>();
 
+            Tooltip = jjgo.GetComponent<HBSTooltip>();
 
-            init(Icon.vectorGraphics);
+            init(Icon.vectorGraphics, "JumpJets are useless, trust me");
         }
 
         public JJHardpointHeler(GameObject jjgo, Transform jj)
@@ -184,9 +198,10 @@ namespace CustomComponents
             IconColor = Icon.GetComponent<UIColorRefTracker>();
 
             var icon = jj.GetComponentInChildren<SVGImage>();
+            Tooltip = jjgo.GetComponent<HBSTooltip>();
 
 
-            init(icon.vectorGraphics);
+            init(icon.vectorGraphics, "JumpJets are useless, trust me");
         }
         public override void Hide()
         {
@@ -220,8 +235,9 @@ namespace CustomComponents
 
             TextColor = Text.GetComponent<UIColorRefTracker>();
             IconColor = Icon.GetComponent<UIColorRefTracker>();
-            
-            init(hpinfo.WeaponCategory.GetIcon());
+            Tooltip = hpgo.GetComponent<HBSTooltip>();
+
+            init(hpinfo.WeaponCategory.GetIcon(), $"i am {hpinfo.WeaponCategory.FriendlyName} hardpoint!");
 
         }
 

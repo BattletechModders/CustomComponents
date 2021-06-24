@@ -67,6 +67,26 @@ namespace CustomComponents
         FULL = 0xffffff,
     }
 
+
+    [Serializable]
+    public class Tootips
+    {
+        public string JJCaption = "JumpJets";
+        public string JJTooltip = "Jump Jets funnel superheated air to propel 'Mechs over obstacles in a controlled manner. Additionally, they may also be used to perform the dreaded 'Death from Above' attack.";
+
+        public string Alert_UnneededAmmo = "Unused ammo";
+        public string Alert_Underweight = "Underweight";
+        public string Alert_Overweight = "Overweight";
+        public string Alert_Destroyed = "Location Destroyed";
+        public string Alert_NoAmmo = "No ammo";
+        public string Alert_MissingWeapon = "Missing weapon";
+        public string Alert_Inventory = "Invalid equipment";
+        public string Alert_Generic = "Error";
+        public string Alert_Damaged = "Structure damaged";
+
+    }
+
+    [Serializable]
     public class ErrorMessages
     {
         public string WrongWeaponCount = "Cannot equip more then {0} weapons";
