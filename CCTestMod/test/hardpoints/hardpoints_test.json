@@ -4,23 +4,34 @@
 			"ID" : "Omni",
 			"Visible" : true,
 			"AllowOnWeapon" : false,
+			"AllowOmni" : true,
+			"Description" : "A 'Mech can mount a limited number of weapons of each type, represented by 'hardpoints.` Omni hardpoints is special kind of them allowing install any weapon",
+            "TooltipCaption" : "Omni Hardpoints",		
 		},
 		{
 			"ID" : "Test1",
 			"Visible" : true,
 			"AllowOnWeapon" : true
+			"AllowOmni" : true,
+			"Description" : "A 'Mech can mount a limited number of weapons of each type, represented by 'hardpoints.' Test2 hardpoints allow install Test1 weapons",
+            "TooltipCaption" : "test1 Hardpoints"
 		},
 		{
 			"ID" : "Test2",
 			"Visible" : true,
 			"AllowOnWeapon" : true
+			"AllowOmni" : true,
+			"Description" : "A 'Mech can mount a limited number of weapons of each type, represented by 'hardpoints.' Test2 hardpoints allow install Test2 weapons",
+            "TooltipCaption" : "test2 Hardpoints"
 		},
 		{
 			"ID" : "Test3",
 			"Visible" : true,
 			"AllowOnWeapon" : false,
 			"AllowOmni" : false,
-			"Compatible" : [ "Ballistic", "Test2" ]
+			"Compatible" : [ "Ballistic", "Test2" ],
+			"Description" : "A 'Mech can mount a limited number of weapons of each type, represented by 'hardpoints.' Test3 hardpoints allow install balistic and Test2 weapons",
+            "TooltipCaption" : "test3 Hardpoints"
 		},
 		{
 			"ID" : "Test4",

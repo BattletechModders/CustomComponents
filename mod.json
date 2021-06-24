@@ -131,6 +131,10 @@
             "Path": "data/unittypes"
         },
 		{
+            "Type": "CCHardpoints",
+            "Path": "data/hardpoints"
+        },
+		{
             "Type": "SVGAsset",
             "Path": "CCTestMod/test/icons"
         },

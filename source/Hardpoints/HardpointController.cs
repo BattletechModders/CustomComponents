@@ -31,72 +31,81 @@ namespace CustomComponents
 
         public List<HardpointInfo> HardpointsList { get; private set; }
 
-        public void SetupDefaults()
-        {
-            var hp = new HardpointInfo()
-            {
-                ID = "Ballistic",
-                Visible = true,
-                AllowOnWeapon = true,
-                OverrideColor = false,
-            };
-            hp.Complete();
-            HardpointsByName[hp.ID] = hp;
-            HardpointsByID[hp.WeaponCategory.ID] = hp;
+        //public void SetupDefaults()
+        //{
+        //    var hp = new HardpointInfo()
+        //    {
+        //        ID = "Ballistic",
+        //        Visible = true,
+        //        AllowOnWeapon = true,
+        //        OverrideColor = false,
+        //        Description = "A 'Mech can mount a limited number of weapons of each type, represented by 'hardpoints.' Ballistic hardpoints can mount Autocannon weapon systems, including the AC/2, AC/5, AC/10, and AC/20.",
+        //        TooltipCaption = "Ballistic Hardpoints"
 
-            hp = new HardpointInfo()
-            {
-                ID = "Energy",
-                Visible = true,
-                AllowOnWeapon = true
-            };
-            hp.Complete();
-            HardpointsByName[hp.ID] = hp;
-            HardpointsByID[hp.WeaponCategory.ID] = hp;
+        //    };
+        //    hp.Complete();
+        //    HardpointsByName[hp.ID] = hp;
+        //    HardpointsByID[hp.WeaponCategory.ID] = hp;
 
-            hp = new HardpointInfo()
-            {
-                ID = "Missile",
-                Visible = true,
-                AllowOnWeapon = true
-            };
-            hp.Complete();
-            HardpointsByName[hp.ID] = hp;
-            HardpointsByID[hp.WeaponCategory.ID] = hp;
+        //    hp = new HardpointInfo()
+        //    {
+        //        ID = "Energy",
+        //        Visible = true,
+        //        AllowOnWeapon = true,
+        //        Description = "A 'Mech can mount a limited number of weapons of each type, represented by 'hardpoints.' Energy hardpoints can mount Energy weapon systems, including Medium Lasers, Large Lasers, and PPCs.",
+        //        TooltipCaption = "Energy Hardpoints"
+        //    };
+        //    hp.Complete();
+        //    HardpointsByName[hp.ID] = hp;
+        //    HardpointsByID[hp.WeaponCategory.ID] = hp;
 
-            hp = new HardpointInfo()
-            {
-                ID = "AntiPersonnel",
-                Visible = true,
-                AllowOnWeapon = true
-            };
-            hp.Complete();
-            HardpointsByName[hp.ID] = hp;
-            HardpointsByID[hp.WeaponCategory.ID] = hp;
+        //    hp = new HardpointInfo()
+        //    {
+        //        ID = "Missile",
+        //        Visible = true,
+        //        AllowOnWeapon = true,
+        //        Description = "A 'Mech can mount a limited number of weapons of each type, represented by 'hardpoints.' Missile hardpoints can mount short- and long-range missile systems (SRMs and LRMs).",
+        //        TooltipCaption = "Missile Hardpoints"
+        //    };
+        //    hp.Complete();
+        //    HardpointsByName[hp.ID] = hp;
+        //    HardpointsByID[hp.WeaponCategory.ID] = hp;
 
-            hp = new HardpointInfo()
-            {
-                ID = "AMS",
-                Visible = false,
-                AllowOnWeapon = true,
-                AllowOmni = false
-            };
-            hp.Complete();
-            HardpointsByName[hp.ID] = hp;
-            HardpointsByID[hp.WeaponCategory.ID] = hp;
+        //    hp = new HardpointInfo()
+        //    {
+        //        ID = "AntiPersonnel",
+        //        Visible = true,
+        //        AllowOnWeapon = true,
+        //        Description = "A 'Mech can mount a limited number of weapons of each type, represented by 'hardpoints.' Support weapon hardpoints can mount antipersonnel weapon systems, including the Small Laser, Machine Gun, and Flamer.",
+        //        TooltipCaption = "Support Weapon Hardpoints"
+        //    };
+        //    hp.Complete();
+        //    HardpointsByName[hp.ID] = hp;
+        //    HardpointsByID[hp.WeaponCategory.ID] = hp;
 
-            hp = new HardpointInfo()
-            {
-                ID = "Melee",
-                Visible = false,
-                AllowOnWeapon = true,
-                AllowOmni = false
-            };
-            hp.Complete();
-            HardpointsByName[hp.ID] = hp;
-            HardpointsByID[hp.WeaponCategory.ID] = hp;
+        //    hp = new HardpointInfo()
+        //    {
+        //        ID = "AMS",
+        //        Visible = false,
+        //        AllowOnWeapon = true,
+        //        AllowOmni = false
+        //    };
+        //    hp.Complete();
+        //    HardpointsByName[hp.ID] = hp;
+        //    HardpointsByID[hp.WeaponCategory.ID] = hp;
 
-        }
+        //    hp = new HardpointInfo()
+        //    {
+        //        ID = "Melee",
+        //        Visible = false,
+        //        AllowOnWeapon = true,
+        //        AllowOmni = false
+        //    };
+        //    hp.Complete();
+        //    HardpointsByName[hp.ID] = hp;
+        //    HardpointsByID[hp.WeaponCategory.ID] = hp;
+
+        //}
 
         public HardpointInfo this[WeaponCategoryValue wc] => wc == null ? null : this[wc.Name];
 
@@ -127,7 +136,7 @@ namespace CustomComponents
 
         public void Setup(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
-            SetupDefaults();
+            //SetupDefaults();
 
             foreach (var hp in SettingsResourcesTools.Enumerate<HardpointInfo>("CCHardpoints", customResources))
             {

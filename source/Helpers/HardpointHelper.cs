@@ -32,25 +32,26 @@ namespace CustomComponents
         public UIColorRefTracker IconColor { get; protected set; }
         public HBSTooltip Tooltip { get; protected set; }
 
-        protected void init(SVGAsset image, string tooltip)
+        protected void init(SVGAsset image, string caption, string tooltip)
         {
             Icon.vectorGraphics = image;
             Text.SetText("-");
 
             SetIconColor();
             SetTextColor();
-            SetTooltip(tooltip);
+            SetTooltip(caption,tooltip);
             Show();
         }
 
-        protected virtual void SetTooltip(string text)
+        protected virtual void SetTooltip(string caption, string text)
         {
             if (Tooltip == null)
                 return;
 
             var loctext = new Text(text);
+            var captest = new Text(caption);
 
-            var desc = new BaseDescriptionDef("hardpoint", "Hardpoint", loctext.ToString(),
+            var desc = new BaseDescriptionDef("hardpoint", captest.ToString(), loctext.ToString(),
                 HPInfo == null ? "" : HPInfo.WeaponCategory.Icon);
 
             Tooltip.SetDefaultStateData(TooltipUtilities.GetStateDataFromObject(desc));
@@ -150,7 +151,7 @@ namespace CustomComponents
             else
                 uicolor = HPInfo.WeaponCategory.GetUIColor();
 
-            init(HPInfo.WeaponCategory.GetIcon(), $"i am {hpinfo.WeaponCategory.FriendlyName} hardpoint!");
+            init(HPInfo.WeaponCategory.GetIcon(), hpinfo.TooltipCaption, hpinfo.Description);
         }
 
         public override void Hide()
@@ -182,7 +183,7 @@ namespace CustomComponents
 
             Tooltip = jjgo.GetComponent<HBSTooltip>();
 
-            init(Icon.vectorGraphics, "JumpJets are useless, trust me");
+            init(Icon.vectorGraphics, Control.Settings.ToolTips.JJCaption, Control.Settings.ToolTips.JJTooltip);
         }
 
         public JJHardpointHeler(GameObject jjgo, Transform jj)
@@ -201,7 +202,7 @@ namespace CustomComponents
             Tooltip = jjgo.GetComponent<HBSTooltip>();
 
 
-            init(icon.vectorGraphics, "JumpJets are useless, trust me");
+            init(icon.vectorGraphics, Control.Settings.ToolTips.JJCaption, Control.Settings.ToolTips.JJTooltip);
         }
         public override void Hide()
         {
@@ -237,7 +238,7 @@ namespace CustomComponents
             IconColor = Icon.GetComponent<UIColorRefTracker>();
             Tooltip = hpgo.GetComponent<HBSTooltip>();
 
-            init(hpinfo.WeaponCategory.GetIcon(), $"i am {hpinfo.WeaponCategory.FriendlyName} hardpoint!");
+            init(hpinfo.WeaponCategory.GetIcon(), hpinfo.TooltipCaption, hpinfo.Description);
 
         }
 

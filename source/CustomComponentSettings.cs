@@ -69,10 +69,10 @@ namespace CustomComponents
 
 
     [Serializable]
-    public class Tootips
+    public class Tooltips
     {
-        public string JJCaption = "JumpJets";
-        public string JJTooltip = "Jump Jets funnel superheated air to propel 'Mechs over obstacles in a controlled manner. Additionally, they may also be used to perform the dreaded 'Death from Above' attack.";
+        public string JJCaption = "Jump Jet Hardpoints";
+        public string JJTooltip = "A 'Mech can mount a limited number of Jump Jets, determined by its relative max speed. The number of Jump Jets a 'Mech can mount is represented by its Jump Jet 'hardpoint' total.";
 
         public string Alert_UnneededAmmo = "Unused ammo";
         public string Alert_Underweight = "Underweight";
@@ -83,7 +83,6 @@ namespace CustomComponents
         public string Alert_Inventory = "Invalid equipment";
         public string Alert_Generic = "Error";
         public string Alert_Damaged = "Structure damaged";
-
     }
 
     [Serializable]
@@ -235,6 +234,7 @@ namespace CustomComponents
         public bool AllowMechlabWrongHardpoints = false;
 
         public ErrorMessages Message = new ErrorMessages();
+        public Tooltips ToolTips = new Tooltips();
 
         public int OmniCategoryID = 1000;
         public bool ColorHardpointsIcon = true;
@@ -252,6 +252,8 @@ namespace CustomComponents
                     if (!ColorTagsDictionary.ContainsKey(colorTag.Tag))
                         ColorTagsDictionary.Add(colorTag.Tag, colorTag.ToColor());
                 }
+            if(ToolTips == null)
+                ToolTips = new Tooltips();
         }
     }
 }

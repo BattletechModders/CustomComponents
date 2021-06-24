@@ -31,7 +31,7 @@ namespace CustomComponents.Patches
         public static void SetTooltip(GameObject ___damagedAlert, List<Text> errors)
         {
             if (errors.Count > 0)
-                ___damagedAlert.SetTooltip(errors, "damaged");
+                ___damagedAlert.SetTooltip(errors, Control.Settings.ToolTips.Alert_Damaged);
         }
 
     }
@@ -44,7 +44,7 @@ namespace CustomComponents.Patches
         public static void SetTooltip(GameObject ___genericAlert, List<Text> errors)
         {
             if (errors.Count > 0)
-                ___genericAlert.SetTooltip(errors, "generic");
+                ___genericAlert.SetTooltip(errors, Control.Settings.ToolTips.Alert_Generic);
         }
 
     }
@@ -57,7 +57,7 @@ namespace CustomComponents.Patches
         public static void SetTooltip(GameObject ___inventoryAlert, List<Text> errors)
         {
             if (errors.Count > 0)
-                ___inventoryAlert.SetTooltip(errors, "inventory");
+                ___inventoryAlert.SetTooltip(errors, Control.Settings.ToolTips.Alert_Inventory);
         }
 
     }
@@ -69,7 +69,7 @@ namespace CustomComponents.Patches
         public static void SetTooltip(GameObject ___missingWeaponAlert, List<Text> errors)
         {
             if (errors.Count > 0)
-                ___missingWeaponAlert.SetTooltip(errors, "missing weapon");
+                ___missingWeaponAlert.SetTooltip(errors, Control.Settings.ToolTips.Alert_MissingWeapon);
         }
 
     }
@@ -81,7 +81,7 @@ namespace CustomComponents.Patches
         public static void SetTooltip(GameObject ___noAmmoAlert, List<Text> errors)
         {
             if (errors.Count > 0)
-                ___noAmmoAlert.SetTooltip(errors, "no ammo");
+                ___noAmmoAlert.SetTooltip(errors, Control.Settings.ToolTips.Alert_NoAmmo);
         }
 
     }
@@ -94,7 +94,7 @@ namespace CustomComponents.Patches
         public static void SetTooltip(GameObject ___destroyedAlert, List<Text> errors)
         {
             if (errors.Count > 0)
-                ___destroyedAlert.SetTooltip(errors, "destroyed");
+                ___destroyedAlert.SetTooltip(errors, Control.Settings.ToolTips.Alert_Destroyed);
         }
 
     }
@@ -108,7 +108,7 @@ namespace CustomComponents.Patches
         public static void SetTooltip(GameObject ___overweightAlert, List<Text> errors)
         {
             if (errors.Count > 0)
-                ___overweightAlert.SetTooltip(errors, "overweight");
+                ___overweightAlert.SetTooltip(errors, Control.Settings.ToolTips.Alert_Overweight);
         }
 
     }
@@ -121,7 +121,7 @@ namespace CustomComponents.Patches
         public static void SetTooltip(GameObject ___underweightAlert, List<Text> errors)
         {
             if (errors.Count > 0)
-                ___underweightAlert.SetTooltip(errors, "underweight");
+                ___underweightAlert.SetTooltip(errors, Control.Settings.ToolTips.Alert_Underweight);
         }
 
     }
@@ -134,7 +134,7 @@ namespace CustomComponents.Patches
         public static void SetTooltip(GameObject ___unneededAmmoAlert, List<Text> errors)
         {
             if (errors.Count > 0)
-                ___unneededAmmoAlert.SetTooltip(errors, "unneed ammo");
+                ___unneededAmmoAlert.SetTooltip(errors, Control.Settings.ToolTips.Alert_UnneededAmmo);
         }
 
     }
