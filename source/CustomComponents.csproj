@@ -6,13 +6,14 @@
     <ProjectGuid>{7E755F55-106A-4F0D-A970-0BA7FC6C5662}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CustomComponents</RootNamespace>
-    <AssemblyName>CustomComponents</AssemblyName>
     <TargetFramework>net472</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
-    <OutputPath>..\</OutputPath>
+    <!-- these output paths make VS crash on a file rename-->
+<!--    <OutputPath>..\</OutputPath>-->
+<!--    <OutputPath>$(SolutionDir)</OutputPath>-->
+<!--    <OutputPath>$(BattleTechGameDir)\Mods\CustomComponents</OutputPath>-->
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>preview</LangVersion>
