@@ -24,6 +24,9 @@
       $(ReferencePath);
     </AssemblySearchPaths>
   </PropertyGroup>
+  <Target Name="CopyDLLtoModDir" AfterTargets="AfterBuild">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionDir)/../" />
+  </Target>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>embedded</DebugType>
