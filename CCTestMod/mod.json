@@ -1,0 +1,54 @@
+{
+	"Name": "CCTestMod",
+	"Author": "Denadan",
+	"Website": "https://github.com/BattletechModders/CustomComponents",
+
+	"Enabled": true,
+	"DependsOn": ["CustomComponents"],
+	"CustomResourceTypes": [ "CCCategories", "CCDefaults", "CCTagRestrictions", "CustomSVGIcon", "CCHardpoints", "CCCEquipLocationTag", "CCUnitTypes" ],
+
+	"Manifest" : [
+		{
+			"Type" : "CCCategories",
+			"Path" : "test/categories"
+		},
+		{
+			"Type" : "CCDefaults",
+			"Path" : "test/defaults"
+		},
+		{
+			"Type" : "UpgradeDef",
+			"Path" : "test/upgrade"
+		},
+		{
+			"Type" : "CCCEquipLocationTag",
+			"Path" : "test/equiplocation"
+		},
+		{
+			"Type" : "ChassisDef",
+			"Path" : "test/chassis"
+		},
+		{
+			"Type" : "MechDef",
+			"Path" : "test/mech"
+		},
+		{
+			"Type" : "WeaponDef",
+			"Path" : "test/weapons"
+		},
+		{
+			"Type": "SVGAsset",
+			"Path": "test/icons"
+		},
+		{
+			"Type": "CCHardpoints",
+			"Path": "test/hardpoints"
+		}
+	],
+	"DataAddendumEntries": [
+		{
+			"name": "BattleTech.WeaponCategoryEnumeration",
+			"path": "WeaponCategory.json"
+		}
+	]
+}
