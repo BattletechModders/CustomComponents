@@ -7,13 +7,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <TargetFramework>net472</TargetFramework>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <!-- these output paths make VS crash on a file rename-->
-<!--    <OutputPath>..\</OutputPath>-->
-<!--    <OutputPath>$(SolutionDir)</OutputPath>-->
-<!--    <OutputPath>$(BattleTechGameDir)\Mods\CustomComponents</OutputPath>-->
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>preview</LangVersion>
