@@ -3,6 +3,7 @@ using BattleTech.UI.TMProWrapper;
 using BattleTech.UI.Tooltips;
 using SVGImporter;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace CustomComponents
 {
@@ -10,31 +11,16 @@ namespace CustomComponents
     {
         private GameObject go;
 
-        public JJHardpointHeler(GameObject jjgo)
-        {
-            go = jjgo;
-
-            uicolor = UIColor.White;
-
-            Text = jjgo.GetComponentInChildren<LocalizableText>();
-            Icon = jjgo.GetComponentInChildren<SVGImage>();
-
-            TextColor = Text.GetComponent<UIColorRefTracker>();
-            IconColor = Icon.GetComponent<UIColorRefTracker>();
-
-            Tooltip = jjgo.GetComponent<HBSTooltip>();
-
-            init(Icon.vectorGraphics, Control.Settings.ToolTips.JJCaption, Control.Settings.ToolTips.JJTooltip);
-        }
-
         public JJHardpointHeler(GameObject jjgo, Transform jj)
         {
             go = jjgo;
 
-            uicolor = UIColor.White;
+            uicolor = Control.Settings.ColorHardpointsBack ? UIColor.Black : UIColor.White;
 
             Text = jjgo.GetComponentInChildren<LocalizableText>();
             Icon = jjgo.GetComponentInChildren<SVGImage>();
+            BackImage = jjgo.GetComponent<Image>();
+
 
             TextColor = Text.GetComponent<UIColorRefTracker>();
             IconColor = Icon.GetComponent<UIColorRefTracker>();

@@ -4,9 +4,11 @@ using BattleTech.UI;
 using BattleTech.UI.TMProWrapper;
 using BattleTech.UI.Tooltips;
 using CustomComponents.Patches;
-using Localize;
+using HBS;
 using SVGImporter;
 using UnityEngine;
+using UnityEngine.UI;
+using Text = Localize.Text;
 using UIColor = BattleTech.UI.UIColor;
 
 namespace CustomComponents
@@ -23,10 +25,12 @@ namespace CustomComponents
 
         protected UIColor uicolor;
         protected Color color;
-        
+        protected Color backcolor;
+
 
         public LocalizableText Text { get; protected set; }
         public SVGImage Icon { get; protected set; }
+        public Image BackImage { get; protected set; }
         public UIColorRefTracker TextColor { get; protected set; }
         public UIColorRefTracker IconColor { get; protected set; }
         public HBSTooltip Tooltip { get; protected set; }
@@ -36,9 +40,25 @@ namespace CustomComponents
             Icon.vectorGraphics = image;
             Text.SetText("-");
 
+            if (Control.Settings.ColorHardpointsBack)
+            {
+                if (uicolor != UIColor.Custom)
+                {
+                    backcolor = LazySingletonBehavior<UIManager>.Instance.UIColorRefs.GetUIColor(uicolor);
+                }
+                else
+                {
+                    backcolor = color;
+                }
+
+                backcolor.a = Control.Settings.HardpointBackAlpha;
+                if (BackImage != null)
+                    BackImage.color = backcolor;
+            }
+
             SetIconColor();
             SetTextColor();
-            SetTooltip(caption,tooltip);
+            SetTooltip(caption, tooltip);
             Show();
         }
 

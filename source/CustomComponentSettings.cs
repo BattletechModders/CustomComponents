@@ -238,8 +238,9 @@ namespace CustomComponents
 
         public int OmniCategoryID = 1000;
         public bool ColorHardpointsIcon = true;
-        public bool ColorHardpointsText = true;
-
+        public bool ColorHardpointsText = false;
+        public bool ColorHardpointsBack = false;
+        public float HardpointBackAlpha = 0.8f;
         public void Complete()
         {
             PreinstalledOverlayColor = PreinstalledOverlayCColor.ToColor();

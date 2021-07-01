@@ -5,6 +5,7 @@ using BattleTech.UI.Tooltips;
 using Harmony;
 using SVGImporter;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace CustomComponents
 {
@@ -32,6 +33,8 @@ namespace CustomComponents
             this.IconColor = Icon.GetComponent<UIColorRefTracker>();
             this.Canvas = traverse.Field<CanvasGroup>("thisCanvasGroup").Value;
             this.Tooltip = element.GetComponent<HBSTooltip>();
+            BackImage = null;
+
         }
 
         public virtual void Init(HardpointInfo hpinfo)

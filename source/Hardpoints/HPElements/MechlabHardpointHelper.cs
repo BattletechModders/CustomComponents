@@ -3,6 +3,7 @@ using BattleTech.UI.TMProWrapper;
 using BattleTech.UI.Tooltips;
 using SVGImporter;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace CustomComponents
 {
@@ -24,6 +25,7 @@ namespace CustomComponents
 
             Text = hpgo.GetComponentInChildren<LocalizableText>();
             Icon = hpgo.GetComponentInChildren<SVGImage>();
+            BackImage = hpgo.GetComponent<Image>();
 
             TextColor = Text.GetComponent<UIColorRefTracker>();
             IconColor = Icon.GetComponent<UIColorRefTracker>();
