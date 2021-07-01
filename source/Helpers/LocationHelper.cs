@@ -41,41 +41,8 @@ namespace CustomComponents
                 HardpointsUsage = null;
                 return;
             }
+            HardpointsUsage = MechLabHelper.CurrentMechLab.ActiveMech.GetHardpointUsage(Location);
 
-            HardpointsUsage = mechLab.activeMechDef.GetAllHardpoints(Location, mechLab.activeMechDef.Inventory.ToInvItems());
-            //foreach (var hpUsage in HardpointsUsage)
-            //{
-            //    hpUsage.Used = 0;
-            //}
-
-            foreach (var item in LocalInventory
-                .Select(i => i.ComponentRef.GetComponent<UseHardpointCustom>())
-                .Where(i => i != null && !i.WeaponCategory.Is_NotSet))
-            {
-                HPUsage first = null;
-                bool found = false;
-
-                for (int i = 0; i < HardpointsUsage.Count; i++)
-                {
-                    var hp = HardpointsUsage[i];
-
-                    if (!hp.hpInfo.CompatibleID.Contains(item.WeaponCategory.ID))
-                        continue;
-                    if (hp.Used < hp.Total)
-                    {
-                        found = true;
-                        hp.Used += 1;
-                    }
-
-                    first ??= hp;
-                }
-
-                if (!found)
-                    if (first == null)
-                        HardpointsUsage.Add(new HPUsage(item.hpInfo, 0, -1));
-                    else
-                        first.Used += 1;
-            }
         }
 
         #region old-hardpoints

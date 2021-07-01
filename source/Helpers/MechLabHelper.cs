@@ -22,7 +22,7 @@ namespace CustomComponents
             get { return mechlab_instance; }
         }
 
-
+        private HPHandler hardpoints; 
 
         internal static void EnterMechLab(MechLabPanel mechlab)
         {
@@ -42,135 +42,47 @@ namespace CustomComponents
             mechlab_instance.RefreshHardpoints();
         }
 
-        public JJHardpointHeler JJWidget { get; private set; }
-
-        public Dictionary<int, MechlabHardpointHelper> HardpointWidgets { get; private set; }
-
         private void MakeHardpoints()
         {
             try
             {
-                var top_layout = MechLab.transform
-                    .Find("Representation/OBJGROUP_LEFT/OBJ_meta/OBJ_status");
-
-                if (top_layout == null)
-                    return;
-
-                
-
-                var hp_layout = top_layout.Find("layout_hardpoints");
-                if (hp_layout == null)
-                    return;
-
-                var horizontal = hp_layout.GetComponent<HorizontalLayoutGroup>();
-
-                if (horizontal == null)
+                hardpoints = MechLab.GetComponent<HPHandler>();
+                if (hardpoints == null)
                 {
-                    ReMakeHardpoints(hp_layout);
-                    return;
+                    var mhp = MechLab.gameObject.AddComponent<MechLabHPHandler>();
+                    mhp.Init(MechLab);
+                    hardpoints = mhp;
                 }
-
-
-                GameObject.DestroyImmediate(horizontal);
-                var jj_layout = top_layout.Find("layout_jumpjets");
-                if (jj_layout == null)
-                    return;
-
-
-
-
-                var vertical = hp_layout.gameObject.AddComponent<VerticalLayoutGroup>();
-                vertical.childControlHeight = true;
-                vertical.childControlWidth = true;
-                vertical.padding = new RectOffset(5, 5, 5, 5);
-                vertical.spacing = 1;
-                vertical.childAlignment = TextAnchor.MiddleCenter;
-                vertical.enabled = true;
-
-                var fitter = hp_layout.gameObject.AddComponent<ContentSizeFitter>();
-                fitter.verticalFit = ContentSizeFitter.FitMode.MinSize;
-                fitter.horizontalFit = ContentSizeFitter.FitMode.MinSize;
-
-                var transform = vertical.GetComponent<RectTransform>();
-                transform.anchoredPosition = new Vector2(-80, transform.anchoredPosition.y);
-
-                var jj = jj_layout.GetChild(0);
-                var sample = make_samlpe(hp_layout);
-                foreach (Transform child in hp_layout)
-                {
-                    if (child != sample)
-                        GameObject.Destroy(child.gameObject);
-                }
-
-                var jjgo = GameObject.Instantiate(sample.gameObject);
-
-                JJWidget = new JJHardpointHeler(jjgo, jj);
-                HardpointWidgets = new Dictionary<int, MechlabHardpointHelper>();
-                jjgo.transform.SetParent(hp_layout);
-                foreach (var hpinfo in HardpointController.Instance.HardpointsList.Where(i => i.Visible))
-                {
-                    var hpgo = GameObject.Instantiate(sample.gameObject);
-                    HardpointWidgets[hpinfo.WeaponCategory.ID] = new MechlabHardpointHelper(hpgo, hpinfo);
-                    hpgo.transform.SetParent(hp_layout);
-                }
-
-                GameObject.Destroy(sample.gameObject);
-                GameObject.Destroy(jj_layout.gameObject);
-
-                var button = top_layout.Find("OBJ_stockBttn");
-                button.SetParent(hp_layout);
-                var l = button.gameObject.AddComponent<LayoutElement>();
-                l.minHeight = 50;
             }
             catch (Exception e)
             {
                 Control.LogError(e);
             }
-
         }
 
-        private void ReMakeHardpoints(Transform hpLayout)
-        {
-            HardpointWidgets = new Dictionary<int, MechlabHardpointHelper>();
-            JJWidget = new JJHardpointHeler(hpLayout.GetChild(0).gameObject);
+        //private void ReMakeHardpoints(Transform hpLayout)
+        //{
+        //    HardpointWidgets = new Dictionary<int, MechlabHardpointHelper>();
+        //    JJWidget = new JJHardpointHeler(hpLayout.GetChild(0).gameObject);
 
-            var list = HardpointController.Instance.HardpointsList.Where(i => i.Visible).ToArray();
-            for (int i = 1; i < hpLayout.childCount - 1; i++)
-            {
-                var obj = hpLayout.GetChild(i).gameObject;
+        //    var list = HardpointController.Instance.HardpointsList.Where(i => i.Visible).ToArray();
+        //    for (int i = 1; i < hpLayout.childCount - 1; i++)
+        //    {
+        //        var obj = hpLayout.GetChild(i).gameObject;
 
-                if (i - 1 >= list.Length)
-                {
-                    GameObject.Destroy(obj);
-                    Control.LogError($"-- Missed hardpoint element for {i}");
-                }
+        //        if (i - 1 >= list.Length)
+        //        {
+        //            GameObject.Destroy(obj);
+        //            Control.LogError($"-- Missed hardpoint element for {i}");
+        //        }
 
-                var hpinfo = list[i - 1];
+        //        var hpinfo = list[i - 1];
 
-                HardpointWidgets[hpinfo.WeaponCategory.ID] = new MechlabHardpointHelper(obj, hpinfo);
-            }
-        }
+        //        HardpointWidgets[hpinfo.WeaponCategory.ID] = new MechlabHardpointHelper(obj, hpinfo);
+        //    }
+        //}
 
-        private Transform make_samlpe(Transform parent)
-        {
-            var samlpe = parent.GetChild(0);
-
-            var lc = samlpe.gameObject.AddComponent<LayoutElement>();
-            lc.minHeight = 25;
-            lc.minWidth = 65;
-            var rect = samlpe.GetChild(0).GetComponent<RectTransform>();
-            rect.sizeDelta = new Vector2(42f, rect.sizeDelta.y);
-            var text = samlpe.GetChild(0).GetComponent<LocalizableText>();
-            text.alignment = TextAlignmentOptions.Midline;
-            var image = samlpe.gameObject.GetComponent<Image>();
-            image.color = Color.black;
-            var hlg = samlpe.gameObject.AddComponent<HorizontalLayoutGroup>();
-            hlg.childControlWidth = true;
-            hlg.padding = new RectOffset(2,2,0,0);
-            
-
-            return samlpe;
-        }
+ 
 
         internal static void CloseMechLab()
         {
@@ -366,18 +278,11 @@ namespace CustomComponents
                     }
             }
 
-            foreach (var widget in HardpointWidgets)
+            if (hardpoints != null)
             {
-                var item = usage.FirstOrDefault(i => i.hpInfo.WeaponCategory.ID == widget.Key);
-                if (item != null)
-                {
-                    widget.Value.Show();
-                    widget.Value.SetText(item.Used, item.Total);
-                }
-                else
-                    widget.Value.Hide();
+                hardpoints.SetData(usage);
+                hardpoints.SetJJ(ActiveMech.GetJJCountByMechDef(), ActiveMech.GetJJMaxByMechDef());
             }
-            JJWidget.SetText(ActiveMech.GetJJCountByMechDef(), ActiveMech.GetJJMaxByMechDef());
         }
     }
 }

@@ -189,7 +189,6 @@ namespace CustomComponents
 
             return dictionary[location];
         }
-
         public static List<HPUsage> GetHardpoints(this MechDef mech, SortOrder sort = SortOrder.Usage)
         {
             return mech?.Chassis.GetHardpoints(sort);
@@ -248,6 +247,72 @@ namespace CustomComponents
                 item.Total += hp.Total;
             else
                 list.Add(new HPUsage(hp));
+        }
+
+
+        public static List<HPUsage> GetHardpointUsage(this MechDef mech, ChassisLocations location, IEnumerable<InvItem> inventory = null)
+        {
+            if (inventory == null)
+                inventory = mech.Inventory.ToInvItems();
+            var inv = inventory.ToList();
+
+            var result = mech.GetAllHardpoints(location, inv);
+            foreach (var item in inv.Where(i => i.Location == location)
+                .Select(i => i.Item.GetComponent<UseHardpointCustom>())
+                .Where(i => i != null && !i.WeaponCategory.Is_NotSet))
+            {
+                HPUsage first = null;
+                bool found = false;
+
+                for (int i = 0; i < result.Count; i++)
+                {
+                    var hp = result[i];
+
+                    if (!hp.hpInfo.CompatibleID.Contains(item.WeaponCategory.ID))
+                        continue;
+                    if (hp.Used < hp.Total)
+                    {
+                        found = true;
+                        hp.Used += 1;
+                    }
+
+                    first ??= hp;
+                }
+
+                if (!found)
+                    if (first == null)
+                        result.Add(new HPUsage(item.hpInfo, 0, -1));
+                    else
+                        first.Used += 1;
+            }
+
+            return result;
+        }
+
+        public static List<HPUsage> GetHardpointUsage(this MechDef mech, IEnumerable<InvItem> inventory = null)
+        {
+            var result = new List<HPUsage>();
+
+            if (mech != null)
+                foreach (var location in DefaultsDatabase.SingleLocations)
+                {
+                    var usage = mech.GetHardpointUsage(location, inventory);
+
+                    if (usage != null)
+                        foreach (var hpUsage in usage)
+                        {
+                            var item = result.FirstOrDefault(i => i.hpInfo.WeaponCategory.ID == hpUsage.WeaponCategoryID);
+                            if (item == null)
+                                result.Add(new HPUsage(hpUsage));
+                            else
+                            {
+                                item.Total += hpUsage.Total;
+                                item.Used += hpUsage.Used;
+                            }
+                        }
+                }
+
+            return result;
         }
 
 
@@ -317,7 +382,7 @@ namespace CustomComponents
             {
                 item = new HPUsage(HardpointController.Instance[wc.ID], 1);
                 if (item.hpInfo != null)
-                    list.Add(new HPUsage(item,true));
+                    list.Add(new HPUsage(item, true));
             }
         }
         private static void SubFromList(List<HPUsage> list, WeaponCategoryValue wc, bool remove = false)
