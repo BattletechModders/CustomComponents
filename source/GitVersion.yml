@@ -1,6 +1,6 @@
 branches:
   master:
-    regex: ^Experimental
+    regex: ^UnitTypes
     mode: ContinuousDelivery
     tag: ''
     increment: Patch
