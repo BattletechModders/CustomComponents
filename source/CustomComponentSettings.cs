@@ -89,7 +89,7 @@ namespace CustomComponents
     public class ErrorMessages
     {
         public string WrongWeaponCount = "Cannot equip more then {0} weapons";
-        
+
         public string Flags_InvaildComponent = "{0} has to be replaced";
         public string Flags_DestroyedComponent = "{0} is destroyed, replace it";
         public string Flags_DamagedComponent = "{0} is damaged, repair it";
@@ -116,26 +116,26 @@ namespace CustomComponents
         public string Base_LocationDestroyed = "Cannot add {0} to {1}: The location is Destroyed.";
         /// 0 - item Name, 1 - Location name, 2 - item.uiname
         public string Base_AddWrongLocation = "Cannot add {0} to {1}: Component is not permitted in this location.";
-        
+
         /// 0 - item Name, 1 - Location name, 2 - item.uiname
         public string Base_ValidateWrongLocation = "Unit have {0} installed in wrong location";
 
         /// <summary>
         /// 0 - mech.Uiname, 1 - item.Name, 2 - item.Uiname, 3 - Hardpoint Name, 4 - Harpdpoint Friendly Name,
-        /// 5 - Location 
+        /// 5 - Location
         /// </summary>
         public string Base_AddNoHardpoins = "{0} dont have {4} hardpoints in {5}";
 
 
         /// <summary>
         /// 0 - mech.Uiname, 1 - item.Name, 2 - item.Uiname, 3 - Hardpoint Name, 4 - Harpdpoint Friendly Name,
-        /// 5 - Location 
+        /// 5 - Location
         /// </summary>
         public string Base_AddNotEnoughHardpoints = $"Unit dont have enough {4} hardpoints in {5}";
 
         /// <summary>
         /// 0 - mech.Uiname, 1 - item.Name, 2 - item.Uiname, 3 - Hardpoint Name, 4 - Harpdpoint Friendly Name,
-        /// 5 - Location 
+        /// 5 - Location
         /// </summary>
         public string Base_ValidateNotEnoughHardpoints = "Unit dont have enough {1} hardpoints in {5}";
 
@@ -187,7 +187,7 @@ namespace CustomComponents
         public float SalvageLegWeight = 0.75f;
         public float SalvageTorsoWeight = 1f;
         public float SalvageHeadWeight = 0.5f;
-        
+
 
         public bool RunAutofixer = true;
         public bool FixDeletedComponents = true;
@@ -237,10 +237,23 @@ namespace CustomComponents
         public Tooltips ToolTips = new Tooltips();
 
         public int OmniCategoryID = 1000;
+
         public bool ColorHardpointsIcon = true;
+        public UIColor HardpointIconDefaultColor = UIColor.White;
         public bool ColorHardpointsText = false;
+        public UIColor HardpointTextDefaultColor = UIColor.White;
         public bool ColorHardpointsBack = false;
         public float HardpointBackAlpha = 0.8f;
+        public Color HardpointBackDefaultColor = Color.black; // used if ColorHardpointsBack = false or for JJs back
+        public UIColor HardpointJJTextAndIconColor = UIColor.White; // used if default colors not in use
+
+        public Color GetHardpointBackDefaultColor()
+        {
+            var color = HardpointBackDefaultColor;
+            color.a = HardpointBackAlpha;
+            return color;
+        }
+
         public void Complete()
         {
             PreinstalledOverlayColor = PreinstalledOverlayCColor.ToColor();

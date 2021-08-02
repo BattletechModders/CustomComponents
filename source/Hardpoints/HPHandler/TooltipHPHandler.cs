@@ -30,7 +30,7 @@ namespace CustomComponents
             //l.preferredHeight = 26;
             //l.preferredWidth = 26;
             var image = sample.gameObject.AddComponent<Image>();
-            image.color = Color.black;
+            image.color = Control.Settings.GetHardpointBackDefaultColor();
             var hlg = sample.gameObject.GetComponent<HorizontalLayoutGroup>();
             hlg.childControlWidth = true;
             hlg.childControlHeight = true;
@@ -71,7 +71,7 @@ namespace CustomComponents
 
                 var sample = make_samlpe(hardpoint.transform);
                 foreach (Transform child in hp_layout)
-                { 
+                {
                     child.gameObject.SetActive(false);
                 }
 

@@ -85,7 +85,7 @@ namespace CustomComponents
                     TextColor.OverrideWithColor(color);
             }
             else
-                TextColor.SetUIColor(UIColor.White);
+                TextColor.SetUIColor(Control.Settings.HardpointTextDefaultColor);
         }
 
         private void SetIconColor()
@@ -97,7 +97,7 @@ namespace CustomComponents
                     IconColor.OverrideWithColor(color);
             }
             else
-                IconColor.SetUIColor(UIColor.White);
+                IconColor.SetUIColor(Control.Settings.HardpointIconDefaultColor);
 
         }
 

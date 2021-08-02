@@ -28,7 +28,7 @@ namespace CustomComponents
             //l.preferredHeight = 26;
             //l.preferredWidth = 26;
             var image = sample.gameObject.GetComponent<Image>();
-            image.color = Color.black;
+            image.color = Control.Settings.GetHardpointBackDefaultColor();
             var hlg = sample.gameObject.AddComponent<HorizontalLayoutGroup>();
             hlg.childControlWidth = true;
             hlg.padding = new RectOffset(2, 2, 2, 2);

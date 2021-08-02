@@ -15,7 +15,7 @@ namespace CustomComponents
         {
             go = jjgo;
 
-            uicolor = Control.Settings.ColorHardpointsBack ? UIColor.Black : UIColor.White;
+            uicolor = Control.Settings.HardpointJJTextAndIconColor;
 
             Text = jjgo.GetComponentInChildren<LocalizableText>();
             Icon = jjgo.GetComponentInChildren<SVGImage>();
