@@ -28,7 +28,7 @@ namespace CustomComponents
             //l.preferredHeight = 26;
             //l.preferredWidth = 26;
             var image = sample.gameObject.AddComponent<Image>();
-            image.color = Color.black;
+            image.color = Color.clear;
             var hlg = sample.gameObject.AddComponent<HorizontalLayoutGroup>();
             hlg.childControlWidth = true;
             hlg.childControlHeight = true;
