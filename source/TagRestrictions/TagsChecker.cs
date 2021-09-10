@@ -385,15 +385,5 @@ namespace CustomComponents
             }
             return result;
         }
-
-        private static string NameForTags(Func<string, IEnumerable<string>> tagsFunc, string baseTag)
-        {
-            string result = "";
-            foreach (var tag in tagsFunc(baseTag))
-            {
-                result = (result.Length == 0) ? $"{NameForTag(tag)}" : $"{result}, {NameForTag(tag)}";
-            }
-            return result;
-        }
     }
 }
