@@ -56,6 +56,7 @@ namespace CustomComponents
             {
                 if (RequiredAnyCheck(componentTags, tagsOnMech)) return error;
                 if (RequiredCheck(componentTags, tagsOnMech)) return error;
+                if (RequiredAnyTagsOnSameLocationCheck(componentTags, location)) return error;
                 if (RequiredOnSameLocationCheck(componentTags, location)) return error;
             }
 
@@ -98,6 +99,39 @@ namespace CustomComponents
             }
 
             return false;
+        }
+
+        private bool RequiredAnyTagsOnSameLocationCheck(HashSet<string> sourceTags, ChassisLocations location)
+        {
+
+          if (location == ChassisLocations.None || location == ChassisLocations.All)
+            return false;
+
+          if (!tagsOnLocations.TryGetValue(location, out var targetTags))
+            targetTags = new HashSet<string>();
+
+          foreach (var tag in sourceTags)
+          {
+            var hasMetAnyRequiredTags = true;
+            foreach(var requiredAnyTag in RequiredAnyTagsOnLocation(tag))
+            {
+              hasMetAnyRequiredTags = false;
+              if (targetTags.Contains(requiredAnyTag))
+              {
+                hasMetAnyRequiredTags = true;
+                break;
+              }
+            }
+
+            if (hasMetAnyRequiredTags)
+              continue;
+
+            var tagName = NameForTag(tag);
+            if (AddError($"{tagName} requirements are not met"))
+              return true;
+          }
+
+          return false;
         }
 
         private bool RequiredOnSameLocationCheck(HashSet<string> sourceTags = null,
@@ -270,6 +304,15 @@ namespace CustomComponents
             if (restriction.RequiredAnyTags == null) yield break;
 
             foreach (var requiredTag in restriction.RequiredAnyTags) yield return requiredTag;
+        }
+
+        private IEnumerable<string> RequiredAnyTagsOnLocation(string tag)
+        {
+          if (!TagRestrictionsHandler.Restrictions.TryGetValue(tag, out var restriction)) yield break;
+
+          if (restriction.RequiredAnyTagsOnSameLocation == null) yield break;
+
+          foreach (var requredTag in restriction.RequiredAnyTagsOnSameLocation) yield return requredTag;
         }
 
         private IEnumerable<string> RequiredTagsOnSameLocation(string tag)
