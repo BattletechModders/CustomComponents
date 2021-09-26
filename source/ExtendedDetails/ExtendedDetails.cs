@@ -14,7 +14,7 @@ namespace CustomComponents.ExtendedDetails
         [JsonIgnore]
         public string OriginalDetails { get; private set; }
         [JsonIgnore]
-        private readonly SortedSet<ExtendedDetail> Details = new SortedSet<ExtendedDetail>();
+        private readonly SortedSet<ExtendedDetail> Details = new();
 
         public  DescriptionDef Def;
 
@@ -74,14 +74,14 @@ namespace CustomComponents.ExtendedDetails
     {
         // UNDEFINED -> always show, in all other cases if actor is known, only show for said actor
         public UnitType UnitType { get; set; }
-        
+
         // some key to identify where the detail come from... traits or critical effects
         // allows to filter in cases where you don't want to show something or only want to show something
         public string Identifier { get; set; }
 
         public int Index { get; set; } // 0 => original description details, -1 before, 1 after
         public virtual string Text { get; set; }
-        
+
         public int CompareTo(ExtendedDetail other)
         {
             var compared = Index.CompareTo(other.Index);
