@@ -1,24 +1,28 @@
-﻿using BattleTech.UI;
-using fastJSON;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using BattleTech;
 
 namespace CustomComponents
 {
     [CustomComponent("Flags")]
     public class Flags : SimpleCustomComponent, IListComponent<string>
     {
+        [Obsolete("this should be internal, don't use directly from other mods")]
         public HashSet<string> flags;
 
         public override string ToString()
         {
-            return flags.Aggregate("Flags: [", (current, flag) => current + flag + " ") + "]";
+            return $"Flags: [{string.Join(" ", flags)}]";
         }
 
         public void LoadList(IEnumerable<string> items)
         {
             flags = items.ToHashSet();
+        }
+
+        // compatibility with CC <v2.0
+        public bool IsSet(string value)
+        {
+            return flags.Contains(value);
         }
     }
 }
