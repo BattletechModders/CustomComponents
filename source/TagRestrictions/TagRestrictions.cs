@@ -11,6 +11,7 @@ namespace CustomComponents
         public string[] IncompatibleTags;
 
         public string[] RequiredTagsOnSameLocation;
+        public string[] RequiredAnyTagsOnSameLocation;
         public string[] IncompatibleTagsOnSameLocation;
 
         //public string ShortText = null;
