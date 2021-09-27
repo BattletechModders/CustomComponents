@@ -31,7 +31,7 @@ namespace CustomComponents
             error = null;
 
             if (RequiredAnyCheck(tagsOnMech, tagsOnMech)) return error;
-            if (RequiredAnyTagsOnSameLocationCheck()) return error;
+            if (RequiredAnyOnSameLocationCheck()) return error;
             if (RequiredCheck(tagsOnMech, tagsOnMech)) return error;
             if (RequiredOnSameLocationCheck()) return error;
 
@@ -56,7 +56,7 @@ namespace CustomComponents
             if (requiredChecks)
             {
                 if (RequiredAnyCheck(componentTags, tagsOnMech)) return error;
-                if (RequiredAnyTagsOnSameLocationCheck(componentTags, location)) return error;
+                if (RequiredAnyOnSameLocationCheck(componentTags, location)) return error;
                 if (RequiredCheck(componentTags, tagsOnMech)) return error;
                 if (RequiredOnSameLocationCheck(componentTags, location)) return error;
             }
@@ -74,25 +74,25 @@ namespace CustomComponents
 
         private bool RequiredCheck(HashSet<string> sourceTags, HashSet<string> targetTags)
         {
-            if (RequiredCheck(sourceTags, targetTags, RequiredTags)) return true;
+            if (SharedRequiredCheck(sourceTags, targetTags, RequiredTags)) return true;
             return false;
         }
 
         private bool RequiredAnyCheck(HashSet<string> sourceTags, HashSet<string> targetTags)
         {
-            if (RequiredAnyCheck(sourceTags, targetTags, RequiredAnyTags)) return true;
+            if (SharedRequiredAnyCheck(sourceTags, targetTags, RequiredAnyTags)) return true;
 
             return false;
         }
 
-        private bool RequiredAnyTagsOnSameLocationCheck(HashSet<string> sourceTags = null, ChassisLocations location = ChassisLocations.None)
+        private bool RequiredAnyOnSameLocationCheck(HashSet<string> sourceTags = null, ChassisLocations location = ChassisLocations.None)
         {
             if (sourceTags != null && location != ChassisLocations.None)
             {
                 if (!tagsOnLocations.TryGetValue(location, out var tags))
                     tags = new HashSet<string>();
 
-                if (RequiredAnyCheck(sourceTags, tags, RequiredAnyTagsOnLocation, location))
+                if (SharedRequiredAnyCheck(sourceTags, tags, RequiredAnyTagsOnLocation, location))
                     return true;
             }
             else
@@ -101,7 +101,7 @@ namespace CustomComponents
                 {
                     location = tagsOnLocationKV.Key;
                     var tags = tagsOnLocationKV.Value;
-                    if (RequiredAnyCheck(tags, tags, RequiredAnyTagsOnLocation, location))
+                    if (SharedRequiredAnyCheck(tags, tags, RequiredAnyTagsOnLocation, location))
                         return true;
                 }
             }
@@ -114,7 +114,7 @@ namespace CustomComponents
             if (sourceTags != null && location != ChassisLocations.None)
             {
                 if (!tagsOnLocations.TryGetValue(location, out var tags)) tags = new HashSet<string>();
-                if (RequiredCheck(sourceTags, tags, RequiredTagsOnSameLocation, location)) return true;
+                if (SharedRequiredCheck(sourceTags, tags, RequiredTagsOnSameLocation, location)) return true;
             }
             else
             {
@@ -123,25 +123,25 @@ namespace CustomComponents
                     location = tagsOnLocationKeyValue.Key;
                     var tags = tagsOnLocationKeyValue.Value;
 
-                    if (RequiredCheck(tags, tags, RequiredTagsOnSameLocation, location)) return true;
+                    if (SharedRequiredCheck(tags, tags, RequiredTagsOnSameLocation, location)) return true;
                 }
             }
 
             return false;
         }
 
-        private bool RequiredAnyCheck(HashSet<string> sourceTags, HashSet<string> targetTags,
+        private bool SharedRequiredAnyCheck(HashSet<string> sourceTags, HashSet<string> targetTags,
           Func<string, IEnumerable<string>> requiredTags, ChassisLocations location = ChassisLocations.None)
         {
             foreach (var tag in sourceTags)
             {
-                var hasMetAnyRequiredTags = true;
+                var hasMetAnyRequiredTags = true; // no required any tags = ok
                 foreach (var requiredTag in requiredTags(tag))
                 {
-                    hasMetAnyRequiredTags = false;
+                    hasMetAnyRequiredTags = false; // at least one required any tag check = not ok
                     if (targetTags.Contains(requiredTag))
                     {
-                        hasMetAnyRequiredTags = true;
+                        hasMetAnyRequiredTags = true; // at least one required any tag found = ok
                         break;
                     }
                 }
@@ -150,7 +150,7 @@ namespace CustomComponents
                     continue;
 
                 var tagName = NameForTag(tag);
-                var requiredTagNames = NameForTags(requiredTags(tag).ToHashSet());
+                var requiredTagNames = NameForTags(requiredTags(tag));
                 var message = location == ChassisLocations.None
                     ? $"{tagName} requires any of {requiredTagNames}"
                     : $"{tagName} requires any of {requiredTagNames} at {Mech.GetLongChassisLocation(location)}";
@@ -160,10 +160,11 @@ namespace CustomComponents
             return false;
         }
 
-        private bool RequiredCheck(HashSet<string> sourceTags, HashSet<string> targetTags,
+        private bool SharedRequiredCheck(HashSet<string> sourceTags, HashSet<string> targetTags,
             Func<string, IEnumerable<string>> requiredTags, ChassisLocations location = ChassisLocations.None)
         {
             foreach (var tag in sourceTags)
+            {
                 foreach (var requiredTag in requiredTags(tag))
                 {
                     if (targetTags.Contains(requiredTag)) continue;
@@ -175,6 +176,7 @@ namespace CustomComponents
                         : $"{tagName} requires {requiredTagName} at {Mech.GetLongChassisLocation(location)}";
                     if (AddError(message)) return true;
                 }
+            }
 
             return false;
         }
@@ -209,6 +211,7 @@ namespace CustomComponents
             ChassisLocations location = ChassisLocations.None)
         {
             foreach (var tag in sourceTags)
+            {
                 foreach (var incompatibleTag in incompatibleTags(tag))
                 {
                     if (!targetTags.Contains(incompatibleTag)) continue;
@@ -221,6 +224,7 @@ namespace CustomComponents
                         : $"{tagName} can't be used with {incompatibleTagName} at {Mech.GetLongChassisLocation(location)}";
                     if (AddError(message)) return true;
                 }
+            }
 
             return false;
         }
@@ -316,7 +320,7 @@ namespace CustomComponents
 
             if (restriction.RequiredAnyTagsOnSameLocation == null) yield break;
 
-            foreach (var requredTag in restriction.RequiredAnyTagsOnSameLocation) yield return requredTag;
+            foreach (var requiredTags in restriction.RequiredAnyTagsOnSameLocation) yield return requiredTags;
         }
 
         private IEnumerable<string> RequiredTagsOnSameLocation(string tag)
@@ -376,7 +380,7 @@ namespace CustomComponents
             return tag;
         }
 
-        private static string NameForTags(HashSet<string> tags)
+        private static string NameForTags(IEnumerable<string> tags)
         {
             string result = "";
             foreach (var tag in tags)
