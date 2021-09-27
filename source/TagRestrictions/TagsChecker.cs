@@ -382,12 +382,7 @@ namespace CustomComponents
 
         private static string NameForTags(IEnumerable<string> tags)
         {
-            string result = "";
-            foreach (var tag in tags)
-            {
-                result = (result.Length == 0) ? $"{NameForTag(tag)}" : $"{result}, {NameForTag(tag)}";
-            }
-            return result;
+            return string.Join(", ", tags.Select(tag => NameForTag(tag)));
         }
     }
 }
