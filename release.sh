@@ -18,7 +18,7 @@ dotnet build --configuration Release --no-incremental -p:OutputPath=../ "$@"
 )
 
 (
-INCLUDES="-i!CustomComponents/CustomComponents.dll -i!CustomComponents/LICENSE -i!CustomComponents/mod.json -i!CustomComponents/mod.minimal.json -i!CustomComponents/README.md"
+INCLUDES="-i!CustomComponents/CustomComponents.dll -i!CustomComponents/LICENSE -i!CustomComponents/mod.json -i!CustomComponents/mod.minimal.json -i!CustomComponents/README.md -ir!CustomComponents/data"
 
 "$SEVENZIP" a -tzip -mx9 "$CCZIP" $INCLUDES
 )
