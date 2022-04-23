@@ -34,26 +34,16 @@ jobs:
         set -e
         cd "$GITHUB_WORKSPACE/CustomComponents/"
         ./release.sh "-p:ReferencePath=$GITHUB_WORKSPACE/deps"
-    - name: Tag latest
-      shell: bash
-      if: github.ref == 'refs/heads/UnitTypes'
-      run: |
-        cd CustomComponents/
-        git tag -f latest
-        git push -f origin refs/tags/latest
-    - name: Release latest
-      uses: "softprops/action-gh-release@master"
+    - name: Release Latest
+      uses: "marvinpinto/action-automatic-releases@latest"
       if: github.ref == 'refs/heads/UnitTypes'
       with:
-        draft: false
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        title: "Latest (unstable)"
         prerelease: true
-        name: "Latest (unstable)"
-        tag_name: "latest"
-        body: |
-          Latest unstable release, even less tested than normal releases.
-          Works with best with ModTek v2
-          - CustomComponents.zip contains the compiled framework
-        files: "./CustomComponents/dist/CustomComponents.zip"
+        files: |
+          ./CustomComponents/dist/CustomComponents.zip
     - name: Release stable
       uses: "softprops/action-gh-release@master"
       if: startsWith(github.ref, 'refs/tags')
