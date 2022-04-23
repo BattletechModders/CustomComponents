@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <ModDir>$(SolutionDir)/../</ModDir>
+  </PropertyGroup>
+  <PropertyGroup>
     <ProjectGuid>{7E755F55-106A-4F0D-A970-0BA7FC6C5662}</ProjectGuid>
     <OutputType>Library</OutputType>
     <TargetFramework>net472</TargetFramework>
@@ -13,7 +16,7 @@
     </AssemblySearchPaths>
   </PropertyGroup>
   <Target Name="CopyDLLtoModDir" AfterTargets="AfterBuild">
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionDir)/../" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModDir)" />
   </Target>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
