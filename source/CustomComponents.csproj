@@ -10,10 +10,8 @@
     <FileAlignment>512</FileAlignment>
     <LangVersion>preview</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <AssemblySearchPaths>
-      $(AssemblySearchPaths);
-      $(ReferencePath);
-    </AssemblySearchPaths>
+    <AssemblySearchPaths>$(ReferencePath);{HintPathFromItem}</AssemblySearchPaths>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
   </PropertyGroup>
   <Target Name="CopyDLLtoModDir" AfterTargets="AfterBuild">
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModDir)" />
