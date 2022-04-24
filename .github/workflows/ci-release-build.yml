@@ -3,37 +3,32 @@ name: Release Build
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      BT_DIR: ${{ github.workspace }}/BATTLETECH
+      CC_DIR: ${{ github.workspace }}/CustomComponents
     steps:
     - name: Setup dotnet
       uses: actions/setup-dotnet@master
       with:
         dotnet-version: '6.0.x'
     - name: Download Build Dependencies
-      shell: bash
       env:
         MANAGED_ARCHIVE_PW: ${{ secrets.MANAGED_ARCHIVE_PW }}
         MANAGED_ARCHIVE_URL: ${{ secrets.MANAGED_ARCHIVE_URL }}
       run: |
-        set -e
+        # BattleTech Managed
         curl -L -o "$GITHUB_WORKSPACE/Managed.7z" "$MANAGED_ARCHIVE_URL"
-        7z e -p"$MANAGED_ARCHIVE_PW" -o"$GITHUB_WORKSPACE/deps" "$GITHUB_WORKSPACE/Managed.7z"
-    - name: Checkout CustomComponents
+        MANAGED_DIR="$BT_DIR/BattleTech_Data/Managed"
+        mkdir -p "$MANAGED_DIR"
+        7z e -p"$MANAGED_ARCHIVE_PW" -o"$MANAGED_DIR" "$GITHUB_WORKSPACE/Managed.7z"
+    - name: Checkout
       uses: actions/checkout@master
       with:
-        path: CustomComponents/
-    - name: Fetch CustomComponents Branches and Tags
-      shell: bash
-      run: |
-        cd CustomComponents/
-        git fetch --prune --unshallow
+        path: ${{ env.CC_DIR }}
+    - name: Fetch Branches and Tags
+      run: cd "$CC_DIR" && git fetch --prune --unshallow
     - name: Build Release
-      shell: bash
-      env:
-        MSBUILDSINGLELOADCONTEXT: 1 # workaround for GitVersionTask
-      run: |
-        set -e
-        cd "$GITHUB_WORKSPACE/CustomComponents/"
-        ./release.sh "-p:ReferencePath=$GITHUB_WORKSPACE/deps"
+      run: cd "$CC_DIR" && ./release.sh "-p:BattleTechGameDir=$BT_DIR"
     - name: Release Latest
       uses: "marvinpinto/action-automatic-releases@latest"
       if: github.ref == 'refs/heads/UnitTypes'
