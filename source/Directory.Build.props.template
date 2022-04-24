@@ -1,11 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <!-- if you checkout CustomComponents as Mods/CustomComponents you only need the following -->
-  	<ReferencePath>z:\Steam\steamapps\common\BATTLETECH\BattleTech_Data\Managed\</ReferencePath>
-    <!-- if you checkout CustomComponents outside the Mods folder, additionally use the following settings to publish the CustomComponents dll to the right place-->
-    <!--
-    <ModDir>z:\Steam\steamapps\common\BATTLETECH\Mods\CustomComponents</ModDir>
-    -->
-  </PropertyGroup>
+	<PropertyGroup>
+		<BattleTechGameDir>z:\Steam\steamapps\common\BATTLETECH</BattleTechGameDir>
+
+        <!--
+            If your CustomComponents checkout is outside of the BATTLETECH Mods directory
+            you need to uncomment and adjust the following setting.
+        -->
+        <!-- Where should the CustomComponents DLL be copied to? -->
+  	    <!-- <CustomComponentsModPath>$(BattleTechGameDir)\Mods\CustomComponents</CustomComponentsModPath> -->
+	</PropertyGroup>
 </Project>
