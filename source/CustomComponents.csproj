@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
+  <PropertyGroup Condition="'$(CustomComponentsModPath)' == ''">
     <CustomComponentsModPath>$(SolutionDir)/..</CustomComponentsModPath>
-    <ReferencePath>$(BattleTechGameDir)\BattleTech_Data\Managed</ReferencePath>
   </PropertyGroup>
   <PropertyGroup>
     <ProjectGuid>{7E755F55-106A-4F0D-A970-0BA7FC6C5662}</ProjectGuid>
@@ -11,6 +10,7 @@
     <FileAlignment>512</FileAlignment>
     <LangVersion>preview</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ReferencePath>$(BattleTechGameDir)\BattleTech_Data\Managed</ReferencePath>
     <AssemblySearchPaths>$(ReferencePath)</AssemblySearchPaths>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
   </PropertyGroup>
