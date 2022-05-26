@@ -222,7 +222,9 @@ namespace CustomComponents
         public string IgnoreAutofixUnitType = "IgnoreAutofix";
         public string IgnoreValidateUnitType = "IgnoreValidate";
 
+        public bool CategoryDescriptionAddedByDefault = true;
         public int CategoryDescriptionIndex = 10;
+        public bool HardpointDescriptionAddedByDefault = true;
         public int HardpointDescriptionIndex = 11;
         public int HardpointAddIndex = 12;
         public string HardpointDescriptionColor = "#008000";

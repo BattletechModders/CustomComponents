@@ -56,7 +56,7 @@ namespace CustomComponents
                 return;
 
             var hpinfo = HardpointController.Instance[WeaponCategory];
-            if (hpinfo == null || !hpinfo.Visible)
+            if (hpinfo == null || !hpinfo.Visible || !Control.Settings.HardpointDescriptionAddedByDefault)
                 return;
 
             ExtendedDetails.ExtendedDetails.GetOrCreate(Def).AddIfMissing(

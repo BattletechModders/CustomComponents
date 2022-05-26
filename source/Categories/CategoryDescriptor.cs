@@ -135,7 +135,7 @@ namespace CustomComponents
         public bool ReplaceDefaultsFirst = true;
 
         //public bool AutoReplace = false;
-        public bool AddCategoryToDescription = true;
+        public bool AddCategoryToDescription = Control.Settings.CategoryDescriptionAddedByDefault;
         public bool AllowMixTags = true;
         public Dictionary<string, object> DefaultCustoms = null;
 
