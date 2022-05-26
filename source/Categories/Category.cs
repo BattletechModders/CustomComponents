@@ -209,25 +209,27 @@ namespace CustomComponents
 
         public void AdjustDescription()
         {
-            if (this.CategoryDescriptor.AddCategoryToDescription)
+            if (!CategoryDescriptor.AddCategoryToDescription)
             {
-                var ed = ExtendedDetails.ExtendedDetails.GetOrCreate(Def);
-                var detail =
-                    ed.GetDetails().FirstOrDefault(i => i.Identifier == "Category") as
-                        ExtendedDetails.ExtendedDetailList ??
-                    new ExtendedDetailList()
-                    {
-                        Index = Control.Settings.CategoryDescriptionIndex,
-                        Identifier = "Category",
-                        OpenBracket = $"\n<b><color={Control.Settings.CategoryDescriptionColor}>[",
-                        CloseBracket = "]</color></b>\n"
-                    };
-
-                detail.AddUnique((Control.Settings.AddWeightToCategory && Weight > 1)
-                    ? this.CategoryDescriptor._DisplayName + ":" + Weight.ToString()
-                    : this.CategoryDescriptor._DisplayName);
-                ed.AddDetail(detail);
+                return;
             }
+
+            var ed = ExtendedDetails.ExtendedDetails.GetOrCreate(Def);
+            var detail = ed.AddIfMissing(
+                new ExtendedDetailList
+                {
+                    Index = Control.Settings.CategoryDescriptionIndex,
+                    Identifier = "Category",
+                    OpenBracket = $"\n\nCategories: <b><color={Control.Settings.CategoryDescriptionColor}>",
+                    CloseBracket = "</color></b>"
+                }
+            );
+
+            detail.AddUnique(Control.Settings.AddWeightToCategory && Weight > 1
+                ? CategoryDescriptor._DisplayName + ":" + Weight
+                : CategoryDescriptor._DisplayName);
+
+            ed.RefreshDetails();
         }
 
 

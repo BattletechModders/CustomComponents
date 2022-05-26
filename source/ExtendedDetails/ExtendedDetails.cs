@@ -3,7 +3,7 @@ using fastJSON;
 using Harmony;
 using System;
 using System.Collections.Generic;
-using ErosionBrushPlugin;
+using System.Linq;
 
 namespace CustomComponents.ExtendedDetails
 {
@@ -50,6 +50,16 @@ namespace CustomComponents.ExtendedDetails
             //Control.Log("current :\n" + Def.Details);
         }
 
+        internal T AddIfMissing<T>(T detail) where T: ExtendedDetail
+        {
+            if (Details.FirstOrDefault(x => x.Identifier == detail.Identifier) is T existing)
+            {
+                return existing;
+            }
+            AddDetail(detail);
+            return detail;
+        }
+
         public void RefreshDetails()
         {
             SetDescriptionDetails();
@@ -85,11 +95,7 @@ namespace CustomComponents.ExtendedDetails
         public int CompareTo(ExtendedDetail other)
         {
             var compared = Index.CompareTo(other.Index);
-            if (compared != 0)
-            {
-                return compared;
-            }
-            return Identifier.CompareTo(other.Identifier);
+            return compared != 0 ? compared : string.Compare(Identifier, other.Identifier, StringComparison.Ordinal);
         }
     }
 
@@ -98,12 +104,7 @@ namespace CustomComponents.ExtendedDetails
         public string OpenBracket { get; set; }
         public string CloseBracket { get; set; }
         public string Delimiter { get; set; } = ", ";
-        private List<string> Values { get; set; } = new List<string>();
-
-        public void Add(string s)
-        {
-            Values.Add(s);
-        }
+        private List<string> Values { get; set; } = new();
 
         public void AddUnique(string s)
         {
@@ -112,14 +113,6 @@ namespace CustomComponents.ExtendedDetails
             Values.Add(s);
         }
 
-        public override string Text
-        {
-            get => OpenBracket + Values.Join(null, Delimiter) + CloseBracket;
-
-            set
-            {
-
-            }
-        }
+        public override string Text => OpenBracket + Values.Join(null, Delimiter) + CloseBracket;
     }
 }

@@ -73,6 +73,7 @@
 			"A": 40
 		},
 
+		"HardpointDescriptionColor": "#008000",
 		"CategoryDescriptionColor": "#008000",
 
 		"OmniTechFlag": "cc_omnitech",

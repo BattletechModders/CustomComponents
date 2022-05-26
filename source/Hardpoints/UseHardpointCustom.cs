@@ -59,20 +59,16 @@ namespace CustomComponents
             if (hpinfo == null || !hpinfo.Visible)
                 return;
 
-            var ed = ExtendedDetails.ExtendedDetails.GetOrCreate(Def);
-            var detail =
-                ed.GetDetails().FirstOrDefault(i => i.Identifier == "UseHardpoints") as
-                    ExtendedDetails.ExtendedDetailList ??
-                new ExtendedDetail()
+            ExtendedDetails.ExtendedDetails.GetOrCreate(Def).AddIfMissing(
+                new ExtendedDetail
                 {
                     Index = Control.Settings.HardpointDescriptionIndex,
                     Identifier = "UseHardpoints",
-                    Text = "\n<b>Using Hardpoint: <color="+ Control.Settings.HardpointDescriptionColor + ">" 
-                           + WeaponCategory.FriendlyName 
-                           + "</color></b>\n"
-                };
-
-            ed.AddDetail(detail);
+                    Text = "\n\nRequired Hardpoint: <b><color="+ Control.Settings.HardpointDescriptionColor + ">"
+                           + WeaponCategory.FriendlyName
+                           + "</color></b>"
+                }
+            );
         }
 
         public string PreValidateDrop(MechLabItemSlotElement item, ChassisLocations location)

@@ -60,20 +60,16 @@ namespace CustomComponents
             if (hpinfo == null || !hpinfo.Visible)
                 return;
 
-            var ed = ExtendedDetails.ExtendedDetails.GetOrCreate(Def);
-            var detail =
-                ed.GetDetails().FirstOrDefault(i => i.Identifier == "AddHardpoints") as
-                    ExtendedDetails.ExtendedDetailList ??
-                new ExtendedDetail()
+            ExtendedDetails.ExtendedDetails.GetOrCreate(Def).AddIfMissing(
+                new ExtendedDetail
                 {
                     Index = Control.Settings.HardpointAddIndex,
                     Identifier = "AddHardpoints",
-                    Text = "\n<b>Add Hardpoint: <color=" +Control.Settings.HardpointDescriptionColor + ">"
+                    Text = "\n\nAdd Hardpoint: <b><color=" +Control.Settings.HardpointDescriptionColor + ">"
                            + WeaponCategory.FriendlyName
-                           + "</color></b>\n"
-                };
-
-            ed.AddDetail(detail);
+                           + "</color></b>"
+                }
+            );
         }
     }
 
@@ -115,23 +111,19 @@ namespace CustomComponents
             var ahpinfo = HardpointController.Instance[AddWeaponCategory];
             var rhpinfo = HardpointController.Instance[UseWeaponCategory];
 
-            var ed = ExtendedDetails.ExtendedDetails.GetOrCreate(Def);
-            var detail =
-                ed.GetDetails().FirstOrDefault(i => i.Identifier == "AddHardpoints") as
-                    ExtendedDetails.ExtendedDetailList ??
-                new ExtendedDetail()
+            ExtendedDetails.ExtendedDetails.GetOrCreate(Def).AddIfMissing(
+                new ExtendedDetail
                 {
                     Index = Control.Settings.HardpointAddIndex,
                     Identifier = "AddHardpoints",
-                    Text = "\n<b>Replace <color=" + Control.Settings.HardpointDescriptionColor + ">"
+                    Text = "\n\nReplace <b><color=" + Control.Settings.HardpointDescriptionColor + ">"
                            + UseWeaponCategory.FriendlyName
-                           + "</color></b> Hardpoint with <color=" + Control.Settings.HardpointDescriptionColor + ">"
+                           + "</color></b> Hardpoint with <b><color=" + Control.Settings.HardpointDescriptionColor + ">"
                            + AddWeaponCategory.FriendlyName
-                           + "</color></b>\n"
+                           + "</color></b>"
 
-                };
-
-            ed.AddDetail(detail);
+                }
+            );
         }
     }
 }
