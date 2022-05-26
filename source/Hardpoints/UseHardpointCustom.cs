@@ -89,7 +89,7 @@ namespace CustomComponents
             if (lhepler.HardpointsUsage.All(i => !i.hpInfo.CompatibleID.Contains(WeaponCategory.ID)))
             {
                 var mech = MechLabHelper.CurrentMechLab.ActiveMech;
-                return new Localize.Text(Control.Settings.Message.Base_AddNoHardpoins, mech.Description.UIName,
+                return new Localize.Text(Control.Settings.Message.Base_AddNoHardpoints, mech.Description.UIName,
                     Def.Description.Name, Def.Description.UIName, WeaponCategory.Name, WeaponCategory.FriendlyName,
                     location
                 ).ToString();

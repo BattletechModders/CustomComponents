@@ -102,7 +102,7 @@ namespace CustomComponents
 
         // 0 - Display Name, 1 - maximum, 2 - Mech Uiname, 3 - Mech Name
         // 4 - Location, 5 - item name, 6 - item uiname
-        public string Category_MaximumReached = "Unit Cannot install more {0} in {6}";
+        public string Category_MaximumReached = "Unit cannot install more {0} in {6}";
         public string Category_Mixed = "Mech can have only one type of {0}";
 
         // 0 - Display Name, 1 - Minimum, 2 - count, 3 - Mech Uiname, 4 - Mech Name
@@ -124,20 +124,20 @@ namespace CustomComponents
         /// 0 - mech.Uiname, 1 - item.Name, 2 - item.Uiname, 3 - Hardpoint Name, 4 - Harpdpoint Friendly Name,
         /// 5 - Location
         /// </summary>
-        public string Base_AddNoHardpoins = "{0} dont have {4} hardpoints in {5}";
+        public string Base_AddNoHardpoints = "Unit doesn't have {4} hardpoints in {5}";
 
 
         /// <summary>
         /// 0 - mech.Uiname, 1 - item.Name, 2 - item.Uiname, 3 - Hardpoint Name, 4 - Harpdpoint Friendly Name,
         /// 5 - Location
         /// </summary>
-        public string Base_AddNotEnoughHardpoints = $"Unit dont have enough {4} hardpoints in {5}";
+        public string Base_AddNotEnoughHardpoints = $"Unit doesn't have enough {4} hardpoints in {5}";
 
         /// <summary>
         /// 0 - mech.Uiname, 1 - item.Name, 2 - item.Uiname, 3 - Hardpoint Name, 4 - Harpdpoint Friendly Name,
         /// 5 - Location
         /// </summary>
-        public string Base_ValidateNotEnoughHardpoints = "Unit dont have enough {1} hardpoints in {5}";
+        public string Base_ValidateNotEnoughHardpoints = "Unit doesn't have enough {1} hardpoints in {5}";
 
         public string Base_AddInventorySize = "Can't install {0} - not enough free space at {1}";
 
