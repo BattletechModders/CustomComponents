@@ -19,7 +19,7 @@ namespace CustomComponents
                     return;
                 }
 
-                MechLabLocationWidget_SetData_Patch.Sorter.SortWidgetInventory(___localInventory);
+                MechLabLocationWidget_SetData_Patch.SortWidgetInventory(___localInventory);
             }
             catch (Exception e)
             {

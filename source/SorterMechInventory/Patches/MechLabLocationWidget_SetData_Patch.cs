@@ -13,7 +13,7 @@ namespace CustomComponents
         {
             try
             {
-                Sorter.SortWidgetInventory(___localInventory);
+                SortWidgetInventory(___localInventory);
             }
             catch (Exception e)
             {
@@ -21,29 +21,13 @@ namespace CustomComponents
             }
         }
 
-        public static readonly MechLabItemSlotElementSorter Sorter = new MechLabItemSlotElementSorter();
-    }
-
-    public class MechLabItemSlotElementSorter : IComparer<MechLabItemSlotElement>
-    {
-        private readonly SorterComparer comparer = new SorterComparer();
-
-        public int Compare(MechLabItemSlotElement x, MechLabItemSlotElement y)
+        internal static void SortWidgetInventory(List<MechLabItemSlotElement> inventory)
         {
-            return comparer.Compare(x.ComponentRef.Def, y.ComponentRef.Def);
-        }
+            inventory.Sort(SorterComparer.CompareElement);
 
-        public void SortWidgetInventory(List<MechLabItemSlotElement> inventory)
-        {
-            // does a stable sort, same order elements stay in insertion order
-            // every element without explicit order gets implicit order of 100
-            var sortedInventory = inventory.OrderBy(element => element, this).ToList();
-            inventory.Clear();
-
-            for (var index = 0; index < sortedInventory.Count; index++)
+            for (var index = 0; index < inventory.Count; index++)
             {
-                var element = sortedInventory[index];
-                inventory.Insert(index, element);
+                var element = inventory[index];
                 element.gameObject.transform.SetSiblingIndex(index);
 
                 //Control.Logger.LogDebug($"id={element.ComponentRef.Def.Description.Id} index={index} order={Order(element)}");
