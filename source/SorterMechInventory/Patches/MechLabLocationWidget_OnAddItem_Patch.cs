@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using BattleTech;
 using BattleTech.UI;
 using Harmony;
-using UnityEngine;
 
 namespace CustomComponents
 {

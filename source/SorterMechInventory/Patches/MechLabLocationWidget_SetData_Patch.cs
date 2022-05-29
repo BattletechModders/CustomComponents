@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using BattleTech.UI;
 using Harmony;
 
@@ -23,7 +22,7 @@ namespace CustomComponents
 
         internal static void SortWidgetInventory(List<MechLabItemSlotElement> inventory)
         {
-            inventory.Sort(SorterComparer.CompareElement);
+            SorterUtils.SortWidgetInventory(inventory);
 
             for (var index = 0; index < inventory.Count; index++)
             {

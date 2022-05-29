@@ -11,7 +11,7 @@ namespace CustomComponents.SorterMechInventory.Patches
         {
             try
             {
-                Array.Sort(newInventory, SorterComparer.CompareRef);
+                SorterUtils.SortMechDefInventory(newInventory);
             }
             catch (Exception e)
             {
