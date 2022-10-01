@@ -10,8 +10,7 @@
     <FileAlignment>512</FileAlignment>
     <LangVersion>preview</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <ReferencePath>$(BattleTechGameDir)\BattleTech_Data\Managed</ReferencePath>
-    <AssemblySearchPaths>$(ReferencePath)</AssemblySearchPaths>
+    <AssemblySearchPaths>$(BattleTechGameDir)/BattleTech_Data/Managed</AssemblySearchPaths>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
   </PropertyGroup>
   <Target Name="CopyDLLtoModDir" AfterTargets="AfterBuild">
