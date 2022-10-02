@@ -1,6 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup Condition="'$(CustomComponentsModPath)' == '' And Exists('$(BattleTechGameDir)\Mods\Core\CustomComponents')">
+    <!-- RogueTech -->
+    <CustomComponentsModPath>$(BattleTechGameDir)\Mods\Core\CustomComponents</CustomComponentsModPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(CustomComponentsModPath)' == '' And Exists('$(BattleTechGameDir)\Mods\CustomComponents')">
+    <!-- flat dir -->
+    <CustomComponentsModPath>$(BattleTechGameDir)\Mods\CustomComponents</CustomComponentsModPath>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(CustomComponentsModPath)' == ''">
+    <!-- sources dir -->
     <CustomComponentsModPath>$(SolutionDir)/..</CustomComponentsModPath>
   </PropertyGroup>
   <PropertyGroup>
