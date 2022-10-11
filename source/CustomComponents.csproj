@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="ValidateBattleTechGameDir">
   <Target Name="ValidateBattleTechGameDir" Condition="'$(BattleTechGameDir)' == '' Or !Exists('$(BattleTechGameDir)')">
-    <Error Text="BattleTechGameDir variable not set properly"/>
+    <Error Text="BattleTechGameDir variable not set properly" />
   </Target>
   <PropertyGroup Condition="'$(CustomComponentsModPath)' == '' And Exists('$(BattleTechGameDir)\Mods\Core\CustomComponents')">
     <!-- RogueTech -->
@@ -97,7 +97,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" Version="5.10.1">
+    <PackageReference Include="GitVersion.MsBuild" Version="5.10.3">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>

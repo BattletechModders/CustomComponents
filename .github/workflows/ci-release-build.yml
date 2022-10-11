@@ -31,7 +31,7 @@ jobs:
       run: cd "$CC_DIR" && ./release.sh "-p:BattleTechGameDir=$BT_DIR"
     - name: Release Latest
       uses: "marvinpinto/action-automatic-releases@latest"
-      if: github.ref == 'refs/heads/UnitTypes'
+      if: github.ref == 'refs/heads/main'
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest"
