@@ -32,7 +32,7 @@ namespace CustomComponents
             }
             catch (Exception e)
             {
-                Control.LogError($"{val} is wrong value for {CustomName} for {Database.Identifier(def)} used {default(TValue)}", e);
+                Control.LogError($"Can't convert value to type '{typeof(TValue).FullName}' for custom '{CustomName}' in def '{Database.Identifier(def)}'", e);
                 return default;
             }
         }
