@@ -29,7 +29,7 @@ namespace CustomComponents
                 var element = inventory[index];
                 element.gameObject.transform.SetSiblingIndex(index);
 
-                //Control.Logger.LogDebug($"id={element.ComponentRef.Def.Description.Id} index={index} order={Order(element)}");
+                // Control.Log($"id={element.ComponentRef.Def.Description.Id} index={index}");
             }
         }
     }

@@ -37,8 +37,7 @@ namespace CustomComponents.Fixes
                 for (int j = 0; j < __instance.Chassis.FixedEquipment.Length; j++)
                 {
                     MechComponentRef mechComponentRef = new MechComponentRef(__instance.Chassis.FixedEquipment[j], null);
-                    mechComponentRef.DataManager = ___dataManager;
-                    mechComponentRef.RefreshComponentDef();
+                    mechComponentRef.RefreshDef();
                     mechComponentRef.SetSimGameUID($"FixedEquipment-{Guid.NewGuid().ToString()}");
                     list.Add(mechComponentRef);
 

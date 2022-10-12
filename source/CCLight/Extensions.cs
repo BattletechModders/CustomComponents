@@ -198,7 +198,7 @@ namespace CustomComponents
             return target.Def.Is<T>();
         }
 
-        private static void RefreshDef(BaseComponentRef target)
+        internal static void RefreshDef(this BaseComponentRef target)
         {
             if (target.Def == null)
             {

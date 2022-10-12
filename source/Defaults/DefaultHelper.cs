@@ -49,8 +49,7 @@ namespace CustomComponents
         public static MechComponentRef CreateRef(string id, ComponentType type)
         {
             var component_ref = new MechComponentRef(id, string.Empty, type, ChassisLocations.None);
-            component_ref.DataManager = UnityGameInstance.BattleTechGame.DataManager;
-            component_ref.RefreshComponentDef();
+            component_ref.RefreshDef();
 
             var state = UnityGameInstance.BattleTechGame.Simulation;
             if (state != null)
@@ -61,9 +60,8 @@ namespace CustomComponents
         public static MechComponentRef CreateRef(string id, ComponentType type, ChassisLocations location)
         {
             var component_ref = new MechComponentRef(id, string.Empty, type, ChassisLocations.None);
-            component_ref.DataManager = UnityGameInstance.BattleTechGame.DataManager;
             component_ref.SetData(location,0, ComponentDamageLevel.Functional, false);
-            component_ref.RefreshComponentDef();
+            component_ref.RefreshDef();
 
 
             var state = UnityGameInstance.BattleTechGame.Simulation;
@@ -125,8 +123,7 @@ namespace CustomComponents
         public static MechLabItemSlotElement CreateSlot(string id, ComponentType type)
         {
             var component_ref = new MechComponentRef(id, string.Empty, type, ChassisLocations.None, isFixed: true);
-            component_ref.DataManager = UnityGameInstance.BattleTechGame.DataManager;
-            component_ref.RefreshComponentDef();
+            component_ref.RefreshDef();
 
             if (!component_ref.IsDefault())
             {
