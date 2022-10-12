@@ -67,6 +67,10 @@ namespace CustomComponents
 
         public CategoryDescriptor GetCategory(string name)
         {
+            if (name == null)
+            {
+                return null;
+            }
             return Categories.TryGetValue(name, out var c) ? c : null;
         }
 
