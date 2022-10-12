@@ -30,7 +30,7 @@ namespace CustomComponents
             }
         }
 
-        public string Category { get; set; }
+        public string CategoryID { get; set; }
         private _record[] Limits { get; set; }
 
         [JsonIgnore]
@@ -38,7 +38,7 @@ namespace CustomComponents
 
         public void OnLoaded(Dictionary<string, object> values)
         {
-            var desc = CategoryController.Shared.GetCategory(Category);
+            var desc = CategoryController.Shared.GetCategory(CategoryID);
 
             if (Limits == null || Limits.Length == 0)
                 LocationLimits = new Dictionary<ChassisLocations, CategoryLimit>();

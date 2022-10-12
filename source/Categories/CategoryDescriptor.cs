@@ -221,7 +221,7 @@ namespace CustomComponents
 
         private Dictionary<ChassisLocations, CategoryLimit> GetMechCategoryCustom(MechDef mech)
         {
-            var custom = mech.Chassis.GetComponents<ChassisCategory>().FirstOrDefault(i => i.Category == Name);
+            var custom = mech.Chassis.GetComponents<ChassisCategory>().FirstOrDefault(i => i.CategoryID == Name);
 
             if (custom != null)
                 return custom.LocationLimits;
