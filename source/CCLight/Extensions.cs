@@ -200,14 +200,16 @@ namespace CustomComponents
 
         internal static void RefreshDef(this BaseComponentRef target)
         {
-            if (target.Def == null)
+            if (target == null)
             {
-                if (target.DataManager == null)
-                {
-                    target.DataManager = UnityGameInstance.BattleTechGame.DataManager;
-                }
-                target.RefreshComponentDef();
+                return;
             }
+            if (target.Def != null)
+            {
+                return;
+            }
+            target.DataManager ??= UnityGameInstance.BattleTechGame.DataManager;
+            target.RefreshComponentDef();
         }
 
         public static T GetComponent<T>(this MechComponentRef target)

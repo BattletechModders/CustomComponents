@@ -92,38 +92,26 @@ namespace CustomComponents
         private HashSet<string> BuildUnitTypes(MechDef mech)
         {
             HashSet<string> result;
-
-
-            result = CheckCustom(mech);
-
-            if (result == null)
+            if (mech.Is<UnitTypeCustom>(out var unitTypes))
             {
-                result = new HashSet<string>();
-
-                foreach (var unitType in types)
-                {
-                    if (unitType.IsThisType(mech))
-                        result.Add(unitType.Name);
-                }
+                result = unitTypes.Types;
+            }
+            else
+            {
+                result = types
+                    .Where(ut => ut.IsThisType(mech))
+                    .Select(ut => ut.Name)
+                    .ToHashSet();
             }
 
-            var add = CheckCustomAdd(mech);
+            if (mech.Is<UnitTypeAddCustom>(out var unitTypesToAdd))
+            {
+                result = result.Concat(unitTypesToAdd.Types).ToHashSet();
+            }
 
             known[mech.ChassisID] = result;
             return result;
         }
-
-        //Method to patch with other custom type
-        public HashSet<string> CheckCustom(MechDef mech)
-        {
-            return mech.Is<UnitTypeCustom>(out var ut) ? ut.Types?.ToHashSet() : null;
-        }
-
-        public HashSet<string> CheckCustomAdd(MechDef mech)
-        {
-            return mech.Is<UnitTypeAddCustom>(out var ut) ? ut.Types?.ToHashSet() : null;
-        }
-
 
         public void ShowRegistredTypes()
         {

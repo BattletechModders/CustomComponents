@@ -236,8 +236,6 @@ namespace CustomComponents
         public void OnAdd(ChassisLocations location, InventoryOperationState state)
         {
             var defaults = DefaultsDatabase.Instance[state.Mech];
-
-
             if (CategoryDescriptor[state.Mech].Limited && !defaults.IsSingleCatDefault(Def.Description.Id, CategoryID))
                 state.AddChange(new Change_CategoryAdjust(CategoryID));
         }
