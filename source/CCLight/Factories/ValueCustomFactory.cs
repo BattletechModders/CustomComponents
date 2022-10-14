@@ -59,6 +59,11 @@ namespace CustomComponents
                 yield break;
             }
 
+            if (componentSettingsObject == null)
+            {
+                yield break;
+            }
+
             if ((componentSettingsObject is IEnumerable<object> compList))
             {
                 foreach (var item in compList)
@@ -144,7 +149,12 @@ namespace CustomComponents
                 yield break;
             }
 
-            if ((componentSettingsObject is IEnumerable<object> compList))
+            if (componentSettingsObject == null)
+            {
+                yield break;
+            }
+
+            if (componentSettingsObject is IEnumerable<object> compList)
             {
                 foreach (var item in compList)
                 {

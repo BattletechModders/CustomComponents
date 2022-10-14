@@ -60,7 +60,6 @@ namespace CustomComponents
                 if (Control.Settings.DEBUG_ShowConfig)
                     Log(JSONSerializationUtility.ToJSON(Settings));
 
-
                 var harmony = HarmonyInstance.Create("io.github.denadan.CustomComponents");
                 try
                 {
@@ -76,9 +75,10 @@ namespace CustomComponents
                     Control.LogError("AmbiguousMatchException\n" + values);
                 }
 
-                var version = Assembly.GetExecutingAssembly().GetName().Version;
-
+                Registry.RegisterPreProcessor(new CategoryDefaultCustomsPreProcessor());
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
+
+                var version = Assembly.GetExecutingAssembly().GetName().Version;
                 Logger.Log($"Loaded CustomComponents {version.ToString(3)} for bt 1.9.1");
                 Logger.Log("DebugInfo: " + Settings.DebugInfo);
                 Logger.Log("- DumpMechDefs:" + Settings.DEBUG_DumpMechDefs);

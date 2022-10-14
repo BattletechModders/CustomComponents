@@ -13,10 +13,12 @@ namespace CustomComponents
     /// <summary>
     /// component use category logic
     /// </summary>
-    [CustomComponent("Category", true)]
+    [CustomComponent(CategoryCustomName, true)]
     public class Category : SimpleCustomComponent, IAfterLoad, IReplaceValidateDrop,
         IReplaceIdentifier, IAdjustDescription, IOnRemove, IOnAdd, IPreValidateDrop
     {
+        internal const string CategoryCustomName = "Category";
+
         private class free_record
         {
             public ChassisLocations locations;
@@ -49,23 +51,13 @@ namespace CustomComponents
                 return Tag;
         }
 
-        //       public bool Placeholder { get; set; } // if true, item is invalid
-
         [JsonIgnore]
         public CategoryDescriptor CategoryDescriptor { get; set; }
 
         public void OnLoaded(Dictionary<string, object> values)
         {
             CategoryDescriptor = CategoryController.Shared.GetOrCreateCategory(CategoryID);
-
-            if (CategoryDescriptor.Defaults == null)
-            {
-                return;
-            }
-
-            Registry.ProcessCustomFactories(Def, CategoryDescriptor.Defaults, false);
         }
-
 
         public string ReplaceValidateDrop(MechLabItemSlotElement drop_item, ChassisLocations location, Queue<IChange> changes)
         {

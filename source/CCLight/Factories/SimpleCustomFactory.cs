@@ -40,6 +40,11 @@ namespace CustomComponents
                 yield break;
             }
 
+            if (componentSettingsObject == null)
+            {
+                yield break;
+            }
+
 
 #if CCDEBUG
             Control.Logger.LogDebug($"Factory {CustomName} for {customSettingsObject})");

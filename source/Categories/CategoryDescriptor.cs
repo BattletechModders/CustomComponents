@@ -252,21 +252,8 @@ namespace CustomComponents
             BaseLimits = source.BaseLimits;
         }
 
-        [Newtonsoft.Json.JsonIgnore]
-        public Dictionary<string, object> Defaults = null;
-
         public void Init()
         {
-            if (DefaultCustoms == null)
-            {
-                Defaults = null;
-            }
-            else
-            {
-                Defaults = new Dictionary<string, object>();
-                Defaults.Add(Control.CustomSectionName, DefaultCustoms);
-            }
-
             UnitLimits ??= new List<CategoryDescriptorRecord>();
 
             var limits = UnitLimits.FirstOrDefault(i => i.UnitType == "*");

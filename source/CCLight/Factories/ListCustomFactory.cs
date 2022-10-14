@@ -57,6 +57,11 @@ namespace CustomComponents
                 yield break;
             }
 
+            if (componentSettingsObject == null)
+            {
+                yield break;
+            }
+
             if (!(componentSettingsObject is IEnumerable<object> compList))
             {
                 yield break;
@@ -131,6 +136,11 @@ namespace CustomComponents
             }
 
             if (!customSettings.TryGetValue(CustomName, out var componentSettingsObject))
+            {
+                yield break;
+            }
+
+            if (componentSettingsObject == null)
             {
                 yield break;
             }
