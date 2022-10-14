@@ -252,7 +252,11 @@ namespace CustomComponents
 
 
                     category.CategoryRecord = category.CategoryDescriptor[mech];
-
+                    if (category.CategoryRecord == null)
+                    {
+                        Control.LogError($"Defaults for {mech.ChassisID} have unknown category record for category {item.CategoryID}, skipped");
+                        continue;
+                    }
 
                     if (!category.CategoryRecord.MinLimited)
                     {

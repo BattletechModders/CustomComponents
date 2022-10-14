@@ -227,16 +227,31 @@ namespace CustomComponents
 
         public void OnAdd(ChassisLocations location, InventoryOperationState state)
         {
-            var defaults = DefaultsDatabase.Instance[state.Mech];
-            if (CategoryDescriptor[state.Mech].Limited && !defaults.IsSingleCatDefault(Def.Description.Id, CategoryID))
-                state.AddChange(new Change_CategoryAdjust(CategoryID));
+            OnInventoryChange(state);
         }
 
         public void OnRemove(ChassisLocations location, InventoryOperationState state)
         {
+            OnInventoryChange(state);
+        }
+
+        private void OnInventoryChange(InventoryOperationState state)
+        {
             var defaults = DefaultsDatabase.Instance[state.Mech];
-            if (CategoryDescriptor[state.Mech].Limited && !defaults.IsSingleCatDefault(Def.Description.Id, CategoryID))
-                state.AddChange(new Change_CategoryAdjust(CategoryID));
+            var record = CategoryDescriptor[state.Mech];
+            if (record == null)
+            {
+                return;
+            }
+            if (!record.Limited)
+            {
+                return;
+            }
+            if (defaults.IsSingleCatDefault(Def.Description.Id, CategoryID))
+            {
+                return;
+            }
+            state.AddChange(new Change_CategoryAdjust(CategoryID));
         }
 
     }
