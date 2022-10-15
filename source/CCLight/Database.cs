@@ -11,9 +11,9 @@ namespace CustomComponents
     {
         #region internal
 
-        internal static bool SetCustomWithIdentifier(string identifier, ICustom cc, bool replace)
+        internal static bool SetCustomWithIdentifier(string identifier, ICustom cc)
         {
-            return Shared.SetCustomInternal(identifier, cc, replace);
+            return Shared.SetCustomInternal(identifier, cc);
         }
 
         public static IEnumerable<T> GetCustoms<T>(object target)
@@ -114,7 +114,7 @@ namespace CustomComponents
             return ccs;
         }
 
-        private bool SetCustomInternal(string key, ICustom cc, bool replace)
+        private bool SetCustomInternal(string key, ICustom cc)
         {
             Control.LogDebug(DType.CCLoading, $"SetCustomInternal key={key} cc={cc}");
 
@@ -146,27 +146,18 @@ namespace CustomComponents
                     if (custom is IReplaceIdentifier cci2 &&
                         cci1.ReplaceID == cci2.ReplaceID)
                     {
-                        Control.LogDebug(DType.CCLoading, $"--find replace: add:{attribute.Name} fnd:{attribute2.Name} grp:{attribute.Group} rid:{cci1.ReplaceID} Replace: {replace}");
+                        Control.LogDebug(DType.CCLoading, $"--find replace: add:{attribute.Name} fnd:{attribute2.Name} grp:{attribute.Group} rid:{cci1.ReplaceID}");
                         Control.LogDebug(DType.CCLoading, $"--replace: from:{custom} to:{cc}");
-                        if (replace)
-                        {
-                            ccs[i] = cc;
-                            return true;
-                        }
-
-                        return false;
+                        ccs[i] = cc;
+                        return true;
                     }
                 }
                 else
                 {
-                    Control.LogDebug(DType.CCLoading, $"--find replace: add:{attribute.Name} fnd:{attribute2.Name} grp:{attribute.Group} Replace: {replace}");
+                    Control.LogDebug(DType.CCLoading, $"--find replace: add:{attribute.Name} fnd:{attribute2.Name} grp:{attribute.Group}");
                     Control.LogDebug(DType.CCLoading, $"--replace: from:{custom} to:{cc}");
-                    if (replace)
-                    {
-                        ccs[i] = cc;
-                        return true;
-                    }
-                    return false;
+                    ccs[i] = cc;
+                    return true;
                 }
             }
             Control.LogDebug(DType.CCLoading, $"--added");

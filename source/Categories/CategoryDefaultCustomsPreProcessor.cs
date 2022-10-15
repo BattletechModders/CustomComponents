@@ -16,32 +16,34 @@ internal class CategoryDefaultCustomsPreProcessor : IPreProcessor
             return;
         }
 
-        foreach (var categoryID in GetCategoryIDs(customSettings))
+        if (!customSettings.TryGetValue(Category.CategoryCustomName, out var categoryCustomObject))
+        {
+            return;
+        }
+
+        foreach (var categoryID in GetCategoryIDs(categoryCustomObject))
         {
             var categoryDescriptor = CategoryController.Shared.GetOrCreateCategory(categoryID);
             if (categoryDescriptor.DefaultCustoms == null)
             {
-                return;
+                continue;
             }
 
+            Control.LogDebug(DType.CCLoading, $"--copying defaults from category {categoryID}");
             foreach (var kv in categoryDescriptor.DefaultCustoms)
             {
                 if (customSettings.ContainsKey(kv.Key))
                 {
                     continue;
                 }
+                Control.LogDebug(DType.CCLoading, $"--copying {kv.Key} from category {categoryID}");
                 customSettings[kv.Key] = kv.Value;
             }
         }
     }
 
-    private IEnumerable<string> GetCategoryIDs(Dictionary<string, object> customSettings)
+    private IEnumerable<string> GetCategoryIDs(object categoryCustomObject)
     {
-        if (!customSettings.TryGetValue(Category.CategoryCustomName, out var categoryCustomObject))
-        {
-            yield break;
-        }
-
         if (categoryCustomObject is List<object> categoryObjectList)
         {
             foreach (var categoryObject in categoryObjectList)

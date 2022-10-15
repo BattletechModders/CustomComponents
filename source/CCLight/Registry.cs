@@ -122,7 +122,7 @@ namespace CustomComponents
 
         #endregion
 
-        internal static void ProcessCustomFactories(object target, Dictionary<string, object> values, bool replace = true)
+        internal static void ProcessCustomFactories(object target, Dictionary<string, object> values)
         {
             if (target == null)
             {
@@ -144,12 +144,9 @@ namespace CustomComponents
             Control.LogDebug(DType.CCLoading, $"ProcessCustomCompontentFactories for {target.GetType()} ({target.GetHashCode()})");
             Control.LogDebug(DType.CCLoading, $"- {identifier}");
 
-            if (replace)
+            foreach (var preProcessor in PreProcessors)
             {
-                foreach (var preProcessor in PreProcessors)
-                {
-                    preProcessor.PreProcess(target, values);
-                }
+                preProcessor.PreProcess(target, values);
             }
 
             var loaded = false;
@@ -157,7 +154,7 @@ namespace CustomComponents
             {
                 try
                 {
-                    ProcessCustomFactory(factory, target, values, replace, identifier, ref loaded);
+                    ProcessCustomFactory(factory, target, values, identifier, ref loaded);
                 }
                 catch (Exception e)
                 {
@@ -196,7 +193,6 @@ namespace CustomComponents
             ICustomFactory factory,
             object target,
             Dictionary<string, object> values,
-            bool replace,
             string identifier,
             ref bool loaded)
         {
@@ -210,7 +206,7 @@ namespace CustomComponents
 
                 Control.LogDebug(DType.CCLoading, $"Created {component} for {identifier}");
 
-                if (Database.SetCustomWithIdentifier(identifier, component, replace))
+                if (Database.SetCustomWithIdentifier(identifier, component))
                 {
                     if (component is IAfterLoad load)
                     {
