@@ -48,18 +48,18 @@ internal class CategoryDefaultCustomsPreProcessor : IPreProcessor
             {
                 if (categoryObject is Dictionary<string, object> categoryDict)
                 {
-                    if (categoryDict.TryGetValue(nameof(Category.CategoryID), out var categoryID))
+                    if (categoryDict.TryGetValue(nameof(Category.CategoryID), out var categoryIDObject) && categoryIDObject is string categoryID)
                     {
-                        yield return categoryID as string;
+                        yield return categoryID;
                     }
                 }
             }
         }
         else if (categoryCustomObject is Dictionary<string, object> categoryDict)
         {
-            if (categoryDict.TryGetValue(nameof(Category.CategoryID), out var categoryID))
+            if (categoryDict.TryGetValue(nameof(Category.CategoryID), out var categoryIDObject) && categoryIDObject is string categoryID)
             {
-                yield return categoryID as string;
+                yield return categoryID;
             }
         }
     }
