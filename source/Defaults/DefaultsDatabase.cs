@@ -260,7 +260,7 @@ namespace CustomComponents
 
                     if (!category.CategoryRecord.MinLimited)
                     {
-                        Control.LogError($"{mech.ChassisID} have default of category {item.CategoryID} which not have minimum limit, skipped");
+                        Control.LogDebug(DType.DefaultsBuild, $"{mech.ChassisID} have default of category {item.CategoryID} which not have minimum limit, skipped");
                         continue;
                     }
 
@@ -269,8 +269,7 @@ namespace CustomComponents
                     {
                         if (!SingleLocations.Contains(default_record.Location))
                         {
-                            Control.LogError(
-                                $"{mech.ChassisID} have default in group location for {default_record.DefID}, skipped");
+                            Control.LogDebug(DType.DefaultsBuild, $"{mech.ChassisID} have default in group location for {default_record.DefID}, skipped");
                             continue;
                         }
 
