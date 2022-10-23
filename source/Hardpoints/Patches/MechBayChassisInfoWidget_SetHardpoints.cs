@@ -28,7 +28,7 @@ namespace CustomComponents.Patches
 
                 var usage = ___selectedChassis.GetHardpoints();
                 hardpoints.SetDataTotal(usage);
-                hardpoints.SetJJ(___selectedChassis.GetJJMaxByChassisDef());
+                hardpoints.SetJJ(___selectedChassis);
 
             }
             catch (Exception e)

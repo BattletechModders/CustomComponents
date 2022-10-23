@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 using FluffyUnderware.DevTools.Extensions;
-using JetBrains.Annotations;
 
 namespace CustomComponents
 {
@@ -192,22 +190,6 @@ namespace CustomComponents
         public static List<HPUsage> GetHardpoints(this MechDef mech, SortOrder sort = SortOrder.Usage)
         {
             return mech?.Chassis.GetHardpoints(sort);
-        }
-
-        public static int GetJJMaxByMechDef(this MechDef def)
-        {
-            return GetJJMaxByChassisDef(def?.Chassis);
-        }
-
-        // returns -1 if JJ max count can't be calculated based on Chassis
-        public static int GetJJMaxByChassisDef(this ChassisDef def)
-        {
-            return def?.MaxJumpjets ?? -1;
-        }
-
-        public static int GetJJCountByMechDef(this MechDef def)
-        {
-            return def?.Inventory.Count(i => i.ComponentDefType == ComponentType.JumpJet) ?? -1;
         }
 
         public static List<HPUsage> GetHardpoints(this ChassisDef chassis, SortOrder sort = SortOrder.Usage)

@@ -281,7 +281,7 @@ namespace CustomComponents
             if (hardpoints != null)
             {
                 hardpoints.SetData(usage);
-                hardpoints.SetJJ(ActiveMech.GetJJCountByMechDef(), ActiveMech.GetJJMaxByMechDef());
+                hardpoints.SetJJ(ActiveMech);
             }
         }
     }

@@ -3,7 +3,6 @@ using BattleTech;
 using BattleTech.UI.TMProWrapper;
 using BattleTech.UI.Tooltips;
 using Harmony;
-using UnityEngine;
 
 namespace CustomComponents.Patches
 {
@@ -31,8 +30,7 @@ namespace CustomComponents.Patches
                     //Control.Log($"set data for {mech.Description.Id}");
                     var usage = mech.GetHardpointUsage();
                     handler.SetData(usage);
-                    handler.SetJJ(mech.GetJJCountByMechDef(), mech.GetJJMaxByMechDef());
-
+                    handler.SetJJ(mech);
                 }
             }
             catch (Exception e)

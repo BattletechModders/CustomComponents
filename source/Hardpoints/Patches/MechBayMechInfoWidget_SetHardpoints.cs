@@ -27,8 +27,7 @@ namespace CustomComponents.Patches
 
                 var usage = ___selectedMech.GetHardpointUsage();
                 hardpoints.SetData(usage);
-                hardpoints.SetJJ(___selectedMech.GetJJCountByMechDef(), ___selectedMech.GetJJMaxByMechDef());
-
+                hardpoints.SetJJ(___selectedMech);
             }
             catch (Exception e)
             {

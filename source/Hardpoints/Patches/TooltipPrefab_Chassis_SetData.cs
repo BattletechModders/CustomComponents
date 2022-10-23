@@ -30,8 +30,7 @@ namespace CustomComponents.Debug
                     //Control.Log($"set data for {mech.Description.Id}");
                     var usage = chassis.GetHardpoints();
                     handler.SetDataTotal(usage);
-                    handler.SetJJ(chassis.GetJJMaxByChassisDef());
-
+                    handler.SetJJ(chassis);
                 }
             }
             catch (Exception e)
