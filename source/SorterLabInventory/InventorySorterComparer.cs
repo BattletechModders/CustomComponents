@@ -8,7 +8,7 @@ namespace CustomComponents
     {
         public static string SortKey(MechComponentDef def)
         {
-            return def?.GetComponent<InventorySorter>()?.SortKey ?? string.Empty;
+            return def?.GetComponent<InventorySorter>()?.SortKey ?? Control.Settings.SorterLabInventoryDefault;
         }
 
         public int Compare(MechComponentDef x, MechComponentDef y)

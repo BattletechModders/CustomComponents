@@ -174,6 +174,9 @@ namespace CustomComponents
         public bool NoLootCTDestroyed = false;
         public bool BaseECMValidation = true;
 
+        public string SorterLabInventoryDefault = "pppppppp";
+        public int SorterMechInventoryDefault = 100;
+
         public bool OverrideRecoveryChance = true;
         public bool SalvageUnrecoveredMech = true;
         public float LimbRecoveryPenalty = 0.05f;

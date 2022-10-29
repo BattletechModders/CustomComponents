@@ -47,10 +47,9 @@ namespace CustomComponents
                 return Index(x) - Index(y);
             }
 
-            // returns the the explicitly defined order or 100
             private static int Order(MechComponentDef def)
             {
-                return def?.GetComponent<ISorter>()?.Order ?? 100;
+                return def?.GetComponent<ISorter>()?.Order ?? Control.Settings.SorterMechInventoryDefault;
             }
 
             private readonly MechComponentRef[] originalOrder;
