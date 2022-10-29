@@ -12,7 +12,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(CustomComponentsModPath)' == ''">
     <!-- sources dir -->
-    <CustomComponentsModPath>$(SolutionDir)/..</CustomComponentsModPath>
+    <CustomComponentsModPath>$(MSBuildProjectDirectory)\..</CustomComponentsModPath>
   </PropertyGroup>
   <PropertyGroup>
     <ProjectGuid>{7E755F55-106A-4F0D-A970-0BA7FC6C5662}</ProjectGuid>
