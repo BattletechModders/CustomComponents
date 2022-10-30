@@ -4,8 +4,8 @@ using Harmony;
 namespace CustomComponents.Patches
 {
     // TODO implement based on Hardpoints
-    [HarmonyPatch(typeof(MechLabPanel), "MechCanUseAmmo")]
-    internal class MechLabPanel_MechCanUseAmmo_Patch
+    [HarmonyPatch(typeof(MechLabPanel), "MechCanEquipItem")]
+    internal class MechLabPanel_MechCanEquipItem_Patch
     {
         public static bool Prefix(ref bool __result)
         {
