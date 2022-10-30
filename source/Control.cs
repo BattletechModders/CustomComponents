@@ -23,38 +23,12 @@ namespace CustomComponents
         internal const string CustomSectionName = "Custom";
         internal static string LogPrefix = "[CC]";
 
-        public static void Init(string directory, string defaultsSettingsJson)
+        public static void Init(string directory, string settingsInitJson)
         {
-            Logger = HBS.Logging.Logger.GetLogger("CustomComponents", LogLevel.Debug);
-            SetupLogging(directory);
-
             try
             {
-                try
-                {
-                    JSONSerializationUtility.FromJSON(Settings, defaultsSettingsJson);
-                }
-                catch (Exception e)
-                {
-                    Logger.LogError("Couldn't load default settings", e);
-                    Settings = new CustomComponentSettings();
-                }
+                LoadSettingsAndSetupLogger(directory, settingsInitJson);
 
-                var settingsPath = Path.Combine(directory, "settings.json");
-                if (File.Exists(settingsPath))
-                {
-                    try
-                    {
-                        var settingsJson = File.ReadAllText(settingsPath);
-                        JSONSerializationUtility.FromJSON(Settings, settingsJson);
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.LogError("Couldn't load settings", e);
-                    }
-                }
-
-                HBS.Logging.Logger.SetLoggerLevel(Logger.Name, Settings.LogLevel);
                 Settings.Complete();
 
                 if (Control.Settings.DEBUG_ShowConfig)
@@ -134,6 +108,49 @@ namespace CustomComponents
             }
         }
 
+        private static void LoadSettingsAndSetupLogger(string directory, string settingsInitJson)
+        {
+            Exception settingsInitEx;
+            try
+            {
+                JSONSerializationUtility.FromJSON(Settings, settingsInitJson);
+                settingsInitEx = null;
+            }
+            catch (Exception e)
+            {
+                settingsInitEx = e;
+                Settings = new();
+            }
+
+            Exception settingsFileEx;
+            try
+            {
+                var settingsPath = Path.Combine(directory, "settings.json");
+                if (File.Exists(settingsPath))
+                {
+                    var settingsJson = File.ReadAllText(settingsPath);
+                    JSONSerializationUtility.FromJSON(Settings, settingsJson);
+                }
+
+                settingsFileEx = null;
+            }
+            catch (Exception e)
+            {
+                settingsFileEx = e;
+            }
+
+            Logger = HBS.Logging.Logger.GetLogger("CustomComponents", Settings.LogLevel);
+            if (settingsInitEx != null)
+            {
+                Logger.LogError("Couldn't load default settings", settingsInitEx);
+            }
+
+            if (settingsFileEx != null)
+            {
+                Logger.LogError("Couldn't load settings", settingsFileEx);
+            }
+        }
+
         public static bool Loaded { get; private set; } = false;
         public static void FinishedLoading(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
@@ -191,57 +208,6 @@ namespace CustomComponents
         public static void Log(string message)
         {
             Logger.Log(LogPrefix + message);
-        }
-
-
-
-        internal static void SetupLogging(string Directory)
-        {
-            var logFilePath = Path.Combine(Directory, "log.txt");
-
-            try
-            {
-                ShutdownLogging();
-                AddLogFileForLogger(logFilePath);
-            }
-            catch (Exception e)
-            {
-                Logger.Log("CustomComponents: can't create log file", e);
-            }
-        }
-
-        internal static void ShutdownLogging()
-        {
-            if (logAppender == null)
-            {
-                return;
-            }
-
-            try
-            {
-                HBS.Logging.Logger.ClearAppender("CustomComponents");
-                logAppender.Flush();
-                logAppender.Close();
-            }
-            catch
-            {
-            }
-
-            logAppender = null;
-        }
-
-        private static void AddLogFileForLogger(string logFilePath)
-        {
-            try
-            {
-                logAppender = new FileLogAppender(logFilePath, FileLogAppender.WriteMode.INSTANT);
-                HBS.Logging.Logger.AddAppender("CustomComponents", logAppender);
-
-            }
-            catch (Exception e)
-            {
-                Logger.Log("CustomComponents: can't create log file", e);
-            }
         }
 
         #endregion
