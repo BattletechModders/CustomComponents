@@ -1,7 +1,4 @@
 ﻿using BattleTech.UI;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using BattleTech;
 
 namespace CustomComponents

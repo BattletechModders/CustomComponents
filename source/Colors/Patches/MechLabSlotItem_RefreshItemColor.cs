@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
 using BattleTech;
 using BattleTech.UI;
-using GraphCoroutines;
 using Harmony;
 using SVGImporter;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace CustomComponents.Patches
 {

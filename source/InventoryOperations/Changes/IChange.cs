@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using BattleTech;
-
-namespace CustomComponents.Changes
+﻿namespace CustomComponents.Changes
 {
     public interface IChange
     {

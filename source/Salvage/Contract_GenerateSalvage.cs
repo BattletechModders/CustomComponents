@@ -37,11 +37,11 @@ namespace CustomComponents
 
                 ___finalPotentialSalvage = new List<SalvageDef>();
 
-                var Contract = new ContractHelper(__instance);
+                var contract = __instance;
 
-                Contract.SalvagedChassis = new List<SalvageDef>();
-                Contract.LostMechs = new List<MechDef>();
-                Contract.SalvageResults = new List<SalvageDef>();
+                contract.SalvagedChassis = new List<SalvageDef>();
+                contract.LostMechs = new List<MechDef>();
+                contract.SalvageResults = new List<SalvageDef>();
 
                 var simgame = __instance.BattleTechGame.Simulation;
                 if (simgame == null)
@@ -61,7 +61,7 @@ namespace CustomComponents
                     {
                         Control.LogDebug(DType.SalvageProccess, $"-- {mech.Name} not destroyed, skiping");
                         continue;
-                        
+
                     }
 
 
@@ -147,7 +147,7 @@ namespace CustomComponents
                     if (lostUnits[i].mechLost)
                     {
                         if (Control.Settings.SalvageUnrecoveredMech)
-                            AddMechToSalvage(mech, Contract, simgame, Constants, ___finalPotentialSalvage);
+                            AddMechToSalvage(mech, contract, simgame, Constants, ___finalPotentialSalvage);
                         else
                         {
                             int old_diff = __instance.Override.finalDifficulty;
@@ -164,7 +164,7 @@ namespace CustomComponents
 
                             __instance.Override.finalDifficulty = 0;
 
-                            AddMechToSalvage(mech, Contract, simgame, Constants, __instance.SalvageResults);
+                            AddMechToSalvage(mech, contract, simgame, Constants, __instance.SalvageResults);
 
 
                             Constants.Salvage.RareUpgradeChance = old_rare_u;
@@ -185,7 +185,7 @@ namespace CustomComponents
                 foreach (var unit in enemyMechs)
                 {
                     if (unit.pilot.IsIncapacitated || IsDestroyed(unit.mech) || unit.pilot.HasEjected)
-                        AddMechToSalvage(unit.mech, Contract, simgame, Constants, ___finalPotentialSalvage);
+                        AddMechToSalvage(unit.mech, contract, simgame, Constants, ___finalPotentialSalvage);
                     else
                     {
                         Control.LogDebug(DType.SalvageProccess, $"-- Salvaging {unit.mech.Name}");
@@ -201,12 +201,12 @@ namespace CustomComponents
                         item.DamageLevel != ComponentDamageLevel.Destroyed))
                     {
                         Control.LogDebug(DType.SalvageProccess, $"--- Adding {component.ComponentDefID}");
-                        Contract.AddMechComponentToSalvage(___finalPotentialSalvage, component.Def, ComponentDamageLevel.Functional, false,
+                        contract.AddMechComponentToSalvage(___finalPotentialSalvage, component.Def, ComponentDamageLevel.Functional, false,
                             Constants, simgame.NetworkRandom, true);
                     }
                 }
 
-                Contract.FilterPotentialSalvage(___finalPotentialSalvage);
+                contract.FilterPotentialSalvage(___finalPotentialSalvage);
                 int num2 = __instance.SalvagePotential;
                 float num3 = Constants.Salvage.VictorySalvageChance;
                 float num4 = Constants.Salvage.VictorySalvageLostPerMechDestroyed;
@@ -233,8 +233,8 @@ namespace CustomComponents
                     num2 += Constants.Finances.ContractFloorSalvageBonus;
                 }
 
-                Contract.FinalSalvageCount = num7;
-                Contract.FinalPrioritySalvageCount = Math.Min(7, Mathf.FloorToInt((float)num7 * Constants.Salvage.PrioritySalvageModifier));
+                contract.FinalSalvageCount = num7;
+                contract.FinalPrioritySalvageCount = Math.Min(7, Mathf.FloorToInt((float)num7 * Constants.Salvage.PrioritySalvageModifier));
 
             }
             catch (Exception e)
@@ -245,7 +245,7 @@ namespace CustomComponents
             return false;
         }
 
-        private static void AddMechToSalvage(MechDef mech, ContractHelper contract, SimGameState simgame, SimGameConstants constants, List<SalvageDef> salvage)
+        private static void AddMechToSalvage(MechDef mech, Contract contract, SimGameState simgame, SimGameConstants constants, List<SalvageDef> salvage)
         {
             Control.LogDebug(DType.SalvageProccess, $"-- Salvaging {mech.Name}");
 

@@ -33,19 +33,10 @@ namespace CustomComponents.Fixes
 
                 if (__result.DesiredLocation == ChassisLocations.None)
                 {
-                    var tr = Traverse.Create(__result);
-                    tr.Field<int>("Cost").Value = 0;
+                    __result.Cost = 0;
                 }
                 else
                 {
-                    var tr = Traverse.Create(__result).Field<int>("Cost");
-
-                    if (tr == null)
-                    {
-                        Control.LogDebug(DType.InstallCost, "SimGameState_CreateComponentInstallWorkOrder: traverce not created!");
-                        return;
-
-                    }
                     MechDef mechByID = __instance.GetMechByID(mechSimGameUID);
 #if CCDEBUG
                     if (mechByID == null)
@@ -54,12 +45,12 @@ namespace CustomComponents.Fixes
                     if (mechByID != null && mechByID.Chassis.ChassisTags.Contains(Control.Settings.OmniTechFlag))
                     {
                         Control.LogDebug(DType.InstallCost, "-- mech is omni!");
-                        tr.Value = (Control.Settings.OmniTechCostBySize ? mechComponent.Def.InventorySize / 2 : 1) * Control.Settings.OmniTechInstallCost;
+                        __result.Cost = (Control.Settings.OmniTechCostBySize ? mechComponent.Def.InventorySize / 2 : 1) * Control.Settings.OmniTechInstallCost;
                     }
 
 
-                    if (tr.Value == 0)
-                        tr.Value = 1;
+                    if (__result.Cost == 0)
+                        __result.Cost = 1;
                 }
 
             }

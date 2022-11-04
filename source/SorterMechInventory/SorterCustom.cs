@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CustomComponents
+﻿namespace CustomComponents
 {
     [CustomComponent("Sorter")]
     public class SorterCustom : SimpleCustomComponent, ISorter, IValueComponent<int>

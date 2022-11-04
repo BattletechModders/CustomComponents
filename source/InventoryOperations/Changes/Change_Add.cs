@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using BattleTech;
 using BattleTech.UI;
-using UIWidgetsSamples.Shops;
 
 namespace CustomComponents.Changes
 {

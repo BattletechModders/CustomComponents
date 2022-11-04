@@ -16,8 +16,7 @@ namespace CustomComponents.Patches
                     return;
                 if (__instance.Def.Flags<CCFlags>().NoRemove)
                 {
-                    var trav = Traverse.Create(__instance).Property<bool>("IsFixed");
-                    trav.Value = true;
+                    __instance.IsFixed = true;
                 }
             }
             catch (Exception e)

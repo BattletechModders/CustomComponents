@@ -1,5 +1,4 @@
-﻿using System;
-using BattleTech.UI;
+﻿using BattleTech.UI;
 using fastJSON;
 using UnityEngine;
 

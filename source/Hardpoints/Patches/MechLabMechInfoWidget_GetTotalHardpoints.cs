@@ -1,5 +1,4 @@
 ﻿using BattleTech.UI;
-using ErosionBrushPlugin;
 using Harmony;
 
 namespace CustomComponents.Patches

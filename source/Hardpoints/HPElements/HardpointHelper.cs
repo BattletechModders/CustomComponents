@@ -1,9 +1,7 @@
-﻿using System;
-using BattleTech;
+﻿using BattleTech;
 using BattleTech.UI;
 using BattleTech.UI.TMProWrapper;
 using BattleTech.UI.Tooltips;
-using CustomComponents.Patches;
 using HBS;
 using SVGImporter;
 using UnityEngine;

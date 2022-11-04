@@ -2,7 +2,6 @@
 using System.Linq;
 using BattleTech;
 using BattleTech.UI;
-using Harmony;
 using Localize;
 
 namespace CustomComponents

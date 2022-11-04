@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace CustomComponents.Changes
+﻿namespace CustomComponents.Changes
 {
     public class Change_CategoryAdjust : IChange_Adjust
     {

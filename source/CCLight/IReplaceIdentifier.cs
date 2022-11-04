@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace CustomComponents
+﻿namespace CustomComponents
 {
     public interface IReplaceIdentifier
     {

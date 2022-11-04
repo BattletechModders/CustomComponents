@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using BattleTech;
 using BattleTech.UI;
 using CustomComponents.ExtendedDetails;

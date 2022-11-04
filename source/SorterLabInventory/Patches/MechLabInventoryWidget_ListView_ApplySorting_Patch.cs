@@ -11,21 +11,19 @@ namespace CustomComponents
         {
             try
             {
-                var adapter = new MechLabInventoryWidget_ListViewAdapter(__instance);
-
-                if (adapter.invertSort)
+                if (__instance.invertSort)
                 {
                     return;
                 }
 
-                if (adapter.currentListItemSorter is InventorySorterListComparer)
+                if (__instance.currentListItemSorter is InventorySorterListComparer)
                 {
                     return;
                 }
 
-                adapter.currentListItemSorter = new InventorySorterListComparer(adapter.currentListItemSorter.Compare);
-                adapter.currentSort = new InventorySorterListComparer(adapter.currentSort).Compare;
-                adapter.invertSort = false;
+                __instance.currentListItemSorter = new InventorySorterListComparer(__instance.currentListItemSorter.Compare);
+                __instance.currentSort = new InventorySorterListComparer(__instance.currentSort).Compare;
+                __instance.invertSort = false;
             }
             catch (Exception e)
             {

@@ -77,14 +77,13 @@ namespace CustomComponents
                 return;
             }
 
-            var adapter = new WorkOrderEntry_MechLabAdapter(workOrder);
             if (!string.IsNullOrEmpty(costs.CBillCost))
             {
-                adapter.CBillCost = Convert.ToInt32(FormulaEvaluator.Shared.Evaluate(costs.CBillCost, variables));
+                workOrder.CBillCost = Convert.ToInt32(FormulaEvaluator.Shared.Evaluate(costs.CBillCost, variables));
             }
             if (!string.IsNullOrEmpty(costs.TechCost))
             {
-                adapter.Cost = Convert.ToInt32(FormulaEvaluator.Shared.Evaluate(costs.TechCost, variables));
+                workOrder.Cost = Convert.ToInt32(FormulaEvaluator.Shared.Evaluate(costs.TechCost, variables));
             }
         }
     }

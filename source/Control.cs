@@ -18,7 +18,6 @@ namespace CustomComponents
         public static CustomComponentSettings Settings = new();
 
         private static ILog Logger;
-        private static FileLogAppender logAppender;
 
         internal const string CustomSectionName = "Custom";
         internal static string LogPrefix = "[CC]";
@@ -170,8 +169,6 @@ namespace CustomComponents
             Control.LogDebug(DType.CustomResource, " - done");
             Loaded = true;
         }
-
-
 
         #region LOGGING
         [Conditional("CCDEBUG")]

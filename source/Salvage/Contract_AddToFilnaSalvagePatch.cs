@@ -1,7 +1,5 @@
 ﻿using System;
 using BattleTech;
-using Harmony;
-using HBS.Logging;
 
 namespace CustomComponents
 { 

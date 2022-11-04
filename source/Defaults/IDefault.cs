@@ -1,6 +1,4 @@
-﻿using BattleTech;
-
-namespace CustomComponents
+﻿namespace CustomComponents
 {
     public interface IDefault
     {

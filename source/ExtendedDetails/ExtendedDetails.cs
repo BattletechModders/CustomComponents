@@ -68,7 +68,7 @@ namespace CustomComponents.ExtendedDetails
         private void SetDescriptionDetails()
         {
             var details = Details.Join(x => x.Text, "");
-            Traverse.Create(Def).Property<string>(nameof(DescriptionDef.Details)).Value = details;
+            Def.Details = details;
         }
 
         // this method should be used when wanting custom behavior of showing details

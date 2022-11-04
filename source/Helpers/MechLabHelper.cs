@@ -4,23 +4,12 @@ using BattleTech;
 using BattleTech.UI;
 using Harmony;
 using System.Linq;
-using BattleTech.UI.TMProWrapper;
-using ErosionBrushPlugin;
-using FluffyUnderware.DevTools.Extensions;
-using TMPro;
-using UnityEngine;
-using UnityEngine.UI;
 
 namespace CustomComponents
 {
     public class MechLabHelper
     {
-        private static MechLabHelper mechlab_instance;
-
-        public static MechLabHelper CurrentMechLab
-        {
-            get { return mechlab_instance; }
-        }
+        public static MechLabHelper CurrentMechLab { get; private set; }
 
         private HPHandler hardpoints; 
 
@@ -35,11 +24,11 @@ namespace CustomComponents
                     Control.Log($"Enter MechLab for {mechlab.activeMechDef.Description.Id}, UT:[{ut.Join()}]");
             }
 
-            mechlab_instance = new MechLabHelper(mechlab);
-            mechlab_instance.MakeLocations();
+            CurrentMechLab = new MechLabHelper(mechlab);
+            CurrentMechLab.MakeLocations();
 
-            mechlab_instance.MakeHardpoints();
-            mechlab_instance.RefreshHardpoints();
+            CurrentMechLab.MakeHardpoints();
+            CurrentMechLab.RefreshHardpoints();
         }
 
         private void MakeHardpoints()
@@ -86,16 +75,11 @@ namespace CustomComponents
 
         internal static void CloseMechLab()
         {
-            mechlab_instance = null;
+            CurrentMechLab = null;
         }
 
         public MechLabPanel MechLab { get; private set; }
 
-
-        private Traverse main;
-        private Traverse drag_item;
-        private Traverse<MechLabInventoryWidget> inventory;
-        private Traverse<MechLabDismountWidget> bin;
         private List<LocationHelper> all_helpers;
         public LocationHelper LHelper_HD { get; private set; }
         public LocationHelper LHelper_CT { get; private set; }
@@ -109,24 +93,8 @@ namespace CustomComponents
         public LocationHelper LHelper_SP { get; private set; }
 
         public MechDef ActiveMech => MechLab.activeMechDef;
-        public bool InMechLab => mechlab_instance != null;
+        public bool InMechLab => CurrentMechLab != null;
         public bool InSimGame => MechLab.IsSimGame;
-        public IEnumerable<MechLabLocationWidget> GetWidgets()
-        {
-            yield return MechLab.headWidget;
-            yield return MechLab.leftArmWidget;
-            yield return MechLab.leftTorsoWidget;
-            yield return MechLab.centerTorsoWidget;
-            yield return MechLab.rightTorsoWidget;
-            yield return MechLab.rightArmWidget;
-            yield return MechLab.leftLegWidget;
-            yield return MechLab.rightLegWidget;
-        }
-
-        public IEnumerable<LocationHelper> GetLocationHelpers()
-        {
-            return all_helpers;
-        }
 
         public IEnumerable<InvItem> FullInventory
         {
@@ -161,31 +129,9 @@ namespace CustomComponents
             return null;
         }
 
-        public MechLabInventoryWidget InventoryWidget
-        {
-            get
-            {
-                if (inventory == null)
-                    inventory = main.Field<MechLabInventoryWidget>("inventoryWidget");
-                return inventory.Value;
-            }
-        }
-
-        public MechLabDismountWidget DismountWidget
-        {
-            get
-            {
-                if (bin == null)
-                    bin = main.Field<MechLabDismountWidget>("dismountWidget");
-                return bin.Value;
-            }
-        }
-
         public MechLabHelper(MechLabPanel mechLab) // !TODO PONE FIX IT
         {
             MechLab = mechLab;
-            main = Traverse.Create(mechLab);
-
         }
 
         private void MakeLocations()
@@ -245,14 +191,6 @@ namespace CustomComponents
         private LocationHelper GetLocationHelperSP()
         {
             return null;
-        }
-
-        public void SetDragItem(MechLabItemSlotElement item)
-        {
-            if (drag_item == null)
-                drag_item = main.Field("dragItem");
-
-            drag_item.SetValue(item);
         }
 
         public void RefreshHardpoints()

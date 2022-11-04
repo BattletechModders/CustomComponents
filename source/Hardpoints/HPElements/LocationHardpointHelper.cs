@@ -1,11 +1,7 @@
 ﻿using BattleTech;
 using BattleTech.UI;
-using BattleTech.UI.TMProWrapper;
 using BattleTech.UI.Tooltips;
-using Harmony;
-using SVGImporter;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace CustomComponents
 {
@@ -14,33 +10,25 @@ namespace CustomComponents
         public CanvasGroup Canvas { get; protected set; }
         public MechLabHardpointElement Element { get; private set; }
         public WeaponCategoryValue WeaponCategory { get; private set; }
-        private Traverse traverse;
-        private Traverse<WeaponCategoryValue> weapon_category;
-
 
         public LocationHardpointHelper(MechLabHardpointElement element)
 
         {
             Element = element;
-            traverse = new Traverse(element);
-
-            weapon_category = traverse.Field<WeaponCategoryValue>("currentWeaponCategoryValue");
             WeaponCategory = null;
 
-            this.Text = traverse.Field<LocalizableText>("hardpointText").Value;
-            this.TextColor = Text.GetComponent<UIColorRefTracker>();
-            this.Icon = traverse.Field<SVGImage>("hardpointIcon").Value;
-            this.IconColor = Icon.GetComponent<UIColorRefTracker>();
-            this.Canvas = traverse.Field<CanvasGroup>("thisCanvasGroup").Value;
-            this.Tooltip = element.GetComponent<HBSTooltip>();
+            Text = Element.hardpointText;
+            TextColor = Text.GetComponent<UIColorRefTracker>();
+            Icon = Element.hardpointIcon;
+            IconColor = Icon.GetComponent<UIColorRefTracker>();
+            Canvas = Element.thisCanvasGroup;
+            Tooltip = element.GetComponent<HBSTooltip>();
             BackImage = null;
-
         }
 
         public virtual void Init(HardpointInfo hpinfo)
         {
             HPInfo = hpinfo;
-
 
             if (hpinfo?.WeaponCategory == null || hpinfo.WeaponCategory.Is_NotSet || !hpinfo.Visible)
             {

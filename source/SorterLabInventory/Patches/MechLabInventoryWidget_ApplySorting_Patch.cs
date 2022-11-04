@@ -12,20 +12,18 @@ namespace CustomComponents
         {
             try
             {
-                var adapter = new MechLabInventoryWidgetAdapter(__instance);
-
-                if (adapter.currentSort == null)
+                if (__instance.currentSort == null)
                 {
                     return;
                 }
 
-                if (adapter.currentSort == currentSort)
+                if (__instance.currentSort == currentSort)
                 {
                     return;
                 }
 
-                currentSort = new InventorySorterNotListComparer(adapter.currentSort).Compare;
-                adapter.currentSort = currentSort;
+                currentSort = new InventorySorterNotListComparer(__instance.currentSort).Compare;
+                __instance.currentSort = currentSort;
             }
             catch (Exception e)
             {

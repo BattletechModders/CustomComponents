@@ -1,7 +1,6 @@
 ﻿using BattleTech;
 using BattleTech.Data;
 using System;
-using SVGImporter;
 
 namespace CustomComponents
 {

@@ -1,13 +1,9 @@
-﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 using BattleTech.UI;
 using CustomComponents.Changes;
 using CustomComponents.ExtendedDetails;
-using Harmony;
-using JetBrains.Annotations;
 
 namespace CustomComponents
 {

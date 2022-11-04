@@ -1,8 +1,6 @@
 ﻿using BattleTech;
 using BattleTech.UI;
 using CustomComponents.Changes;
-using Harmony;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 

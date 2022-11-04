@@ -23,14 +23,17 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AssemblySearchPaths>
       $(ReferencePath);
+      {HintPathFromItem};
       $(BattleTechGameDir)\BattleTech_Data\Managed\;
-      {HintPathFromItem}
     </AssemblySearchPaths>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
   </PropertyGroup>
-  <Target Name="CopyDLLtoModDir" AfterTargets="AfterBuild">
+  <Target Name="CopyFilesToGame" AfterTargets="CopyFilesToOutputDirectory">
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(CustomComponentsModPath)" />
   </Target>
+  <ItemGroup>
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.3.0" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>embedded</DebugType>
@@ -45,7 +48,7 @@
     <Reference Include="0Harmony">
       <Private>False</Private>
     </Reference>
-    <Reference Include="Assembly-CSharp">
+    <Reference Include="Assembly-CSharp" Publicize="true">
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
