@@ -9,6 +9,11 @@ namespace CustomComponents
     [HarmonyPatch]
     public static class JSONSerializationUtility_RehydrateObjectFromDictionary_Patch2
     {
+        public static bool Prepare()
+        {
+            return Control.Settings.DEBUG_EnableAllTags;
+        }
+
         public static MethodBase TargetMethod()
         {
             return typeof(JSONSerializationUtility)
@@ -19,10 +24,6 @@ namespace CustomComponents
         {
             try
             {
-                if (!Control.Settings.DEBUG_EnableAllTags)
-                {
-                    return;
-                }
                 var baseTags = new[] { "ComponentTags", "MechTags" };
                 foreach (var baseTag in baseTags)
                     if (values.TryGetValue(baseTag, out var Tags))
