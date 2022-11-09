@@ -15,7 +15,17 @@ namespace CustomComponents
         {
             var catA = SortKey(x);
             var catB = SortKey(y);
-            return string.Compare(catA, catB, StringComparison.Ordinal);
+            var cmp = string.Compare(catA, catB, StringComparison.Ordinal);
+            if (cmp != 0)
+            {
+                return cmp;
+            }
+            cmp = string.Compare(x?.Description.UIName, y?.Description.UIName, StringComparison.Ordinal);
+            if (cmp != 0)
+            {
+                return cmp;
+            }
+            return string.Compare(x?.Description.Id, y?.Description.Id, StringComparison.Ordinal);
         }
     }
 }
