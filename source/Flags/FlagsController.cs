@@ -48,7 +48,7 @@ namespace CustomComponents
             }
 
             if (flags.Count == 0)
-                Control.LogError($"{type} cannot be used as CustomFlags, no flags");
+                Logging.Error?.Log($"{type} cannot be used as CustomFlags, no flags");
 
             foreach (var flagInfo in flags)
             {
@@ -70,30 +70,26 @@ namespace CustomComponents
 
                 if(!flags.TryGetValue(setter_attribute.Flag, out var f))
                 {
-                    Control.LogError(
-                        $"{minfo.Name} marked as setter for {setter_attribute.Flag} but there is not such tag");
+                    Logging.Error?.Log($"{minfo.Name} marked as setter for {setter_attribute.Flag} but there is not such tag");
                     continue;
                 }
 
                 if (minfo.ReturnType != typeof(bool))
                 {
-                    Control.LogError(
-                        $"{minfo.Name} marked as setter for {setter_attribute.Flag} but not return Boolean");
+                    Logging.Error?.Log($"{minfo.Name} marked as setter for {setter_attribute.Flag} but not return Boolean");
                     continue;
                 }
 
                 var prams = minfo.GetParameters();
                 if(prams.Length != 1)
                 {
-                    Control.LogError(
-                        $"{minfo.Name} marked as setter for {setter_attribute.Flag} but have wrong parameters");
+                    Logging.Error?.Log($"{minfo.Name} marked as setter for {setter_attribute.Flag} but have wrong parameters");
                     continue;
                 }
 
                 if (prams[0].ParameterType != typeof(MechComponentDef))
                 {
-                    Control.LogError(
-                        $"{minfo.Name} marked as setter for {setter_attribute.Flag} but have wrong parameters");
+                    Logging.Error?.Log($"{minfo.Name} marked as setter for {setter_attribute.Flag} but have wrong parameters");
                     continue;
                 }
 
@@ -145,7 +141,7 @@ namespace CustomComponents
                         set_recursive(flagChild, values);
             }
 
-            Control.LogDebug(DType.Flags, "BuildFlags for " + item.Description.Id);
+            Logging.Debug?.LogDebug(DType.Flags, "BuildFlags for " + item.Description.Id);
             var result = new T();
             var f = item.GetComponent<Flags>();
 
@@ -171,7 +167,9 @@ namespace CustomComponents
             }
 
             if(Control.Settings.DebugInfo.HasFlag(DType.Flags))
-                Control.LogDebug(DType.Flags, $"Flags for {item.Description.Id}: [{result.ToString()}]");
+            {
+                Logging.Debug?.LogDebug(DType.Flags, $"Flags for {item.Description.Id}: [{result.ToString()}]");
+            }
 
             return result;
         }

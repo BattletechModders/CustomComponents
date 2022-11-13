@@ -79,7 +79,7 @@ namespace CustomComponents.Changes
                 var change = current[i];
                 if (!change.Initial && change is Change_Add add && !add.Applied && add.Location == Location && add.ItemID == ItemID)
                 {
-                    Control.LogDebug(DType.InventoryOperaions, "--- OPT {0}, {1}", this, current[i]);
+                    Logging.Debug?.LogDebug(DType.InventoryOperaions, "--- OPT {0}, {1}", this, current[i]);
                     current.RemoveAt(i);
                     current.Remove(this);
                     return;
@@ -93,8 +93,8 @@ namespace CustomComponents.Changes
 
         public Change_Remove(MechComponentRef item, ChassisLocations location, bool already_applied = false)
         {
-            this.ItemID = item.ComponentDefID;
-            this.Location = location;
+            ItemID = item.ComponentDefID;
+            Location = location;
             if (already_applied)
             {
                 Applied = true;
@@ -104,8 +104,8 @@ namespace CustomComponents.Changes
 
         public Change_Remove(string defid, ChassisLocations location)
         {
-            this.ItemID = defid;
-            this.Location = location;
+            ItemID = defid;
+            Location = location;
         }
 
         public override string ToString()

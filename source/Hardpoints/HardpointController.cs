@@ -112,7 +112,7 @@ namespace CustomComponents
             {
                 if (HardpointsByName.TryGetValue(wcname, out var result))
                     return result;
-                Control.LogError($"{wcname} - dont have weapon category info!");
+                Logging.Error?.Log($"{wcname} - dont have weapon category info!");
                 return null;
             }
 
@@ -124,7 +124,7 @@ namespace CustomComponents
             {
                 if (HardpointsByID.TryGetValue(wcid, out var result))
                     return result;
-                Control.LogError($"{wcid} - dont have weapon category info!");
+                Logging.Error?.Log($"{wcid} - dont have weapon category info!");
                 return null;
 
             }
@@ -140,7 +140,7 @@ namespace CustomComponents
                 if (hp.Complete())
                 {
                     if(Control.Settings.DEBUG_ShowLoadedHardpoints)
-                        Control.Log($"Hardpoint {hp.ID} loaded, [{hp.CompatibleID.Aggregate("", (last, next) => last + " " + WeaponCategoryEnumeration.GetWeaponCategoryByID(next).FriendlyName)}]");
+                        Logging.Info?.Log($"Hardpoint {hp.ID} loaded, [{hp.CompatibleID.Aggregate("", (last, next) => last + " " + WeaponCategoryEnumeration.GetWeaponCategoryByID(next).FriendlyName)}]");
                     HardpointsByName[hp.ID] = hp;
                     HardpointsByID[hp.WeaponCategory.ID] = hp;
                 }
@@ -160,11 +160,11 @@ namespace CustomComponents
 
             if (Control.Settings.DEBUG_ShowLoadedHardpoints)
             {
-                Control.Log($"Hardpoints: Total {HardpointsList?.Count ?? 0} Loaded");
+                Logging.Info?.Log($"Hardpoints: Total {HardpointsList?.Count ?? 0} Loaded");
                 if(omni != null)
-                    Control.Log($"- omni list [{omni.CompatibleID.Aggregate("", (last, next) => last + " " + WeaponCategoryEnumeration.GetWeaponCategoryByID(next).FriendlyName)}]");
+                    Logging.Info?.Log($"- omni list [{omni.CompatibleID.Aggregate("", (last, next) => last + " " + WeaponCategoryEnumeration.GetWeaponCategoryByID(next).FriendlyName)}]");
                 else
-                    Control.Log("- no omni hardpoint definition load");
+                    Logging.Info?.Log("- no omni hardpoint definition load");
             }
         }
 
@@ -201,7 +201,7 @@ namespace CustomComponents
                         if (nearest != null)
                             nearest.Used += 1;
                         else
-                            return new Localize.Text(Control.Settings.Message.Base_AddNotEnoughHardpoints,
+                            return new Text(Control.Settings.Message.Base_AddNotEnoughHardpoints,
                                 mechDef.Description.UIName, recrd.item.Def.Description.Name,
                                 recrd.item.Def.Description.UIName,
                                 recrd.wcat.Name, recrd.wcat.FriendlyName,
@@ -237,7 +237,7 @@ namespace CustomComponents
                         if (nearest != null)
                             nearest.Used += 1;
                         else
-                            errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(
+                            errors[MechValidationType.InvalidInventorySlots].Add(new Text(
                                 Control.Settings.Message.Base_AddNotEnoughHardpoints,
                                 mechdef.Description.UIName, recrd.item.Def.Description.Name,
                                 recrd.item.Def.Description.UIName,

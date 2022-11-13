@@ -33,14 +33,14 @@ namespace CustomComponents.Patches
                     return false;
                 }
 
-                Control.LogDebug(DType.ComponentInstall, $"OnMechLabDrop: Adding {newComponentDef.Description.Id}");
+                Logging.Debug?.LogDebug(DType.ComponentInstall, $"OnMechLabDrop: Adding {newComponentDef.Description.Id}");
 
                 bool do_cancel(string error)
                 {
                     if (string.IsNullOrEmpty(error))
                         return false;
 
-                    Control.LogDebug(DType.ComponentInstall, $"- Canceled: {error}");
+                    Logging.Debug?.LogDebug(DType.ComponentInstall, $"- Canceled: {error}");
 
                     ___mechLab.ForceItemDrop(dragItem);
                     ___mechLab.OnDrop(eventData);
@@ -48,7 +48,7 @@ namespace CustomComponents.Patches
                     return true;
                 }
 
-                Control.LogDebug(DType.ComponentInstall, $"- pre validation");
+                Logging.Debug?.LogDebug(DType.ComponentInstall, $"- pre validation");
 
                 foreach (var pre_validator in Validator.GetPre(newComponentDef))
                 {
@@ -57,7 +57,7 @@ namespace CustomComponents.Patches
                         return false;
                 }
 
-                Control.LogDebug(DType.ComponentInstall, $"- replace validation");
+                Logging.Debug?.LogDebug(DType.ComponentInstall, $"- replace validation");
 
                 var changes = new Queue<IChange>();
 
@@ -73,30 +73,33 @@ namespace CustomComponents.Patches
                 if (Control.Settings.DebugInfo.HasFlag(DType.ComponentInstall))
                 {
                     if (changes.Count == 1)
-                        Control.LogDebug(DType.ComponentInstall, $"-- no replace");
+                    {
+                        Logging.Debug?.LogDebug(DType.ComponentInstall, $"-- no replace");
+                    }
                     else
                         foreach (var replace in changes)
                         {
                             if (replace is Change_Add add)
-                                Control.LogDebug(DType.ComponentInstall,
-                                    $"-- add {add.ItemID} to {add.Location}");
+                            {
+                                Logging.Debug?.LogDebug(DType.ComponentInstall, $"-- add {add.ItemID} to {add.Location}");
+                            }
 
                             else if (replace is Change_Remove remove)
-                                Control.LogDebug(DType.ComponentInstall,
-                                    $"-- remove {remove.ItemID} from {remove.Location}");
-
+                            {
+                                Logging.Debug?.LogDebug(DType.ComponentInstall, $"-- remove {remove.ItemID} from {remove.Location}");
+                            }
                         }
                 }
 #endif
 
 
-                Control.LogDebug(DType.ComponentInstall, $"- adjusting");
+                Logging.Debug?.LogDebug(DType.ComponentInstall, $"- adjusting");
 
                 var state = new InventoryOperationState(changes, ___mechLab.activeMechDef);
                 state.DoChanges();
                 var inv = state.Inventory;
 
-                Control.LogDebug(DType.ComponentInstall, $"- post validation");
+                Logging.Debug?.LogDebug(DType.ComponentInstall, $"- post validation");
 
                 foreach (var pst_validator in Validator.GetPost(newComponentDef))
                 {
@@ -117,7 +120,7 @@ namespace CustomComponents.Patches
             }
             catch (Exception e)
             {
-                Control.LogError(e);
+                Logging.Error?.Log(e);
             }
 
             return true;

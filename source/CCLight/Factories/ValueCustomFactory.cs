@@ -22,7 +22,7 @@ namespace CustomComponents
         {
             if (val == null)
             {
-                Control.LogError($"{CustomName} for {Database.Identifier(def)} has null, used {default(TValue)}");
+                Logging.Error?.Log($"{CustomName} for {Database.Identifier(def)} has null, used {default(TValue)}");
                 return default;
             }
 
@@ -32,7 +32,7 @@ namespace CustomComponents
             }
             catch (Exception e)
             {
-                Control.LogError($"Can't convert value to type '{typeof(TValue).FullName}' for custom '{CustomName}' in def '{Database.Identifier(def)}'", e);
+                Logging.Error?.Log($"Can't convert value to type '{typeof(TValue).FullName}' for custom '{CustomName}' in def '{Database.Identifier(def)}'", e);
                 return default;
             }
         }
@@ -101,7 +101,7 @@ namespace CustomComponents
         {
             if (val == null)
             {
-                Control.LogError($"{CustomName} for {Database.Identifier(def)} has null, used {default(TValue)}");
+                Logging.Error?.Log($"{CustomName} for {Database.Identifier(def)} has null, used {default(TValue)}");
                 return default;
             }
 
@@ -110,7 +110,7 @@ namespace CustomComponents
                     return res;
                 else
                 {
-                    Control.LogError($"{val} is wrong value for {CustomName} for {Database.Identifier(def)} used {default(TValue)}");
+                    Logging.Error?.Log($"{val} is wrong value for {CustomName} for {Database.Identifier(def)} used {default(TValue)}");
                     return default;
                 }
 
@@ -120,9 +120,7 @@ namespace CustomComponents
             }
             catch (Exception e)
             {
-                Control.LogError(
-                    $"{val} is wrong value for {CustomName} for {Database.Identifier(def)} used {default(TValue)}",
-                    e);
+                Logging.Error?.Log($"{val} is wrong value for {CustomName} for {Database.Identifier(def)} used {default(TValue)}", e);
                 return default;
             }
         }

@@ -20,13 +20,13 @@ namespace CustomComponents.Icons
                 __result = IconController.Get(id);
                 if (__result == null)
                 {
-                    Control.LogError($"Custom icon {id} not found!");
+                    Logging.Error?.Log($"Custom icon {id} not found!");
                 }
                 return false;
             }
             catch (Exception e)
             {
-                Control.LogError(e);
+                Logging.Error?.Log(e);
             }
             return true;
         }

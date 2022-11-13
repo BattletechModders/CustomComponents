@@ -20,8 +20,8 @@ namespace CustomComponents
 
         public InvItem(MechComponentRef item, ChassisLocations location)
         {
-            this.Item = item;
-            this.Location = location;
+            Item = item;
+            Location = location;
         }
     }
 

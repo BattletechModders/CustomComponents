@@ -19,9 +19,9 @@ namespace CustomComponents
             {
                 var ut = mechlab.activeMechDef.GetUnitTypes();
                 if (ut == null)
-                    Control.Log($"Enter MechLab for {mechlab.activeMechDef.Description.Id}, UT:[ ]");
+                    Logging.Info?.Log($"Enter MechLab for {mechlab.activeMechDef.Description.Id}, UT:[ ]");
                 else
-                    Control.Log($"Enter MechLab for {mechlab.activeMechDef.Description.Id}, UT:[{ut.Join()}]");
+                    Logging.Info?.Log($"Enter MechLab for {mechlab.activeMechDef.Description.Id}, UT:[{ut.Join()}]");
             }
 
             CurrentMechLab = new MechLabHelper(mechlab);
@@ -45,7 +45,7 @@ namespace CustomComponents
             }
             catch (Exception e)
             {
-                Control.LogError(e);
+                Logging.Error?.Log(e);
             }
         }
 

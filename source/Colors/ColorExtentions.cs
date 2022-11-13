@@ -78,7 +78,7 @@ namespace CustomComponents
             }
             catch (Exception ex)
             {
-                Control.LogError(ex);
+                Logging.Error?.Log(ex);
             }
         }
 
@@ -90,7 +90,7 @@ namespace CustomComponents
             }
             catch (Exception ex)
             {
-                Control.LogError(ex);
+                Logging.Error?.Log(ex);
             }
         }
     }

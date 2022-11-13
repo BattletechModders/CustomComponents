@@ -42,7 +42,7 @@ namespace CustomComponents
             var hp_layout = hardpointtext.transform.parent.parent;
 
             var horizontal = hp_layout.GetComponent<HorizontalLayoutGroup>();
-            GameObject.DestroyImmediate(horizontal);
+            DestroyImmediate(horizontal);
             var jj_layout = jjtext.transform.parent.parent;
 
 
@@ -71,10 +71,10 @@ namespace CustomComponents
             foreach (Transform child in hp_layout)
             {
                 if (child != sample)
-                    GameObject.Destroy(child.gameObject);
+                    Destroy(child.gameObject);
             }
 
-            var jjgo = GameObject.Instantiate(sample.gameObject);
+            var jjgo = Instantiate(sample.gameObject);
 
             jjhardpoint = new JJHardpointHeler(jjgo, jj);
             hardpoints = new Dictionary<int, HardpointHelper>();
@@ -82,13 +82,13 @@ namespace CustomComponents
             jjgo.transform.SetParent(hp_layout);
             foreach (var hpinfo in HardpointController.Instance.HardpointsList.Where(i => i.Visible))
             {
-                var hpgo = GameObject.Instantiate(sample.gameObject);
+                var hpgo = Instantiate(sample.gameObject);
                 hardpoints[hpinfo.WeaponCategory.ID] = new MechlabHardpointHelper(hpgo, hpinfo);
                 hpgo.transform.SetParent(hp_layout);
             }
 
-            GameObject.Destroy(sample.gameObject);
-            GameObject.Destroy(jj_layout.gameObject);
+            Destroy(sample.gameObject);
+            Destroy(jj_layout.gameObject);
         }
     }
 }

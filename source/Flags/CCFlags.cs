@@ -70,18 +70,18 @@ namespace CustomComponents
                 var f = item.Flags<CCFlags>();
 
                 if (f.Invalid)
-                    errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(
+                    errors[MechValidationType.InvalidInventorySlots].Add(new Text(
                         Control.Settings.Message.Flags_InvaildComponent, item.Def.Description.Name, item.Def.Description.UIName));
 
                 if (item.DamageLevel == ComponentDamageLevel.Destroyed && (f.NotBroken || f.NotDestroyed))
                 {
-                    errors[MechValidationType.StructureDestroyed].Add(new Localize.Text(
+                    errors[MechValidationType.StructureDestroyed].Add(new Text(
                         Control.Settings.Message.Flags_DestroyedComponent, item.Def.Description.Name, item.Def.Description.UIName));
                 }
 
                 if (item.DamageLevel == ComponentDamageLevel.Penalized && f.NotBroken)
                 {
-                    errors[MechValidationType.StructureDestroyed].Add(new Localize.Text(
+                    errors[MechValidationType.StructureDestroyed].Add(new Text(
                         Control.Settings.Message.Flags_DamagedComponent, item.Def.Description.Name, item.Def.Description.UIName));
                 }
             }

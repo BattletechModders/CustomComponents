@@ -16,7 +16,7 @@ namespace CustomComponents
 
         public void LoadValue(string value)
         {
-            Control.LogDebug(DType.Hardpoints, $"UseHardpoint LoadValue for {Def.Description.Id}: {value}");
+            Logging.Debug?.LogDebug(DType.Hardpoints, $"UseHardpoint LoadValue for {Def.Description.Id}: {value}");
 
             var cat = WeaponCategoryEnumeration.GetWeaponCategoryByName(value);
             WeaponCategory = cat ?? WeaponCategoryEnumeration.GetNotSetValue();
@@ -24,12 +24,12 @@ namespace CustomComponents
             hpInfo = WeaponCategory.Is_NotSet ? null : HardpointController.Instance[WeaponCategory];
             if (hpInfo != null && !hpInfo.AllowOnWeapon)
             {
-                Control.LogError($"{Def.Description.Id} use {value} weapon category that cannot be used on weapons");
+                Logging.Error?.Log($"{Def.Description.Id} use {value} weapon category that cannot be used on weapons");
                 hpInfo = null;
                 WeaponCategory = WeaponCategoryEnumeration.GetNotSetValue();
             }
 
-            Control.LogDebug(DType.Hardpoints, $"- {cat.WeaponCategoryID}:{cat.Name}/{cat.FriendlyName}");
+            Logging.Debug?.LogDebug(DType.Hardpoints, $"- {cat.WeaponCategoryID}:{cat.Name}/{cat.FriendlyName}");
         }
 
         public void OnAdd(ChassisLocations location, InventoryOperationState state)
@@ -72,7 +72,7 @@ namespace CustomComponents
             if (WeaponCategory.Is_NotSet)
                 return string.Empty;
 
-            Control.LogDebug(DType.Hardpoints, $"PreValidateDrop {Def.Description.Id}[{WeaponCategory.Name}]");
+            Logging.Debug?.LogDebug(DType.Hardpoints, $"PreValidateDrop {Def.Description.Id}[{WeaponCategory.Name}]");
 
             var lhepler = MechLabHelper.CurrentMechLab.GetLocationHelper(location);
             var hp = lhepler.HardpointsUsage;

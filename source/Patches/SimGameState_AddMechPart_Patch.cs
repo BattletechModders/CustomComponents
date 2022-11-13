@@ -34,7 +34,7 @@ namespace CustomComponents.Patches
 
         private static MechDef CreateMech(MechDef mechDef, string simguid, bool need_equip)
         {
-            Control.LogDebug(DType.ClearInventory, $"Create mech from parts need_equip:{need_equip}");
+            Logging.Debug?.LogDebug(DType.ClearInventory, $"Create mech from parts need_equip:{need_equip}");
 
             var result = new MechDef(mechDef, simguid, true);
             if (!need_equip)

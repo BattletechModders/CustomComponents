@@ -20,7 +20,6 @@ namespace CustomComponents
         private static ILog Logger;
 
         internal const string CustomSectionName = "Custom";
-        internal static string LogPrefix = "[CC]";
 
         public static void Init(string directory, string settingsInitJson)
         {
@@ -30,8 +29,8 @@ namespace CustomComponents
 
                 Settings.Complete();
 
-                if (Control.Settings.DEBUG_ShowConfig)
-                    Log(JSONSerializationUtility.ToJSON(Settings));
+                if (Settings.DEBUG_ShowConfig)
+                    Logging.Info?.Log(JSONSerializationUtility.ToJSON(Settings));
 
                 var harmony = HarmonyInstance.Create("io.github.denadan.CustomComponents");
                 try
@@ -45,7 +44,7 @@ namespace CustomComponents
                     {
                         values += $"  {dictionaryEntry.Key} : {dictionaryEntry.Value}\n";
                     }
-                    Control.LogError("AmbiguousMatchException\n" + values);
+                    Logging.Error?.Log("AmbiguousMatchException\n" + values);
                 }
 
                 Registry.RegisterPreProcessor(new CategoryDefaultCustomsPreProcessor());
@@ -74,7 +73,7 @@ namespace CustomComponents
                 Validator.RegisterMechValidator(EquipLocationController.Instance.ValidateMech, EquipLocationController.Instance.CanBeFielded);
                 Validator.RegisterMechValidator(HardpointController.Instance.ValidateMech, HardpointController.Instance.CanBeFielded);
                 Validator.RegisterMechValidator(AutoLinked.ValidateMech, AutoLinked.CanBeFielded);
-                if (Control.Settings.CheckWeaponCount)
+                if (Settings.CheckWeaponCount)
                 {
                     Validator.RegisterMechValidator(WeaponsCountFix.CheckWeapons, WeaponsCountFix.CheckWeaponsFielded);
                 }
@@ -155,7 +154,7 @@ namespace CustomComponents
         {
             var Manifests = customResources;
 
-            Control.LogDebug(DType.CustomResource, "Custom Resource Load started");
+            Logging.Debug?.LogDebug(DType.CustomResource, "Custom Resource Load started");
 
             UnitTypeDatabase.Instance.Setup(Manifests);
             CategoryController.Shared.Setup(Manifests);
@@ -166,47 +165,8 @@ namespace CustomComponents
 
             if (Manifests.TryGetValue("CustomSVGIcon", out var icons))
                 IconController.LoadIcons(icons);
-            Control.LogDebug(DType.CustomResource, " - done");
+            Logging.Debug?.LogDebug(DType.CustomResource, " - done");
             Loaded = true;
         }
-
-        #region LOGGING
-        [Conditional("CCDEBUG")]
-        public static void LogDebug(DType type, string message)
-        {
-            if (Settings.DebugInfo.HasFlag(type))
-                Logger.LogDebug(LogPrefix + message);
-        }
-        [Conditional("CCDEBUG")]
-        public static void LogDebug(DType type, string message, Exception e)
-        {
-            if (Settings.DebugInfo.HasFlag(type))
-                Logger.LogDebug(LogPrefix + message, e);
-        }
-        [Conditional("CCDEBUG")]
-        public static void LogDebug(DType type, string message, params object[] objs)
-        {
-            if (Settings.DebugInfo.HasFlag(type))
-                Logger.LogDebug(LogPrefix + string.Format(message, objs));
-        }
-        public static void LogError(string message)
-        {
-            Logger.LogError(LogPrefix + message);
-        }
-        public static void LogError(string message, Exception e)
-        {
-            Logger.LogError(LogPrefix + message, e);
-        }
-        public static void LogError(Exception e)
-        {
-            Logger.LogError(LogPrefix, e);
-        }
-
-        public static void Log(string message)
-        {
-            Logger.Log(LogPrefix + message);
-        }
-
-        #endregion
     }
 }

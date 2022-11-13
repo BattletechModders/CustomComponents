@@ -16,7 +16,7 @@ namespace CustomComponents
             }
             catch (Exception e)
             {
-                Control.LogError(e);
+                Logging.Error?.Log(e);
             }
         }
 

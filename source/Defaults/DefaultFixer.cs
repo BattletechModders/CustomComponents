@@ -23,9 +23,9 @@ namespace CustomComponents
             private inv_change(bool add, string id, ChassisLocations location, ComponentType type = ComponentType.NotSet)
             {
                 this.add = add;
-                this.Location = location;
-                this.Id = id;
-                this.Type = type;
+                Location = location;
+                Id = id;
+                Type = type;
             }
 
             public static inv_change Add(string id, ComponentType type, ChassisLocations location)
@@ -100,7 +100,7 @@ namespace CustomComponents
                 }
                 catch (Exception e)
                 {
-                    Control.LogError($"Error in Default autofixer for {mechDef.Description.Id}", e);
+                    Logging.Error?.Log($"Error in Default autofixer for {mechDef.Description.Id}", e);
                 }
             }
         }

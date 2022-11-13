@@ -48,7 +48,7 @@ namespace CustomComponents
                 var hp_layout = hardpoint.transform.parent;
 
                 var horizontal = hp_layout.GetComponent<HorizontalLayoutGroup>();
-                GameObject.DestroyImmediate(horizontal);
+                DestroyImmediate(horizontal);
 
                 var grid = hp_layout.gameObject.AddComponent<GridLayoutGroup>();
                 //grid.childControlHeight = true;
@@ -75,7 +75,7 @@ namespace CustomComponents
                     child.gameObject.SetActive(false);
                 }
 
-                var jjgo = GameObject.Instantiate(sample.gameObject);
+                var jjgo = Instantiate(sample.gameObject);
 
                 jjhardpoint = new JJHardpointHeler(jjgo, sample);
                 hardpoints = new Dictionary<int, HardpointHelper>();
@@ -83,7 +83,7 @@ namespace CustomComponents
                 jjgo.SetActive(true);
                 foreach (var hpinfo in HardpointController.Instance.HardpointsList.Where(i => i.Visible))
                 {
-                    var hpgo = GameObject.Instantiate(sample.gameObject);
+                    var hpgo = Instantiate(sample.gameObject);
                     hardpoints[hpinfo.WeaponCategory.ID] = new MechlabHardpointHelper(hpgo, hpinfo);
                     hpgo.transform.SetParent(hp_layout);
                     hpgo.SetActive(true);
@@ -95,7 +95,7 @@ namespace CustomComponents
             }
             catch (Exception e)
             {
-                Control.LogError(e);
+                Logging.Error?.Log(e);
 
             }
         }

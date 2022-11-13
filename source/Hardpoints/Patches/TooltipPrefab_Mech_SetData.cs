@@ -35,7 +35,7 @@ namespace CustomComponents.Patches
             }
             catch (Exception e)
             {
-                Control.LogError(e);
+                Logging.Error?.Log(e);
             }
         }
     }

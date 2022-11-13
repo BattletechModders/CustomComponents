@@ -24,9 +24,9 @@ namespace CustomComponents
 
         public HPUsage(HPUsage other, bool reset = false)
         {
-            this.hpInfo = other.hpInfo;
-            this.Total = other.Total;
-            this.Used = reset ? 0 : other.Used;
+            hpInfo = other.hpInfo;
+            Total = other.Total;
+            Used = reset ? 0 : other.Used;
         }
 
         public int CompareTo(object obj)

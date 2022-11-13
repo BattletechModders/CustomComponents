@@ -75,7 +75,7 @@ namespace CustomComponents
                 return true;
             }
 
-            Control.LogDebug(DType.ComponentInstall, $"-- Category {CategoryID}");
+            Logging.Debug?.LogDebug(DType.ComponentInstall, $"-- Category {CategoryID}");
 
 
             var mech = MechLabHelper.CurrentMechLab.MechLab.activeMechDef;
@@ -85,7 +85,7 @@ namespace CustomComponents
 
             if (record == null || !record.MaxLimited)
             {
-                Control.LogDebug(DType.ComponentInstall, $"--- no replace needed");
+                Logging.Debug?.LogDebug(DType.ComponentInstall, $"--- no replace needed");
                 return String.Empty;
             }
 
@@ -153,7 +153,7 @@ namespace CustomComponents
                 {
                     // 0 - Display Name, 1 - maximum, 2 - Mech Uiname, 3 - Mech Name
                     // 4 - Location, 5 - item name, 6 - item uiname
-                    return new Localize.Text(CategoryDescriptor.AddMaximumReached, CategoryDescriptor._DisplayName,
+                    return new Text(CategoryDescriptor.AddMaximumReached, CategoryDescriptor._DisplayName,
                         free.limit.Max, mech.Description.UIName, mech.Description.Name,
                         free.locations == ChassisLocations.All ? "All Locations" : free.locations.ToString(),
                         drop_item.ComponentRef.Def.Description.Name, drop_item.ComponentRef.Def.Description.UIName

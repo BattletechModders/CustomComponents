@@ -84,9 +84,9 @@ namespace CustomComponents
             foreach (var tag in SettingsResourcesTools.Enumerate<EquipLocationTag>("CCCEquipLocationTag", customResources))
             {
                 Tags[tag.Tag] = tag;
-                Control.Log($"LocationTag {tag.Tag} registered");
+                Logging.Info?.Log($"LocationTag {tag.Tag} registered");
                 if (Control.Settings.DEBUG_ShowLoadedAlLocations)
-                    Control.Log(tag.ToString());
+                    Logging.Info?.Log(tag.ToString());
             }
         }
 

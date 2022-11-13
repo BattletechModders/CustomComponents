@@ -20,7 +20,7 @@ namespace CustomComponents.Patches
                 if (Control.Settings.DontUseFilter)
                     return;
 
-                Control.LogDebug(DType.Filter, "StartFilter");
+                Logging.Debug?.LogDebug(DType.Filter, "StartFilter");
                 int empty_item = 0;
                 foreach (var item in ___localInventory)
                 {
@@ -31,7 +31,7 @@ namespace CustomComponents.Patches
 
                     }
 
-                    Control.LogDebug(DType.Filter, $"-- item: {item.ItemType}. ref: {(item.ComponentRef == null ? "NULL!" : item.ComponentRef.ComponentDefID)}");
+                    Logging.Debug?.LogDebug(DType.Filter, $"-- item: {item.ItemType}. ref: {(item.ComponentRef == null ? "NULL!" : item.ComponentRef.ComponentDefID)}");
 
 
                     //if item already hidden - skip
@@ -44,42 +44,43 @@ namespace CustomComponents.Patches
                         if(item.ComponentRef.Flags<CCFlags>().HideFromInv)
                         {
                             item.gameObject.SetActive(false);
-                            Control.LogDebug(DType.Filter, $"---- filterd, hide from inventory/default");
+                            Logging.Debug?.LogDebug(DType.Filter, $"---- filterd, hide from inventory/default");
                         }
                         foreach (var filter in item.ComponentRef.GetComponents<IMechLabFilter>())
                         {
                             try
                             {
-                                Control.LogDebug(DType.Filter, $"--- {filter.GetType()}");
+                                Logging.Debug?.LogDebug(DType.Filter, $"--- {filter.GetType()}");
                                 if (!filter.CheckFilter(mechlab))
                                 {
                                     item.gameObject.SetActive(false);
-                                    Control.LogDebug(DType.Filter, $"---- filterd, stoped");
+                                    Logging.Debug?.LogDebug(DType.Filter, $"---- filterd, stoped");
                                     break;
                                 }
                             }
                             catch (Exception e)
                             {
-                                Control.LogError("Error in filter", e);
+                                Logging.Error?.Log("Error in filter", e);
                             }
                         }
                     }
                     else
-                        Control.LogDebug(DType.Filter, $"-- ITEM IS NULL!");
-
+                    {
+                        Logging.Debug?.LogDebug(DType.Filter, $"-- ITEM IS NULL!");
+                    }
                 }
 
                 if (empty_item > 0)
                 {
-                    Control.LogError($"found {empty_item} broken items, trying to clear");
+                    Logging.Error?.Log($"found {empty_item} broken items, trying to clear");
                     ___localInventory.RemoveAll(o => o == null);
                 }
-                Control.LogDebug(DType.Filter, "EndFilter");
+                Logging.Debug?.LogDebug(DType.Filter, "EndFilter");
 
             }
             catch (Exception e)
             {
-                Control.LogError(e);
+                Logging.Error?.Log(e);
             }
         }
     }

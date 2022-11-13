@@ -15,7 +15,7 @@ namespace CustomComponents
         public bool AllowOnWeapon { get; set; } = true;
         public bool AllowOmni { get; set; } = true;
         public bool OverrideColor { get; set; } = false;
-        public Color HPColor { get; set; } = UnityEngine.Color.white;
+        public Color HPColor { get; set; } = Color.white;
 
         public string Description { get; set; }
         public string TooltipCaption { get; set; }
@@ -27,7 +27,7 @@ namespace CustomComponents
         {
             if (ID == null)
             {
-                Control.LogError($"Empty WeaponCategory");
+                Logging.Error?.Log($"Empty WeaponCategory");
                 return false;
             }
 
@@ -36,7 +36,7 @@ namespace CustomComponents
 
             if (WeaponCategory == null || WeaponCategory.Is_NotSet)
             {
-                Control.LogError($"Unknown WeaponCategory {ID}");
+                Logging.Error?.Log($"Unknown WeaponCategory {ID}");
                 return false;
             }
 

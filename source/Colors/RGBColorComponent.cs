@@ -20,7 +20,7 @@ namespace CustomComponents
                 RGBColor = color;
             }
             else
-                RGBColor = UnityEngine.Color.magenta;
+                RGBColor = Color.magenta;
         }
     }
 

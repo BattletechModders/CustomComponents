@@ -22,7 +22,7 @@ namespace CustomComponents
                         if ((mechDef.Chassis.ChassisTags != null && mechDef.Chassis.ChassisTags.Contains(tag)) ||
                         (mechDef.MechTags!= null && mechDef.MechTags.Contains(tag)))
                         {
-                            Control.LogDebug(DType.MechValidation, $"Validation {mechDef.Description.Id} Ignored by {tag}");
+                            Logging.Debug?.LogDebug(DType.MechValidation, $"Validation {mechDef.Description.Id} Ignored by {tag}");
                             foreach (var pair in __result)
                             {
                                 pair.Value.Clear();
@@ -44,14 +44,14 @@ namespace CustomComponents
                         && (component.MountedLocation & locations.GetLocationsFor(mechDef)) <= ChassisLocations.None)
                     {
                         __result[MechValidationType.InvalidInventorySlots].Add(
-                            new Localize.Text(Control.Settings.Message.Base_LocationDestroyed,
+                            new Text(Control.Settings.Message.Base_LocationDestroyed,
                             component.Def.Description.Name, component.MountedLocation, component.Def.Description.UIName));
                     }
                 }
             }
             catch (Exception e)
             {
-                Control.LogError(e);
+                Logging.Error?.Log(e);
             }
         }
     }

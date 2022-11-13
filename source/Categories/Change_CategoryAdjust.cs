@@ -21,12 +21,12 @@
 
             if (record.Multi != null)
             {
-                Control.LogDebug(DType.InventoryOperaions, "--- DoMultiChange");
+                Logging.Debug?.LogDebug(DType.InventoryOperaions, "--- DoMultiChange");
 
                 DefaultFixer.Instance.DoMultiChange(state);
             }
 
-            Control.LogDebug(DType.InventoryOperaions, "--- DoDefaultsChange");
+            Logging.Debug?.LogDebug(DType.InventoryOperaions, "--- DoDefaultsChange");
             DefaultFixer.Instance.DoDefaultsChange(state, CategoryID);
         }
 

@@ -54,16 +54,16 @@ namespace CustomComponents
 
             public _record(ChassisLocations location, int min, int max)
             {
-                this.Location = location;
-                this.Max = max;
-                this.Min = min;
+                Location = location;
+                Max = max;
+                Min = min;
             }
 
             public _record(_record source)
             {
-                this.Location = source.Location;
-                this.Max = source.Max;
-                this.Min = source.Min;
+                Location = source.Location;
+                Max = source.Max;
+                Min = source.Min;
             }
         }
 
@@ -82,7 +82,7 @@ namespace CustomComponents
 
         public CategoryDescriptorRecord(_record[] baseLimits)
         {
-            this.Limits = baseLimits;
+            Limits = baseLimits;
         }
 
         [Newtonsoft.Json.JsonIgnore] public bool MinLimited { get; set; }

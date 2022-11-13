@@ -13,11 +13,11 @@ namespace CustomComponents
         {
             try
             {
-                Control.LogDebug(DType.ComponentInstall, $"Prefix: Get ref for mech:{mech.Description.Id} suid:{simGameUID} cid:{componentID} type:{componentType}");
+                Logging.Debug?.LogDebug(DType.ComponentInstall, $"Prefix: Get ref for mech:{mech.Description.Id} suid:{simGameUID} cid:{componentID} type:{componentType}");
             }
             catch (Exception e)
             {
-                Control.LogError("PREFIX", e);
+                Logging.Error?.Log("PREFIX", e);
             }
         }
 
@@ -25,28 +25,28 @@ namespace CustomComponents
         {
             try
             {
-                Control.LogDebug(DType.ComponentInstall, $"Postfix: Get ref for mech:{mech.Description.Id} suid:{simGameUID} cid:{componentID} type:{componentType}");
+                Logging.Debug?.LogDebug(DType.ComponentInstall, $"Postfix: Get ref for mech:{mech.Description.Id} suid:{simGameUID} cid:{componentID} type:{componentType}");
 
                 if (__result == null)
                 {
-                    Control.LogDebug(DType.ComponentInstall, "- Component not found! start to check");
-                    Control.LogDebug(DType.ComponentInstall, "-- reserved");
+                    Logging.Debug?.LogDebug(DType.ComponentInstall, "- Component not found! start to check");
+                    Logging.Debug?.LogDebug(DType.ComponentInstall, "-- reserved");
 
                     foreach (MechComponentRef r in __instance.WorkOrderComponents)
                     {
-                        Control.LogDebug(DType.ComponentInstall, $"--- id:{r.ComponentDefID} uid:{r.SimGameUID} type:{r.ComponentDefType}");
+                        Logging.Debug?.LogDebug(DType.ComponentInstall, $"--- id:{r.ComponentDefID} uid:{r.SimGameUID} type:{r.ComponentDefType}");
                     }
                 }
                 else
                 {
-                    Control.LogDebug(DType.ComponentInstall, "- Component found");
+                    Logging.Debug?.LogDebug(DType.ComponentInstall, "- Component found");
                 }
-                Control.LogDebug(DType.ComponentInstall, "- done");
+                Logging.Debug?.LogDebug(DType.ComponentInstall, "- done");
 
             }
             catch (Exception e)
             {
-                Control.LogError("Postfix", e);
+                Logging.Error?.Log("Postfix", e);
             }
         }
     }

@@ -18,7 +18,7 @@ namespace CustomComponents.Patches
         {
             try
             {
-                Control.LogDebug(DType.ComponentInstall, $"OnItemGrab.Prefix {item.ComponentRef.ComponentDefID}");
+                Logging.Debug?.LogDebug(DType.ComponentInstall, $"OnItemGrab.Prefix {item.ComponentRef.ComponentDefID}");
 
                 foreach (var grab_handler in item.ComponentRef.Def.GetComponents<IOnItemGrab>())
                 {
@@ -40,7 +40,7 @@ namespace CustomComponents.Patches
             }
             catch (Exception e)
             {
-                Control.LogError(e);
+                Logging.Error?.Log(e);
             }
             return true;
         }
@@ -65,7 +65,7 @@ namespace CustomComponents.Patches
             }
             catch (Exception e)
             {
-                Control.LogError(e);
+                Logging.Error?.Log(e);
             }
         }
     }

@@ -197,11 +197,11 @@ namespace CustomComponents
 
                 defaults_by_category[entry.CategoryID] = entry;
 
-                Control.Log($"Defaults for {entry.CategoryID} registered");
+                Logging.Info?.Log($"Defaults for {entry.CategoryID} registered");
 
                 entry.Complete();
                 if(Control.Settings.DEBUG_ShowLoadedDefaults)
-                    Control.Log(entry.ToString());
+                    Logging.Info?.Log(entry.ToString());
             }
         }
 
@@ -217,7 +217,7 @@ namespace CustomComponents
 
         private MechDefaultInfo CreateDefaultRecord(MechDef mech)
         {
-            Control.LogDebug(DType.DefaultsBuild, "CreateDefaultRecord for {0}", mech?.ChassisID);
+            Logging.Debug?.LogDebug(DType.DefaultsBuild, "CreateDefaultRecord for {0}", mech?.ChassisID);
 
             void process_defaults(MechDefaultInfo result, IEnumerable<IDefault> defaults)
             {
@@ -243,7 +243,7 @@ namespace CustomComponents
                     category.CategoryDescriptor = CategoryController.Shared.GetCategory(item.CategoryID);
                     if (category.CategoryDescriptor == null)
                     {
-                        Control.LogError($"Defaults for {mech.ChassisID} have unknown category {item.CategoryID}, skipped");
+                        Logging.Error?.Log($"Defaults for {mech.ChassisID} have unknown category {item.CategoryID}, skipped");
                         continue;
                     }
 
@@ -251,13 +251,13 @@ namespace CustomComponents
                     category.CategoryRecord = category.CategoryDescriptor[mech];
                     if (category.CategoryRecord == null)
                     {
-                        Control.LogError($"Defaults for {mech.ChassisID} have unknown category record for category {item.CategoryID}, skipped");
+                        Logging.Error?.Log($"Defaults for {mech.ChassisID} have unknown category record for category {item.CategoryID}, skipped");
                         continue;
                     }
 
                     if (!category.CategoryRecord.MinLimited)
                     {
-                        Control.LogDebug(DType.DefaultsBuild, $"{mech.ChassisID} have default of category {item.CategoryID} which not have minimum limit, skipped");
+                        Logging.Debug?.LogDebug(DType.DefaultsBuild, $"{mech.ChassisID} have default of category {item.CategoryID} which not have minimum limit, skipped");
                         continue;
                     }
 
@@ -266,24 +266,24 @@ namespace CustomComponents
                     {
                         if (!SingleLocations.Contains(default_record.Location))
                         {
-                            Control.LogDebug(DType.DefaultsBuild, $"{mech.ChassisID} have default in group location for {default_record.DefID}, skipped");
+                            Logging.Debug?.LogDebug(DType.DefaultsBuild, $"{mech.ChassisID} have default in group location for {default_record.DefID}, skipped");
                             continue;
                         }
 
                         var def = GetComponentDef(default_record.DefID, default_record.Type);
                         if (def == null)
                         {
-                            Control.LogError($"{mech.ChassisID} have unexisting default {default_record.DefID}[{default_record.Type}]");
+                            Logging.Error?.Log($"{mech.ChassisID} have unexisting default {default_record.DefID}[{default_record.Type}]");
                             continue;
                         }
                         if (!def.IsCategory(item.CategoryID, out var c))
                         {
-                            Control.LogError($"{mech.ChassisID} default {default_record.DefID} dont have category {item.CategoryID}");
+                            Logging.Error?.Log($"{mech.ChassisID} default {default_record.DefID} dont have category {item.CategoryID}");
                             continue;
                         }
                         if (!def.Flags<CCFlags>().Default)
                         {
-                            Control.LogError($"{mech.ChassisID} default {default_record.DefID} dont have `default` flag");
+                            Logging.Error?.Log($"{mech.ChassisID} default {default_record.DefID} dont have `default` flag");
                             continue;
                         }
 
@@ -312,11 +312,11 @@ namespace CustomComponents
 
             if (mech_multi != null)
             {
-                Control.LogDebug(DType.DefaultsBuild, "- MultiRecords");
+                Logging.Debug?.LogDebug(DType.DefaultsBuild, "- MultiRecords");
 
                 foreach (var m in mech_multi)
                 {
-                    Control.LogDebug(DType.DefaultsBuild, "-- {0} => {1}", m.DefID, m.Location);
+                    Logging.Debug?.LogDebug(DType.DefaultsBuild, "-- {0} => {1}", m.DefID, m.Location);
 
                     var info = new MultiCategoryDefault
                     {
@@ -333,15 +333,13 @@ namespace CustomComponents
 
                     if (info.Categories == null || info.Categories.Length == 0)
                     {
-                        Control.LogError(
-                            $"MultiDefault _record for {mech.Description.Id} have empty category list for {m.DefID}");
+                        Logging.Error?.Log($"MultiDefault _record for {mech.Description.Id} have empty category list for {m.DefID}");
                         continue;
                     }
 
                     if (info.Component == null)
                     {
-                        Control.LogError(
-                            $"MultiDefault _record for {mech.Description.Id} have unknown component {m.DefID}");
+                        Logging.Error?.Log($"MultiDefault _record for {mech.Description.Id} have unknown component {m.DefID}");
                         continue;
                     }
 
@@ -352,8 +350,7 @@ namespace CustomComponents
                             var cr = c.CategoryDescriptor[mech];
                             if (cr == null || !cr.MinLimited)
                             {
-                                Control.LogError(
-                                    $"MultiDefault _record for {mech.Description.Id}, component {m.DefID}, category {category} dont have minimum limit, so defaults will be ignored");
+                                Logging.Error?.Log($"MultiDefault _record for {mech.Description.Id}, component {m.DefID}, category {category} dont have minimum limit, so defaults will be ignored");
                                 continue;
                             }
 
@@ -362,16 +359,14 @@ namespace CustomComponents
                         }
                         else
                         {
-                            Control.LogError(
-                                $"MultiDefault _record for {mech.Description.Id} have unknown category [{category}] for {m.DefID}");
+                            Logging.Error?.Log($"MultiDefault _record for {mech.Description.Id} have unknown category [{category}] for {m.DefID}");
                             continue;
                         }
                     }
 
                     if (info.CategoryRecords.Count == 0)
                     {
-                        Control.LogError(
-                            $"MultiDefault _record for {mech.Description.Id} have no applicable categories for {m.DefID}");
+                        Logging.Error?.Log($"MultiDefault _record for {mech.Description.Id} have no applicable categories for {m.DefID}");
                         continue;
                     }
 
@@ -381,18 +376,18 @@ namespace CustomComponents
 
             if (multi.HasRecords)
             {
-                Control.LogDebug(DType.DefaultsBuild, "- Build UsedCategories");
+                Logging.Debug?.LogDebug(DType.DefaultsBuild, "- Build UsedCategories");
                 multi.UsedCategories = multi.Defaults
                     .SelectMany(i => i.CategoryRecords)
                     .GroupBy(i => i.Key)
                     .ToDictionary(a => a.Key, a => a.First().Value.record);
 
                 result.Multi = multi;
-                Control.LogDebug(DType.DefaultsBuild, "- done");
+                Logging.Debug?.LogDebug(DType.DefaultsBuild, "- done");
             }
             else
             {
-                Control.LogDebug(DType.DefaultsBuild, "- No MultiRecords");
+                Logging.Debug?.LogDebug(DType.DefaultsBuild, "- No MultiRecords");
             }
 
             result.Defaults = new Dictionary<string, CategoryDefault>();
@@ -414,7 +409,9 @@ namespace CustomComponents
 
             result.Complete();
             if(Control.Settings.DEBUG_ShowLoadedDefaults)
-                Control.LogDebug(DType.DefaultsBuild, "result: {0}", result);
+            {
+                Logging.Debug?.LogDebug(DType.DefaultsBuild, "result: {0}", result);
+            }
 
             return result;
         }

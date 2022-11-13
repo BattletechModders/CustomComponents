@@ -16,7 +16,7 @@ namespace CustomComponents.Icons
             __result = IconController.Contains(id);
             if (!__result)
             {
-                Control.LogError($"Custom icon {id} not exists!");
+                Logging.Error?.Log($"Custom icon {id} not exists!");
             }
             return false;
         }

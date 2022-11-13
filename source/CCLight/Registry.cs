@@ -56,7 +56,7 @@ namespace CustomComponents
                 var name = customAttribute.Name;
                 if (!SimpleIdentifiers.Add(name))
                 {
-                    Control.Log($"SimpleCustom {name} already registered");
+                    Logging.Info?.Log($"SimpleCustom {name} already registered");
                     continue;
                 }
 
@@ -94,7 +94,7 @@ namespace CustomComponents
                 var factoryType = factoryGenericType.MakeGenericType(genericTypes);
                 var factory = Activator.CreateInstance(factoryType, name) as ICustomFactory;
                 Factories.Add(factory);
-                Control.Log($"SimpleCustom {name} registered for type {defType}");
+                Logging.Info?.Log($"SimpleCustom {name} registered for type {defType}");
             }
         }
 
@@ -126,10 +126,10 @@ namespace CustomComponents
         {
             if (target == null)
             {
-                Control.LogError($"NULL item loaded");
+                Logging.Error?.Log($"NULL item loaded");
                 foreach (var value in values)
                 {
-                    Control.LogError($"- {value.Key}: {value.Value}");
+                    Logging.Error?.Log($"- {value.Key}: {value.Value}");
                 }
                 return;
             }
@@ -141,8 +141,8 @@ namespace CustomComponents
                 return;
             }
 
-            Control.LogDebug(DType.CCLoading, $"ProcessCustomCompontentFactories for {target.GetType()} ({target.GetHashCode()})");
-            Control.LogDebug(DType.CCLoading, $"- {identifier}");
+            Logging.Debug?.LogDebug(DType.CCLoading, $"ProcessCustomCompontentFactories for {target.GetType()} ({target.GetHashCode()})");
+            Logging.Debug?.LogDebug(DType.CCLoading, $"- {identifier}");
 
             foreach (var preProcessor in PreProcessors)
             {
@@ -158,7 +158,7 @@ namespace CustomComponents
                 }
                 catch (Exception e)
                 {
-                    Control.LogError($"Error when processing custom factory {factory.CustomName} for {target.GetType()} ({target.GetHashCode()})", e);
+                    Logging.Error?.Log($"Error when processing custom factory {factory.CustomName} for {target.GetType()} ({target.GetHashCode()})", e);
                 }
             }
 
@@ -173,17 +173,17 @@ namespace CustomComponents
 #if CCDEBUG
             if (loaded)
             {
-                Control.LogDebug(DType.CCLoadingSummary, $"ProcessCustomCompontentFactories for {target.GetType()} ({target.GetHashCode()})");
-                Control.LogDebug(DType.CCLoadingSummary, $"- {identifier}");
+                Logging.Debug?.LogDebug(DType.CCLoadingSummary, $"ProcessCustomCompontentFactories for {target.GetType()} ({target.GetHashCode()})");
+                Logging.Debug?.LogDebug(DType.CCLoadingSummary, $"- {identifier}");
 
-                Control.LogDebug(DType.CCLoadingSummary, "- Loaded:");
+                Logging.Debug?.LogDebug(DType.CCLoadingSummary, "- Loaded:");
 
                 foreach (var custom in Database.GetCustoms<ICustom>(target))
                 {
-                    Control.LogDebug(DType.CCLoadingSummary, $"--- {custom}");
+                    Logging.Debug?.LogDebug(DType.CCLoadingSummary, $"--- {custom}");
                 }
 
-                Control.LogDebug(DType.CCLoadingSummary, "- done");
+                Logging.Debug?.LogDebug(DType.CCLoadingSummary, "- done");
             }
 #endif
 
@@ -204,13 +204,13 @@ namespace CustomComponents
                     continue;
                 }
 
-                Control.LogDebug(DType.CCLoading, $"Created {component} for {identifier}");
+                Logging.Debug?.LogDebug(DType.CCLoading, $"Created {component} for {identifier}");
 
                 if (Database.SetCustomWithIdentifier(identifier, component))
                 {
                     if (component is IAfterLoad load)
                     {
-                        Control.LogDebug(DType.CCLoading, $"IAfterLoad: {identifier}");
+                        Logging.Debug?.LogDebug(DType.CCLoading, $"IAfterLoad: {identifier}");
                         load.OnLoaded(values);
                     }
 

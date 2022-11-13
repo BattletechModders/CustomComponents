@@ -85,7 +85,7 @@ namespace CustomComponents
             }
             catch (Exception e)
             {
-                Control.LogError(Defaults[0].DefID, e);
+                Logging.Error?.Log(Defaults[0].DefID, e);
             }
 
             return Defaults;

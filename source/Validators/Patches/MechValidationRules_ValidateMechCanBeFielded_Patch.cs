@@ -13,11 +13,11 @@ namespace CustomComponents
             {
                 if (mechDef == null)
                 {
-                    Control.LogDebug(DType.MechValidation, $"Mech validation for NULL return");
+                    Logging.Debug?.LogDebug(DType.MechValidation, $"Mech validation for NULL return");
                     return;
                 }
 
-                Control.LogDebug(DType.MechValidation, $"Mech validation for {mechDef.Name} start from {__result}");
+                Logging.Debug?.LogDebug(DType.MechValidation, $"Mech validation for {mechDef.Name} start from {__result}");
 
                 if(Control.Settings.IgnoreValidationTags != null && Control.Settings.IgnoreValidationTags.Length > 0)
                     foreach (var tag in Control.Settings.IgnoreValidationTags)
@@ -25,7 +25,7 @@ namespace CustomComponents
                         if ((mechDef.Chassis.ChassisTags != null && mechDef.Chassis.ChassisTags.Contains(tag)) ||
                             (mechDef.MechTags != null && mechDef.MechTags.Contains(tag)))
                         {
-                            Control.LogDebug(DType.MechValidation, $"- Ignored by {tag}");
+                            Logging.Debug?.LogDebug(DType.MechValidation, $"- Ignored by {tag}");
                             __result = true;
                             return;
                         }
@@ -33,28 +33,28 @@ namespace CustomComponents
                 
                 if (!__result)
                 {
-                    Control.LogDebug(DType.MechValidation, $"- failed base validation");
+                    Logging.Debug?.LogDebug(DType.MechValidation, $"- failed base validation");
                     return;
                 }
 
-                Control.LogDebug(DType.MechValidation, $"- fixed validation");
+                Logging.Debug?.LogDebug(DType.MechValidation, $"- fixed validation");
                 if (!Validator.ValidateMechCanBeFielded(mechDef))
                 {
                     __result = false;
-                    Control.LogDebug(DType.MechValidation, $"- failed fixed validation");
+                    Logging.Debug?.LogDebug(DType.MechValidation, $"- failed fixed validation");
                     return;
                 }
-                Control.LogDebug(DType.MechValidation, $"- component validation");
+
+                Logging.Debug?.LogDebug(DType.MechValidation, $"- component validation");
                 foreach (var component in mechDef.Inventory)
                 {
                     foreach (var mechValidate in component.GetComponents<IMechValidate>())
                     {
-
-                        Control.LogDebug(DType.MechValidation, $"-- {mechValidate.GetType()}");
+                        Logging.Debug?.LogDebug(DType.MechValidation, $"-- {mechValidate.GetType()}");
                         if (!mechValidate.ValidateMechCanBeFielded(mechDef, component))
                         {
                             __result = false;
-                            Control.LogDebug(DType.MechValidation, $"- failed component validation");
+                            Logging.Debug?.LogDebug(DType.MechValidation, $"- failed component validation");
                             return;
                         }
                     }
@@ -64,18 +64,18 @@ namespace CustomComponents
                         && (component.MountedLocation & locations.GetLocationsFor(mechDef)) <= ChassisLocations.None)
                     {
                         __result = false;
-                        Control.LogDebug(DType.MechValidation, $"- failed component location validation");
+                        Logging.Debug?.LogDebug(DType.MechValidation, $"- failed component location validation");
                         return;
                     }
 
                 }
 
-                Control.LogDebug(DType.MechValidation, $"- validation passed");
+                Logging.Debug?.LogDebug(DType.MechValidation, $"- validation passed");
             }
 
             catch (Exception e)
             {
-                Control.LogError(e);
+                Logging.Error?.Log(e);
             }
         }
     }

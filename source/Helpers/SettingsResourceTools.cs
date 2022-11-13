@@ -21,13 +21,13 @@ namespace CustomComponents
         {
             if (customResources == null)
             {
-                Control.LogDebug(DType.CustomResource, $"customResources not found");
+                Logging.Debug?.LogDebug(DType.CustomResource, $"customResources not found");
                 yield break;
             }
 
             if (!customResources.TryGetValue(resourceType, out var entries))
             {
-                Control.LogDebug(DType.CustomResource, $"{resourceType} not found");
+                Logging.Debug?.LogDebug(DType.CustomResource, $"{resourceType} not found");
                 yield break;
             }
 
@@ -36,7 +36,7 @@ namespace CustomComponents
                 var settings = new SettingsResource<T>();
                 try
                 {
-                    Control.LogDebug(DType.CustomResource, $"Reading {entry.FilePath}");
+                    Logging.Debug?.LogDebug(DType.CustomResource, $"Reading {entry.FilePath}");
                     using (var reader = new StreamReader(entry.FilePath))
                     {
                         var json = reader.ReadToEnd();
@@ -45,16 +45,16 @@ namespace CustomComponents
                 }
                 catch (Exception e)
                 {
-                    Control.LogDebug(DType.CustomResource, $"Couldn't read {entry.FilePath}", e);
+                    Logging.Debug?.LogDebug(DType.CustomResource, $"Couldn't read {entry.FilePath}", e);
                 }
 
                 if (settings.Settings == null)
                 {
-                    Control.LogDebug(DType.CustomResource, $"Settings is null in {entry.FilePath}");
+                    Logging.Debug?.LogDebug(DType.CustomResource, $"Settings is null in {entry.FilePath}");
                     continue;
                 }
 
-                Control.LogDebug(DType.CustomResource, $" - total {settings.Settings.Count} entries loaded");
+                Logging.Debug?.LogDebug(DType.CustomResource, $" - total {settings.Settings.Count} entries loaded");
 
                 foreach (var settingsEntry in settings.Settings)
                 {

@@ -29,14 +29,15 @@ internal class CategoryDefaultCustomsPreProcessor : IPreProcessor
                 continue;
             }
 
-            Control.LogDebug(DType.CCLoading, $"--copying defaults from category {categoryID}");
+            Logging.Debug?.LogDebug(DType.CCLoading, $"--copying defaults from category {categoryID}");
             foreach (var kv in categoryDescriptor.DefaultCustoms)
             {
                 if (customSettings.ContainsKey(kv.Key))
                 {
                     continue;
                 }
-                Control.LogDebug(DType.CCLoading, $"--copying {kv.Key} from category {categoryID}");
+
+                Logging.Debug?.LogDebug(DType.CCLoading, $"--copying {kv.Key} from category {categoryID}");
                 customSettings[kv.Key] = kv.Value;
             }
         }

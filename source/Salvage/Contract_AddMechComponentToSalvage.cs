@@ -15,7 +15,7 @@ namespace CustomComponents
             }
             catch (Exception e)
             {
-                Control.LogError(e);
+                Logging.Error?.Log(e);
             }
 
             return true;
@@ -25,7 +25,7 @@ namespace CustomComponents
         {
             if (def == null)
             {
-                Control.LogError("Get NULL component in salvage!");
+                Logging.Error?.Log("Get NULL component in salvage!");
                 return false;
             }
 
@@ -37,7 +37,7 @@ namespace CustomComponents
 
             if (lootable == null)
             {
-                Control.LogDebug(DType.SalvageProccess, $"---- default, no lootable - skipped");
+                Logging.Debug?.LogDebug(DType.SalvageProccess, $"---- default, no lootable - skipped");
 
                 return false;
             }
@@ -73,10 +73,11 @@ namespace CustomComponents
 
             if (component == null || component.Flags<CCFlags>().NoSalvage)
             {
-                Control.LogDebug(DType.SalvageProccess, $"---- default, lootable {lootable.ItemID} not found or notsalvagable - skipped");
+                Logging.Debug?.LogDebug(DType.SalvageProccess, $"---- default, lootable {lootable.ItemID} not found or notsalvagable - skipped");
                 return false;
             }
-            Control.LogDebug(DType.SalvageProccess, $"---- default, lootable {lootable.ItemID} replaced");
+
+            Logging.Debug?.LogDebug(DType.SalvageProccess, $"---- default, lootable {lootable.ItemID} replaced");
 
             def = component;
 

@@ -40,18 +40,18 @@ namespace CustomComponents
         {
             if (unitType == null)
             {
-                Control.LogError("Null unit type, skipping");
+                Logging.Error?.Log("Null unit type, skipping");
             }
 
             var old = types.FirstOrDefault(i => i.Name == unitType.Name);
             if (old != null)
             {
-                Control.LogDebug(DType.UnitType, $"-- removed old one");
+                Logging.Debug?.LogDebug(DType.UnitType, $"-- removed old one");
                 types.Remove(old);
             }
 
             types.Add(unitType);
-            Control.Log("UnitType " + unitType.Name + " Registred");
+            Logging.Info?.Log("UnitType " + unitType.Name + " Registred");
         }
 
         public HashSet<string> GetUnitTypes(ChassisDef chassis)
@@ -119,7 +119,7 @@ namespace CustomComponents
                 return;
             foreach (var unitType in types)
             {
-                Control.LogDebug(DType.UnitType, unitType.ToString());
+                Logging.Debug?.LogDebug(DType.UnitType, unitType.ToString());
             }
         }
     }

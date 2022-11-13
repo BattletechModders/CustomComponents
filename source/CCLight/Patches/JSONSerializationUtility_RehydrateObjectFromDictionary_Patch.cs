@@ -26,7 +26,7 @@ namespace CustomComponents
             }
             catch (Exception e)
             {
-                Control.LogError($"Error loading item", e);
+                Logging.Error?.Log($"Error loading item", e);
             }
         }
 

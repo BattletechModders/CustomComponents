@@ -15,7 +15,7 @@ namespace CustomComponents
 
         internal void Setup(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
-            Control.LogDebug(DType.CustomResource, " - TagRestriction");
+            Logging.Debug?.LogDebug(DType.CustomResource, " - TagRestriction");
             _restrictions = SettingsResourcesTools.Enumerate<TagRestrictions>("CCTagRestrictions", customResources)
                 .ToDictionary(entry => entry.Tag);
 
@@ -23,7 +23,7 @@ namespace CustomComponents
             {
                 foreach (var pair in _restrictions)
                 {
-                    Control.LogDebug(DType.CustomResource, $" -- {pair.Key}");
+                    Logging.Debug?.LogDebug(DType.CustomResource, $" -- {pair.Key}");
                 }
             }
         }

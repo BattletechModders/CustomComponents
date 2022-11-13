@@ -15,7 +15,7 @@ namespace CustomComponents.SorterMechInventory.Patches
             }
             catch (Exception e)
             {
-                Control.LogError(e);
+                Logging.Error?.Log(e);
             }
         }
     }

@@ -19,7 +19,7 @@ namespace CustomComponents
         public Link[] Links { get; set; }
 
         
-        public static void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors, MechValidationLevel validationLevel, MechDef mechDef)
+        public static void ValidateMech(Dictionary<MechValidationType, List<Text>> errors, MechValidationLevel validationLevel, MechDef mechDef)
         {
             var linked = mechDef.Inventory
                 .Select(i => i.GetComponent<AutoLinked>())
