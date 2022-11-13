@@ -1,0 +1,14 @@
+{
+	"TargetID": "settings",
+	"Instructions": [
+		{
+			"JSONPath": "loggerLevels",
+			"Action": "ArrayAdd",
+			"Value":
+			{
+				"k" : "CustomComponents",
+				"v" : "200"
+			}
+		}
+	]
+}

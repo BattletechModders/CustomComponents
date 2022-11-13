@@ -17,8 +17,6 @@ namespace CustomComponents
     {
         public static CustomComponentSettings Settings = new();
 
-        private static ILog Logger;
-
         internal const string CustomSectionName = "Custom";
 
         public static void Init(string directory, string settingsInitJson)
@@ -51,20 +49,20 @@ namespace CustomComponents
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
 
                 var version = Assembly.GetExecutingAssembly().GetName().Version;
-                Logger.Log($"Loaded CustomComponents {version.ToString(3)} for bt 1.9.1");
-                Logger.Log("DebugInfo: " + Settings.DebugInfo);
-                Logger.Log("- DumpMechDefs:" + Settings.DEBUG_DumpMechDefs);
-                Logger.Log("-- MechDefsDir: " + Settings.DEBUG_MechDefsDir);
-                Logger.Log("- ValidateMechDefs: " + Settings.DEBUG_ValidateMechDefs);
-                Logger.Log("-- ShowOnlyErrors: " + Settings.DEBUG_ShowOnlyErrors);
-                Logger.Log("- ShowAllUnitTypes: " + Settings.DEBUG_ShowAllUnitTypes);
-                Logger.Log("- EnableAllTags: " + Settings.DEBUG_EnableAllTags);
-                Logger.Log("- ShowConfig: " + Settings.DEBUG_ShowConfig);
-                Logger.Log("- ShowLoadedCategory: " + Settings.DEBUG_ShowLoadedCategory);
-                Logger.Log("- ShowLoadedDefaults: " + Settings.DEBUG_ShowLoadedDefaults);
-                Logger.Log("- ShowLoadedAlLocations: " + Settings.DEBUG_ShowLoadedAlLocations);
-                Logger.Log("- ShowMechUT: " + Settings.DEBUG_ShowMechUT);
-                Logger.Log("- ShowLoadedHardpoints: " + Settings.DEBUG_ShowLoadedHardpoints);
+                Logging.Info?.Log($"Loaded CustomComponents {version.ToString(3)} for bt 1.9.1");
+                Logging.Info?.Log("DebugInfo: " + Settings.DebugInfo);
+                Logging.Info?.Log("- DumpMechDefs:" + Settings.DEBUG_DumpMechDefs);
+                Logging.Info?.Log("-- MechDefsDir: " + Settings.DEBUG_MechDefsDir);
+                Logging.Info?.Log("- ValidateMechDefs: " + Settings.DEBUG_ValidateMechDefs);
+                Logging.Info?.Log("-- ShowOnlyErrors: " + Settings.DEBUG_ShowOnlyErrors);
+                Logging.Info?.Log("- ShowAllUnitTypes: " + Settings.DEBUG_ShowAllUnitTypes);
+                Logging.Info?.Log("- EnableAllTags: " + Settings.DEBUG_EnableAllTags);
+                Logging.Info?.Log("- ShowConfig: " + Settings.DEBUG_ShowConfig);
+                Logging.Info?.Log("- ShowLoadedCategory: " + Settings.DEBUG_ShowLoadedCategory);
+                Logging.Info?.Log("- ShowLoadedDefaults: " + Settings.DEBUG_ShowLoadedDefaults);
+                Logging.Info?.Log("- ShowLoadedAlLocations: " + Settings.DEBUG_ShowLoadedAlLocations);
+                Logging.Info?.Log("- ShowMechUT: " + Settings.DEBUG_ShowMechUT);
+                Logging.Info?.Log("- ShowLoadedHardpoints: " + Settings.DEBUG_ShowLoadedHardpoints);
 
 
                 Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);
@@ -98,11 +96,11 @@ namespace CustomComponents
                     }
                 }
 
-                Logger.LogDebug("done");
+                Logging.Debug?.Log("done");
             }
             catch (Exception e)
             {
-                Logger.LogError(e);
+                Logging.Error?.Log(e);
             }
         }
 
@@ -137,15 +135,14 @@ namespace CustomComponents
                 settingsFileEx = e;
             }
 
-            Logger = HBS.Logging.Logger.GetLogger("CustomComponents", Settings.LogLevel);
             if (settingsInitEx != null)
             {
-                Logger.LogError("Couldn't load default settings", settingsInitEx);
+                Logging.Error?.Log("Couldn't load default settings", settingsInitEx);
             }
 
             if (settingsFileEx != null)
             {
-                Logger.LogError("Couldn't load settings", settingsFileEx);
+                Logging.Error?.Log("Couldn't load settings", settingsFileEx);
             }
         }
 

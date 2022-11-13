@@ -166,7 +166,6 @@ namespace CustomComponents
 
         public bool DEBUG_ShowMechUT = false;
 
-        public LogLevel LogLevel = LogLevel.Debug;
         public List<TagColor> ColorTags = new List<TagColor>();
 
         public bool OverrideSalvageGeneration = true;
