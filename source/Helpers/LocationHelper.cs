@@ -46,7 +46,7 @@ namespace CustomComponents
 
                     if (HardpointsUsage == null)
                     {
-                        Logging.Error?.Log($"- {Location} widget #{i} not exist, skip");
+                        Log.Main.Error?.Log($"- {Location} widget #{i} not exist, skip");
                         widget.Hide();
                         continue;
                     }
@@ -78,7 +78,7 @@ namespace CustomComponents
             }
             catch (Exception e)
             {
-                Logging.Error?.Log(e);
+                Log.Main.Error?.Log(e);
             }
         }
 

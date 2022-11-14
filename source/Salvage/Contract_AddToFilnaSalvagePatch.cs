@@ -2,7 +2,7 @@
 using BattleTech;
 
 namespace CustomComponents
-{ 
+{
 //    [HarmonyPatch(typeof(Contract), "AddToFinalSalvage")]
     internal static class Contract_AddToFilnaSalvagePatch
     {
@@ -14,7 +14,7 @@ namespace CustomComponents
             }
             catch (Exception e)
             {
-                Logging.Error?.Log(e);
+                Log.Main.Error?.Log(e);
             }
 
             return true;

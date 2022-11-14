@@ -17,7 +17,7 @@ namespace CustomComponents.Patches
             }
             catch (Exception ex)
             {
-                Logging.Error?.Log(ex);
+                Log.Main.Error?.Log(ex);
             }
             return false;
         }
@@ -36,7 +36,7 @@ namespace CustomComponents.Patches
             }
             catch (Exception ex)
             {
-                Logging.Error?.Log(ex);
+                Log.Main.Error?.Log(ex);
             }
             return false;
         }

@@ -13,11 +13,11 @@ namespace CustomComponents
             {
                 if (mechDef == null)
                 {
-                    Logging.Debug?.LogDebug(DType.MechValidation, $"Mech validation for NULL return");
+                    Log.MechValidation.Trace?.Log($"Mech validation for NULL return");
                     return;
                 }
 
-                Logging.Debug?.LogDebug(DType.MechValidation, $"Mech validation for {mechDef.Name} start from {__result}");
+                Log.MechValidation.Trace?.Log($"Mech validation for {mechDef.Name} start from {__result}");
 
                 if(Control.Settings.IgnoreValidationTags != null && Control.Settings.IgnoreValidationTags.Length > 0)
                     foreach (var tag in Control.Settings.IgnoreValidationTags)
@@ -25,36 +25,36 @@ namespace CustomComponents
                         if ((mechDef.Chassis.ChassisTags != null && mechDef.Chassis.ChassisTags.Contains(tag)) ||
                             (mechDef.MechTags != null && mechDef.MechTags.Contains(tag)))
                         {
-                            Logging.Debug?.LogDebug(DType.MechValidation, $"- Ignored by {tag}");
+                            Log.MechValidation.Trace?.Log($"- Ignored by {tag}");
                             __result = true;
                             return;
                         }
                     }
-                
+
                 if (!__result)
                 {
-                    Logging.Debug?.LogDebug(DType.MechValidation, $"- failed base validation");
+                    Log.MechValidation.Trace?.Log($"- failed base validation");
                     return;
                 }
 
-                Logging.Debug?.LogDebug(DType.MechValidation, $"- fixed validation");
+                Log.MechValidation.Trace?.Log($"- fixed validation");
                 if (!Validator.ValidateMechCanBeFielded(mechDef))
                 {
                     __result = false;
-                    Logging.Debug?.LogDebug(DType.MechValidation, $"- failed fixed validation");
+                    Log.MechValidation.Trace?.Log($"- failed fixed validation");
                     return;
                 }
 
-                Logging.Debug?.LogDebug(DType.MechValidation, $"- component validation");
+                Log.MechValidation.Trace?.Log($"- component validation");
                 foreach (var component in mechDef.Inventory)
                 {
                     foreach (var mechValidate in component.GetComponents<IMechValidate>())
                     {
-                        Logging.Debug?.LogDebug(DType.MechValidation, $"-- {mechValidate.GetType()}");
+                        Log.MechValidation.Trace?.Log($"-- {mechValidate.GetType()}");
                         if (!mechValidate.ValidateMechCanBeFielded(mechDef, component))
                         {
                             __result = false;
-                            Logging.Debug?.LogDebug(DType.MechValidation, $"- failed component validation");
+                            Log.MechValidation.Trace?.Log($"- failed component validation");
                             return;
                         }
                     }
@@ -64,18 +64,18 @@ namespace CustomComponents
                         && (component.MountedLocation & locations.GetLocationsFor(mechDef)) <= ChassisLocations.None)
                     {
                         __result = false;
-                        Logging.Debug?.LogDebug(DType.MechValidation, $"- failed component location validation");
+                        Log.MechValidation.Trace?.Log($"- failed component location validation");
                         return;
                     }
 
                 }
 
-                Logging.Debug?.LogDebug(DType.MechValidation, $"- validation passed");
+                Log.MechValidation.Trace?.Log($"- validation passed");
             }
 
             catch (Exception e)
             {
-                Logging.Error?.Log(e);
+                Log.Main.Error?.Log(e);
             }
         }
     }

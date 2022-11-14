@@ -36,7 +36,7 @@ namespace CustomComponents
 
             if (!have_defaults.TryGetValue(mech.ChassisID, out var result))
             {
-                Logging.Debug?.LogDebug(DType.WeaponDefaults, $"Build Weapon Defaults for {mech.ChassisID}");
+                Log.WeaponDefaults.Trace?.Log($"Build Weapon Defaults for {mech.ChassisID}");
                 result = ChassisLocations.None;
 
                 var defs = mech.GetWeaponDefaults();
@@ -45,21 +45,21 @@ namespace CustomComponents
                     var list = defs.ToList();
                     foreach (var wd in list)
                     {
-                        Logging.Debug?.LogDebug(DType.WeaponDefaults, $"-- add {wd.Location}");
+                        Log.WeaponDefaults.Trace?.Log($"-- add {wd.Location}");
                         result = result.Set(wd.Location);
                     }
 
-                    Logging.Debug?.LogDebug(DType.WeaponDefaults, $"- complete - {result}");
+                    Log.WeaponDefaults.Trace?.Log($"- complete - {result}");
                 }
                 else
                 {
-                    Logging.Debug?.LogDebug(DType.WeaponDefaults, $"- no defaults - {result}");
+                    Log.WeaponDefaults.Trace?.Log($"- no defaults - {result}");
                 }
 
                 have_defaults[mech.ChassisID] = result;
             }
 
-            Logging.Debug?.LogDebug(DType.WeaponDefaults, $"HasWeaponDefaults {result} - {location} - {result.HasFlag(location)}");
+            Log.WeaponDefaults.Trace?.Log($"HasWeaponDefaults {result} - {location} - {result.HasFlag(location)}");
 
             return result.HasFlag(location);
         }
@@ -98,20 +98,20 @@ namespace CustomComponents
                 var def = DefaultHelper.GetComponentDef(weaponDefault.DefID, weaponDefault.Type);
                 if (def == null)
                 {
-                    Logging.Error?.Log($"Unknown weapon default {weaponDefault.DefID}/{weaponDefault.Type}");
+                    Log.Main.Error?.Log($"Unknown weapon default {weaponDefault.DefID}/{weaponDefault.Type}");
                     continue;
                 }
 
                 if (!def.IsDefault())
                 {
-                    Logging.Error?.Log($"Weapon default {weaponDefault.DefID} is not default");
+                    Log.Main.Error?.Log($"Weapon default {weaponDefault.DefID} is not default");
                     continue;
                 }
 
                 var wc = def.GetWeaponCategory();
                 if (wc == null || wc.Is_NotSet)
                 {
-                    Logging.Error?.Log($"Weapon default {weaponDefault.DefID} not a weapon/UseHardpoint");
+                    Log.Main.Error?.Log($"Weapon default {weaponDefault.DefID} not a weapon/UseHardpoint");
                     continue;
                 }
 

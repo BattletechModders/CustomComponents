@@ -27,7 +27,7 @@ namespace CustomComponents
         {
             if (ID == null)
             {
-                Logging.Error?.Log($"Empty WeaponCategory");
+                Log.Main.Error?.Log($"Empty WeaponCategory");
                 return false;
             }
 
@@ -36,7 +36,7 @@ namespace CustomComponents
 
             if (WeaponCategory == null || WeaponCategory.Is_NotSet)
             {
-                Logging.Error?.Log($"Unknown WeaponCategory {ID}");
+                Log.Main.Error?.Log($"Unknown WeaponCategory {ID}");
                 return false;
             }
 

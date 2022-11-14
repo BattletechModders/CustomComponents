@@ -98,22 +98,22 @@ namespace CustomComponents
             {
                 if (def == null)
                 {
-                    Logging.Error?.Log("MECHDEF IS NULL!");
+                    Log.Main.Error?.Log("MECHDEF IS NULL!");
                     return true;
                 }
                 if (def.Chassis == null)
                 {
-                    Logging.Error?.Log($"Chassis of {def.Description.Id} IS NULL!");
+                    Log.Main.Error?.Log($"Chassis of {def.Description.Id} IS NULL!");
                     return true;
                 }
                 if (def.MechTags == null)
                 {
-                    Logging.Error?.Log($"Mechtags of {def.Description.Id} IS NULL!");
+                    Log.Main.Error?.Log($"Mechtags of {def.Description.Id} IS NULL!");
                     return true;
                 }
                 if (def.Chassis.ChassisTags == null)
                 {
-                    Logging.Error?.Log($"Chassistags of {def.Description.Id} IS NULL!");
+                    Log.Main.Error?.Log($"Chassistags of {def.Description.Id} IS NULL!");
                     return true;
                 }
 
@@ -121,8 +121,8 @@ namespace CustomComponents
             }
             catch
             {
-                Logging.Error?.Log("5.GOT NRE!!!!");
-                Logging.Error?.Log($"{def}");
+                Log.Main.Error?.Log("5.GOT NRE!!!!");
+                Log.Main.Error?.Log($"{def}");
                 return false;
             }
         }

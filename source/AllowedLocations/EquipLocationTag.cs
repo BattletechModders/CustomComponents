@@ -18,10 +18,10 @@ namespace CustomComponents
         public override string ToString()
         {
             var sb = new StringBuilder("Allowed Locations for " + Tag);
-            sb.Append("\n- Default: " + Default.ToString());
+            sb.Append("\n- Default: " + Default);
             if(UnitTypes != null && UnitTypes.Length > 0)
                 foreach (var unitType in UnitTypes)
-                    sb.Append("\n- " + unitType.UnitType + ": " + unitType.Location.ToString());
+                    sb.Append("\n- " + unitType.UnitType + ": " + unitType.Location);
             return sb.ToString();
         }
     }

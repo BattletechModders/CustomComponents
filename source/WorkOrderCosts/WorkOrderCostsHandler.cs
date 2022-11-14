@@ -44,7 +44,7 @@ namespace CustomComponents
             {
                 return;
             }
-            
+
             if (mechComponent.DamageLevel == ComponentDamageLevel.Destroyed)
             {
                 ApplyCosts(result, workOrderCosts.RepairDestroyed);
@@ -54,7 +54,7 @@ namespace CustomComponents
                 ApplyCosts(result, workOrderCosts.Repair);
             }
         }
-        
+
         private Dictionary<string, string> TemplateVariables(MechDef mechDef)
         {
             if (mechDef == null)

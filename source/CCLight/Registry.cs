@@ -56,7 +56,7 @@ namespace CustomComponents
                 var name = customAttribute.Name;
                 if (!SimpleIdentifiers.Add(name))
                 {
-                    Logging.Info?.Log($"SimpleCustom {name} already registered");
+                    Log.Main.Info?.Log($"SimpleCustom {name} already registered");
                     continue;
                 }
 
@@ -94,7 +94,7 @@ namespace CustomComponents
                 var factoryType = factoryGenericType.MakeGenericType(genericTypes);
                 var factory = Activator.CreateInstance(factoryType, name) as ICustomFactory;
                 Factories.Add(factory);
-                Logging.Info?.Log($"SimpleCustom {name} registered for type {defType}");
+                Log.Main.Info?.Log($"SimpleCustom {name} registered for type {defType}");
             }
         }
 
@@ -126,10 +126,10 @@ namespace CustomComponents
         {
             if (target == null)
             {
-                Logging.Error?.Log($"NULL item loaded");
+                Log.Main.Error?.Log($"NULL item loaded");
                 foreach (var value in values)
                 {
-                    Logging.Error?.Log($"- {value.Key}: {value.Value}");
+                    Log.Main.Error?.Log($"- {value.Key}: {value.Value}");
                 }
                 return;
             }
@@ -141,8 +141,8 @@ namespace CustomComponents
                 return;
             }
 
-            Logging.Debug?.LogDebug(DType.CCLoading, $"ProcessCustomCompontentFactories for {target.GetType()} ({target.GetHashCode()})");
-            Logging.Debug?.LogDebug(DType.CCLoading, $"- {identifier}");
+            Log.CCLoading.Trace?.Log($"ProcessCustomCompontentFactories for {target.GetType()} ({target.GetHashCode()})");
+            Log.CCLoading.Trace?.Log($"- {identifier}");
 
             foreach (var preProcessor in PreProcessors)
             {
@@ -158,7 +158,7 @@ namespace CustomComponents
                 }
                 catch (Exception e)
                 {
-                    Logging.Error?.Log($"Error when processing custom factory {factory.CustomName} for {target.GetType()} ({target.GetHashCode()})", e);
+                    Log.Main.Error?.Log($"Error when processing custom factory {factory.CustomName} for {target.GetType()} ({target.GetHashCode()})", e);
                 }
             }
 
@@ -173,17 +173,17 @@ namespace CustomComponents
 #if CCDEBUG
             if (loaded)
             {
-                Logging.Debug?.LogDebug(DType.CCLoadingSummary, $"ProcessCustomCompontentFactories for {target.GetType()} ({target.GetHashCode()})");
-                Logging.Debug?.LogDebug(DType.CCLoadingSummary, $"- {identifier}");
+                Log.CCLoadingSummary.Trace?.Log($"ProcessCustomCompontentFactories for {target.GetType()} ({target.GetHashCode()})");
+                Log.CCLoadingSummary.Trace?.Log($"- {identifier}");
 
-                Logging.Debug?.LogDebug(DType.CCLoadingSummary, "- Loaded:");
+                Log.CCLoadingSummary.Trace?.Log("- Loaded:");
 
                 foreach (var custom in Database.GetCustoms<ICustom>(target))
                 {
-                    Logging.Debug?.LogDebug(DType.CCLoadingSummary, $"--- {custom}");
+                    Log.CCLoadingSummary.Trace?.Log($"--- {custom}");
                 }
 
-                Logging.Debug?.LogDebug(DType.CCLoadingSummary, "- done");
+                Log.CCLoadingSummary.Trace?.Log("- done");
             }
 #endif
 
@@ -204,13 +204,13 @@ namespace CustomComponents
                     continue;
                 }
 
-                Logging.Debug?.LogDebug(DType.CCLoading, $"Created {component} for {identifier}");
+                Log.CCLoading.Trace?.Log($"Created {component} for {identifier}");
 
                 if (Database.SetCustomWithIdentifier(identifier, component))
                 {
                     if (component is IAfterLoad load)
                     {
-                        Logging.Debug?.LogDebug(DType.CCLoading, $"IAfterLoad: {identifier}");
+                        Log.CCLoading.Trace?.Log($"IAfterLoad: {identifier}");
                         load.OnLoaded(values);
                     }
 

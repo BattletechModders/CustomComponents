@@ -16,10 +16,10 @@ namespace CustomComponents
 
         internal static void LoadIcons(Dictionary<string, VersionManifestEntry> icons_ressourses)
         {
-            Logging.Debug?.LogDebug(DType.Icons, $"Get data:");
+            Log.Icons.Trace?.Log($"Get data:");
             foreach (var pair in icons_ressourses)
             {
-                Logging.Debug?.LogDebug(DType.Icons, $"- {pair.Key}: {pair.Value.FileName} {pair.Value.FilePath} {pair.Value.Name}");
+                Log.Icons.Trace?.Log($"- {pair.Key}: {pair.Value.FileName} {pair.Value.FilePath} {pair.Value.Name}");
                 try
                 {
                     using (var reader = new StreamReader(pair.Value.FilePath))
@@ -31,7 +31,7 @@ namespace CustomComponents
                 }
                 catch(Exception e)
                 {
-                    Logging.Error?.Log(e);
+                    Log.Main.Error?.Log(e);
                 }
                 
             }

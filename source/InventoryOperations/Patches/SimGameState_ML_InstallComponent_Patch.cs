@@ -14,7 +14,7 @@ namespace CustomComponents.Patches
         {
             try
             {
-                Logging.Debug?.LogDebug(DType.ComponentInstall, $"ML_InstallComponent {order.MechComponentRef.ComponentDefID} - {order.MechComponentRef.Def == null}");
+                Log.ComponentInstall.Trace?.Log($"ML_InstallComponent {order.MechComponentRef.ComponentDefID} - {order.MechComponentRef.Def == null}");
                 if (!order.IsMechLabComplete)
                     return;
 
@@ -31,11 +31,11 @@ namespace CustomComponents.Patches
                 state.DoChanges();
                 state.ApplyInventory();
 
-                Logging.Debug?.LogDebug(DType.ComponentInstall, $"ML_InstallComponent complete");
+                Log.ComponentInstall.Trace?.Log($"ML_InstallComponent complete");
             }
             catch (Exception e)
             {
-                Logging.Error?.Log(e);
+                Log.Main.Error?.Log(e);
             }
         }
 

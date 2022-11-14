@@ -6,7 +6,7 @@ using System.Linq;
 namespace CustomComponents
 {
     /// <summary>
-    /// Static class to make validation 
+    /// Static class to make validation
     /// </summary>
     public static class Validator
     {
@@ -74,7 +74,7 @@ namespace CustomComponents
 
             foreach (var validator in chk_drop_validators)
                 yield return validator;
-            
+
             yield return ValidateSize;
             yield return ValidateJumpJets;
         }

@@ -50,7 +50,7 @@ namespace CustomComponents
         {
             if (target == null)
             {
-                Logging.Error?.Log("Error - requested identifier for null!");
+                Log.Main.Error?.Log("Error - requested identifier for null!");
                 return string.Empty;
             }
 
@@ -116,7 +116,7 @@ namespace CustomComponents
 
         private bool SetCustomInternal(string key, ICustom cc)
         {
-            Logging.Debug?.LogDebug(DType.CCLoading, $"SetCustomInternal key={key} cc={cc}");
+            Log.CCLoading.Trace?.Log($"SetCustomInternal key={key} cc={cc}");
 
             var ccs = GetOrCreateCustomsList(key);
 
@@ -146,22 +146,22 @@ namespace CustomComponents
                     if (custom is IReplaceIdentifier cci2 &&
                         cci1.ReplaceID == cci2.ReplaceID)
                     {
-                        Logging.Debug?.LogDebug(DType.CCLoading, $"--find replace: add:{attribute.Name} fnd:{attribute2.Name} grp:{attribute.Group} rid:{cci1.ReplaceID}");
-                        Logging.Debug?.LogDebug(DType.CCLoading, $"--replace: from:{custom} to:{cc}");
+                        Log.CCLoading.Trace?.Log($"--find replace: add:{attribute.Name} fnd:{attribute2.Name} grp:{attribute.Group} rid:{cci1.ReplaceID}");
+                        Log.CCLoading.Trace?.Log($"--replace: from:{custom} to:{cc}");
                         ccs[i] = cc;
                         return true;
                     }
                 }
                 else
                 {
-                    Logging.Debug?.LogDebug(DType.CCLoading, $"--find replace: add:{attribute.Name} fnd:{attribute2.Name} grp:{attribute.Group}");
-                    Logging.Debug?.LogDebug(DType.CCLoading, $"--replace: from:{custom} to:{cc}");
+                    Log.CCLoading.Trace?.Log($"--find replace: add:{attribute.Name} fnd:{attribute2.Name} grp:{attribute.Group}");
+                    Log.CCLoading.Trace?.Log($"--replace: from:{custom} to:{cc}");
                     ccs[i] = cc;
                     return true;
                 }
             }
 
-            Logging.Debug?.LogDebug(DType.CCLoading, $"--added");
+            Log.CCLoading.Trace?.Log($"--added");
             ccs.Add(cc);
             return true;
         }
@@ -189,7 +189,7 @@ namespace CustomComponents
                 }
                 catch (Exception e)
                 {
-                    Logging.Error?.Log(e);
+                    Log.Main.Error?.Log(e);
                 }
             }
         }

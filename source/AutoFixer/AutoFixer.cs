@@ -62,7 +62,7 @@ namespace CustomComponents
                     work_list.Add(mechDef);
             }
 
-            Logging.Debug?.LogDebug(DType.AutoFixBase, $"-- default: mechdefs:{work_list.Count} af:{fixers.Count}");
+            Log.AutoFixBase.Trace?.Log($"-- default: mechdefs:{work_list.Count} af:{fixers.Count}");
             foreach (var autoFixerDelegate in fixers)
             {
                 try
@@ -71,7 +71,7 @@ namespace CustomComponents
                 }
                 catch (Exception e)
                 {
-                    Logging.Error?.Log($"Exception in default Autofixer {autoFixerDelegate.Method.Name}", e);
+                    Log.Main.Error?.Log($"Exception in default Autofixer {autoFixerDelegate.Method.Name}", e);
                 }
             }
 
@@ -94,11 +94,11 @@ namespace CustomComponents
                 foreach (var mechDef in mechDefs)
                 {
                     var ut = mechDef.GetUnitTypes();
-                    Logging.Debug?.LogDebug(DType.UnitType, $"{mechDef.Description.Id}: [{ (ut == null ? "null" : ut.Join(null, ", "))}]");
+                    Log.UnitType.Trace?.Log($"{mechDef.Description.Id}: [{ (ut == null ? "null" : ut.Join(null, ", "))}]");
                 }
             }
 
-            Logging.Debug?.LogDebug(DType.AutoFixBase, $"-- done");
+            Log.AutoFixBase.Trace?.Log($"-- done");
 
         }
 
@@ -133,7 +133,7 @@ namespace CustomComponents
                 }
                 catch (Exception e)
                 {
-                    Logging.Error?.Log($"Exception in default Autofixer {autoFixerDelegate.Method.Name}", e);
+                    Log.Main.Error?.Log($"Exception in default Autofixer {autoFixerDelegate.Method.Name}", e);
                 }
             }
         }
@@ -159,12 +159,12 @@ namespace CustomComponents
                     continue;
                 }
 
-                Logging.Error?.Log($"Found NULL in {mechDef.Name}({mechDef.Description.Id})");
+                Log.Main.Error?.Log($"Found NULL in {mechDef.Name}({mechDef.Description.Id})");
 
                 foreach (var r in mechDef.Inventory)
                 {
                     if (r.Def == null)
-                        Logging.Error?.Log($"--- NULL --- {r.ComponentDefID}");
+                        Log.Main.Error?.Log($"--- NULL --- {r.ComponentDefID}");
                 }
 
                 mechDef.SetInventory(mechDef.Inventory.Where(i => i.Def != null).ToArray());

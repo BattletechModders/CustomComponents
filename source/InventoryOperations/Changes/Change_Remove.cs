@@ -79,7 +79,7 @@ namespace CustomComponents.Changes
                 var change = current[i];
                 if (!change.Initial && change is Change_Add add && !add.Applied && add.Location == Location && add.ItemID == ItemID)
                 {
-                    Logging.Debug?.LogDebug(DType.InventoryOperaions, "--- OPT {0}, {1}", this, current[i]);
+                    Log.InventoryOperations.Trace?.Log($"--- OPT {this}, {current[i]}");
                     current.RemoveAt(i);
                     current.Remove(this);
                     return;

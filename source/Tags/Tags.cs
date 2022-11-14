@@ -13,7 +13,7 @@ namespace CustomComponents {
   [HarmonyPatch(new Type[] { typeof(CombatGameState) })]
   public static class CombatHUD_InitTags {
     public static bool Prefix(CombatHUD __instance, CombatGameState Combat) {
-      Logging.Info?.Log("Clearing tags cache");
+      Log.Main.Info?.Log("Clearing tags cache");
       CustomCombatTagsHelper.ClearTagsCache();
       return true;
     }
@@ -62,7 +62,7 @@ namespace CustomComponents {
       return tags;
     }
     private static void saveTags(MechComponent target,TagSet tags) {
-      Logging.Info?.Log($"saving tags "+target.defId+":"+tags.ToString());
+      Log.Main.Info?.Log($"saving tags "+target.defId+":"+tags);
       if (checkExistance(target.StatCollection, CCComponentTagsStatName) == false) {
         target.StatCollection.AddStatistic<string>(CCComponentTagsStatName, tags.ToString());
       } else {

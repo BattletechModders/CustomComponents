@@ -68,7 +68,7 @@ namespace CustomComponents
             if (hardpoints == null)
                 return;
 
-            
+
             foreach (var widget in hardpoints)
             {
                 var item = usage?.FirstOrDefault(i => i.hpInfo.WeaponCategory.ID == widget.Key);

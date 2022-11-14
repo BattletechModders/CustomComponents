@@ -17,7 +17,7 @@ namespace CustomComponents
 
                     if (mechDef == null)
                     {
-                        Logging.Error?.Log("NullMECHDEF!");
+                        Log.Main.Error?.Log("NullMECHDEF!");
                         continue;
                     }
                     if (Control.Settings.IgnoreValidationTags != null && Control.Settings.IgnoreValidationTags.Length > 0)
@@ -28,7 +28,7 @@ namespace CustomComponents
                             if ((mechDef.Chassis.ChassisTags != null && mechDef.Chassis.ChassisTags.Contains(tag)) ||
                             (mechDef.MechTags != null && mechDef.MechTags.Contains(tag)))
                             {
-                                Logging.Debug?.LogDebug(DType.AutofixValidate, $"{mechDef.Description.Id} Ignored by {tag}");
+                                Log.AutofixValidate.Trace?.Log($"{mechDef.Description.Id} Ignored by {tag}");
                                 skip = true;
                                 break;
                             }
@@ -37,7 +37,7 @@ namespace CustomComponents
                             continue;
                     }
 
-                    var error = MechValidationRules.ValidateMechDef(MechValidationLevel.Full, dm, 
+                    var error = MechValidationRules.ValidateMechDef(MechValidationLevel.Full, dm,
                         mechDef, work);
                     foreach (var component in mechDef.Inventory)
                     {
@@ -55,22 +55,22 @@ namespace CustomComponents
                             if (!bad_mech)
                             {
                                 bad_mech = true;
-                                Logging.Debug?.LogDebug(DType.AutofixValidate, $"{mechDef.Description.Id} has errors:");
+                                Log.AutofixValidate.Trace?.Log($"{mechDef.Description.Id} has errors:");
                             }
                             foreach (var text in pair.Value)
                             {
-                                Logging.Debug?.LogDebug(DType.AutofixValidate, $"[{pair.Key}]:{text}");
+                                Log.AutofixValidate.Trace?.Log($"[{pair.Key}]:{text}");
                             }
                         }
                     }
                     if (!bad_mech && !Control.Settings.DEBUG_ShowOnlyErrors)
                     {
-                        Logging.Debug?.LogDebug(DType.AutofixValidate, $"{mechDef.Description.Id} no errors");
+                        Log.AutofixValidate.Trace?.Log($"{mechDef.Description.Id} no errors");
                     }
                 }
                 catch (Exception e)
                 {
-                    Logging.Error?.Log($"{mechDef.Description.Id} throwed exception on validation", e);
+                    Log.Main.Error?.Log($"{mechDef.Description.Id} throwed exception on validation", e);
                 }
             }
         }

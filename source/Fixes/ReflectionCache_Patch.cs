@@ -43,7 +43,7 @@ namespace CustomComponents
                     "TryCacheMember",
                     BindingFlags.NonPublic | BindingFlags.Instance,
                     null,
-                    new[] {typeof(Type), typeof(string), typeof(string).MakeByRefType()}, 
+                    new[] {typeof(Type), typeof(string), typeof(string).MakeByRefType()},
                     null
                 );
         }
@@ -61,11 +61,11 @@ namespace CustomComponents
         {
             return typeof(ReflectionCache)
                 .GetMethod(
-                    "TryCacheMethod", 
+                    "TryCacheMethod",
                     BindingFlags.Public | BindingFlags.Instance
                 );
         }
-        
+
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             return ReflectionCache_Patch.ReplaceNameInstructions(instructions);

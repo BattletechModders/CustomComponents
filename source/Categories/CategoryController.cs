@@ -35,7 +35,7 @@ namespace CustomComponents
             foreach (var category in SettingsResourcesTools.Enumerate<CategoryDescriptor>("CCCategories", customResources))
             {
                 AddCategory(category);
-                Logging.Info?.Log($"Category {category.Name}({category._DisplayName}) registered");
+                Log.Main.Info?.Log($"Category {category.Name}({category._DisplayName}) registered");
             }
         }
 
@@ -43,7 +43,7 @@ namespace CustomComponents
         {
             if (Categories.TryGetValue(category.Name, out var c))
             {
-                Logging.Info?.Log("already have " + c.ToString());
+                Log.Main.Info?.Log("already have " + c);
                 c.Apply(category);
                 category = c;
             }
@@ -52,7 +52,7 @@ namespace CustomComponents
 
             category.Init();
             if (Control.Settings.DEBUG_ShowLoadedCategory)
-                Logging.Info?.Log(category.ToString());
+                Log.Main.Info?.Log(category.ToString());
         }
 
         internal CategoryDescriptor GetOrCreateCategory(string name)
@@ -112,7 +112,7 @@ namespace CustomComponents
                 }
                 catch (NullReferenceException nre)
                 {
-                    Logging.Error?.Log($"mech: {mechDef.Description.Id}, category: {category.Name}", nre);
+                    Log.Main.Error?.Log($"mech: {mechDef.Description.Id}, category: {category.Name}", nre);
                     continue;
 
                 }
@@ -287,7 +287,7 @@ namespace CustomComponents
                 }
                 catch (NullReferenceException nre)
                 {
-                    Logging.Error?.Log($"mech: {mechDef.Description.Id}, category: {category.Name}", nre);
+                    Log.Main.Error?.Log($"mech: {mechDef.Description.Id}, category: {category.Name}", nre);
                     continue;
 
                 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using BattleTech.UI;
-using HBS.Logging;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -150,8 +149,6 @@ namespace CustomComponents
     }
     public class CustomComponentSettings
     {
-        public DType DebugInfo = DType.Color;
-
         public bool DEBUG_DumpMechDefs = false;
         public string DEBUG_MechDefsDir = "D:/MechDefs";
         public bool DEBUG_ValidateMechDefs = false;

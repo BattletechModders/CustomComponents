@@ -11,7 +11,7 @@ namespace CustomComponents
     {
         public static MechLabHelper CurrentMechLab { get; private set; }
 
-        private HPHandler hardpoints; 
+        private HPHandler hardpoints;
 
         internal static void EnterMechLab(MechLabPanel mechlab)
         {
@@ -19,9 +19,9 @@ namespace CustomComponents
             {
                 var ut = mechlab.activeMechDef.GetUnitTypes();
                 if (ut == null)
-                    Logging.Info?.Log($"Enter MechLab for {mechlab.activeMechDef.Description.Id}, UT:[ ]");
+                    Log.Main.Info?.Log($"Enter MechLab for {mechlab.activeMechDef.Description.Id}, UT:[ ]");
                 else
-                    Logging.Info?.Log($"Enter MechLab for {mechlab.activeMechDef.Description.Id}, UT:[{ut.Join()}]");
+                    Log.Main.Info?.Log($"Enter MechLab for {mechlab.activeMechDef.Description.Id}, UT:[{ut.Join()}]");
             }
 
             CurrentMechLab = new MechLabHelper(mechlab);
@@ -45,7 +45,7 @@ namespace CustomComponents
             }
             catch (Exception e)
             {
-                Logging.Error?.Log(e);
+                Log.Main.Error?.Log(e);
             }
         }
 
@@ -71,7 +71,7 @@ namespace CustomComponents
         //    }
         //}
 
- 
+
 
         internal static void CloseMechLab()
         {

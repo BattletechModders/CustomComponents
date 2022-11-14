@@ -23,17 +23,17 @@ namespace CustomComponents
         {
             if (panel == null)
             {
-                Logging.Error?.Log("TonnageLimited.CheckFilter: MechLab is null");
+                Log.Main.Error?.Log("TonnageLimited.CheckFilter: MechLab is null");
                 return true;
             }
             if (panel.activeMechDef == null)
             {
-                Logging.Error?.Log("TonnageLimited.CheckFilter: MechDef is null");
+                Log.Main.Error?.Log("TonnageLimited.CheckFilter: MechDef is null");
                 return true;
             }
             if (panel.activeMechDef.Chassis == null)
             {
-                Logging.Error?.Log("TonnageLimited.CheckFilter: MechDef.Chassis is null");
+                Log.Main.Error?.Log("TonnageLimited.CheckFilter: MechDef.Chassis is null");
                 return true;
             }
 
@@ -45,7 +45,7 @@ namespace CustomComponents
 
         public string PreValidateDrop(MechLabItemSlotElement item, ChassisLocations location)
         {
-            Logging.Debug?.LogDebug(DType.ComponentInstall, "-- TonnageLimit");
+            Log.ComponentInstall.Trace?.Log("-- TonnageLimit");
             var tonnage = MechLabHelper.CurrentMechLab.ActiveMech.Chassis.Tonnage;
 
 

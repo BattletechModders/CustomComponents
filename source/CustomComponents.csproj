@@ -95,9 +95,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\mod.json">
-      <Link>mod.json</Link>
-    </None>
+    <None Include="..\mod.json" />
+    <None Include="..\advancedjsonmerge\loglevels.json" />
+    <None Include="$(BattleTechGameDir)\Mods\.modtek\battletech_log.txt" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3">

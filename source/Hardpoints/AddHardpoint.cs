@@ -16,7 +16,7 @@ namespace CustomComponents
         public void LoadValue(string value)
         {
             WeaponCategory = WeaponCategoryEnumeration.GetWeaponCategoryByName(value);
- 
+
             if (WeaponCategory == null)
                 WeaponCategory = WeaponCategoryEnumeration.GetNotSetValue();
 
@@ -78,7 +78,7 @@ namespace CustomComponents
         private string UseHardpoint;
         private string AddHardpoint;
 
-        public bool Valid => AddWeaponCategory != null && !AddWeaponCategory.Is_NotSet 
+        public bool Valid => AddWeaponCategory != null && !AddWeaponCategory.Is_NotSet
             && UseWeaponCategory != null && !UseWeaponCategory.Is_NotSet;
 
         public WeaponCategoryValue AddWeaponCategory { get; private set; }

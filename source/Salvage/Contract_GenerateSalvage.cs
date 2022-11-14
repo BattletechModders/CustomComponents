@@ -33,7 +33,7 @@ namespace CustomComponents
 
             try
             {
-                Logging.Debug?.LogDebug(DType.SalvageProccess, $"Start GenerateSalvage for {__instance.Name}");
+                Log.SalvageProcess.Trace?.Log($"Start GenerateSalvage for {__instance.Name}");
 
                 ___finalPotentialSalvage = new List<SalvageDef>();
 
@@ -46,20 +46,20 @@ namespace CustomComponents
                 var simgame = __instance.BattleTechGame.Simulation;
                 if (simgame == null)
                 {
-                    Logging.Error?.Log("No simgame - cancel salvage");
+                    Log.Main.Error?.Log("No simgame - cancel salvage");
                     return false;
                 }
 
                 var Constants = simgame.Constants;
 
-                Logging.Debug?.LogDebug(DType.SalvageProccess, $"- Lost Units {__instance.Name}");
+                Log.SalvageProcess.Trace?.Log($"- Lost Units {__instance.Name}");
                 for (int i = 0; i < lostUnits.Count; i++)
                 {
                     var mech = lostUnits[i].mech;
 
                     if (!IsDestroyed(mech))
                     {
-                        Logging.Debug?.LogDebug(DType.SalvageProccess, $"-- {mech.Name} not destroyed, skiping");
+                        Log.SalvageProcess.Trace?.Log($"-- {mech.Name} not destroyed, skiping");
                         continue;
 
                     }
@@ -67,7 +67,7 @@ namespace CustomComponents
 
                     if (Control.Settings.OverrideRecoveryChance)
                     {
-                        Logging.Debug?.LogDebug(DType.SalvageProccess, $"-- Recovery {mech.Name} CC method");
+                        Log.SalvageProcess.Trace?.Log($"-- Recovery {mech.Name} CC method");
 
                         float chance = Constants.Salvage.DestroyedMechRecoveryChance;
 
@@ -109,21 +109,21 @@ namespace CustomComponents
 
                         if (lostUnits[i].mechLost)
                         {
-                            Logging.Debug?.LogDebug(DType.SalvageProccess, $"--- {chance:0.00} < {num:0.00} - roll failed, no recovery");
+                            Log.SalvageProcess.Trace?.Log($"--- {chance:0.00} < {num:0.00} - roll failed, no recovery");
                         }
                         else
                         {
-                            Logging.Debug?.LogDebug(DType.SalvageProccess, $"--- {chance:0.00} >= {num:0.00} - roll success, recovery");
+                            Log.SalvageProcess.Trace?.Log($"--- {chance:0.00} >= {num:0.00} - roll success, recovery");
                         }
                     }
                     else
                     {
-                        Logging.Debug?.LogDebug(DType.SalvageProccess, $"-- Recovery {mech.Name} vanila method");
+                        Log.SalvageProcess.Trace?.Log($"-- Recovery {mech.Name} vanila method");
                         float num = simgame.NetworkRandom.Float(0f, 1f);
 
                         if (mech.IsLocationDestroyed(ChassisLocations.CenterTorso))
                         {
-                            Logging.Debug?.LogDebug(DType.SalvageProccess, $"--- CenterTorso Destroyed - no recovery");
+                            Log.SalvageProcess.Trace?.Log($"--- CenterTorso Destroyed - no recovery");
                             lostUnits[i].mechLost = true;
                         }
                         else
@@ -131,11 +131,11 @@ namespace CustomComponents
                             lostUnits[i].mechLost = Constants.Salvage.DestroyedMechRecoveryChance < num;
                             if (lostUnits[i].mechLost)
                             {
-                                Logging.Debug?.LogDebug(DType.SalvageProccess, $"--- {Constants.Salvage.DestroyedMechRecoveryChance:0.00} < {num:0.00} - roll failed, no recovery");
+                                Log.SalvageProcess.Trace?.Log($"--- {Constants.Salvage.DestroyedMechRecoveryChance:0.00} < {num:0.00} - roll failed, no recovery");
                             }
                             else
                             {
-                                Logging.Debug?.LogDebug(DType.SalvageProccess, $"--- {Constants.Salvage.DestroyedMechRecoveryChance:0.00} >= {num:0.00} - roll success, recovery");
+                                Log.SalvageProcess.Trace?.Log($"--- {Constants.Salvage.DestroyedMechRecoveryChance:0.00} >= {num:0.00} - roll success, recovery");
                             }
                         }
                     }
@@ -177,26 +177,26 @@ namespace CustomComponents
                 }
 
 
-                Logging.Debug?.LogDebug(DType.SalvageProccess, $"- Enemy Mechs {__instance.Name}");
+                Log.SalvageProcess.Trace?.Log($"- Enemy Mechs {__instance.Name}");
                 foreach (var unit in enemyMechs)
                 {
                     if (unit.pilot.IsIncapacitated || IsDestroyed(unit.mech) || unit.pilot.HasEjected)
                         AddMechToSalvage(unit.mech, contract, simgame, Constants, ___finalPotentialSalvage);
                     else
                     {
-                        Logging.Debug?.LogDebug(DType.SalvageProccess, $"-- Salvaging {unit.mech.Name}");
-                        Logging.Debug?.LogDebug(DType.SalvageProccess, $"--- not destroyed, skipping");
+                        Log.SalvageProcess.Trace?.Log($"-- Salvaging {unit.mech.Name}");
+                        Log.SalvageProcess.Trace?.Log($"--- not destroyed, skipping");
                     }
                 }
 
-                Logging.Debug?.LogDebug(DType.SalvageProccess, $"- Enemy Vechicle {__instance.Name}");
+                Log.SalvageProcess.Trace?.Log($"- Enemy Vechicle {__instance.Name}");
                 foreach (var vechicle in enemyVehicles)
                 {
-                    Logging.Debug?.LogDebug(DType.SalvageProccess, $"-- Salvaging {vechicle?.Chassis?.Description?.Name}");
+                    Log.SalvageProcess.Trace?.Log($"-- Salvaging {vechicle?.Chassis?.Description?.Name}");
                     foreach (var component in vechicle.Inventory.Where(item =>
                         item.DamageLevel != ComponentDamageLevel.Destroyed))
                     {
-                        Logging.Debug?.LogDebug(DType.SalvageProccess, $"--- Adding {component.ComponentDefID}");
+                        Log.SalvageProcess.Trace?.Log($"--- Adding {component.ComponentDefID}");
                         contract.AddMechComponentToSalvage(___finalPotentialSalvage, component.Def, ComponentDamageLevel.Functional, false,
                             Constants, simgame.NetworkRandom, true);
                     }
@@ -235,7 +235,7 @@ namespace CustomComponents
             }
             catch (Exception e)
             {
-                Logging.Error?.Log("Unhandled error in salvage", e);
+                Log.Main.Error?.Log("Unhandled error in salvage", e);
             }
 
             return false;
@@ -243,7 +243,7 @@ namespace CustomComponents
 
         private static void AddMechToSalvage(MechDef mech, Contract contract, SimGameState simgame, SimGameConstants constants, List<SalvageDef> salvage)
         {
-            Logging.Debug?.LogDebug(DType.SalvageProccess, $"-- Salvaging {mech.Name}");
+            Log.SalvageProcess.Trace?.Log($"-- Salvaging {mech.Name}");
 
             int numparts = 0;
 
@@ -292,33 +292,33 @@ namespace CustomComponents
 
             try
             {
-                Logging.Debug?.LogDebug(DType.SalvageProccess, $"--- Adding {numparts} parts");
+                Log.SalvageProcess.Trace?.Log($"--- Adding {numparts} parts");
                 contract.CreateAndAddMechPart(constants, mech, numparts, salvage);
             }
             catch (Exception e)
             {
-                Logging.Error?.Log("Error in adding parts", e);
+                Log.Main.Error?.Log("Error in adding parts", e);
             }
 
             try
             {
                 if (Control.Settings.NoLootCTDestroyed && mech.IsLocationDestroyed(ChassisLocations.CenterTorso))
                 {
-                    Logging.Debug?.LogDebug(DType.SalvageProccess, $"--- CT Destroyed - no component loot");
+                    Log.SalvageProcess.Trace?.Log($"--- CT Destroyed - no component loot");
                 }
                 else
                     foreach (var component in mech.Inventory.Where(item =>
                         !mech.IsLocationDestroyed(item.MountedLocation) &&
                         item.DamageLevel != ComponentDamageLevel.Destroyed))
                     {
-                        Logging.Debug?.LogDebug(DType.SalvageProccess, $"--- Adding {component.ComponentDefID}");
+                        Log.SalvageProcess.Trace?.Log($"--- Adding {component.ComponentDefID}");
                         contract.AddMechComponentToSalvage(salvage, component.Def, ComponentDamageLevel.Functional, false,
                             constants, simgame.NetworkRandom, true);
                     }
             }
             catch (Exception e)
             {
-                Logging.Error?.Log("Error in adding component", e);
+                Log.Main.Error?.Log("Error in adding component", e);
             }
         }
     }

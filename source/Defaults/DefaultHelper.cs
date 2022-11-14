@@ -17,10 +17,10 @@ namespace CustomComponents
 
         public static bool IsModuleFixed(this MechComponentRef item, MechDef mech)
         {
-            Logging.Debug?.LogDebug(DType.FixedCheck, $"IsModuleFixed: {item.ComponentDefID}");
+            Log.FixedCheck.Trace?.Log($"IsModuleFixed: {item.ComponentDefID}");
             if (!item.IsFixed)
             {
-                Logging.Debug?.LogDebug(DType.FixedCheck, $"-- false: not fixed");
+                Log.FixedCheck.Trace?.Log($"-- false: not fixed");
                 return false;
 
             }
@@ -32,12 +32,12 @@ namespace CustomComponents
 
                     if (mref.MountedLocation == item.MountedLocation && item.ComponentDefID == mref.ComponentDefID)
                     {
-                        Logging.Debug?.LogDebug(DType.FixedCheck, $"-- true!");
+                        Log.FixedCheck.Trace?.Log($"-- true!");
                         return true;
                     }
                 }
 
-            Logging.Debug?.LogDebug(DType.FixedCheck, $"-- false: not really fixed");
+            Log.FixedCheck.Trace?.Log($"-- false: not really fixed");
 
 
             return false;
@@ -90,7 +90,7 @@ namespace CustomComponents
                     dm.UpgradeDefs.TryGet(id, out var upgrade);
                     return upgrade;
                 default:
-                    Logging.Error?.Log($"Cannot find {id} of type {type}");
+                    Log.Main.Error?.Log($"Cannot find {id} of type {type}");
                     return null;
             }
         }
@@ -126,7 +126,7 @@ namespace CustomComponents
 
             if (!component_ref.IsDefault())
             {
-                Logging.Error?.Log($"CreateDefault: {id} not default or not exist");
+                Log.Main.Error?.Log($"CreateDefault: {id} not default or not exist");
             }
 
             var mechLab = MechLabHelper.CurrentMechLab.MechLab;
@@ -143,13 +143,13 @@ namespace CustomComponents
 
         internal static void AddMechLab(MechComponentRef replace)
         {
-            Logging.Debug?.LogDebug(DType.DefaultHandle, $"DefaultHelper.AddMechLab: adding {replace.ComponentDefID} to {replace.MountedLocation}");
+            Log.DefaultHandle.Trace?.Log($"DefaultHelper.AddMechLab: adding {replace.ComponentDefID} to {replace.MountedLocation}");
 
             var target = MechLabHelper.CurrentMechLab.GetLocationWidget(replace.MountedLocation);
 
             if (target == null)
             {
-                Logging.Debug?.LogDebug(DType.DefaultHandle, $"DefaultHelper: Cannot add - wrong location ");
+                Log.DefaultHandle.Trace?.Log($"DefaultHelper: Cannot add - wrong location ");
                 return;
             }
 
@@ -162,12 +162,12 @@ namespace CustomComponents
         {
             if (!MechLabHelper.CurrentMechLab.InMechLab)
                 return;
-            Logging.Debug?.LogDebug(DType.DefaultHandle, $"DefaultHelper.AddMechLab: adding {id} to {location}");
+            Log.DefaultHandle.Trace?.Log($"DefaultHelper.AddMechLab: adding {id} to {location}");
 
             var target = MechLabHelper.CurrentMechLab.GetLocationWidget(location);
             if (target == null)
             {
-                Logging.Debug?.LogDebug(DType.DefaultHandle, $"DefaultHelper: Cannot add {id} to {location} - wrong location ");
+                Log.DefaultHandle.Trace?.Log($"DefaultHelper: Cannot add {id} to {location} - wrong location ");
                 return;
             }
 
@@ -187,20 +187,20 @@ namespace CustomComponents
             {
 
                 helper.widget.OnRemoveItem(slot, true);
-                Logging.Debug?.LogDebug(DType.DefaultHandle, $"- removed");
+                Log.DefaultHandle.Trace?.Log($"- removed");
                 slot.thisCanvasGroup.blocksRaycasts = true;
                 MechLabHelper.CurrentMechLab.MechLab.dataManager.PoolGameObject(MechLabPanel.MECHCOMPONENT_ITEM_PREFAB, slot.GameObject);
             }
             else
             {
-                Logging.Debug?.LogDebug(DType.DefaultHandle, $"DefaultHelper: Cannot remove {slot.ComponentRef.ComponentDefID} from {helper.LocationName} - wrong location ");
+                Log.DefaultHandle.Trace?.Log($"DefaultHelper: Cannot remove {slot.ComponentRef.ComponentDefID} from {helper.LocationName} - wrong location ");
             }
         }
 
         public static MechComponentRef[] ClearInventory(MechDef source_mech, SimGameState state)
         {
 
-            Logging.Debug?.LogDebug(DType.ClearInventory, "Clearing Inventory");
+            Log.ClearInventory.Trace?.Log("Clearing Inventory");
 
             var list = source_mech.Inventory.ToList();
             var changes = new Queue<IChange>();
@@ -213,12 +213,12 @@ namespace CustomComponents
             foreach (var invChange in to_apply)
                 invChange.ApplyToInventory(source_mech, list);
 
-            Logging.Debug?.LogDebug(DType.ClearInventory, $"- setting guids");
+            Log.ClearInventory.Trace?.Log($"- setting guids");
             foreach (var item in list)
             {
                 if (string.IsNullOrEmpty(item.SimGameUID))
                     item.SetSimGameUID(state.GenerateSimGameUID());
-                Logging.Debug?.LogDebug(DType.ClearInventory, $"-- {item.ComponentDefID} - {item.SimGameUID}");
+                Log.ClearInventory.Trace?.Log($"-- {item.ComponentDefID} - {item.SimGameUID}");
             }
 
             return list.ToArray();

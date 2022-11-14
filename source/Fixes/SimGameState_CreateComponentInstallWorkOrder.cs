@@ -19,13 +19,13 @@ namespace CustomComponents.Fixes
         {
             try
             {
-                Logging.Debug?.LogDebug(DType.InstallCost, $"SimGameState_CreateComponentInstallWorkOrder: for {mechComponent.ComponentDefID}");
-                Logging.Debug?.LogDebug(DType.InstallCost, $"-- from {previousLocation} to {newLocation}");
-                Logging.Debug?.LogDebug(DType.InstallCost, $"-- order {__result?.GetType().ToString() ?? "null"}");
+                Log.InstallCost.Trace?.Log($"SimGameState_CreateComponentInstallWorkOrder: for {mechComponent.ComponentDefID}");
+                Log.InstallCost.Trace?.Log($"-- from {previousLocation} to {newLocation}");
+                Log.InstallCost.Trace?.Log($"-- order {__result?.GetType().ToString() ?? "null"}");
 
                 if (__result == null)
                 {
-                    Logging.Debug?.LogDebug(DType.InstallCost, "-- No order");
+                    Log.InstallCost.Trace?.Log("-- No order");
                     return;
 
                 }
@@ -40,11 +40,11 @@ namespace CustomComponents.Fixes
                     MechDef mechByID = __instance.GetMechByID(mechSimGameUID);
 #if CCDEBUG
                     if (mechByID == null)
-                        Logging.Debug?.LogDebug(DType.InstallCost, "-- no mech found!");
+                        Log.InstallCost.Trace?.Log("-- no mech found!");
 #endif
                     if (mechByID != null && mechByID.Chassis.ChassisTags.Contains(Control.Settings.OmniTechFlag))
                     {
-                        Logging.Debug?.LogDebug(DType.InstallCost, "-- mech is omni!");
+                        Log.InstallCost.Trace?.Log("-- mech is omni!");
                         __result.Cost = (Control.Settings.OmniTechCostBySize ? mechComponent.Def.InventorySize / 2 : 1) * Control.Settings.OmniTechInstallCost;
                     }
 
@@ -56,7 +56,7 @@ namespace CustomComponents.Fixes
             }
             catch (Exception e)
             {
-                Logging.Error?.Log(e);
+                Log.Main.Error?.Log(e);
             }
         }
     }

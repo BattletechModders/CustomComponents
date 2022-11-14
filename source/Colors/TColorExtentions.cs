@@ -10,10 +10,10 @@ namespace CustomComponents
         //[Conditional("COLORICON")]
         public static void SetTColor(this UIColorRefTracker color_text, UIColorRefTracker color_icon, MechComponentRef cref)
         {
-            Logging.Debug?.LogDebug(DType.Color, $"TextColor for {cref.ComponentDefID}");
+            Log.Color.Trace?.Log($"TextColor for {cref.ComponentDefID}");
             if (cref.Is<ITColorComponent>(out var color))
             {
-                Logging.Debug?.LogDebug(DType.Color, $"-- color found set to {color.UIColor}/{color.RGBColor}");
+                Log.Color.Trace?.Log($"-- color found set to {color.UIColor}/{color.RGBColor}");
 
                 if(color.SkipText)
                     color_text.SetUIColor(UIColor.White);
@@ -27,7 +27,7 @@ namespace CustomComponents
            }
             else
             {
-                Logging.Debug?.LogDebug(DType.Color, $"-- no color set to white");
+                Log.Color.Trace?.Log($"-- no color set to white");
                 color_text.SetUIColor(UIColor.White);
                 if (color_icon != null)
                     color_icon.SetUIColor(UIColor.White);

@@ -29,7 +29,7 @@ namespace CustomComponents
             }
             catch (Exception e)
             {
-                Logging.Error?.Log($"{item} is wrong value for {CustomName} for {Database.Identifier(def)} used {default(TValue)}", e);
+                Log.Main.Error?.Log($"{item} is wrong value for {CustomName} for {Database.Identifier(def)} used {default(TValue)}", e);
                 return default;
             }
         }
@@ -91,7 +91,7 @@ namespace CustomComponents
         {
             if (val == null)
             {
-                Logging.Error?.Log($"{CustomName} for {Database.Identifier(def)} has null, used {default(TValue)}");
+                Log.Main.Error?.Log($"{CustomName} for {Database.Identifier(def)} has null, used {default(TValue)}");
                 return default;
             }
 
@@ -100,7 +100,7 @@ namespace CustomComponents
                     return res;
                 else
                 {
-                    Logging.Error?.Log($"{val} is wrong value for {CustomName} for {Database.Identifier(def)} used {default(TValue)}");
+                    Log.Main.Error?.Log($"{val} is wrong value for {CustomName} for {Database.Identifier(def)} used {default(TValue)}");
                     return default;
                 }
 
@@ -110,7 +110,7 @@ namespace CustomComponents
             }
             catch (Exception e)
             {
-                Logging.Error?.Log($"{val} is wrong value for {CustomName} for {Database.Identifier(def)} used {default(TValue)}", e);
+                Log.Main.Error?.Log($"{val} is wrong value for {CustomName} for {Database.Identifier(def)} used {default(TValue)}", e);
                 return default;
             }
         }

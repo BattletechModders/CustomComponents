@@ -16,13 +16,13 @@ namespace CustomComponents
         [Conditional("CCDEBUG")]
         public static void ShowInventory(MechDef mech)
         {
-            Logging.Info?.Log($"SHOW INVENTORY FOR {mech.Name}");
+            Log.Main.Info?.Log($"SHOW INVENTORY FOR {mech.Name}");
             foreach (var comp in mech.Inventory.OrderBy(i => i.MountedLocation))
             {
-                Logging.Info?.Log($" -- {comp.MountedLocation} -- {comp.ComponentDefID} -- F:{comp.IsFixed} -- {comp.SimGameUID}");
+                Log.Main.Info?.Log($" -- {comp.MountedLocation} -- {comp.ComponentDefID} -- F:{comp.IsFixed} -- {comp.SimGameUID}");
             }
 
-            Logging.Info?.Log($"========== done ============");
+            Log.Main.Info?.Log($"========== done ============");
         }
 
         internal static void SHOWTAGS(List<MechDef> mechDefs, SimGameState simgame)
@@ -38,9 +38,9 @@ namespace CustomComponents
 
             foreach (var def in mechDefs)
             {
-                Logging.Debug?.LogDebug(DType.AutoFixFAKE, $"Mech: {def.Description.Id}");
-                Logging.Debug?.LogDebug(DType.AutoFixFAKE, "-- mech tags: " + list_to_string(def.MechTags));
-                Logging.Debug?.LogDebug(DType.AutoFixFAKE, "-- chassis tags: " + list_to_string(def.Chassis.ChassisTags));
+                Log.AutoFixFAKE.Trace?.Log($"Mech: {def.Description.Id}");
+                Log.AutoFixFAKE.Trace?.Log("-- mech tags: " + list_to_string(def.MechTags));
+                Log.AutoFixFAKE.Trace?.Log("-- chassis tags: " + list_to_string(def.Chassis.ChassisTags));
 
             }
         }
@@ -49,7 +49,7 @@ namespace CustomComponents
         {
             if (go == null)
                 return;
-            Logging.Info?.Log($"show hierarchy for {go.name}");
+            Log.Main.Info?.Log($"show hierarchy for {go.name}");
             walk(go, "");
         }
 
@@ -57,23 +57,23 @@ namespace CustomComponents
         {
             if (root == null)
                 return;
-            Logging.Info?.Log(prefix + $" GameObject:[{root.name}]");
-            Logging.Info?.Log(prefix + $" |Components:");
+            Log.Main.Info?.Log(prefix + $" GameObject:[{root.name}]");
+            Log.Main.Info?.Log(prefix + $" |Components:");
 
             var rect = root.GetComponent<RectTransform>();
             if ( rect != null)
             {
-                Logging.Info?.Log(prefix + $" |- Rect pos:({rect.anchoredPosition.x}, {rect.anchoredPosition.y}) size:{rect.sizeDelta.x}, {rect.sizeDelta.y})");
+                Log.Main.Info?.Log(prefix + $" |- Rect pos:({rect.anchoredPosition.x}, {rect.anchoredPosition.y}) size:{rect.sizeDelta.x}, {rect.sizeDelta.y})");
             }
 
             foreach (var component in root.GetComponents<Object>())
             {
-                Logging.Info?.Log(prefix + $" |- {component?.GetType()}");
+                Log.Main.Info?.Log(prefix + $" |- {component?.GetType()}");
             }
 
             if (root.transform.childCount > 0)
             {
-                Logging.Info?.Log(prefix + $" |Childs:");
+                Log.Main.Info?.Log(prefix + $" |Childs:");
                 foreach (Transform transform in root.transform)
                 {
                     walk(transform.gameObject, prefix + "  ");

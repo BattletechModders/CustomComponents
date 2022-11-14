@@ -29,7 +29,7 @@ internal class CategoryDefaultCustomsPreProcessor : IPreProcessor
                 continue;
             }
 
-            Logging.Debug?.LogDebug(DType.CCLoading, $"--copying defaults from category {categoryID}");
+            Log.CCLoading.Trace?.Log($"--copying defaults from category {categoryID}");
             foreach (var kv in categoryDescriptor.DefaultCustoms)
             {
                 if (customSettings.ContainsKey(kv.Key))
@@ -37,7 +37,7 @@ internal class CategoryDefaultCustomsPreProcessor : IPreProcessor
                     continue;
                 }
 
-                Logging.Debug?.LogDebug(DType.CCLoading, $"--copying {kv.Key} from category {categoryID}");
+                Log.CCLoading.Trace?.Log($"--copying {kv.Key} from category {categoryID}");
                 customSettings[kv.Key] = kv.Value;
             }
         }

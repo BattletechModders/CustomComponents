@@ -7,7 +7,7 @@ using UnityEngine;
 namespace CustomComponents
 {
     [SerializeField]
-    public class DefaultsInfoRecord 
+    public class DefaultsInfoRecord
     {
         public ChassisLocations Location { get; set; } = ChassisLocations.None;
         public string DefID { get; set; }
@@ -30,7 +30,7 @@ namespace CustomComponents
             string result = "\n- " + UnitType;
             if(Defaults != null && Defaults.Length > 0)
                 foreach (var defaultsInfoRecord in Defaults)
-                    result += "\n-- " + defaultsInfoRecord.ToString();
+                    result += "\n-- " + defaultsInfoRecord;
 
             return result;
         }
@@ -51,7 +51,7 @@ namespace CustomComponents
             {
                 result += "\n- Defaults";
                 foreach (var defaultsInfoRecord in Defaults)
-                    result += "\n-- " + defaultsInfoRecord.ToString();
+                    result += "\n-- " + defaultsInfoRecord;
             }
 
             if (UnitTypes != null && UnitTypes.Length > 0)
@@ -85,7 +85,7 @@ namespace CustomComponents
             }
             catch (Exception e)
             {
-                Logging.Error?.Log(Defaults[0].DefID, e);
+                Log.Main.Error?.Log(Defaults[0].DefID, e);
             }
 
             return Defaults;

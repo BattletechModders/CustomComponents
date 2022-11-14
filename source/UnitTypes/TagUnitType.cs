@@ -18,7 +18,7 @@ namespace CustomComponents
         {
             if (mechdef?.Chassis == null)
                 return false;
-            
+
             TagSet tags = new TagSet();
             if(mechdef.MechTags != null)
                 tags.UnionWith(mechdef.MechTags);

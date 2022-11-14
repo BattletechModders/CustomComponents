@@ -3,12 +3,11 @@
 	"Instructions": [
 		{
 			"JSONPath": "loggerLevels",
-			"Action": "ArrayAdd",
+			"Action": "ArrayConcat",
 			"Value":
-			{
-				"k" : "CustomComponents",
-				"v" : "200"
-			}
+			[
+				{ "k" : "CustomComponents", "v" : "200" }
+			]
 		}
 	]
 }

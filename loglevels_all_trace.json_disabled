@@ -1,0 +1,32 @@
+{
+	"TargetID": "settings",
+	"Instructions": [
+		{
+			"JSONPath": "loggerLevels",
+			"Action": "ArrayConcat",
+			"Value":
+			[
+				{ "k" : "CustomComponents", "v" : "200" },
+				{ "k" : "CustomComponents.SalvageProccess", "v" : "200" },
+				{ "k" : "CustomComponents.Hardpoints", "v" : "200" },
+				{ "k" : "CustomComponents.DefaultsBuild", "v" : "200" },
+				{ "k" : "CustomComponents.ComponentInstall", "v" : "200" },
+				{ "k" : "CustomComponents.MechValidation", "v" : "200" },
+				{ "k" : "CustomComponents.CCLoading", "v" : "200" },
+				{ "k" : "CustomComponents.CCLoadingSummary", "v" : "200" },
+				{ "k" : "CustomComponents.InstallCost", "v" : "200" },
+				{ "k" : "CustomComponents.FixedCheck", "v" : "200" },
+				{ "k" : "CustomComponents.DefaultHandle", "v" : "200" },
+				{ "k" : "CustomComponents.ClearInventory", "v" : "200" },
+				{ "k" : "CustomComponents.CustomResource", "v" : "200" },
+				{ "k" : "CustomComponents.Flags", "v" : "200" },
+				{ "k" : "CustomComponents.AutoFix", "v" : "200" },
+				{ "k" : "CustomComponents.Filter", "v" : "200" },
+				{ "k" : "CustomComponents.Color", "v" : "200" },
+				{ "k" : "CustomComponents.Icons", "v" : "200" },
+				{ "k" : "CustomComponents.AutoFixFAKE", "v" : "200" },
+				{ "k" : "CustomComponents.AutoFixBase", "v" : "200" }
+			]
+		}
+	]
+}

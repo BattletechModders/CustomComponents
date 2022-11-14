@@ -15,15 +15,15 @@ namespace CustomComponents
 
         internal void Setup(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
         {
-            Logging.Debug?.LogDebug(DType.CustomResource, " - TagRestriction");
+            Log.CustomResource.Trace?.Log(" - TagRestriction");
             _restrictions = SettingsResourcesTools.Enumerate<TagRestrictions>("CCTagRestrictions", customResources)
                 .ToDictionary(entry => entry.Tag);
 
-            if (Control.Settings.DebugInfo.HasFlag(DType.CustomResource))
+            if (Log.CustomResource.Debug != null)
             {
                 foreach (var pair in _restrictions)
                 {
-                    Logging.Debug?.LogDebug(DType.CustomResource, $" -- {pair.Key}");
+                    Log.CustomResource.Debug.Log($" -- {pair.Key}");
                 }
             }
         }

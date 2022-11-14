@@ -22,7 +22,7 @@ namespace CustomComponents
                         if ((mechDef.Chassis.ChassisTags != null && mechDef.Chassis.ChassisTags.Contains(tag)) ||
                         (mechDef.MechTags!= null && mechDef.MechTags.Contains(tag)))
                         {
-                            Logging.Debug?.LogDebug(DType.MechValidation, $"Validation {mechDef.Description.Id} Ignored by {tag}");
+                            Log.MechValidation.Trace?.Log($"Validation {mechDef.Description.Id} Ignored by {tag}");
                             foreach (var pair in __result)
                             {
                                 pair.Value.Clear();
@@ -40,7 +40,7 @@ namespace CustomComponents
                         validator.ValidateMech(__result, validationLevel, mechDef, component);
                     }
 
-                    if (component.Is<IAllowedLocations>(out var locations) 
+                    if (component.Is<IAllowedLocations>(out var locations)
                         && (component.MountedLocation & locations.GetLocationsFor(mechDef)) <= ChassisLocations.None)
                     {
                         __result[MechValidationType.InvalidInventorySlots].Add(
@@ -51,7 +51,7 @@ namespace CustomComponents
             }
             catch (Exception e)
             {
-                Logging.Error?.Log(e);
+                Log.Main.Error?.Log(e);
             }
         }
     }

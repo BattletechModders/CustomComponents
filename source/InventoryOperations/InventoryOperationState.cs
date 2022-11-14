@@ -29,30 +29,30 @@ namespace CustomComponents
 
         public void DoChanges()
         {
-            Logging.Debug?.LogDebug(DType.InventoryOperaions, "DoChanges for {0}", Mech.Description.Id);
-            Logging.Debug?.LogDebug(DType.InventoryOperaions, "- Initial preview");
+            Log.InventoryOperations.Trace?.Log($"DoChanges for {Mech.Description.Id}");
+            Log.InventoryOperations.Trace?.Log("- Initial preview");
 
             foreach (var change in pending_changes)
             {
                 if (change is IChange_Apply iichange)
                 {
-                    Logging.Debug?.LogDebug(DType.InventoryOperaions, "-- {0}", change);
+                    Log.InventoryOperations.Trace?.Log($"-- {change}");
                     iichange.PreviewApply(this);
                 }
             }
 
-            Logging.Debug?.LogDebug(DType.InventoryOperaions, "- iteration");
+            Log.InventoryOperations.Trace?.Log("- iteration");
             while (pending_changes.Count > 0)
             {
                 var change = pending_changes.Dequeue();
                 if (change is IChange_Adjust adj &&
                     pending_changes.Any(i => i is IChange_Adjust adj2 && adj2.ChangeID == adj.ChangeID))
                 {
-                    Logging.Debug?.LogDebug(DType.InventoryOperaions, "-- Skip {0}", change);
+                    Log.InventoryOperations.Trace?.Log($"-- Skip {change}");
                     continue;
                 }
 
-                Logging.Debug?.LogDebug(DType.InventoryOperaions, "-- Adjust {0}", change);
+                Log.InventoryOperations.Trace?.Log($"-- Adjust {change}");
                 change.AdjustChange(this);
 
                 if (change is IChange_Apply iichange)
@@ -71,7 +71,7 @@ namespace CustomComponents
 
         public void AddChange(IChange change)
         {
-            Logging.Debug?.LogDebug(DType.InventoryOperaions, "--- {0}, ", change);
+            Log.InventoryOperations.Trace?.Log($"--- {change}, ");
 
             change.Initial = false;
             pending_changes.Enqueue(change);
@@ -81,11 +81,11 @@ namespace CustomComponents
 
         public void ApplyInventory()
         {
-            Logging.Debug?.LogDebug(DType.ComponentInstall, "ApplyInventory");
+            Log.ComponentInstall.Trace?.Log("ApplyInventory");
             var inv = Mech.Inventory.ToList();
             foreach (var change in done_changes)
             {
-                Logging.Debug?.LogDebug(DType.ComponentInstall, "- {0}", change);
+                Log.ComponentInstall.Trace?.Log($"- {change}");
                 change.ApplyToInventory(Mech, inv);
             }
             Mech.SetInventory(inv.ToArray());
@@ -93,10 +93,10 @@ namespace CustomComponents
 
         public void ApplyMechlab()
         {
-            Logging.Debug?.LogDebug(DType.ComponentInstall, "ApplyMechlab");
+            Log.ComponentInstall.Trace?.Log("ApplyMechlab");
             foreach (var change in done_changes)
             {
-                Logging.Debug?.LogDebug(DType.ComponentInstall, "- {0}", change);
+                Log.ComponentInstall.Trace?.Log($"- {change}");
                 change.ApplyToMechlab();
             }
 

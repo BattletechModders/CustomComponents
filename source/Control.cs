@@ -1,11 +1,9 @@
 ﻿using BattleTech;
 using Harmony;
-using HBS.Logging;
 using HBS.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 
@@ -28,7 +26,7 @@ namespace CustomComponents
                 Settings.Complete();
 
                 if (Settings.DEBUG_ShowConfig)
-                    Logging.Info?.Log(JSONSerializationUtility.ToJSON(Settings));
+                    Log.Main.Info?.Log(JSONSerializationUtility.ToJSON(Settings));
 
                 var harmony = HarmonyInstance.Create("io.github.denadan.CustomComponents");
                 try
@@ -42,27 +40,26 @@ namespace CustomComponents
                     {
                         values += $"  {dictionaryEntry.Key} : {dictionaryEntry.Value}\n";
                     }
-                    Logging.Error?.Log("AmbiguousMatchException\n" + values);
+                    Log.Main.Error?.Log("AmbiguousMatchException\n" + values);
                 }
 
                 Registry.RegisterPreProcessor(new CategoryDefaultCustomsPreProcessor());
                 Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());
 
                 var version = Assembly.GetExecutingAssembly().GetName().Version;
-                Logging.Info?.Log($"Loaded CustomComponents {version.ToString(3)} for bt 1.9.1");
-                Logging.Info?.Log("DebugInfo: " + Settings.DebugInfo);
-                Logging.Info?.Log("- DumpMechDefs:" + Settings.DEBUG_DumpMechDefs);
-                Logging.Info?.Log("-- MechDefsDir: " + Settings.DEBUG_MechDefsDir);
-                Logging.Info?.Log("- ValidateMechDefs: " + Settings.DEBUG_ValidateMechDefs);
-                Logging.Info?.Log("-- ShowOnlyErrors: " + Settings.DEBUG_ShowOnlyErrors);
-                Logging.Info?.Log("- ShowAllUnitTypes: " + Settings.DEBUG_ShowAllUnitTypes);
-                Logging.Info?.Log("- EnableAllTags: " + Settings.DEBUG_EnableAllTags);
-                Logging.Info?.Log("- ShowConfig: " + Settings.DEBUG_ShowConfig);
-                Logging.Info?.Log("- ShowLoadedCategory: " + Settings.DEBUG_ShowLoadedCategory);
-                Logging.Info?.Log("- ShowLoadedDefaults: " + Settings.DEBUG_ShowLoadedDefaults);
-                Logging.Info?.Log("- ShowLoadedAlLocations: " + Settings.DEBUG_ShowLoadedAlLocations);
-                Logging.Info?.Log("- ShowMechUT: " + Settings.DEBUG_ShowMechUT);
-                Logging.Info?.Log("- ShowLoadedHardpoints: " + Settings.DEBUG_ShowLoadedHardpoints);
+                Log.Main.Info?.Log($"Loaded CustomComponents {version.ToString(3)} for bt 1.9.1");
+                Log.Main.Info?.Log("- DumpMechDefs:" + Settings.DEBUG_DumpMechDefs);
+                Log.Main.Info?.Log("-- MechDefsDir: " + Settings.DEBUG_MechDefsDir);
+                Log.Main.Info?.Log("- ValidateMechDefs: " + Settings.DEBUG_ValidateMechDefs);
+                Log.Main.Info?.Log("-- ShowOnlyErrors: " + Settings.DEBUG_ShowOnlyErrors);
+                Log.Main.Info?.Log("- ShowAllUnitTypes: " + Settings.DEBUG_ShowAllUnitTypes);
+                Log.Main.Info?.Log("- EnableAllTags: " + Settings.DEBUG_EnableAllTags);
+                Log.Main.Info?.Log("- ShowConfig: " + Settings.DEBUG_ShowConfig);
+                Log.Main.Info?.Log("- ShowLoadedCategory: " + Settings.DEBUG_ShowLoadedCategory);
+                Log.Main.Info?.Log("- ShowLoadedDefaults: " + Settings.DEBUG_ShowLoadedDefaults);
+                Log.Main.Info?.Log("- ShowLoadedAlLocations: " + Settings.DEBUG_ShowLoadedAlLocations);
+                Log.Main.Info?.Log("- ShowMechUT: " + Settings.DEBUG_ShowMechUT);
+                Log.Main.Info?.Log("- ShowLoadedHardpoints: " + Settings.DEBUG_ShowLoadedHardpoints);
 
 
                 Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);
@@ -96,11 +93,11 @@ namespace CustomComponents
                     }
                 }
 
-                Logging.Debug?.Log("done");
+                Log.Main.Info?.Log("done");
             }
             catch (Exception e)
             {
-                Logging.Error?.Log(e);
+                Log.Main.Error?.Log(e);
             }
         }
 
@@ -137,12 +134,12 @@ namespace CustomComponents
 
             if (settingsInitEx != null)
             {
-                Logging.Error?.Log("Couldn't load default settings", settingsInitEx);
+                Log.Main.Error?.Log("Couldn't load default settings", settingsInitEx);
             }
 
             if (settingsFileEx != null)
             {
-                Logging.Error?.Log("Couldn't load settings", settingsFileEx);
+                Log.Main.Error?.Log("Couldn't load settings", settingsFileEx);
             }
         }
 
@@ -151,7 +148,7 @@ namespace CustomComponents
         {
             var Manifests = customResources;
 
-            Logging.Debug?.LogDebug(DType.CustomResource, "Custom Resource Load started");
+            Log.CustomResource.Trace?.Log("Custom Resource Load started");
 
             UnitTypeDatabase.Instance.Setup(Manifests);
             CategoryController.Shared.Setup(Manifests);
@@ -162,7 +159,7 @@ namespace CustomComponents
 
             if (Manifests.TryGetValue("CustomSVGIcon", out var icons))
                 IconController.LoadIcons(icons);
-            Logging.Debug?.LogDebug(DType.CustomResource, " - done");
+            Log.CustomResource.Trace?.Log(" - done");
             Loaded = true;
         }
     }

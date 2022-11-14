@@ -11,9 +11,6 @@
 	"CustomResourceTypes": [ "CCCategories", "CCDefaults", "CCTagRestrictions", "CustomSVGIcon", "CCHardpoints", "CCCEquipLocationTag", "CCUnitTypes" ],
 
 	"Settings": {
-		"LogLevel": "Debug",
-		"DebugInfo" : "NONE",
-
 		"DEBUG_ValidateMechDefs": false,
 		"DEBUG_ShowOnlyErrors": false,
 		"DEBUG_ShowAllUnitTypes": false,

@@ -75,7 +75,7 @@ namespace CustomComponents
                 return true;
             }
 
-            Logging.Debug?.LogDebug(DType.ComponentInstall, $"-- Category {CategoryID}");
+            Log.ComponentInstall.Trace?.Log($"-- Category {CategoryID}");
 
 
             var mech = MechLabHelper.CurrentMechLab.MechLab.activeMechDef;
@@ -85,7 +85,7 @@ namespace CustomComponents
 
             if (record == null || !record.MaxLimited)
             {
-                Logging.Debug?.LogDebug(DType.ComponentInstall, $"--- no replace needed");
+                Log.ComponentInstall.Trace?.Log($"--- no replace needed");
                 return String.Empty;
             }
 

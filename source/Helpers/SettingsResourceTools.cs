@@ -21,13 +21,13 @@ namespace CustomComponents
         {
             if (customResources == null)
             {
-                Logging.Debug?.LogDebug(DType.CustomResource, $"customResources not found");
+                Log.CustomResource.Trace?.Log($"customResources not found");
                 yield break;
             }
 
             if (!customResources.TryGetValue(resourceType, out var entries))
             {
-                Logging.Debug?.LogDebug(DType.CustomResource, $"{resourceType} not found");
+                Log.CustomResource.Trace?.Log($"{resourceType} not found");
                 yield break;
             }
 
@@ -36,7 +36,7 @@ namespace CustomComponents
                 var settings = new SettingsResource<T>();
                 try
                 {
-                    Logging.Debug?.LogDebug(DType.CustomResource, $"Reading {entry.FilePath}");
+                    Log.CustomResource.Trace?.Log($"Reading {entry.FilePath}");
                     using (var reader = new StreamReader(entry.FilePath))
                     {
                         var json = reader.ReadToEnd();
@@ -45,16 +45,16 @@ namespace CustomComponents
                 }
                 catch (Exception e)
                 {
-                    Logging.Debug?.LogDebug(DType.CustomResource, $"Couldn't read {entry.FilePath}", e);
+                    Log.CustomResource.Trace?.Log($"Couldn't read {entry.FilePath}", e);
                 }
 
                 if (settings.Settings == null)
                 {
-                    Logging.Debug?.LogDebug(DType.CustomResource, $"Settings is null in {entry.FilePath}");
+                    Log.CustomResource.Trace?.Log($"Settings is null in {entry.FilePath}");
                     continue;
                 }
 
-                Logging.Debug?.LogDebug(DType.CustomResource, $" - total {settings.Settings.Count} entries loaded");
+                Log.CustomResource.Trace?.Log($" - total {settings.Settings.Count} entries loaded");
 
                 foreach (var settingsEntry in settings.Settings)
                 {

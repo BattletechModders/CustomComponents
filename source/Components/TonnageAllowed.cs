@@ -18,7 +18,7 @@ namespace CustomComponents
 
         public string PreValidateDrop(MechLabItemSlotElement item, ChassisLocations location)
         {
-            Logging.Debug?.LogDebug(DType.ComponentInstall, "-- TonnageAllowed");
+            Log.ComponentInstall.Trace?.Log("-- TonnageAllowed");
             var tonnage = MechLabHelper.CurrentMechLab.ActiveMech.Chassis.Tonnage;
             if (tonnage != Tonnage)
             {

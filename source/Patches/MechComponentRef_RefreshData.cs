@@ -21,7 +21,7 @@ namespace CustomComponents.Patches
             }
             catch (Exception e)
             {
-                Logging.Error?.Log($"Error in {__instance?.ComponentDefID} refreshing, check item", e);
+                Log.Main.Error?.Log($"Error in {__instance?.ComponentDefID} refreshing, check item", e);
             }
         }
     }

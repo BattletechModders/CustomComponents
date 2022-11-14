@@ -19,6 +19,6 @@ namespace CustomComponents.Patches
                 lhelper.RefreshHardpoints();
 
             return false;
-        }   
+        }
     }
 }

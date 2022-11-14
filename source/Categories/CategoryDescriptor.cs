@@ -197,7 +197,7 @@ namespace CustomComponents
                         }
                     }
                 }
-                
+
                 if (result == null)
                     result = DefaultLimits;
 
@@ -300,7 +300,7 @@ namespace CustomComponents
             {
                 if (DefaultLimits.LocationLimits == null)
                     DefaultLimits.Complete(this);
-                sb.Append("- DefaultLimits: " + DefaultLimits.ToString());
+                sb.Append("- DefaultLimits: " + DefaultLimits);
             }
 
             if (UnitLimits != null)
@@ -308,7 +308,7 @@ namespace CustomComponents
                 {
                     if (record.LocationLimits == null)
                         record.Complete(this);
-                    sb.Append("-- " + record.ToString());
+                    sb.Append("-- " + record);
                 }
 
             return sb.ToString();

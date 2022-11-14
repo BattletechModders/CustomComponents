@@ -100,7 +100,7 @@ namespace CustomComponents
                 }
                 catch (Exception e)
                 {
-                    Logging.Error?.Log($"Error in Default autofixer for {mechDef.Description.Id}", e);
+                    Log.Main.Error?.Log($"Error in Default autofixer for {mechDef.Description.Id}", e);
                 }
             }
         }

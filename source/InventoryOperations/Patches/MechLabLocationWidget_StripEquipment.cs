@@ -11,7 +11,7 @@ namespace CustomComponents.Patches
         [HarmonyPrefix]
         public static bool StripLocation(MechLabLocationWidget __instance)
         {
-            Logging.Debug?.LogDebug(DType.InventoryOperaions, $"StripEquipment in {__instance.loadout.Location}");
+            Log.InventoryOperations.Trace?.Log($"StripEquipment in {__instance.loadout.Location}");
             var lhelper = MechLabHelper.CurrentMechLab.GetLocationHelper(__instance.loadout.Location);
 
             var changes = new Queue<IChange>();
@@ -20,11 +20,11 @@ namespace CustomComponents.Patches
                 if (!item.ComponentRef.IsFixed)
                 {
                     changes.Enqueue(new Change_Remove(item.ComponentRef.ComponentDefID, __instance.loadout.Location));
-                    Logging.Debug?.LogDebug(DType.InventoryOperaions, $"- remove {item.ComponentRef.ComponentDefID}");
+                    Log.InventoryOperations.Trace?.Log($"- remove {item.ComponentRef.ComponentDefID}");
                 }
                 else
                 {
-                    Logging.Debug?.LogDebug(DType.InventoryOperaions, $"- fixed {item.ComponentRef.ComponentDefID}");
+                    Log.InventoryOperations.Trace?.Log($"- fixed {item.ComponentRef.ComponentDefID}");
                 }
 
             var state = new InventoryOperationState(changes, MechLabHelper.CurrentMechLab.ActiveMech);
