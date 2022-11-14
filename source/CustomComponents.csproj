@@ -95,7 +95,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\mod.json" />
+    <None Include="..\*.json" />
     <None Include="..\advancedjsonmerge\loglevels.json" />
     <None Include="$(BattleTechGameDir)\Mods\.modtek\battletech_log.txt" />
   </ItemGroup>
