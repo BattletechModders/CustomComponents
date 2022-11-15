@@ -8,13 +8,15 @@ jobs:
       checkout-directory: 'BATTLETECH/Mods/CustomComponents'
       build-script: |
         (
-        cd source
-        dotnet build --configuration Release -p:BattleTechGameDir="$BATTLETECH_DIR/"
+          cd source
+          dotnet build -c Release -p:BattleTechGameDir="$BATTLETECH_DIR/"
         )
         (
-        cd ..
-        INCLUDES="-i!CustomComponents/CustomComponents.dll -i!CustomComponents/LICENSE -i!CustomComponents/mod.json -i!CustomComponents/mod.minimal.json -i!CustomComponents/README.md -ir!CustomComponents/data -ir!CustomComponents/advancedjsonmerge"
-        7z a -tzip -mx9 "$DIST_DIR/CustomComponents.zip" $INCLUDES
+          cd ..
+          7z a -tzip -mx9 "$DIST_DIR/CustomComponents.zip" \
+            -ir!CustomComponents \
+            -xr!CCTestMod \
+            -xr!source "-xr!.*"
         )
       release-notes: |
         Works best with ModTek V3
