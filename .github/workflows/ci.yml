@@ -1,0 +1,22 @@
+on: push
+name: CI
+
+jobs:
+  build:
+    uses: BattletechModders/ModTek/.github/workflows/mod-builder.yml@master
+    with:
+      checkout-directory: 'BATTLETECH/Mods/CustomComponents'
+      build-script: |
+        (
+        cd source
+        dotnet build --configuration Release -p:BattleTechGameDir="$BATTLETECH_DIR/"
+        )
+        (
+        cd ..
+        INCLUDES="-i!CustomComponents/CustomComponents.dll -i!CustomComponents/LICENSE -i!CustomComponents/mod.json -i!CustomComponents/mod.minimal.json -i!CustomComponents/README.md -ir!CustomComponents/data -ir!CustomComponents/advancedjsonmerge"
+        7z a -tzip -mx9 "$DIST_DIR/CustomComponents.zip" $INCLUDES
+        )
+      release-notes: |
+        Works best with ModTek V3
+        - CustomComponents.zip contains the compiled framework
+    secrets: inherit
