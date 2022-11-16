@@ -29,7 +29,7 @@ public class Change_Add : IChange_Apply, IChange_Optimize
         InvItem i = null;
         if (!Applied)
         {
-            i = new InvItem(DefaultHelper.CreateRef(ItemID, Type, Location), Location);
+            i = new(DefaultHelper.CreateRef(ItemID, Type, Location), Location);
             item = i.Item;
         }
 

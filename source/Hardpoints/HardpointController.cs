@@ -16,14 +16,14 @@ public class HardpointController
         get
         {
             if (_instance == null)
-                _instance = new HardpointController();
+                _instance = new();
 
             return _instance;
         }
     }
 
-    private Dictionary<string, HardpointInfo> HardpointsByName { get; set; } = new Dictionary<string, HardpointInfo>();
-    private Dictionary<int, HardpointInfo> HardpointsByID { get; set; } = new Dictionary<int, HardpointInfo>();
+    private Dictionary<string, HardpointInfo> HardpointsByName { get; set; } = new();
+    private Dictionary<int, HardpointInfo> HardpointsByID { get; set; } = new();
 
 
     public List<HardpointInfo> HardpointsList { get; private set; }
@@ -237,7 +237,7 @@ public class HardpointController
                     if (nearest != null)
                         nearest.Used += 1;
                     else
-                        errors[MechValidationType.InvalidInventorySlots].Add(new Text(
+                        errors[MechValidationType.InvalidInventorySlots].Add(new(
                             Control.Settings.Message.Base_AddNotEnoughHardpoints,
                             mechdef.Description.UIName, recrd.item.Def.Description.Name,
                             recrd.item.Def.Description.UIName,

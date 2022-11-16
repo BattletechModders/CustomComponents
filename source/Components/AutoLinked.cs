@@ -36,7 +36,7 @@ public class AutoLinked : SimpleCustomComponent, IOnAdd, IOnRemove
                     i.ComponentDefID == item.link.ComponentDefId && i.MountedLocation == item.link.Location);
 
                 if (found == null)
-                    errors[MechValidationType.InvalidInventorySlots].Add(new Text(
+                    errors[MechValidationType.InvalidInventorySlots].Add(new(
                         Control.Settings.Message.Linked_Validate,
                         mechDef.Description.UIName, item.custom.Def.Description.Name,
                         item.custom.Def.Description.UIName,

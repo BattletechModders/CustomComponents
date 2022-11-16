@@ -44,7 +44,7 @@ internal static class MechLabLocationWidget_OnMechLabDrop_Patch
 
                 ___mechLab.ForceItemDrop(dragItem);
                 ___mechLab.OnDrop(eventData);
-                ___mechLab.ShowDropErrorMessage(new Text(error));
+                ___mechLab.ShowDropErrorMessage(new(error));
                 return true;
             }
 

@@ -8,8 +8,8 @@ public class UnitTypeDatabase
 {
     private static UnitTypeDatabase _instance;
 
-    List<IUnitType> types = new List<IUnitType>();
-    Dictionary<string, HashSet<string>> known =new Dictionary<string, HashSet<string>>();
+    List<IUnitType> types = new();
+    Dictionary<string, HashSet<string>> known =new();
 
 
     public static UnitTypeDatabase Instance
@@ -17,7 +17,7 @@ public class UnitTypeDatabase
         get
         {
             if(_instance ==null)
-                _instance = new UnitTypeDatabase();
+                _instance = new();
             return _instance;
         }
     }
@@ -57,7 +57,7 @@ public class UnitTypeDatabase
     public HashSet<string> GetUnitTypes(ChassisDef chassis)
     {
         if (chassis == null)
-            return new HashSet<string>();
+            return new();
 
         if (known.TryGetValue(chassis.Description.Id, out var result))
             return result;
@@ -65,7 +65,7 @@ public class UnitTypeDatabase
         var mechid = GetMechIDFromChassisID(chassis.Description.Id);
         var mech = UnityGameInstance.BattleTechGame.DataManager.MechDefs.Get(mechid);
         if(mech == null)
-            return new HashSet<string>();
+            return new();
 
         return BuildUnitTypes(mech);
     }
@@ -75,7 +75,7 @@ public class UnitTypeDatabase
     public HashSet<string> GetUnitTypes(MechDef mech)
     {
         if (mech == null)
-            return new HashSet<string>();
+            return new();
 
         if (known.TryGetValue(mech.ChassisID, out var result))
             return result;

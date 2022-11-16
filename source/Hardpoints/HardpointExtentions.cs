@@ -22,10 +22,10 @@ public static class HardpointExtentions
 
     }
 
-    private static Dictionary<string, ChassisLocations> have_defaults = new Dictionary<string, ChassisLocations>();
-    private static Dictionary<string, WeaponCategoryValue> categories = new Dictionary<string, WeaponCategoryValue>();
-    private static Dictionary<string, List<WeaponDefaultRecord>> defaults = new Dictionary<string, List<WeaponDefaultRecord>>();
-    private static Dictionary<string, Dictionary<ChassisLocations, List<HPUsage>>> hp_database = new Dictionary<string, Dictionary<ChassisLocations, List<HPUsage>>>();
+    private static Dictionary<string, ChassisLocations> have_defaults = new();
+    private static Dictionary<string, WeaponCategoryValue> categories = new();
+    private static Dictionary<string, List<WeaponDefaultRecord>> defaults = new();
+    private static Dictionary<string, Dictionary<ChassisLocations, List<HPUsage>>> hp_database = new();
 
 
     private static WeaponCategoryValue notSet = WeaponCategoryEnumeration.GetNotSetValue();
@@ -173,7 +173,7 @@ public static class HardpointExtentions
         var id = chassis.Description.Id;
         if (!hp_database.TryGetValue(id, out var dictionary))
         {
-            dictionary = new Dictionary<ChassisLocations, List<HPUsage>>();
+            dictionary = new();
 
             foreach (var chassisLocationse in DefaultsDatabase.SingleLocations)
             {
@@ -227,7 +227,7 @@ public static class HardpointExtentions
         if (item != null)
             item.Total += hp.Total;
         else
-            list.Add(new HPUsage(hp));
+            list.Add(new(hp));
     }
 
 
@@ -284,7 +284,7 @@ public static class HardpointExtentions
                     {
                         var item = result.FirstOrDefault(i => i.hpInfo.WeaponCategory.ID == hpUsage.WeaponCategoryID);
                         if (item == null)
-                            result.Add(new HPUsage(hpUsage));
+                            result.Add(new(hpUsage));
                         else
                         {
                             item.Total += hpUsage.Total;
@@ -361,9 +361,9 @@ public static class HardpointExtentions
             item.Total += 1;
         else
         {
-            item = new HPUsage(HardpointController.Instance[wc.ID], 1);
+            item = new(HardpointController.Instance[wc.ID], 1);
             if (item.hpInfo != null)
-                list.Add(new HPUsage(item, true));
+                list.Add(new(item, true));
         }
     }
     private static void SubFromList(List<HPUsage> list, WeaponCategoryValue wc, bool remove = false)

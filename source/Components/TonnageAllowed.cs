@@ -33,7 +33,7 @@ public class TonnageAllowed : SimpleCustomComponent, IMechLabFilter, IMechValida
     {
         if (mechDef.Chassis.Tonnage != Tonnage)
         {
-            errors[MechValidationType.InvalidInventorySlots].Add(new Text(Control.Settings.Message.Tonnage_ValidateAllow, componentRef.Def.Description.UIName, Tonnage));
+            errors[MechValidationType.InvalidInventorySlots].Add(new(Control.Settings.Message.Tonnage_ValidateAllow, componentRef.Def.Description.UIName, Tonnage));
         }
     }
 

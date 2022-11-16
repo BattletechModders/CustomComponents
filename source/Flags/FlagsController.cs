@@ -25,7 +25,7 @@ public class FlagsController<T>
 
     static FlagsController()
     {
-        flags = new Dictionary<string, FlagInfo>();
+        flags = new();
 
         var type = typeof(T);
 
@@ -100,7 +100,7 @@ public class FlagsController<T>
     private delegate void SetterDelegate(T obj, bool value);
     private delegate bool CustomSetterDelegate(T obj, MechComponentDef item);
 
-    private static Dictionary<string, T> flags_database = new Dictionary<string, T>();
+    private static Dictionary<string, T> flags_database = new();
 
 
     private static FlagsController<T> _shared;
@@ -109,7 +109,7 @@ public class FlagsController<T>
         get
         {
             if(_shared == null)
-                _shared = new FlagsController<T>();
+                _shared = new();
             return _shared;
         }
     }

@@ -24,7 +24,7 @@ public static class SimGameState_AddMechPart_Patch
         {
             if (codeInstruction.operand is ConstructorInfo operand && operand == constructor)
             {
-                yield return new CodeInstruction(OpCodes.Call,
+                yield return new(OpCodes.Call,
                     ((Func<MechDef, string, bool, MechDef>)CreateMech).Method);
             }
             else

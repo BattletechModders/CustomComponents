@@ -35,13 +35,13 @@ public static class Contract_GenerateSalvage
         {
             Log.SalvageProcess.Trace?.Log($"Start GenerateSalvage for {__instance.Name}");
 
-            ___finalPotentialSalvage = new List<SalvageDef>();
+            ___finalPotentialSalvage = new();
 
             var contract = __instance;
 
-            contract.SalvagedChassis = new List<SalvageDef>();
-            contract.LostMechs = new List<MechDef>();
-            contract.SalvageResults = new List<SalvageDef>();
+            contract.SalvagedChassis = new();
+            contract.LostMechs = new();
+            contract.SalvageResults = new();
 
             var simgame = __instance.BattleTechGame.Simulation;
             if (simgame == null)

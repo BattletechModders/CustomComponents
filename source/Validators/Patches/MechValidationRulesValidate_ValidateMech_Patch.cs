@@ -44,7 +44,7 @@ internal static class MechValidationRulesValidate_ValidateMech_Patch
                     && (component.MountedLocation & locations.GetLocationsFor(mechDef)) <= ChassisLocations.None)
                 {
                     __result[MechValidationType.InvalidInventorySlots].Add(
-                        new Text(Control.Settings.Message.Base_LocationDestroyed,
+                        new(Control.Settings.Message.Base_LocationDestroyed,
                             component.Def.Description.Name, component.MountedLocation, component.Def.Description.UIName));
                 }
             }

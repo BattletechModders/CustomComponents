@@ -15,7 +15,7 @@ public struct CCColor
 
     public Color ToColor()
     {
-        return new Color(R / 255f, G / 255f, B / 255f, A / 255f);
+        return new(R / 255f, G / 255f, B / 255f, A / 255f);
     }
 }
 
@@ -129,7 +129,7 @@ public class CustomComponentSettings
 
     public bool DEBUG_ShowMechUT = false;
 
-    public List<TagColor> ColorTags = new List<TagColor>();
+    public List<TagColor> ColorTags = new();
 
     public bool OverrideSalvageGeneration = true;
     public bool NoLootCTDestroyed = false;
@@ -167,8 +167,8 @@ public class CustomComponentSettings
     public UIColor InvalidFlagBackgroundColor = UIColor.Red;
 
     public UIColor DefaultOverlayColor = UIColor.DarkGrayEighth;
-    public CCColor PreinstalledOverlayCColor = new CCColor() { A = 12, R = 255, B = 180, G = 180 };
-    public CCColor DefaultFlagOverlayCColor = new CCColor() { A = 12, R = 180, B = 180, G = 255 };
+    public CCColor PreinstalledOverlayCColor = new() { A = 12, R = 255, B = 180, G = 180 };
+    public CCColor DefaultFlagOverlayCColor = new() { A = 12, R = 180, B = 180, G = 255 };
 
     [JsonIgnore] public Color PreinstalledOverlayColor;
     [JsonIgnore] public Color DefaultFlagOverlayColor;
@@ -199,8 +199,8 @@ public class CustomComponentSettings
 
     public bool AllowMechlabWrongHardpoints = false;
 
-    public ErrorMessages Message = new ErrorMessages();
-    public Tooltips ToolTips = new Tooltips();
+    public ErrorMessages Message = new();
+    public Tooltips ToolTips = new();
 
     public int OmniCategoryID = 1000;
 
@@ -225,7 +225,7 @@ public class CustomComponentSettings
         PreinstalledOverlayColor = PreinstalledOverlayCColor.ToColor();
         DefaultFlagOverlayColor = DefaultFlagOverlayCColor.ToColor();
 
-        ColorTagsDictionary = new Dictionary<string, Color>();
+        ColorTagsDictionary = new();
         if (ColorTags != null)
             foreach (var colorTag in ColorTags)
             {
@@ -233,6 +233,6 @@ public class CustomComponentSettings
                     ColorTagsDictionary.Add(colorTag.Tag, colorTag.ToColor());
             }
         if(ToolTips == null)
-            ToolTips = new Tooltips();
+            ToolTips = new();
     }
 }

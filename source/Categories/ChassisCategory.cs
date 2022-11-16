@@ -40,7 +40,7 @@ public class ChassisCategory : SimpleCustomChassis, IAfterLoad
         var desc = CategoryController.Shared.GetCategory(CategoryID);
 
         if (Limits == null || Limits.Length == 0)
-            LocationLimits = new Dictionary<ChassisLocations, CategoryLimit>();
+            LocationLimits = new();
         else
             LocationLimits = Limits.Distinct().ToDictionary(i => i.Location, i => new CategoryLimit(i.Min, i.Max, desc?.ReplaceDefaultsFirst ?? true));
 

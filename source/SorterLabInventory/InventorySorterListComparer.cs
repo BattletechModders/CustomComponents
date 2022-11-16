@@ -6,7 +6,7 @@ namespace CustomComponents;
 
 public class InventorySorterListComparer : IComparer<InventoryDataObject_BASE>
 {
-    private readonly InventorySorterComparer comparer = new InventorySorterComparer();
+    private readonly InventorySorterComparer comparer = new();
     private readonly Comparison<InventoryDataObject_BASE> wrapped;
     public InventorySorterListComparer(Comparison<InventoryDataObject_BASE> comparison)
     {

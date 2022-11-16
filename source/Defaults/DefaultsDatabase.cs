@@ -33,7 +33,7 @@ public class CategoryDefault
 {
     public CategoryDescriptorRecord CategoryRecord { get; set; }
     public CategoryDescriptor CategoryDescriptor { get; set; }
-    public List<CategoryDefaultRecord> Defaults { get; set; } = new List<CategoryDefaultRecord>();
+    public List<CategoryDefaultRecord> Defaults { get; set; } = new();
 }
 
 
@@ -69,8 +69,8 @@ public class DefaultsDatabase
 
         public void Complete()
         {
-            single_id = new Dictionary<string, HashSet<string>>();
-            all_id = new Dictionary<string, HashSet<string>>();
+            single_id = new();
+            all_id = new();
 
             if (Multi != null && Multi.HasRecords)
                 foreach (var d in Multi.Defaults)
@@ -79,7 +79,7 @@ public class DefaultsDatabase
                     {
                         if (!all_id.TryGetValue(cat, out var h))
                         {
-                            h = new HashSet<string>();
+                            h = new();
                             all_id[cat] = h;
                         }
 
@@ -92,7 +92,7 @@ public class DefaultsDatabase
                 {
                     if (!all_id.TryGetValue(def.Key, out var ha))
                     {
-                        ha = new HashSet<string>();
+                        ha = new();
                         all_id[def.Key] = ha;
                     }
 
@@ -157,16 +157,16 @@ public class DefaultsDatabase
     }
 
     private static DefaultsDatabase _instance;
-    private Dictionary<string, MechDefaultInfo> database = new Dictionary<string, MechDefaultInfo>();
-    private Dictionary<string, MechComponentDef> def_cache = new Dictionary<string, MechComponentDef>();
-    private Dictionary<string, DefaultsInfo> defaults_by_category = new Dictionary<string, DefaultsInfo>();
+    private Dictionary<string, MechDefaultInfo> database = new();
+    private Dictionary<string, MechComponentDef> def_cache = new();
+    private Dictionary<string, DefaultsInfo> defaults_by_category = new();
 
     public static DefaultsDatabase Instance
     {
         get
         {
             if (_instance == null)
-                _instance = new DefaultsDatabase();
+                _instance = new();
             return _instance;
         }
     }
@@ -306,7 +306,7 @@ public class DefaultsDatabase
 
         var result = new MechDefaultInfo();
 
-        var multi = new MultiRecord() { Defaults = new List<MultiCategoryDefault>() };
+        var multi = new MultiRecord() { Defaults = new() };
 
         var mech_multi = GetMechMultiDefauls(mech);
 
@@ -325,7 +325,7 @@ public class DefaultsDatabase
                     ComponentType = m.ComponentType,
                     Location = m.Location,
                     CategoryRecords =
-                        new Dictionary<string, (Category category, CategoryDescriptorRecord record)>(),
+                        new(),
                     Component = DefaultHelper.GetComponentDef(m.DefID, m.ComponentType)
 
                 };
@@ -390,7 +390,7 @@ public class DefaultsDatabase
             Log.DefaultsBuild.Trace?.Log("- No MultiRecords");
         }
 
-        result.Defaults = new Dictionary<string, CategoryDefault>();
+        result.Defaults = new();
         var defaults = GetMechDefaults(mech);
 
         //if(defaults != null &&)

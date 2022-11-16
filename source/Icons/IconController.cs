@@ -8,7 +8,7 @@ namespace CustomComponents;
 
 public static class IconController
 {
-    private static Dictionary<string, SVGAsset> icons = new Dictionary<string, SVGAsset>();
+    private static Dictionary<string, SVGAsset> icons = new();
 
     internal static SVGAsset Get(string resourceId) => icons.TryGetValue(resourceId, out var icon) ? icon : null;
 

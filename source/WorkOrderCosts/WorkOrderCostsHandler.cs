@@ -7,7 +7,7 @@ namespace CustomComponents;
 
 internal class WorkOrderCostsHandler
 {
-    public static readonly WorkOrderCostsHandler Shared = new WorkOrderCostsHandler();
+    public static readonly WorkOrderCostsHandler Shared = new();
 
     public void ComponentInstallWorkOrder(MechDef mechDef, MechComponentRef mechComponent, ChassisLocations newLocation, WorkOrderEntry_InstallComponent result)
     {

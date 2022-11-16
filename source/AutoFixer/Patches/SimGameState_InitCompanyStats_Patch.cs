@@ -12,7 +12,7 @@ public static class SimGameState_InitCompanyStats_Patch
     {
         try
         {
-            AutoFixer.Shared.FixSavedMech(new List<MechDef>(), __instance);
+            AutoFixer.Shared.FixSavedMech(new(), __instance);
         }
         catch (Exception e)
         {

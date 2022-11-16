@@ -24,7 +24,7 @@ public class MechLabHelper
                 Log.Main.Info?.Log($"Enter MechLab for {mechlab.activeMechDef.Description.Id}, UT:[{ut.Join()}]");
         }
 
-        CurrentMechLab = new MechLabHelper(mechlab);
+        CurrentMechLab = new(mechlab);
         CurrentMechLab.MakeLocations();
 
         CurrentMechLab.MakeHardpoints();
@@ -136,19 +136,19 @@ public class MechLabHelper
 
     private void MakeLocations()
     {
-        LHelper_CT = new LocationHelper(MechLab.centerTorsoWidget);
-        LHelper_HD = new LocationHelper(MechLab.headWidget);
-        LHelper_RT = new LocationHelper(MechLab.rightTorsoWidget);
-        LHelper_LT = new LocationHelper(MechLab.leftTorsoWidget);
+        LHelper_CT = new(MechLab.centerTorsoWidget);
+        LHelper_HD = new(MechLab.headWidget);
+        LHelper_RT = new(MechLab.rightTorsoWidget);
+        LHelper_LT = new(MechLab.leftTorsoWidget);
 
-        LHelper_LA = new LocationHelper(MechLab.leftArmWidget);
-        LHelper_RA = new LocationHelper(MechLab.rightArmWidget);
-        LHelper_LL = new LocationHelper(MechLab.leftLegWidget);
-        LHelper_RL = new LocationHelper(MechLab.rightLegWidget);
+        LHelper_LA = new(MechLab.leftArmWidget);
+        LHelper_RA = new(MechLab.rightArmWidget);
+        LHelper_LL = new(MechLab.leftLegWidget);
+        LHelper_RL = new(MechLab.rightLegWidget);
 
         LHelper_SP = GetLocationHelperSP();
 
-        all_helpers = new List<LocationHelper>();
+        all_helpers = new();
 
         all_helpers.Add(LHelper_CT);
         all_helpers.Add(LHelper_HD);
@@ -207,7 +207,7 @@ public class MechLabHelper
                 {
                     var item = usage.FirstOrDefault(i => i.hpInfo.WeaponCategory.ID == hpUsage.WeaponCategoryID);
                     if (item == null)
-                        usage.Add(new HPUsage(hpUsage));
+                        usage.Add(new(hpUsage));
                     else
                     {
                         item.Total += hpUsage.Total;

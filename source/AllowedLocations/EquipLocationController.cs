@@ -15,14 +15,14 @@ public class EquipLocationController
         get
         {
             if (_instance == null)
-                _instance = new EquipLocationController();
+                _instance = new();
 
             return _instance;
         }
     }
 
-    private Dictionary<string, Dictionary<string, ChassisLocations>> Locations = new Dictionary<string, Dictionary<string, ChassisLocations>>();
-    private Dictionary<string, EquipLocationTag> Tags = new Dictionary<string, EquipLocationTag>();
+    private Dictionary<string, Dictionary<string, ChassisLocations>> Locations = new();
+    private Dictionary<string, EquipLocationTag> Tags = new();
     public ChassisLocations this[MechDef mechdef, MechComponentDef itemdef]
     {
         get
@@ -32,7 +32,7 @@ public class EquipLocationController
 
             if (!Locations.TryGetValue(mechdef.ChassisID, out var mech_locations))
             {
-                mech_locations = new Dictionary<string, ChassisLocations>();
+                mech_locations = new();
                 Locations[mechdef.ChassisID] = mech_locations;
             }
 
@@ -115,7 +115,7 @@ public class EquipLocationController
 
             if ((location & item.MountedLocation) <= ChassisLocations.None)
                 errors[MechValidationType.InvalidInventorySlots].Add(
-                    new Text(Control.Settings.Message.Base_ValidateWrongLocation, item.Def.Description.Name)
+                    new(Control.Settings.Message.Base_ValidateWrongLocation, item.Def.Description.Name)
                 );
         }
     }

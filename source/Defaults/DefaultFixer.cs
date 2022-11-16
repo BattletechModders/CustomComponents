@@ -30,12 +30,12 @@ public class DefaultFixer
 
         public static inv_change Add(string id, ComponentType type, ChassisLocations location)
         {
-            return new inv_change(true, id, location, type);
+            return new(true, id, location, type);
         }
 
         public static inv_change Remove(string id, ChassisLocations location)
         {
-            return new inv_change(false, id, location);
+            return new(false, id, location);
         }
     }
 
@@ -85,7 +85,7 @@ public class DefaultFixer
         get
         {
             if (_instance == null)
-                _instance = new DefaultFixer();
+                _instance = new();
             return _instance;
         }
     }

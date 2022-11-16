@@ -19,7 +19,7 @@ public class MechLabHPHandler : HPHandler
         lc.minHeight = 30;
         lc.minWidth = 70;
         var rect = sample.GetChild(0).GetComponent<RectTransform>();
-        rect.sizeDelta = new Vector2(42f, rect.sizeDelta.y);
+        rect.sizeDelta = new(42f, rect.sizeDelta.y);
         var text = sample.GetChild(0).GetComponent<LocalizableText>();
         text.alignment = TextAlignmentOptions.Midline;
         var l = sample.GetChild(1).gameObject.AddComponent<LayoutElement>();
@@ -31,7 +31,7 @@ public class MechLabHPHandler : HPHandler
         image.color = Control.Settings.GetHardpointBackDefaultColor();
         var hlg = sample.gameObject.AddComponent<HorizontalLayoutGroup>();
         hlg.childControlWidth = true;
-        hlg.padding = new RectOffset(2, 2, 2, 2);
+        hlg.padding = new(2, 2, 2, 2);
 
 
         return sample;
@@ -53,7 +53,7 @@ public class MechLabHPHandler : HPHandler
         var vertical = hp_layout.gameObject.AddComponent<VerticalLayoutGroup>();
         vertical.childControlHeight = true;
         vertical.childControlWidth = true;
-        vertical.padding = new RectOffset(5, 5, 5, 5);
+        vertical.padding = new(5, 5, 5, 5);
         vertical.spacing = 0;
         vertical.childAlignment = TextAnchor.MiddleCenter;
         vertical.enabled = true;
@@ -63,7 +63,7 @@ public class MechLabHPHandler : HPHandler
         fitter.horizontalFit = ContentSizeFitter.FitMode.MinSize;
 
         var transform = vertical.GetComponent<RectTransform>();
-        transform.anchoredPosition = new Vector2(-80, transform.anchoredPosition.y);
+        transform.anchoredPosition = new(-80, transform.anchoredPosition.y);
 
         var jj = jj_layout.GetChild(0);
         var sample = make_samlpe(hp_layout);
@@ -75,8 +75,8 @@ public class MechLabHPHandler : HPHandler
 
         var jjgo = Instantiate(sample.gameObject);
 
-        jjhardpoint = new JJHardpointHeler(jjgo, jj);
-        hardpoints = new Dictionary<int, HardpointHelper>();
+        jjhardpoint = new(jjgo, jj);
+        hardpoints = new();
 
         jjgo.transform.SetParent(hp_layout);
         foreach (var hpinfo in HardpointController.Instance.HardpointsList.Where(i => i.Visible))

@@ -10,7 +10,7 @@ public static class DefaultHelper
 {
     #region EXTENSIONS
 
-    private static Dictionary<string, bool> defaults = new Dictionary<string, bool>();
+    private static Dictionary<string, bool> defaults = new();
 
 
 

@@ -11,12 +11,11 @@ namespace CustomComponents;
 /// </summary>
 public static class Validator
 {
-    public static List<PreValidateDropDelegate> pre_drop_validators = new List<PreValidateDropDelegate>();
-    public static List<ReplaceValidateDropDelegate> rep_drop_validators = new List<ReplaceValidateDropDelegate>();
-    public static List<PostValidateDropDelegate> chk_drop_validators = new List<PostValidateDropDelegate>();
-    public static List<ValidateMechDelegate> mech_validators = new List<ValidateMechDelegate>();
-    private static List<ValidateMechCanBeFieldedDelegate> field_validators =
-        new List<ValidateMechCanBeFieldedDelegate>();
+    public static List<PreValidateDropDelegate> pre_drop_validators = new();
+    public static List<ReplaceValidateDropDelegate> rep_drop_validators = new();
+    public static List<PostValidateDropDelegate> chk_drop_validators = new();
+    public static List<ValidateMechDelegate> mech_validators = new();
+    private static List<ValidateMechCanBeFieldedDelegate> field_validators = new();
 
     /// <summary>
     /// register new AddValidator
@@ -160,7 +159,7 @@ public static class Validator
         {
             if (mechDef.GetChassisLocationDef(size.location).InventorySlots < size.size)
             {
-                errors[MechValidationType.InvalidInventorySlots].Add(new Text($"{size.location} no space left, remove excess equipment"));
+                errors[MechValidationType.InvalidInventorySlots].Add(new($"{size.location} no space left, remove excess equipment"));
             }
         }
     }

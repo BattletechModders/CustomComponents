@@ -6,7 +6,7 @@ namespace CustomComponents;
 
 public class InventorySorterNotListComparer : IComparer<InventoryItemElement_NotListView>
 {
-    private readonly InventorySorterComparer comparer = new InventorySorterComparer();
+    private readonly InventorySorterComparer comparer = new();
     private readonly Comparison<InventoryItemElement_NotListView> wrapped;
     public InventorySorterNotListComparer(Comparison<InventoryItemElement_NotListView> comparison)
     {

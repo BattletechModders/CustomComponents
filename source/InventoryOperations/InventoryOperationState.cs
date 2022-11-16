@@ -15,11 +15,11 @@ public class InventoryOperationState
 
     public InventoryOperationState(Queue<IChange> start_changes, MechDef mech, IEnumerable<InvItem> inventory = null)
     {
-        done_changes = new List<IChange_Apply>();
+        done_changes = new();
         Mech = mech;
         Inventory = (inventory ?? mech.Inventory.ToInvItems()).ToList();
 
-        pending_changes = new Queue<IChange>();
+        pending_changes = new();
         foreach (var change in start_changes)
         {
             change.Initial = true;

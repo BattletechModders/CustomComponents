@@ -25,7 +25,7 @@ public class Category : SimpleCustomComponent, IAfterLoad, IReplaceValidateDrop,
         public CategoryLimit limit;
         public int free;
         public int can_free;
-        public List<(InvItem item, int weight)> items = new List<(InvItem item, int weight)>();
+        public List<(InvItem item, int weight)> items = new();
     }
 
     /// <summary>

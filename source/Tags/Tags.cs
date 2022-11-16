@@ -20,7 +20,7 @@ public static class CombatHUD_InitTags {
   }
 }
 public static class CustomCombatTagsHelper {
-  private static Dictionary<string, TagSet> tagsCache = new Dictionary<string, TagSet>();
+  private static Dictionary<string, TagSet> tagsCache = new();
   private static readonly string CCComponentTagsStatName = "CCCombatComponentTags";
   private static readonly string CCComponentGUIDStatName = "CCComponentGUID";
   public static void ClearTagsCache() {
@@ -48,7 +48,7 @@ public static class CustomCombatTagsHelper {
       //Control.Log($" not in cache");
       if (checkExistance(target.StatCollection, CCComponentTagsStatName) == false) {
         //Control.Log($" have no statistic value:"+ CustomCombatTagsHelper.CCComponentTagsStatName);
-        tags = new TagSet();
+        tags = new();
         tags.AddRange(target.componentDef.ComponentTags);
       } else {
         var tags_string = target.StatCollection.GetStatistic(CCComponentTagsStatName).Value<string>();

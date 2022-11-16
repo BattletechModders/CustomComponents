@@ -22,7 +22,7 @@ public class AutoFixer
         {
             this.mech = mech;
             processed = false;
-            tags = new TagSet();
+            tags = new();
             if (mech.MechTags != null)
                 tags.UnionWith(mech.MechTags);
             if (mech.Chassis.ChassisTags != null)
@@ -31,13 +31,13 @@ public class AutoFixer
     }
 
 
-    public static AutoFixer Shared = new AutoFixer();
+    public static AutoFixer Shared = new();
 
-    private readonly List<AutoFixerDelegate> fixers = new List<AutoFixerDelegate>();
-    private readonly List<AutoFixerDelegate> savegamefixers = new List<AutoFixerDelegate>();
+    private readonly List<AutoFixerDelegate> fixers = new();
+    private readonly List<AutoFixerDelegate> savegamefixers = new();
 
-    private readonly Dictionary<string, List<AutoFixerDelegate>> tagfixers = new Dictionary<string, List<AutoFixerDelegate>>();
-    private readonly Dictionary<string, List<AutoFixerDelegate>> tagsavefixers = new Dictionary<string, List<AutoFixerDelegate>>();
+    private readonly Dictionary<string, List<AutoFixerDelegate>> tagfixers = new();
+    private readonly Dictionary<string, List<AutoFixerDelegate>> tagsavefixers = new();
 
     public void FixMechDef(List<MechDef> mechDefs)
     {

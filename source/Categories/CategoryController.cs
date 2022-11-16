@@ -28,7 +28,7 @@ public class CategoryController
 {
     public static CategoryController Shared = new();
 
-    private readonly Dictionary<string, CategoryDescriptor> Categories = new Dictionary<string, CategoryDescriptor>();
+    private readonly Dictionary<string, CategoryDescriptor> Categories = new();
 
     internal void Setup(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
     {
@@ -59,7 +59,7 @@ public class CategoryController
     {
         if (Categories.TryGetValue(name, out var c))
             return c;
-        c = new CategoryDescriptor { Name = name };
+        c = new() { Name = name };
         //Control.Log("create empty " + name + " for " + Environment.StackTrace);
         Categories.Add(name, c);
         return c;
@@ -129,7 +129,7 @@ public class CategoryController
                     var count = items == null ? 0 : items.Where(i => pair.Key.HasFlag(i.location)).Sum(i => i.num);
 
                     if (count < pair.Value.Min)
-                        errors[MechValidationType.InvalidInventorySlots].Add(new Text(category.ValidateMinimum,
+                        errors[MechValidationType.InvalidInventorySlots].Add(new(category.ValidateMinimum,
                             category._DisplayName, pair.Value.Min, count, mechDef.Description.UIName,
                             mechDef.Description.Name, pair.Key == ChassisLocations.All ? "All Locations" : pair.Key.ToString()));
                 }
@@ -139,7 +139,7 @@ public class CategoryController
                     var count = items == null ? 0 : items.Where(i => pair.Key.HasFlag(i.location)).Sum(i => i.num);
 
                     if (count > pair.Value.Max)
-                        errors[MechValidationType.InvalidInventorySlots].Add(new Text(category.ValidateMaximum,
+                        errors[MechValidationType.InvalidInventorySlots].Add(new(category.ValidateMaximum,
                             category._DisplayName, pair.Value.Max, count, mechDef.Description.UIName,
                             mechDef.Description.Name, pair.Key == ChassisLocations.All ? "All Locations" : pair.Key.ToString()));
                 }
@@ -165,7 +165,7 @@ public class CategoryController
                     var mixed = pair.Value.Any(i => i.mix != "*" && i.mix != null && i.mix != first_tag);
                     if (mixed)
                     {
-                        errors[MechValidationType.InvalidInventorySlots].Add(new Text(pair.Key.ValidateMixed,
+                        errors[MechValidationType.InvalidInventorySlots].Add(new(pair.Key.ValidateMixed,
                             pair.Key._DisplayName));
                     }
                 }

@@ -94,7 +94,7 @@ public class CategoryDescriptorRecord
     {
         if (LocationLimits == null)
             if (Limits == null || Limits.Length == 0)
-                LocationLimits = new Dictionary<ChassisLocations, CategoryLimit>();
+                LocationLimits = new();
             else
                 LocationLimits = Limits.Distinct().ToDictionary(i => i.Location, i => new CategoryLimit(i.Min, i.Max, cat_info?.ReplaceDefaultsFirst ?? true));
 
@@ -149,8 +149,8 @@ public class CategoryDescriptor
     public CategoryDescriptorRecord DefaultLimits { get; set; }
 
     private CategoryDescriptorRecord._record[] BaseLimits { get; set; }
-    public List<CategoryDescriptorRecord> UnitLimits = new List<CategoryDescriptorRecord>();
-    [JsonIgnore] private Dictionary<string, CategoryDescriptorRecord> records = new Dictionary<string, CategoryDescriptorRecord>();
+    public List<CategoryDescriptorRecord> UnitLimits = new();
+    [JsonIgnore] private Dictionary<string, CategoryDescriptorRecord> records = new();
 
     public CategoryDescriptorRecord this[MechDef mech]
     {
@@ -165,7 +165,7 @@ public class CategoryDescriptor
             var chassis_limits = GetMechCategoryCustom(mech);
             if (chassis_limits != null)
             {
-                result = new CategoryDescriptorRecord()
+                result = new()
                 {
                     LocationLimits = chassis_limits
                 };
@@ -182,7 +182,7 @@ public class CategoryDescriptor
                     if (result == null && candidates.Count > 0 && DefaultLimits != null)
                     {
                         { // copy default limits into result
-                            result = new CategoryDescriptorRecord(DefaultLimits.Limits);
+                            result = new(DefaultLimits.Limits);
                             result.Complete(this);
                         }
                         // overwrite values and last one wins
@@ -252,7 +252,7 @@ public class CategoryDescriptor
 
     public void Init()
     {
-        UnitLimits ??= new List<CategoryDescriptorRecord>();
+        UnitLimits ??= new();
 
         var limits = UnitLimits.FirstOrDefault(i => i.UnitType == "*");
         if (limits != null)
@@ -261,12 +261,12 @@ public class CategoryDescriptor
         if (BaseLimits == null)
         {
             if (limits == null)
-                DefaultLimits = new CategoryDescriptorRecord();
+                DefaultLimits = new();
             else
                 DefaultLimits = limits;
         }
         else
-            DefaultLimits = new CategoryDescriptorRecord(BaseLimits);
+            DefaultLimits = new(BaseLimits);
 
 
 

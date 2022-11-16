@@ -7,12 +7,12 @@ namespace CustomComponents;
 
 public class FormulaEvaluator
 {
-    public static FormulaEvaluator Shared = new FormulaEvaluator();
+    public static FormulaEvaluator Shared = new();
 
     private readonly DataTable table;
     private FormulaEvaluator()
     {
-        table =  new DataTable();
+        table =  new();
         table.Columns.Add("column", typeof(double));
         table.Rows.Add(1.0);
     }
@@ -23,7 +23,7 @@ public class FormulaEvaluator
         return value != DBNull.Value ? value : null;
     }
 
-    private static readonly Regex Regex = new Regex(@"(?:\[\[([^\]]+)\]\])", RegexOptions.Singleline | RegexOptions.Compiled);
+    private static readonly Regex Regex = new(@"(?:\[\[([^\]]+)\]\])", RegexOptions.Singleline | RegexOptions.Compiled);
 
     public object Evaluate(string expression, Dictionary<string, string> variables = null)
     {

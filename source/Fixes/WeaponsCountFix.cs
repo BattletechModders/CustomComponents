@@ -11,7 +11,7 @@ internal static class WeaponsCountFix
     {
         if (!CheckWeaponsFielded(mechDef))
         {
-            errors[MechValidationType.InvalidInventorySlots].Add(new Text(Control.Settings.Message.WrongWeaponCount, Control.Settings.MaxWeaponCount));
+            errors[MechValidationType.InvalidInventorySlots].Add(new(Control.Settings.Message.WrongWeaponCount, Control.Settings.MaxWeaponCount));
         }
     }
 

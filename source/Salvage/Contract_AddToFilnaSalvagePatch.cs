@@ -68,7 +68,7 @@ internal static class Contract_AddToFilnaSalvagePatch
 
         var salvageDef = new SalvageDef();
         salvageDef.MechComponentDef = component;
-        salvageDef.Description = new DescriptionDef(component.Description);
+        salvageDef.Description = new(component.Description);
         salvageDef.RewardID = def.RewardID;
         salvageDef.Type = SalvageDef.SalvageType.COMPONENT;
         salvageDef.ComponentType = def.ComponentType;

@@ -8,11 +8,11 @@ namespace CustomComponents;
 
 public static class Registry
 {
-    private static readonly List<IPreProcessor> PreProcessors = new List<IPreProcessor>();
-    private static readonly List<ICustomFactory> Factories = new List<ICustomFactory>();
-    private static readonly HashSet<string> SimpleIdentifiers = new HashSet<string>();
+    private static readonly List<IPreProcessor> PreProcessors = new();
+    private static readonly List<ICustomFactory> Factories = new();
+    private static readonly HashSet<string> SimpleIdentifiers = new();
 
-    private static Dictionary<Type, CustomComponentAttribute> attributes = new Dictionary<Type, CustomComponentAttribute>();
+    private static Dictionary<Type, CustomComponentAttribute> attributes = new();
 
     public static CustomComponentAttribute GetAttributeByType(Type type)
     {

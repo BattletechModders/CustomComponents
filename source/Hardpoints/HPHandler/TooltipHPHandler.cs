@@ -19,7 +19,7 @@ public class TooltipHPHandler : HPHandler
         lc.minWidth = 72;
 
         var rect = sample.GetChild(0).GetComponent<RectTransform>();
-        rect.sizeDelta = new Vector2(42f, rect.sizeDelta.y);
+        rect.sizeDelta = new(42f, rect.sizeDelta.y);
         var text = sample.GetChild(0).GetComponent<LocalizableText>();
         var l = text.gameObject.AddComponent<LayoutElement>();
         l.minWidth = 38;
@@ -34,7 +34,7 @@ public class TooltipHPHandler : HPHandler
         var hlg = sample.gameObject.GetComponent<HorizontalLayoutGroup>();
         hlg.childControlWidth = true;
         hlg.childControlHeight = true;
-        hlg.padding = new RectOffset(3, 1, 1, 2);
+        hlg.padding = new(3, 1, 1, 2);
         hlg.enabled = true;
         return sample;
     }
@@ -53,12 +53,12 @@ public class TooltipHPHandler : HPHandler
             var grid = hp_layout.gameObject.AddComponent<GridLayoutGroup>();
             //grid.childControlHeight = true;
             //vertical.childControlWidth = true;
-            grid.padding = new RectOffset(3, 3, 3, 3);
-            grid.spacing = new Vector2(1, 1);
+            grid.padding = new(3, 3, 3, 3);
+            grid.spacing = new(1, 1);
             grid.childAlignment = TextAnchor.MiddleCenter;
             grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             grid.constraintCount = 5;
-            grid.cellSize = new Vector2(73, 35);
+            grid.cellSize = new(73, 35);
             var transform = hp_layout.GetComponent<RectTransform>();
             //transform.anchoredPosition = position;
             //transform.sizeDelta = new Vector2(295, 66);
@@ -77,8 +77,8 @@ public class TooltipHPHandler : HPHandler
 
             var jjgo = Instantiate(sample.gameObject);
 
-            jjhardpoint = new JJHardpointHeler(jjgo, sample);
-            hardpoints = new Dictionary<int, HardpointHelper>();
+            jjhardpoint = new(jjgo, sample);
+            hardpoints = new();
             jjgo.transform.SetParent(hp_layout);
             jjgo.SetActive(true);
             foreach (var hpinfo in HardpointController.Instance.HardpointsList.Where(i => i.Visible))

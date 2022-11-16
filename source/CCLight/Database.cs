@@ -75,9 +75,9 @@ public class Database
 
     #region private
 
-    private static readonly Database Shared = new Database();
+    private static readonly Database Shared = new();
 
-    private readonly Dictionary<string, List<ICustom>> customs = new Dictionary<string, List<ICustom>>();
+    private readonly Dictionary<string, List<ICustom>> customs = new();
 
     private IEnumerable<T> GetCustomsInternal<T>(string key)
     {
@@ -108,7 +108,7 @@ public class Database
     {
         if (!customs.TryGetValue(key, out var ccs))
         {
-            ccs = new List<ICustom>();
+            ccs = new();
             customs[key] = ccs;
         }
         return ccs;

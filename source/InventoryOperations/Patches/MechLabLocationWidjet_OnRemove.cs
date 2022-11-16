@@ -17,7 +17,7 @@ public static class MechLabLocationWidjet_OnRemove
         {
                
             if (i >=3 && i <=8)
-                yield return new CodeInstruction(OpCodes.Nop);
+                yield return new(OpCodes.Nop);
             else
                 yield return codeInstruction;
 

@@ -22,7 +22,7 @@ public static class MechBayMechInfoWidget_SetHardpoints
             {
                 hardpoints = __instance.gameObject.AddComponent<UIModuleHPHandler>();
                 hardpoints.Init(__instance, ___ballisticHardpointText.gameObject,
-                    ___jumpjetHardpointText.gameObject, new Vector2(-5, -58));
+                    ___jumpjetHardpointText.gameObject, new(-5, -58));
             }
 
             var usage = ___selectedMech.GetHardpointUsage();

@@ -90,7 +90,7 @@ internal class TagsChecker
         if (sourceTags != null && location != ChassisLocations.None)
         {
             if (!tagsOnLocations.TryGetValue(location, out var tags))
-                tags = new HashSet<string>();
+                tags = new();
 
             if (SharedRequiredAnyCheck(sourceTags, tags, RequiredAnyTagsOnLocation, location))
                 return true;
@@ -113,7 +113,7 @@ internal class TagsChecker
     {
         if (sourceTags != null && location != ChassisLocations.None)
         {
-            if (!tagsOnLocations.TryGetValue(location, out var tags)) tags = new HashSet<string>();
+            if (!tagsOnLocations.TryGetValue(location, out var tags)) tags = new();
             if (SharedRequiredCheck(sourceTags, tags, RequiredTagsOnSameLocation, location)) return true;
         }
         else
@@ -197,7 +197,7 @@ internal class TagsChecker
 
         foreach (var loc in locations)
         {
-            if (!tagsOnLocations.TryGetValue(location, out var tags)) tags = new HashSet<string>();
+            if (!tagsOnLocations.TryGetValue(location, out var tags)) tags = new();
             if (IncompatiblesCheck(sourceTags ?? tags, targetTags ?? tags, IncompatibleTagsOnSameLocation, loc)) return true;
         }
 
@@ -291,7 +291,7 @@ internal class TagsChecker
             return true;
         }
 
-        errors[MechValidationType.InvalidInventorySlots].Add(new Text(message));
+        errors[MechValidationType.InvalidInventorySlots].Add(new(message));
 
         return false;
     }

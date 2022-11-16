@@ -27,7 +27,7 @@ internal class SimGameState_ReadyMech_Patch
         {
             if (codeInstruction.operand is ConstructorInfo operand && operand == constructor)
             {
-                yield return new CodeInstruction(OpCodes.Call,
+                yield return new(OpCodes.Call,
                     ((Func<ChassisDef, string, MechDef, MechDef>)CreateMech).Method);
             }
             else
