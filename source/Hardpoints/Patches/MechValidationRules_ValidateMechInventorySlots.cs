@@ -1,16 +1,15 @@
 ﻿using BattleTech;
 using Harmony;
 
-namespace CustomComponents.Patches
+namespace CustomComponents.Patches;
+
+[HarmonyPatch(typeof(MechValidationRules))]
+[HarmonyPatch("ValidateMechInventorySlots")]
+public static class MechValidationRules_ValidateMechInventorySlots
 {
-    [HarmonyPatch(typeof(MechValidationRules))]
-    [HarmonyPatch("ValidateMechInventorySlots")]
-    public static class MechValidationRules_ValidateMechInventorySlots
+    [HarmonyPrefix]
+    public static bool CancelVanilaValidation()
     {
-        [HarmonyPrefix]
-        public static bool CancelVanilaValidation()
-        {
-            return false;
-        }
+        return false;
     }
 }

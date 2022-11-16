@@ -1,7 +1,6 @@
-﻿namespace CustomComponents.Changes
+﻿namespace CustomComponents.Changes;
+
+public interface IChange_Adjust : IChange
 {
-    public interface IChange_Adjust : IChange
-    {
-        string ChangeID { get; }
-    }
+    string ChangeID { get; }
 }

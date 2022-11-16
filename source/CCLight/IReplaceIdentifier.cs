@@ -1,7 +1,6 @@
-﻿namespace CustomComponents
+﻿namespace CustomComponents;
+
+public interface IReplaceIdentifier
 {
-    public interface IReplaceIdentifier
-    {
-        string ReplaceID { get; }
-    }
+    string ReplaceID { get; }
 }

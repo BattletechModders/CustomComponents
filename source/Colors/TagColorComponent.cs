@@ -3,43 +3,42 @@ using BattleTech.UI;
 using fastJSON;
 using UnityEngine;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+[CustomComponent("ColorTag", group: "ColorType")]
+public class TagColorComponent : SimpleCustomComponent, IColorComponent, IValueComponent<string>
 {
-    [CustomComponent("ColorTag", group: "ColorType")]
-    public class TagColorComponent : SimpleCustomComponent, IColorComponent, IValueComponent<string>
-    {
-        [JsonIgnore] public UIColor UIColor => UIColor.Custom;
-        [JsonIgnore]
-        public Color RGBColor { get; private set; }
+    [JsonIgnore] public UIColor UIColor => UIColor.Custom;
+    [JsonIgnore]
+    public Color RGBColor { get; private set; }
 
-        public void LoadValue(string value)
-        {
-            if (Control.Settings.ColorTagsDictionary.TryGetValue(value, out var color))
-                RGBColor = color;
-            else
-                RGBColor = Color.magenta;
-        }
+    public void LoadValue(string value)
+    {
+        if (Control.Settings.ColorTagsDictionary.TryGetValue(value, out var color))
+            RGBColor = color;
+        else
+            RGBColor = Color.magenta;
     }
+}
 
 
-    [CustomComponent("TColorTag", group: "TColorType")]
-    public class TTagColorComponent : SimpleCustomComponent, ITColorComponent, IAfterLoad
+[CustomComponent("TColorTag", group: "TColorType")]
+public class TTagColorComponent : SimpleCustomComponent, ITColorComponent, IAfterLoad
+{
+    [JsonIgnore] public UIColor UIColor => UIColor.Custom;
+    [JsonIgnore]
+    public Color RGBColor { get; private set; }
+
+    public bool SkipIcon { get; set; } = false;
+    public bool SkipText { get; set; } = false;
+
+    public string Tag { get; set; }
+
+    public void OnLoaded(Dictionary<string, object> values)
     {
-        [JsonIgnore] public UIColor UIColor => UIColor.Custom;
-        [JsonIgnore]
-        public Color RGBColor { get; private set; }
-
-        public bool SkipIcon { get; set; } = false;
-        public bool SkipText { get; set; } = false;
-
-        public string Tag { get; set; }
-
-        public void OnLoaded(Dictionary<string, object> values)
-        {
-            if (Control.Settings.ColorTagsDictionary.TryGetValue(Tag, out var color))
-                RGBColor = color;
-            else
-                RGBColor = Color.white;
-        }
+        if (Control.Settings.ColorTagsDictionary.TryGetValue(Tag, out var color))
+            RGBColor = color;
+        else
+            RGBColor = Color.white;
     }
 }

@@ -3,113 +3,112 @@ using System.Linq;
 using BattleTech;
 using Localize;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+public class CCFlags
 {
-    public class CCFlags
+    [CustomFlag("autorepair")]
+    public bool AutoRepair { get; set; } = false;
+    [CustomFlag("no_remove")]
+    public bool NoRemove { get; set; } = false;
+    [CustomFlag("hide")]
+    public bool HideFromInv { get; set; } = false;
+    [CustomFlag("hide_equip")]
+    public bool HideFromEquip { get; set; } = false;
+    [CustomFlag("no_salvage")]
+    public bool NoSalvage { get; set; } = false;
+    [CustomFlag("default")]
+    [SubFlags("autorepair", "no_remove", "hide", "no_salvage")]
+    public bool Default { get; set; } = false;
+
+    [CustomFlag("not_broken")]
+    public bool NotBroken { get; set; } = false;
+    [CustomFlag("vital")]
+    public bool Vital { get; set; } = false;
+    [CustomFlag("not_destroyed")]
+    public bool NotDestroyed { get; set; } = false;
+    [CustomFlag("invalid")]
+    public bool Invalid { get; set; } = false;
+
+
+    [CustomSetter("default")]
+    private bool SetDefault(MechComponentDef item)
     {
-        [CustomFlag("autorepair")]
-        public bool AutoRepair { get; set; } = false;
-        [CustomFlag("no_remove")]
-        public bool NoRemove { get; set; } = false;
-        [CustomFlag("hide")]
-        public bool HideFromInv { get; set; } = false;
-        [CustomFlag("hide_equip")]
-        public bool HideFromEquip { get; set; } = false;
-        [CustomFlag("no_salvage")]
-        public bool NoSalvage { get; set; } = false;
-        [CustomFlag("default")]
-        [SubFlags("autorepair", "no_remove", "hide", "no_salvage")]
-        public bool Default { get; set; } = false;
+        return item.Is<IDefaultComponent>();
+    }
 
-        [CustomFlag("not_broken")]
-        public bool NotBroken { get; set; } = false;
-        [CustomFlag("vital")]
-        public bool Vital { get; set; } = false;
-        [CustomFlag("not_destroyed")]
-        public bool NotDestroyed { get; set; } = false;
-        [CustomFlag("invalid")]
-        public bool Invalid { get; set; } = false;
+    [CustomSetter("invalid")]
+    private bool SetInvalid(MechComponentDef item)
+    {
+        var comps = item.GetComponents<IValid>();
+        return comps == null || comps.All(i => i.Valid);
+    }
 
 
-        [CustomSetter("default")]
-        private bool SetDefault(MechComponentDef item)
+    internal static bool CanBeFielded(MechDef mechDef)
+    {
+        foreach (var item in mechDef.Inventory)
         {
-            return item.Is<IDefaultComponent>();
+            var f = item.Flags<CCFlags>();
+
+            if (f.Invalid)
+                return false;
+
+            if (item.DamageLevel == ComponentDamageLevel.Destroyed && (f.NotBroken || f.NotDestroyed))
+                return false;
+
+            if (item.DamageLevel == ComponentDamageLevel.Penalized && f.NotBroken)
+                return false;
         }
+        return true;
+    }
 
-        [CustomSetter("invalid")]
-        private bool SetInvalid(MechComponentDef item)
+    internal static void ValidateMech(Dictionary<MechValidationType, List<Text>> errors, MechValidationLevel validationLevel, MechDef mechDef)
+    {
+        foreach (var item in mechDef.Inventory)
         {
-            var comps = item.GetComponents<IValid>();
-            return comps == null || comps.All(i => i.Valid);
-        }
+            var f = item.Flags<CCFlags>();
 
+            if (f.Invalid)
+                errors[MechValidationType.InvalidInventorySlots].Add(new Text(
+                    Control.Settings.Message.Flags_InvaildComponent, item.Def.Description.Name, item.Def.Description.UIName));
 
-        internal static bool CanBeFielded(MechDef mechDef)
-        {
-            foreach (var item in mechDef.Inventory)
+            if (item.DamageLevel == ComponentDamageLevel.Destroyed && (f.NotBroken || f.NotDestroyed))
             {
-                var f = item.Flags<CCFlags>();
-
-                if (f.Invalid)
-                    return false;
-
-                if (item.DamageLevel == ComponentDamageLevel.Destroyed && (f.NotBroken || f.NotDestroyed))
-                    return false;
-
-                if (item.DamageLevel == ComponentDamageLevel.Penalized && f.NotBroken)
-                    return false;
+                errors[MechValidationType.StructureDestroyed].Add(new Text(
+                    Control.Settings.Message.Flags_DestroyedComponent, item.Def.Description.Name, item.Def.Description.UIName));
             }
-            return true;
-        }
 
-        internal static void ValidateMech(Dictionary<MechValidationType, List<Text>> errors, MechValidationLevel validationLevel, MechDef mechDef)
-        {
-            foreach (var item in mechDef.Inventory)
+            if (item.DamageLevel == ComponentDamageLevel.Penalized && f.NotBroken)
             {
-                var f = item.Flags<CCFlags>();
-
-                if (f.Invalid)
-                    errors[MechValidationType.InvalidInventorySlots].Add(new Text(
-                        Control.Settings.Message.Flags_InvaildComponent, item.Def.Description.Name, item.Def.Description.UIName));
-
-                if (item.DamageLevel == ComponentDamageLevel.Destroyed && (f.NotBroken || f.NotDestroyed))
-                {
-                    errors[MechValidationType.StructureDestroyed].Add(new Text(
-                        Control.Settings.Message.Flags_DestroyedComponent, item.Def.Description.Name, item.Def.Description.UIName));
-                }
-
-                if (item.DamageLevel == ComponentDamageLevel.Penalized && f.NotBroken)
-                {
-                    errors[MechValidationType.StructureDestroyed].Add(new Text(
-                        Control.Settings.Message.Flags_DamagedComponent, item.Def.Description.Name, item.Def.Description.UIName));
-                }
+                errors[MechValidationType.StructureDestroyed].Add(new Text(
+                    Control.Settings.Message.Flags_DamagedComponent, item.Def.Description.Name, item.Def.Description.UIName));
             }
         }
+    }
 
-        public override string ToString()
-        {
-            var result = "";
-            if (Default)
-                result += "Default ";
-            if (NoRemove)
-                result += "NoRemove ";
-            if (Vital)
-                result += "Vital ";
-            if (AutoRepair)
-                result += "AutoRepair ";
-            if (HideFromInv)
-                result += "HideFromInv ";
-            if (NotBroken)
-                result += "NotBroken ";
-            if (NotDestroyed)
-                result += "NotDestroyed ";
-            if (Invalid)
-                result += "Invalid ";
-            if (NoSalvage)
-                result += "NoSalvage ";
+    public override string ToString()
+    {
+        var result = "";
+        if (Default)
+            result += "Default ";
+        if (NoRemove)
+            result += "NoRemove ";
+        if (Vital)
+            result += "Vital ";
+        if (AutoRepair)
+            result += "AutoRepair ";
+        if (HideFromInv)
+            result += "HideFromInv ";
+        if (NotBroken)
+            result += "NotBroken ";
+        if (NotDestroyed)
+            result += "NotDestroyed ";
+        if (Invalid)
+            result += "Invalid ";
+        if (NoSalvage)
+            result += "NoSalvage ";
 
-            return result;
-        }
+        return result;
     }
 }

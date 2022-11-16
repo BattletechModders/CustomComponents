@@ -1,9 +1,8 @@
 ﻿using BattleTech;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+public interface IIsDestroyed
 {
-    public interface IIsDestroyed
-    {
-        bool IsMechDestroyed(MechComponentRef item, MechDef mech);
-    }
+    bool IsMechDestroyed(MechComponentRef item, MechDef mech);
 }

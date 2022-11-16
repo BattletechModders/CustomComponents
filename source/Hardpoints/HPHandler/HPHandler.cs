@@ -4,82 +4,81 @@ using System.Linq;
 using BattleTech;
 using UnityEngine;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+public abstract class HPHandler : MonoBehaviour
 {
-    public abstract class HPHandler : MonoBehaviour
+    protected Dictionary<int, HardpointHelper> hardpoints;
+    protected JJHardpointHeler jjhardpoint;
+
+    // returns -1 if count can't be calculated
+    // also set by MechEngineer
+    public static Func<ChassisDef, int> GetJumpJetMaxByChassisDef { get; set; } = def => def?.MaxJumpjets ?? -1;
+    public static Func<MechDef, (int, int)> GetJumpJetStatsByMechDef { get; set; } = def =>
     {
-        protected Dictionary<int, HardpointHelper> hardpoints;
-        protected JJHardpointHeler jjhardpoint;
+        var max = def?.Chassis?.MaxJumpjets ?? -1;
+        var count = def?.Inventory.Count(i => i.ComponentDefType == ComponentType.JumpJet) ?? -1;
+        return (count, max);
+    };
 
-        // returns -1 if count can't be calculated
-        // also set by MechEngineer
-        public static Func<ChassisDef, int> GetJumpJetMaxByChassisDef { get; set; } = def => def?.MaxJumpjets ?? -1;
-        public static Func<MechDef, (int, int)> GetJumpJetStatsByMechDef { get; set; } = def =>
-        {
-            var max = def?.Chassis?.MaxJumpjets ?? -1;
-            var count = def?.Inventory.Count(i => i.ComponentDefType == ComponentType.JumpJet) ?? -1;
-            return (count, max);
-        };
+    internal void SetJJ(MechDef mechDef)
+    {
+        var (count, max) = GetJumpJetStatsByMechDef(mechDef);
+        jjhardpoint?.SetText(count, max);
+        jjhardpoint?.Show();
+    }
 
-        internal void SetJJ(MechDef mechDef)
+    internal void SetJJ(ChassisDef chassisDef)
+    {
+        if (jjhardpoint == null)
+            return;
+
+        var max = GetJumpJetMaxByChassisDef(chassisDef);
+        if (max >= 0)
         {
-            var (count, max) = GetJumpJetStatsByMechDef(mechDef);
-            jjhardpoint?.SetText(count, max);
-            jjhardpoint?.Show();
+            jjhardpoint.Show();
+            jjhardpoint?.SetText(max);
         }
-
-        internal void SetJJ(ChassisDef chassisDef)
+        else
         {
-            if (jjhardpoint == null)
-                return;
+            jjhardpoint.Hide();
+        }
+    }
 
-            var max = GetJumpJetMaxByChassisDef(chassisDef);
-            if (max >= 0)
+    internal void SetData(List<HPUsage> usage)
+    {
+        if (hardpoints == null)
+            return;
+
+        foreach (var widget in hardpoints)
+        {
+            var item = usage.FirstOrDefault(i => i.hpInfo.WeaponCategory.ID == widget.Key);
+            if (item != null)
             {
-                jjhardpoint.Show();
-                jjhardpoint?.SetText(max);
+                widget.Value.Show();
+                widget.Value.SetText(item.Used, item.Total);
             }
             else
-            {
-                jjhardpoint.Hide();
-            }
+                widget.Value.Hide();
         }
+    }
 
-        internal void SetData(List<HPUsage> usage)
+    internal void SetDataTotal(List<HPUsage> usage)
+    {
+        if (hardpoints == null)
+            return;
+
+
+        foreach (var widget in hardpoints)
         {
-            if (hardpoints == null)
-                return;
-
-            foreach (var widget in hardpoints)
+            var item = usage?.FirstOrDefault(i => i.hpInfo.WeaponCategory.ID == widget.Key);
+            if (item != null)
             {
-                var item = usage.FirstOrDefault(i => i.hpInfo.WeaponCategory.ID == widget.Key);
-                if (item != null)
-                {
-                    widget.Value.Show();
-                    widget.Value.SetText(item.Used, item.Total);
-                }
-                else
-                    widget.Value.Hide();
+                widget.Value.Show();
+                widget.Value.SetText(item.Total);
             }
-        }
-
-        internal void SetDataTotal(List<HPUsage> usage)
-        {
-            if (hardpoints == null)
-                return;
-
-
-            foreach (var widget in hardpoints)
-            {
-                var item = usage?.FirstOrDefault(i => i.hpInfo.WeaponCategory.ID == widget.Key);
-                if (item != null)
-                {
-                    widget.Value.Show();
-                    widget.Value.SetText(item.Total);
-                }
-                else
-                    widget.Value.Hide();
-            }
+            else
+                widget.Value.Hide();
         }
     }
 }

@@ -2,33 +2,32 @@
 using BattleTech.UI;
 using Harmony;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+[HarmonyPatch(typeof(MechLabInventoryWidget), nameof(MechLabInventoryWidget.ApplySorting))]
+internal static class MechLabInventoryWidget_ApplySorting_Patch
 {
-    [HarmonyPatch(typeof(MechLabInventoryWidget), nameof(MechLabInventoryWidget.ApplySorting))]
-    internal static class MechLabInventoryWidget_ApplySorting_Patch
+    private static Comparison<InventoryItemElement_NotListView> currentSort;
+    internal static void Prefix(MechLabInventoryWidget __instance)
     {
-        private static Comparison<InventoryItemElement_NotListView> currentSort;
-        internal static void Prefix(MechLabInventoryWidget __instance)
+        try
         {
-            try
+            if (__instance.currentSort == null)
             {
-                if (__instance.currentSort == null)
-                {
-                    return;
-                }
-
-                if (__instance.currentSort == currentSort)
-                {
-                    return;
-                }
-
-                currentSort = new InventorySorterNotListComparer(__instance.currentSort).Compare;
-                __instance.currentSort = currentSort;
+                return;
             }
-            catch (Exception e)
+
+            if (__instance.currentSort == currentSort)
             {
-                Log.Main.Error?.Log(e);
+                return;
             }
+
+            currentSort = new InventorySorterNotListComparer(__instance.currentSort).Compare;
+            __instance.currentSort = currentSort;
+        }
+        catch (Exception e)
+        {
+            Log.Main.Error?.Log(e);
         }
     }
 }

@@ -4,51 +4,50 @@ using BattleTech;
 using BattleTech.UI;
 using Localize;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+internal class TagRestrictionsHandler
 {
-    internal class TagRestrictionsHandler
+    internal static TagRestrictionsHandler Shared = new();
+
+    private Dictionary<string, TagRestrictions> _restrictions { get; set;  }
+    internal static Dictionary<string, TagRestrictions> Restrictions => Shared._restrictions;
+
+    internal void Setup(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
     {
-        internal static TagRestrictionsHandler Shared = new();
+        Log.CustomResource.Trace?.Log(" - TagRestriction");
+        _restrictions = SettingsResourcesTools.Enumerate<TagRestrictions>("CCTagRestrictions", customResources)
+            .ToDictionary(entry => entry.Tag);
 
-        private Dictionary<string, TagRestrictions> _restrictions { get; set;  }
-        internal static Dictionary<string, TagRestrictions> Restrictions => Shared._restrictions;
-
-        internal void Setup(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
+        if (Log.CustomResource.Debug != null)
         {
-            Log.CustomResource.Trace?.Log(" - TagRestriction");
-            _restrictions = SettingsResourcesTools.Enumerate<TagRestrictions>("CCTagRestrictions", customResources)
-                .ToDictionary(entry => entry.Tag);
-
-            if (Log.CustomResource.Debug != null)
+            foreach (var pair in _restrictions)
             {
-                foreach (var pair in _restrictions)
-                {
-                    Log.CustomResource.Debug.Log($" -- {pair.Key}");
-                }
+                Log.CustomResource.Debug.Log($" -- {pair.Key}");
             }
         }
+    }
 
-        internal bool ValidateMechCanBeFielded(MechDef mechDef)
-        {
-            var checker = new TagsChecker(mechDef);
-            return checker.Validate() == null;
-        }
+    internal bool ValidateMechCanBeFielded(MechDef mechDef)
+    {
+        var checker = new TagsChecker(mechDef);
+        return checker.Validate() == null;
+    }
 
-        internal void ValidateMech(Dictionary<MechValidationType, List<Text>> errors, MechValidationLevel validationLevel, MechDef mechDef)
-        {
-            var checker = new TagsChecker(mechDef);
-            checker.Validate(errors);
-        }
+    internal void ValidateMech(Dictionary<MechValidationType, List<Text>> errors, MechValidationLevel validationLevel, MechDef mechDef)
+    {
+        var checker = new TagsChecker(mechDef);
+        checker.Validate(errors);
+    }
 
-        public string ValidateDrop(MechLabItemSlotElement drop_item, ChassisLocations location)
-        {
-            var checker = new TagsChecker(MechLabHelper.CurrentMechLab.ActiveMech);
-            return checker.ValidateDrop(
-                Control.Settings.TagRestrictionDropValidateRequiredTags,
-                Control.Settings.TagRestrictionDropValidateIncompatibleTags,
-                drop_item.ComponentRef,
-                location
-            );
-        }
+    public string ValidateDrop(MechLabItemSlotElement drop_item, ChassisLocations location)
+    {
+        var checker = new TagsChecker(MechLabHelper.CurrentMechLab.ActiveMech);
+        return checker.ValidateDrop(
+            Control.Settings.TagRestrictionDropValidateRequiredTags,
+            Control.Settings.TagRestrictionDropValidateIncompatibleTags,
+            drop_item.ComponentRef,
+            location
+        );
     }
 }

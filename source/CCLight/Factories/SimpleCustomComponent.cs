@@ -1,8 +1,7 @@
 ﻿using BattleTech;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+public class SimpleCustomComponent : SimpleCustom<MechComponentDef>
 {
-    public class SimpleCustomComponent : SimpleCustom<MechComponentDef>
-    {
-    }
 }

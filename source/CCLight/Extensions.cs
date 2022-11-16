@@ -2,238 +2,237 @@
 using System;
 using System.Collections.Generic;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+public static class MechComponentDefExtensions
 {
-    public static class MechComponentDefExtensions
+    public static T GetComponent<T>(this MechComponentDef target)
     {
-        public static T GetComponent<T>(this MechComponentDef target)
-        {
-            return Database.GetCustom<T>(target);
-        }
-
-        public static IEnumerable<T> GetComponents<T>(this MechComponentDef target)
-        {
-            return Database.GetCustoms<T>(target);
-        }
-
-        public static bool Is<T>(this MechComponentDef target, out T res)
-        {
-            return Database.Is(target, out res);
-        }
-
-        public static bool Is<T>(this MechComponentDef target)
-        {
-            return Database.Is<T>(target);
-        }
-
-        public static T AddComponent<T>(this MechComponentDef target, T component) where T : ICustom
-        {
-            if (component is SimpleCustom<MechComponentDef> simple)
-            {
-                simple.Def = target;
-            }
-            Database.AddCustom(target, component);
-            return component;
-        }
-
-        public static T GetOrCreate<T>(this MechComponentDef target, Func<T> factory) where T : ICustom
-        {
-            var result = target.GetComponent<T>();
-            if ((result is ExtendedDetails.ExtendedDetails ed) && ed.Def != target.Description)
-            {
-                ed.Def = target.Description;
-            }
-            return result ?? target.AddComponent(factory.Invoke());
-        }
+        return Database.GetCustom<T>(target);
     }
 
-    public static class VehicleExtentions
+    public static IEnumerable<T> GetComponents<T>(this MechComponentDef target)
     {
-        public static T GetComponent<T>(this VehicleChassisDef target)
-        {
-            return Database.GetCustom<T>(target);
-        }
-
-        public static IEnumerable<T> GetComponents<T>(this VehicleChassisDef target)
-        {
-            return Database.GetCustoms<T>(target);
-        }
-
-        public static bool Is<T>(this VehicleChassisDef target, out T res)
-        {
-            return Database.Is(target, out res);
-        }
-
-        public static bool Is<T>(this VehicleChassisDef target)
-        {
-            return Database.Is<T>(target);
-        }
+        return Database.GetCustoms<T>(target);
     }
 
-    public static class MechDefExtensions
+    public static bool Is<T>(this MechComponentDef target, out T res)
     {
-        public static T GetComponent<T>(this MechDef target)
-        {
-            return Database.GetCustom<T>(target);
-        }
-
-        public static IEnumerable<T> GetComponents<T>(this MechDef target)
-        {
-            return Database.GetCustoms<T>(target);
-        }
-
-        public static bool Is<T>(this MechDef target, out T res)
-        {
-            return Database.Is(target, out res);
-        }
-
-        public static bool Is<T>(this MechDef target)
-        {
-            return Database.Is<T>(target);
-        }
-
-        public static bool IsBroken(this MechDef def)
-        {
-            try
-            {
-                if (def == null)
-                {
-                    Log.Main.Error?.Log("MECHDEF IS NULL!");
-                    return true;
-                }
-                if (def.Chassis == null)
-                {
-                    Log.Main.Error?.Log($"Chassis of {def.Description.Id} IS NULL!");
-                    return true;
-                }
-                if (def.MechTags == null)
-                {
-                    Log.Main.Error?.Log($"Mechtags of {def.Description.Id} IS NULL!");
-                    return true;
-                }
-                if (def.Chassis.ChassisTags == null)
-                {
-                    Log.Main.Error?.Log($"Chassistags of {def.Description.Id} IS NULL!");
-                    return true;
-                }
-
-                return false;
-            }
-            catch
-            {
-                Log.Main.Error?.Log("5.GOT NRE!!!!");
-                Log.Main.Error?.Log($"{def}");
-                return false;
-            }
-        }
+        return Database.Is(target, out res);
     }
 
-    public static class ChassisDefExtensions
+    public static bool Is<T>(this MechComponentDef target)
     {
-        public static T GetComponent<T>(this ChassisDef target)
-        {
-            return Database.GetCustom<T>(target);
-        }
-
-        public static IEnumerable<T> GetComponents<T>(this ChassisDef target)
-        {
-            return Database.GetCustoms<T>(target);
-        }
-
-        public static bool Is<T>(this ChassisDef target, out T res)
-        {
-            return Database.Is(target, out res);
-        }
-
-        public static bool Is<T>(this ChassisDef target)
-        {
-            return Database.Is<T>(target);
-        }
-
-        public static T AddComponent<T>(this ChassisDef target, T component) where T : ICustom
-        {
-            if (component is SimpleCustom<ChassisDef> simple)
-            {
-                simple.Def = target;
-            }
-            Database.AddCustom(target, component);
-            return component;
-        }
-
-        public static T GetOrCreate<T>(this ChassisDef target, Func<T> factory) where T : ICustom
-        {
-            var result = target.GetComponent<T>();
-            if ((result is ExtendedDetails.ExtendedDetails ed) && ed.Def != target.Description)
-            {
-                ed.Def = target.Description;
-            }
-
-            return result ?? target.AddComponent(factory.Invoke());
-        }
+        return Database.Is<T>(target);
     }
 
-    public static class MechComponentRefExtensions
+    public static T AddComponent<T>(this MechComponentDef target, T component) where T : ICustom
     {
-        public static T GetComponent<T>(this BaseComponentRef target)
+        if (component is SimpleCustom<MechComponentDef> simple)
         {
-            RefreshDef(target);
-            return target.Def.GetComponent<T>();
+            simple.Def = target;
         }
+        Database.AddCustom(target, component);
+        return component;
+    }
 
-        public static IEnumerable<T> GetComponents<T>(this BaseComponentRef target)
+    public static T GetOrCreate<T>(this MechComponentDef target, Func<T> factory) where T : ICustom
+    {
+        var result = target.GetComponent<T>();
+        if ((result is ExtendedDetails.ExtendedDetails ed) && ed.Def != target.Description)
         {
-            RefreshDef(target);
-            return target.Def.GetComponents<T>();
+            ed.Def = target.Description;
         }
+        return result ?? target.AddComponent(factory.Invoke());
+    }
+}
 
-        public static bool Is<T>(this BaseComponentRef target, out T res)
-        {
-            RefreshDef(target);
-            return target.Def.Is(out res);
-        }
+public static class VehicleExtentions
+{
+    public static T GetComponent<T>(this VehicleChassisDef target)
+    {
+        return Database.GetCustom<T>(target);
+    }
 
-        public static bool Is<T>(this BaseComponentRef target)
-        {
-            RefreshDef(target);
-            return target.Def.Is<T>();
-        }
+    public static IEnumerable<T> GetComponents<T>(this VehicleChassisDef target)
+    {
+        return Database.GetCustoms<T>(target);
+    }
 
-        internal static void RefreshDef(this BaseComponentRef target)
+    public static bool Is<T>(this VehicleChassisDef target, out T res)
+    {
+        return Database.Is(target, out res);
+    }
+
+    public static bool Is<T>(this VehicleChassisDef target)
+    {
+        return Database.Is<T>(target);
+    }
+}
+
+public static class MechDefExtensions
+{
+    public static T GetComponent<T>(this MechDef target)
+    {
+        return Database.GetCustom<T>(target);
+    }
+
+    public static IEnumerable<T> GetComponents<T>(this MechDef target)
+    {
+        return Database.GetCustoms<T>(target);
+    }
+
+    public static bool Is<T>(this MechDef target, out T res)
+    {
+        return Database.Is(target, out res);
+    }
+
+    public static bool Is<T>(this MechDef target)
+    {
+        return Database.Is<T>(target);
+    }
+
+    public static bool IsBroken(this MechDef def)
+    {
+        try
         {
-            if (target == null)
+            if (def == null)
             {
-                return;
+                Log.Main.Error?.Log("MECHDEF IS NULL!");
+                return true;
             }
-            if (target.Def != null)
+            if (def.Chassis == null)
             {
-                return;
+                Log.Main.Error?.Log($"Chassis of {def.Description.Id} IS NULL!");
+                return true;
             }
-            target.DataManager ??= UnityGameInstance.BattleTechGame.DataManager;
-            target.RefreshComponentDef();
+            if (def.MechTags == null)
+            {
+                Log.Main.Error?.Log($"Mechtags of {def.Description.Id} IS NULL!");
+                return true;
+            }
+            if (def.Chassis.ChassisTags == null)
+            {
+                Log.Main.Error?.Log($"Chassistags of {def.Description.Id} IS NULL!");
+                return true;
+            }
+
+            return false;
+        }
+        catch
+        {
+            Log.Main.Error?.Log("5.GOT NRE!!!!");
+            Log.Main.Error?.Log($"{def}");
+            return false;
+        }
+    }
+}
+
+public static class ChassisDefExtensions
+{
+    public static T GetComponent<T>(this ChassisDef target)
+    {
+        return Database.GetCustom<T>(target);
+    }
+
+    public static IEnumerable<T> GetComponents<T>(this ChassisDef target)
+    {
+        return Database.GetCustoms<T>(target);
+    }
+
+    public static bool Is<T>(this ChassisDef target, out T res)
+    {
+        return Database.Is(target, out res);
+    }
+
+    public static bool Is<T>(this ChassisDef target)
+    {
+        return Database.Is<T>(target);
+    }
+
+    public static T AddComponent<T>(this ChassisDef target, T component) where T : ICustom
+    {
+        if (component is SimpleCustom<ChassisDef> simple)
+        {
+            simple.Def = target;
+        }
+        Database.AddCustom(target, component);
+        return component;
+    }
+
+    public static T GetOrCreate<T>(this ChassisDef target, Func<T> factory) where T : ICustom
+    {
+        var result = target.GetComponent<T>();
+        if ((result is ExtendedDetails.ExtendedDetails ed) && ed.Def != target.Description)
+        {
+            ed.Def = target.Description;
         }
 
-        public static T GetComponent<T>(this MechComponentRef target)
-        {
-            RefreshDef(target);
-            return target.Def.GetComponent<T>();
-        }
+        return result ?? target.AddComponent(factory.Invoke());
+    }
+}
 
-        public static IEnumerable<T> GetComponents<T>(this MechComponentRef target)
-        {
-            RefreshDef(target);
-            return target.Def.GetComponents<T>();
-        }
+public static class MechComponentRefExtensions
+{
+    public static T GetComponent<T>(this BaseComponentRef target)
+    {
+        RefreshDef(target);
+        return target.Def.GetComponent<T>();
+    }
 
-        public static bool Is<T>(this MechComponentRef target, out T res)
-        {
-            RefreshDef(target);
-            return target.Def.Is(out res);
-        }
+    public static IEnumerable<T> GetComponents<T>(this BaseComponentRef target)
+    {
+        RefreshDef(target);
+        return target.Def.GetComponents<T>();
+    }
 
-        public static bool Is<T>(this MechComponentRef target)
+    public static bool Is<T>(this BaseComponentRef target, out T res)
+    {
+        RefreshDef(target);
+        return target.Def.Is(out res);
+    }
+
+    public static bool Is<T>(this BaseComponentRef target)
+    {
+        RefreshDef(target);
+        return target.Def.Is<T>();
+    }
+
+    internal static void RefreshDef(this BaseComponentRef target)
+    {
+        if (target == null)
         {
-            RefreshDef(target);
-            return target.Def.Is<T>();
+            return;
         }
+        if (target.Def != null)
+        {
+            return;
+        }
+        target.DataManager ??= UnityGameInstance.BattleTechGame.DataManager;
+        target.RefreshComponentDef();
+    }
+
+    public static T GetComponent<T>(this MechComponentRef target)
+    {
+        RefreshDef(target);
+        return target.Def.GetComponent<T>();
+    }
+
+    public static IEnumerable<T> GetComponents<T>(this MechComponentRef target)
+    {
+        RefreshDef(target);
+        return target.Def.GetComponents<T>();
+    }
+
+    public static bool Is<T>(this MechComponentRef target, out T res)
+    {
+        RefreshDef(target);
+        return target.Def.Is(out res);
+    }
+
+    public static bool Is<T>(this MechComponentRef target)
+    {
+        RefreshDef(target);
+        return target.Def.Is<T>();
     }
 }

@@ -3,21 +3,20 @@ using System.Collections.Generic;
 using BattleTech;
 using Harmony;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+[HarmonyPatch(typeof(SimGameState), "InitCompanyStats")]
+public static class SimGameState_InitCompanyStats_Patch
 {
-    [HarmonyPatch(typeof(SimGameState), "InitCompanyStats")]
-    public static class SimGameState_InitCompanyStats_Patch
+    public static void Postfix(SimGameState __instance)
     {
-        public static void Postfix(SimGameState __instance)
+        try
         {
-            try
-            {
-                AutoFixer.Shared.FixSavedMech(new List<MechDef>(), __instance);
-            }
-            catch (Exception e)
-            {
-                Log.Main.Error?.Log(e);
-            }
+            AutoFixer.Shared.FixSavedMech(new List<MechDef>(), __instance);
+        }
+        catch (Exception e)
+        {
+            Log.Main.Error?.Log(e);
         }
     }
 }

@@ -1,19 +1,18 @@
 ﻿using BattleTech.UI;
 using UnityEngine;
 
-namespace CustomComponents
-{
-    public interface IColorComponent
-    {
-        UIColor UIColor { get; }
-        Color RGBColor { get; }
-    }
+namespace CustomComponents;
 
-    public interface ITColorComponent
-    {
-        UIColor UIColor { get; }
-        Color RGBColor { get; }
-        bool SkipIcon { get; }
-        bool SkipText { get; }
-    }
+public interface IColorComponent
+{
+    UIColor UIColor { get; }
+    Color RGBColor { get; }
+}
+
+public interface ITColorComponent
+{
+    UIColor UIColor { get; }
+    Color RGBColor { get; }
+    bool SkipIcon { get; }
+    bool SkipText { get; }
 }

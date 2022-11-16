@@ -2,78 +2,77 @@
 using BattleTech;
 using BattleTech.UI;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+/// <summary>
+/// component limited to mech tonnage
+/// </summary>
+[CustomComponent("TonnageLimit")]
+public class TonnageLimited : SimpleCustomComponent, IMechLabFilter, IMechValidate, IPreValidateDrop
 {
     /// <summary>
-    /// component limited to mech tonnage
+    /// minimum allowed tonnage
     /// </summary>
-    [CustomComponent("TonnageLimit")]
-    public class TonnageLimited : SimpleCustomComponent, IMechLabFilter, IMechValidate, IPreValidateDrop
+    public int Min { get; set; }
+    /// <summary>
+    /// maximum allowed tonnage
+    /// </summary>
+    public int Max { get; set; }
+
+    public bool CheckFilter(MechLabPanel panel)
     {
-        /// <summary>
-        /// minimum allowed tonnage
-        /// </summary>
-        public int Min { get; set; }
-        /// <summary>
-        /// maximum allowed tonnage
-        /// </summary>
-        public int Max { get; set; }
-
-        public bool CheckFilter(MechLabPanel panel)
+        if (panel == null)
         {
-            if (panel == null)
-            {
-                Log.Main.Error?.Log("TonnageLimited.CheckFilter: MechLab is null");
-                return true;
-            }
-            if (panel.activeMechDef == null)
-            {
-                Log.Main.Error?.Log("TonnageLimited.CheckFilter: MechDef is null");
-                return true;
-            }
-            if (panel.activeMechDef.Chassis == null)
-            {
-                Log.Main.Error?.Log("TonnageLimited.CheckFilter: MechDef.Chassis is null");
-                return true;
-            }
-
-            var tonnage = panel.activeMechDef.Chassis.Tonnage;
-            return tonnage >= Min && tonnage <= Max;
+            Log.Main.Error?.Log("TonnageLimited.CheckFilter: MechLab is null");
+            return true;
+        }
+        if (panel.activeMechDef == null)
+        {
+            Log.Main.Error?.Log("TonnageLimited.CheckFilter: MechDef is null");
+            return true;
+        }
+        if (panel.activeMechDef.Chassis == null)
+        {
+            Log.Main.Error?.Log("TonnageLimited.CheckFilter: MechDef.Chassis is null");
+            return true;
         }
 
+        var tonnage = panel.activeMechDef.Chassis.Tonnage;
+        return tonnage >= Min && tonnage <= Max;
+    }
 
 
-        public string PreValidateDrop(MechLabItemSlotElement item, ChassisLocations location)
+
+    public string PreValidateDrop(MechLabItemSlotElement item, ChassisLocations location)
+    {
+        Log.ComponentInstall.Trace?.Log("-- TonnageLimit");
+        var tonnage = MechLabHelper.CurrentMechLab.ActiveMech.Chassis.Tonnage;
+
+
+        if (tonnage < Min ||
+            tonnage > Max)
         {
-            Log.ComponentInstall.Trace?.Log("-- TonnageLimit");
-            var tonnage = MechLabHelper.CurrentMechLab.ActiveMech.Chassis.Tonnage;
-
-
-            if (tonnage < Min ||
-                tonnage > Max)
-            {
-                if (Min == Max)
-                    return (new Localize.Text(Control.Settings.Message.Tonnage_AddAllow, item.ComponentRef.Def.Description.UIName, Min)).ToString();
-                else
-                    return (new Localize.Text(Control.Settings.Message.Tonnage_AddLimit, item.ComponentRef.Def.Description.UIName, Min, Max)).ToString();
-            }
-
-            return string.Empty;
+            if (Min == Max)
+                return (new Localize.Text(Control.Settings.Message.Tonnage_AddAllow, item.ComponentRef.Def.Description.UIName, Min)).ToString();
+            else
+                return (new Localize.Text(Control.Settings.Message.Tonnage_AddLimit, item.ComponentRef.Def.Description.UIName, Min, Max)).ToString();
         }
 
-        public void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
-        {
-            if (mechDef.Chassis.Tonnage < Min && mechDef.Chassis.Tonnage > Max)
+        return string.Empty;
+    }
 
-                if (Min == Max)
-                    errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(Control.Settings.Message.Tonnage_ValidateAllow, componentRef.Def.Description.UIName, Min));
-                else
-                    errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(Control.Settings.Message.Tonnage_ValidateLimit, componentRef.Def.Description.UIName, Min, Max));
-        }
+    public void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
+    {
+        if (mechDef.Chassis.Tonnage < Min && mechDef.Chassis.Tonnage > Max)
 
-        public bool ValidateMechCanBeFielded(MechDef mechDef, MechComponentRef componentRef)
-        {
-            return mechDef.Chassis.Tonnage >= Min && mechDef.Chassis.Tonnage <= Max;
-        }
+            if (Min == Max)
+                errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(Control.Settings.Message.Tonnage_ValidateAllow, componentRef.Def.Description.UIName, Min));
+            else
+                errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(Control.Settings.Message.Tonnage_ValidateLimit, componentRef.Def.Description.UIName, Min, Max));
+    }
+
+    public bool ValidateMechCanBeFielded(MechDef mechDef, MechComponentRef componentRef)
+    {
+        return mechDef.Chassis.Tonnage >= Min && mechDef.Chassis.Tonnage <= Max;
     }
 }

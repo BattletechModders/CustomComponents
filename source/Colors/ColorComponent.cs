@@ -2,44 +2,43 @@
 using fastJSON;
 using UnityEngine;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+/// <summary>
+/// component has specific color
+/// </summary>
+[CustomComponent("Color", group: "ColorType")]
+public class ColorComponent : SimpleCustomComponent, IColorComponent, IValueComponent<UIColor>
 {
     /// <summary>
-    /// component has specific color
+    /// color of component
     /// </summary>
-    [CustomComponent("Color", group: "ColorType")]
-    public class ColorComponent : SimpleCustomComponent, IColorComponent, IValueComponent<UIColor>
+    public UIColor UIColor { get; set; } = UIColor.Red;
+
+    [JsonIgnore]
+    public Color RGBColor => Color.black;
+
+    public void LoadValue(UIColor value)
     {
-        /// <summary>
-        /// color of component
-        /// </summary>
-        public UIColor UIColor { get; set; } = UIColor.Red;
-
-        [JsonIgnore]
-        public Color RGBColor => Color.black;
-
-        public void LoadValue(UIColor value)
-        {
-                UIColor = value;
-        }
+        UIColor = value;
     }
+}
 
 
+/// <summary>
+/// component has specific color
+/// </summary>
+[CustomComponent("TColor", group: "TColorType")]
+public class TColorComponent : SimpleCustomComponent, ITColorComponent
+{
     /// <summary>
-    /// component has specific color
+    /// color of component
     /// </summary>
-    [CustomComponent("TColor", group: "TColorType")]
-    public class TColorComponent : SimpleCustomComponent, ITColorComponent
-    {
-        /// <summary>
-        /// color of component
-        /// </summary>
-        public UIColor UIColor { get; set; }
+    public UIColor UIColor { get; set; }
 
-        [JsonIgnore]
-        public Color RGBColor => Color.white;
+    [JsonIgnore]
+    public Color RGBColor => Color.white;
 
-        public bool SkipIcon { get; set; } = false;
-        public bool SkipText { get; set; } = false;
-    }
+    public bool SkipIcon { get; set; } = false;
+    public bool SkipText { get; set; } = false;
 }

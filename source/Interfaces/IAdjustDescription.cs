@@ -1,7 +1,6 @@
-﻿namespace CustomComponents
+﻿namespace CustomComponents;
+
+public interface IAdjustDescription
 {
-    public interface IAdjustDescription
-    {
-        void AdjustDescription();
-    }
+    void AdjustDescription();
 }

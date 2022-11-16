@@ -5,42 +5,41 @@ using SVGImporter;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+public class JJHardpointHeler : HardpointHelper
 {
-    public class JJHardpointHeler : HardpointHelper
+    private GameObject go;
+
+    public JJHardpointHeler(GameObject jjgo, Transform jj)
     {
-        private GameObject go;
+        go = jjgo;
 
-        public JJHardpointHeler(GameObject jjgo, Transform jj)
-        {
-            go = jjgo;
+        uicolor = Control.Settings.HardpointJJTextAndIconColor;
 
-            uicolor = Control.Settings.HardpointJJTextAndIconColor;
-
-            Text = jjgo.GetComponentInChildren<LocalizableText>();
-            Icon = jjgo.GetComponentInChildren<SVGImage>();
-            BackImage = jjgo.GetComponent<Image>();
+        Text = jjgo.GetComponentInChildren<LocalizableText>();
+        Icon = jjgo.GetComponentInChildren<SVGImage>();
+        BackImage = jjgo.GetComponent<Image>();
 
 
-            TextColor = Text.GetComponent<UIColorRefTracker>();
-            IconColor = Icon.GetComponent<UIColorRefTracker>();
+        TextColor = Text.GetComponent<UIColorRefTracker>();
+        IconColor = Icon.GetComponent<UIColorRefTracker>();
 
-            var icon = jj.GetComponentInChildren<SVGImage>();
-            Tooltip = jjgo.GetComponent<HBSTooltip>();
+        var icon = jj.GetComponentInChildren<SVGImage>();
+        Tooltip = jjgo.GetComponent<HBSTooltip>();
 
 
-            init(icon.vectorGraphics, Control.Settings.ToolTips.JJCaption, Control.Settings.ToolTips.JJTooltip);
-        }
-        public override void Hide()
-        {
-            if (go.activeSelf)
-                go.SetActive(false);
-        }
+        init(icon.vectorGraphics, Control.Settings.ToolTips.JJCaption, Control.Settings.ToolTips.JJTooltip);
+    }
+    public override void Hide()
+    {
+        if (go.activeSelf)
+            go.SetActive(false);
+    }
 
-        public override void Show()
-        {
-            if (!go.activeSelf)
-                go.SetActive(true);
-        }
+    public override void Show()
+    {
+        if (!go.activeSelf)
+            go.SetActive(true);
     }
 }

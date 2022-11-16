@@ -1,34 +1,33 @@
 ﻿using BattleTech;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+public interface IAllowedLocations
 {
-    public interface IAllowedLocations
+    ChassisLocations GetLocationsFor(MechDef mech);
+}
+
+[CustomComponent("AllowedLocations")]
+public class EquipLocations: SimpleCustomComponent, IAllowedLocations
+{
+    internal string Tag { get; set; }
+
+    public ChassisLocations GetLocationsFor(MechDef mech)
     {
-        ChassisLocations GetLocationsFor(MechDef mech);
+        return EquipLocationController.Instance[mech, Def];
     }
+}
 
-    [CustomComponent("AllowedLocations")]
-    public class EquipLocations: SimpleCustomComponent, IAllowedLocations
-    {
-        internal string Tag { get; set; }
-
-        public ChassisLocations GetLocationsFor(MechDef mech)
-        {
-            return EquipLocationController.Instance[mech, Def];
-        }
-    }
-
-    public interface IChassisAllowedLocations
-    {
-        string Tag { get; }
-        ChassisLocations Locations { get;  }
-    }
+public interface IChassisAllowedLocations
+{
+    string Tag { get; }
+    ChassisLocations Locations { get;  }
+}
 
 
-    [CustomComponent("ChassisAllowedLocations", true)]
-    public class CEquipLocations : SimpleCustomChassis, IChassisAllowedLocations
-    {
-        public string Tag { get; set; }
-        public ChassisLocations Locations { get; set; }
-    }
+[CustomComponent("ChassisAllowedLocations", true)]
+public class CEquipLocations : SimpleCustomChassis, IChassisAllowedLocations
+{
+    public string Tag { get; set; }
+    public ChassisLocations Locations { get; set; }
 }

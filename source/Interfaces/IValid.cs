@@ -1,7 +1,6 @@
-﻿namespace CustomComponents
+﻿namespace CustomComponents;
+
+public interface IValid
 {
-    public interface IValid
-    {
-        bool Valid { get; }
-    }
+    bool Valid { get; }
 }

@@ -4,24 +4,22 @@ using System.Linq;
 using BattleTech;
 using Harmony;
 
-namespace CustomComponents.Patches
-{
+namespace CustomComponents.Patches;
 
-    [HarmonyPatch(typeof(SimGameState), "Rehydrate")]
-    public static class SimGameState_Rehydrate_Patch
+[HarmonyPatch(typeof(SimGameState), "Rehydrate")]
+public static class SimGameState_Rehydrate_Patch
+{
+    [HarmonyPostfix]
+    public static void FixMechInMechbay(SimGameState __instance, StatCollection ___companyStats, Dictionary<int, MechDef> ___ActiveMechs, Dictionary<int, MechDef> ___ReadyingMechs)
     {
-        [HarmonyPostfix]
-        public static void FixMechInMechbay(SimGameState __instance, StatCollection ___companyStats, Dictionary<int, MechDef> ___ActiveMechs, Dictionary<int, MechDef> ___ReadyingMechs)
+        try
         {
-            try
-            {
-                var mechDefs = ___ActiveMechs.Values.Union(___ReadyingMechs.Values).ToList();
-                AutoFixer.Shared.FixSavedMech(mechDefs, __instance);
-            }
-            catch (Exception e)
-            {
-                Log.Main.Error?.Log(e);
-            }
+            var mechDefs = ___ActiveMechs.Values.Union(___ReadyingMechs.Values).ToList();
+            AutoFixer.Shared.FixSavedMech(mechDefs, __instance);
+        }
+        catch (Exception e)
+        {
+            Log.Main.Error?.Log(e);
         }
     }
 }

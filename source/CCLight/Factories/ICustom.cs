@@ -1,6 +1,5 @@
-﻿namespace CustomComponents
+﻿namespace CustomComponents;
+
+public interface ICustom // only used for semantics
 {
-    public interface ICustom // only used for semantics
-    {
-    }
 }

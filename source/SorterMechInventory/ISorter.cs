@@ -1,7 +1,6 @@
-﻿namespace CustomComponents
+﻿namespace CustomComponents;
+
+public interface ISorter
 {
-    public interface ISorter
-    {
-         int Order { get; }
-    }
+    int Order { get; }
 }

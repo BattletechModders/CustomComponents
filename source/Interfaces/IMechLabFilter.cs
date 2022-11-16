@@ -1,9 +1,8 @@
 ﻿using BattleTech.UI;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+public interface IMechLabFilter
 {
-    public interface IMechLabFilter
-    {
-        bool CheckFilter(MechLabPanel panel);
-    }
+    bool CheckFilter(MechLabPanel panel);
 }

@@ -3,21 +3,20 @@ using BattleTech;
 using BattleTech.UI;
 using CustomComponents.Changes;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+/// <summary>
+/// component check if it can be dropped to this location
+/// </summary>
+public interface IReplaceValidateDrop
 {
     /// <summary>
-    /// component check if it can be dropped to this location
+    /// validation drop check
     /// </summary>
-    public interface IReplaceValidateDrop
-    {
-        /// <summary>
-        /// validation drop check
-        /// </summary>
-        /// <param name="widget">location, where check</param>
-        /// <param name="element">element being dragged</param>
-        /// <returns></returns>
-        string ReplaceValidateDrop(MechLabItemSlotElement drop_item, ChassisLocations location, Queue<IChange> changes);
-    }
-
-    public delegate string ReplaceValidateDropDelegate(MechLabItemSlotElement drop_item, ChassisLocations location, Queue<IChange> changes);
+    /// <param name="widget">location, where check</param>
+    /// <param name="element">element being dragged</param>
+    /// <returns></returns>
+    string ReplaceValidateDrop(MechLabItemSlotElement drop_item, ChassisLocations location, Queue<IChange> changes);
 }
+
+public delegate string ReplaceValidateDropDelegate(MechLabItemSlotElement drop_item, ChassisLocations location, Queue<IChange> changes);

@@ -3,52 +3,51 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text.RegularExpressions;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+public class FormulaEvaluator
 {
-    public class FormulaEvaluator
+    public static FormulaEvaluator Shared = new FormulaEvaluator();
+
+    private readonly DataTable table;
+    private FormulaEvaluator()
     {
-        public static FormulaEvaluator Shared = new FormulaEvaluator();
+        table =  new DataTable();
+        table.Columns.Add("column", typeof(double));
+        table.Rows.Add(1.0);
+    }
 
-        private readonly DataTable table;
-        private FormulaEvaluator()
+    private object Compute(string expr)
+    {
+        var value = table.Compute(expr, null);
+        return value != DBNull.Value ? value : null;
+    }
+
+    private static readonly Regex Regex = new Regex(@"(?:\[\[([^\]]+)\]\])", RegexOptions.Singleline | RegexOptions.Compiled);
+
+    public object Evaluate(string expression, Dictionary<string, string> variables = null)
+    {
+        if (variables != null)
         {
-            table =  new DataTable();
-            table.Columns.Add("column", typeof(double));
-            table.Rows.Add(1.0);
-        }
-
-        private object Compute(string expr)
-        {
-            var value = table.Compute(expr, null);
-            return value != DBNull.Value ? value : null;
-        }
-
-        private static readonly Regex Regex = new Regex(@"(?:\[\[([^\]]+)\]\])", RegexOptions.Singleline | RegexOptions.Compiled);
-
-        public object Evaluate(string expression, Dictionary<string, string> variables = null)
-        {
-            if (variables != null)
+            var keys = new HashSet<string>();
+            foreach (Match match in Regex.Matches(expression))
             {
-                var keys = new HashSet<string>();
-                foreach (Match match in Regex.Matches(expression))
-                {
-                    var key = match.Groups[1].Value;
-                    keys.Add(key);
-                }
-
-                foreach (var key in keys)
-                {
-                    if (!variables.TryGetValue(key, out var value))
-                    {
-                        value = "1"; // avoids division by zero issues
-                    }
-                    var placeholder = "[[" + key + "]]";
-                    //Control.mod.Logger.LogDebug($"key={key} value={value}");
-                    expression = expression.Replace(placeholder, value);
-                }
+                var key = match.Groups[1].Value;
+                keys.Add(key);
             }
 
-            return Compute(expression);
+            foreach (var key in keys)
+            {
+                if (!variables.TryGetValue(key, out var value))
+                {
+                    value = "1"; // avoids division by zero issues
+                }
+                var placeholder = "[[" + key + "]]";
+                //Control.mod.Logger.LogDebug($"key={key} value={value}");
+                expression = expression.Replace(placeholder, value);
+            }
         }
+
+        return Compute(expression);
     }
 }

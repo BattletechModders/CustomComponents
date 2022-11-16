@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+public interface IAfterLoad
 {
-    public interface IAfterLoad
-    {
-        void OnLoaded(Dictionary<string, object> values);
-    }
+    void OnLoaded(Dictionary<string, object> values);
 }

@@ -5,80 +5,79 @@ using Harmony;
 using SVGImporter;
 using UnityEngine;
 
-namespace CustomComponents.Patches
+namespace CustomComponents.Patches;
+
+[HarmonyPatch(typeof(MechLabItemSlotElement), "RefreshItemColor")]
+public static class MechLabSlotItem_RefreshItemColor
 {
-    [HarmonyPatch(typeof(MechLabItemSlotElement), "RefreshItemColor")]
-    public static class MechLabSlotItem_RefreshItemColor
+    [HarmonyPrefix]
+    public static bool ChangeColor(MechLabItemSlotElement __instance, UIColorRefTracker ___backgroundColor,
+        GameObject ___fixedEquipmentOverlay, IMechLabDropTarget ___dropParent,
+        UIColorRefTracker ___nameTextColor, UIColorRefTracker ___iconColor, SVGImage ___icon)
     {
-        [HarmonyPrefix]
-        public static bool ChangeColor(MechLabItemSlotElement __instance, UIColorRefTracker ___backgroundColor,
-            GameObject ___fixedEquipmentOverlay, IMechLabDropTarget ___dropParent,
-            UIColorRefTracker ___nameTextColor, UIColorRefTracker ___iconColor, SVGImage ___icon)
+
+        try
         {
+            ___backgroundColor.SetColor(__instance.ComponentRef);
 
-            try
+            if (__instance.ComponentRef.DamageLevel == ComponentDamageLevel.Functional)
+                ___nameTextColor.SetTColor(___iconColor, __instance.ComponentRef);
+            else
             {
-                ___backgroundColor.SetColor(__instance.ComponentRef);
+                ___iconColor.SetUIColor(UIColor.White);
+            }
 
-                if (__instance.ComponentRef.DamageLevel == ComponentDamageLevel.Functional)
-                    ___nameTextColor.SetTColor(___iconColor, __instance.ComponentRef);
-                else
+            if (___icon.vectorGraphics == null && Control.Settings.FixIcons &&
+                !string.IsNullOrEmpty(__instance.ComponentRef.Def.Description.Icon))
+            {
+                var loadrequest =
+                    UnityGameInstance.BattleTechGame.DataManager.CreateLoadRequest();
+                loadrequest.AddLoadRequest<SVGAsset>(BTLoadUtils.GetResourceType(nameof(BattleTechResourceType.SVGAsset)),
+                    __instance.ComponentRef.Def.Description.Icon,
+                    (id, icon) =>
+                    {
+                        if (icon != null) ___icon.vectorGraphics = icon;
+                    });
+                loadrequest.ProcessRequests();
+            }
+
+            var color_tracker = ___fixedEquipmentOverlay.GetComponent<UIColorRefTracker>();
+            // reset colors in case its a pooled item that was previously fixed
+            color_tracker.SetUIColor(Control.Settings.DefaultOverlayColor);
+
+            if (__instance.ComponentRef != null && __instance.ComponentRef.IsFixed)
+            {
+                var preinstalled = false;
+                if (___dropParent is MechLabLocationWidget widget)
                 {
-                    ___iconColor.SetUIColor(UIColor.White);
+                    preinstalled = __instance.ComponentRef.IsModuleFixed((widget.parentDropTarget as MechLabPanel).activeMechDef);
                 }
 
-                if (___icon.vectorGraphics == null && Control.Settings.FixIcons &&
-                    !string.IsNullOrEmpty(__instance.ComponentRef.Def.Description.Icon))
+                if (!Control.Settings.UseDefaultFixedColor)
                 {
-                    var loadrequest =
-                        UnityGameInstance.BattleTechGame.DataManager.CreateLoadRequest();
-                    loadrequest.AddLoadRequest<SVGAsset>(BTLoadUtils.GetResourceType(nameof(BattleTechResourceType.SVGAsset)),
-                        __instance.ComponentRef.Def.Description.Icon,
-                        (id, icon) =>
-                        {
-                            if (icon != null) ___icon.vectorGraphics = icon;
-                        });
-                    loadrequest.ProcessRequests();
-                }
-
-                var color_tracker = ___fixedEquipmentOverlay.GetComponent<UIColorRefTracker>();
-                // reset colors in case its a pooled item that was previously fixed
-                color_tracker.SetUIColor(Control.Settings.DefaultOverlayColor);
-
-                if (__instance.ComponentRef != null && __instance.ComponentRef.IsFixed)
-                {
-                    var preinstalled = false;
-                    if (___dropParent is MechLabLocationWidget widget)
-                    {
-                        preinstalled = __instance.ComponentRef.IsModuleFixed((widget.parentDropTarget as MechLabPanel).activeMechDef);
-                    }
-
-                    if (!Control.Settings.UseDefaultFixedColor)
-                    {
-                        ___fixedEquipmentOverlay.SetActive(true);
-                        color_tracker.colorRef.UIColor = UIColor.Custom;
-                        color_tracker.colorRef.color = preinstalled
-                            ? Control.Settings.PreinstalledOverlayColor
-                            : Control.Settings.DefaultFlagOverlayColor;
-                    }
-                    else
-                    {
-                        ___fixedEquipmentOverlay.SetActive(preinstalled);
-                    }
+                    ___fixedEquipmentOverlay.SetActive(true);
+                    color_tracker.colorRef.UIColor = UIColor.Custom;
+                    color_tracker.colorRef.color = preinstalled
+                        ? Control.Settings.PreinstalledOverlayColor
+                        : Control.Settings.DefaultFlagOverlayColor;
                 }
                 else
                 {
-                    ___fixedEquipmentOverlay.SetActive(false);
+                    ___fixedEquipmentOverlay.SetActive(preinstalled);
                 }
-                color_tracker.RefreshUIColors();
-
-                return false;
             }
-            catch (Exception e)
+            else
             {
-                Log.Main.Error?.Log(e);
-                return true;
+                ___fixedEquipmentOverlay.SetActive(false);
             }
+            color_tracker.RefreshUIColors();
+
+            return false;
+        }
+        catch (Exception e)
+        {
+            Log.Main.Error?.Log(e);
+            return true;
         }
     }
 }

@@ -1,16 +1,15 @@
 ﻿using BattleTech.UI;
 using Harmony;
 
-namespace CustomComponents.Patches
+namespace CustomComponents.Patches;
+
+// TODO implement based on Hardpoints
+[HarmonyPatch(typeof(MechLabPanel), "MechCanUseAmmo")]
+internal class MechLabPanel_MechCanUseAmmo_Patch
 {
-    // TODO implement based on Hardpoints
-    [HarmonyPatch(typeof(MechLabPanel), "MechCanUseAmmo")]
-    internal class MechLabPanel_MechCanUseAmmo_Patch
+    public static bool Prefix(ref bool __result)
     {
-        public static bool Prefix(ref bool __result)
-        {
-            __result = true;
-            return false;
-        }
+        __result = true;
+        return false;
     }
 }

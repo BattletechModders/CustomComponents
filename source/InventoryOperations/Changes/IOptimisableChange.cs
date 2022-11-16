@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace CustomComponents.Changes
+namespace CustomComponents.Changes;
+
+public interface IChange_Optimize : IChange_Apply
 {
-    public interface IChange_Optimize : IChange_Apply
-    {
-        void DoOptimization(List<IChange_Apply> current);
-    }
+    void DoOptimization(List<IChange_Apply> current);
 }

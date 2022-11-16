@@ -1,9 +1,8 @@
 ﻿using BattleTech;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+public class SimpleCustomChassis : SimpleCustom<ChassisDef>
 {
-    public class SimpleCustomChassis : SimpleCustom<ChassisDef>
-    {
         
-    }
 }

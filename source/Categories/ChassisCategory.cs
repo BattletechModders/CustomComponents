@@ -3,48 +3,46 @@ using BattleTech;
 using Newtonsoft.Json;
 using System.Linq;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+[CustomComponent("ChassisCategory", true)]
+public class ChassisCategory : SimpleCustomChassis, IAfterLoad
 {
-
-    [CustomComponent("ChassisCategory", true)]
-    public class ChassisCategory : SimpleCustomChassis, IAfterLoad
+    public class _record
     {
-        public class _record
+        public ChassisLocations Location { get; set; } = ChassisLocations.All;
+        public int Min { get; set; } = 0;
+        public int Max { get; set; } = -1;
+
+        public override bool Equals(object obj)
         {
-            public ChassisLocations Location { get; set; } = ChassisLocations.All;
-            public int Min { get; set; } = 0;
-            public int Max { get; set; } = -1;
+            var r = obj as _record;
+            if (r == null)
+                return false;
 
-            public override bool Equals(object obj)
-            {
-                var r = obj as _record;
-                if (r == null)
-                    return false;
-
-                return Location == r.Location;
-            }
-
-            public override int GetHashCode()
-            {
-                return Location.GetHashCode();
-            }
+            return Location == r.Location;
         }
 
-        public string CategoryID { get; set; }
-        private _record[] Limits { get; set; }
-
-        [JsonIgnore]
-        public Dictionary<ChassisLocations, CategoryLimit> LocationLimits { get; set; }
-
-        public void OnLoaded(Dictionary<string, object> values)
+        public override int GetHashCode()
         {
-            var desc = CategoryController.Shared.GetCategory(CategoryID);
-
-            if (Limits == null || Limits.Length == 0)
-                LocationLimits = new Dictionary<ChassisLocations, CategoryLimit>();
-            else
-                LocationLimits = Limits.Distinct().ToDictionary(i => i.Location, i => new CategoryLimit(i.Min, i.Max, desc?.ReplaceDefaultsFirst ?? true));
-
+            return Location.GetHashCode();
         }
+    }
+
+    public string CategoryID { get; set; }
+    private _record[] Limits { get; set; }
+
+    [JsonIgnore]
+    public Dictionary<ChassisLocations, CategoryLimit> LocationLimits { get; set; }
+
+    public void OnLoaded(Dictionary<string, object> values)
+    {
+        var desc = CategoryController.Shared.GetCategory(CategoryID);
+
+        if (Limits == null || Limits.Length == 0)
+            LocationLimits = new Dictionary<ChassisLocations, CategoryLimit>();
+        else
+            LocationLimits = Limits.Distinct().ToDictionary(i => i.Location, i => new CategoryLimit(i.Min, i.Max, desc?.ReplaceDefaultsFirst ?? true));
+
     }
 }

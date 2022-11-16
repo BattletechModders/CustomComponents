@@ -3,33 +3,32 @@ using BattleTech.UI;
 using Harmony;
 using System;
 
-namespace CustomComponents.Patches
+namespace CustomComponents.Patches;
+
+[HarmonyPatch(typeof(MechComponentDef), "GetUIColor")]
+internal static class MechComponentDef_GetUIColor
 {
-    [HarmonyPatch(typeof(MechComponentDef), "GetUIColor")]
-    internal static class MechComponentDef_GetUIColor
+
+    [HarmonyPostfix]
+    public static void Postfix(MechComponentDef componentDef,
+        ref UIColor __result)
     {
-
-        [HarmonyPostfix]
-        public static void Postfix(MechComponentDef componentDef,
-            ref UIColor __result)
+        try
         {
-            try
+            var f = componentDef.Flags<CCFlags>();
+            if (f.Invalid)
             {
-                var f = componentDef.Flags<CCFlags>();
-                    if (f.Invalid)
-                    {
-                        __result = Control.Settings.InvalidFlagBackgroundColor;
-                    }
-                    else if (f.Default)
-                    {
-                        __result = Control.Settings.DefaultFlagBackgroundColor;
-                    }
+                __result = Control.Settings.InvalidFlagBackgroundColor;
             }
-            catch (Exception e)
+            else if (f.Default)
             {
-                Log.Main.Error?.Log(e);
+                __result = Control.Settings.DefaultFlagBackgroundColor;
             }
-
         }
+        catch (Exception e)
+        {
+            Log.Main.Error?.Log(e);
+        }
+
     }
 }

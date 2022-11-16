@@ -1,7 +1,6 @@
-﻿namespace CustomComponents
+﻿namespace CustomComponents;
+
+public interface IDefaultComponent
 {
-    public interface IDefaultComponent
-    {
         
-    }
 }

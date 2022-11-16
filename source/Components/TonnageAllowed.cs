@@ -2,50 +2,49 @@
 using BattleTech;
 using BattleTech.UI;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+[CustomComponent("TonnageAllowed")]
+public class TonnageAllowed : SimpleCustomComponent, IMechLabFilter, IMechValidate, IPreValidateDrop, IValueComponent<int>
 {
-    [CustomComponent("TonnageAllowed")]
-    public class TonnageAllowed : SimpleCustomComponent, IMechLabFilter, IMechValidate, IPreValidateDrop, IValueComponent<int>
+    public int Tonnage { get; set; }
+
+    public bool CheckFilter(MechLabPanel panel)
     {
-        public int Tonnage { get; set; }
+        var tonnage = panel.activeMechDef.Chassis.Tonnage;
+        return Tonnage == tonnage;
+    }
 
-        public bool CheckFilter(MechLabPanel panel)
+
+    public string PreValidateDrop(MechLabItemSlotElement item, ChassisLocations location)
+    {
+        Log.ComponentInstall.Trace?.Log("-- TonnageAllowed");
+        var tonnage = MechLabHelper.CurrentMechLab.ActiveMech.Chassis.Tonnage;
+        if (tonnage != Tonnage)
         {
-            var tonnage = panel.activeMechDef.Chassis.Tonnage;
-            return Tonnage == tonnage;
+            return (new Localize.Text(Control.Settings.Message.Tonnage_AddAllow, item.ComponentRef.Def.Description.UIName, Tonnage)).ToString();
         }
 
+        return string.Empty;
+    }
 
-        public string PreValidateDrop(MechLabItemSlotElement item, ChassisLocations location)
+    public void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
+    {
+        if (mechDef.Chassis.Tonnage != Tonnage)
         {
-            Log.ComponentInstall.Trace?.Log("-- TonnageAllowed");
-            var tonnage = MechLabHelper.CurrentMechLab.ActiveMech.Chassis.Tonnage;
-            if (tonnage != Tonnage)
-            {
-                return (new Localize.Text(Control.Settings.Message.Tonnage_AddAllow, item.ComponentRef.Def.Description.UIName, Tonnage)).ToString();
-            }
-
-            return string.Empty;
+            errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(Control.Settings.Message.Tonnage_ValidateAllow, componentRef.Def.Description.UIName, Tonnage));
         }
-
-        public void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
-        {
-            if (mechDef.Chassis.Tonnage != Tonnage)
-            {
-                errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(Control.Settings.Message.Tonnage_ValidateAllow, componentRef.Def.Description.UIName, Tonnage));
-            }
-        }
+    }
 
 
-        public bool ValidateMechCanBeFielded(MechDef mechDef, MechComponentRef componentRef)
-        {
-            return mechDef.Chassis.Tonnage == Tonnage;
-        }
+    public bool ValidateMechCanBeFielded(MechDef mechDef, MechComponentRef componentRef)
+    {
+        return mechDef.Chassis.Tonnage == Tonnage;
+    }
 
 
-        public void LoadValue(int value)
-        {
-            Tonnage = value;
-        }
+    public void LoadValue(int value)
+    {
+        Tonnage = value;
     }
 }

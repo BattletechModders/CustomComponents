@@ -1,10 +1,9 @@
 ﻿using BattleTech;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+public interface IUnitType
 {
-    public interface IUnitType
-    {
-        public string Name { get; }
-        public bool IsThisType(MechDef mechdef);
-    }
+    public string Name { get; }
+    public bool IsThisType(MechDef mechdef);
 }

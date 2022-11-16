@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+public interface IPreProcessor
 {
-    public interface IPreProcessor
-    {
-        void PreProcess(object target, Dictionary<string, object> values);
-    }
+    void PreProcess(object target, Dictionary<string, object> values);
 }

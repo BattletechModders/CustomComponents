@@ -3,34 +3,33 @@ using System.Collections.Generic;
 using BattleTech.UI;
 using Harmony;
 
-namespace CustomComponents
+namespace CustomComponents;
+
+[HarmonyPatch(typeof(MechLabLocationWidget), "SetData")]
+public static class MechLabLocationWidget_SetData_Patch
 {
-    [HarmonyPatch(typeof(MechLabLocationWidget), "SetData")]
-    public static class MechLabLocationWidget_SetData_Patch
+    public static void Postfix(List<MechLabItemSlotElement> ___localInventory)
     {
-        public static void Postfix(List<MechLabItemSlotElement> ___localInventory)
+        try
         {
-            try
-            {
-                SortWidgetInventory(___localInventory);
-            }
-            catch (Exception e)
-            {
-                Log.Main.Error?.Log(e);
-            }
+            SortWidgetInventory(___localInventory);
         }
-
-        internal static void SortWidgetInventory(List<MechLabItemSlotElement> inventory)
+        catch (Exception e)
         {
-            SorterUtils.SortWidgetInventory(inventory);
+            Log.Main.Error?.Log(e);
+        }
+    }
 
-            for (var index = 0; index < inventory.Count; index++)
-            {
-                var element = inventory[index];
-                element.gameObject.transform.SetSiblingIndex(index);
+    internal static void SortWidgetInventory(List<MechLabItemSlotElement> inventory)
+    {
+        SorterUtils.SortWidgetInventory(inventory);
 
-                // Control.Log($"id={element.ComponentRef.Def.Description.Id} index={index}");
-            }
+        for (var index = 0; index < inventory.Count; index++)
+        {
+            var element = inventory[index];
+            element.gameObject.transform.SetSiblingIndex(index);
+
+            // Control.Log($"id={element.ComponentRef.Def.Description.Id} index={index}");
         }
     }
 }

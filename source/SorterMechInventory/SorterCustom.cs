@@ -1,12 +1,11 @@
-﻿namespace CustomComponents
+﻿namespace CustomComponents;
+
+[CustomComponent("Sorter")]
+public class SorterCustom : SimpleCustomComponent, ISorter, IValueComponent<int>
 {
-    [CustomComponent("Sorter")]
-    public class SorterCustom : SimpleCustomComponent, ISorter, IValueComponent<int>
+    public int Order { get; set; }
+    public void LoadValue(int value)
     {
-        public int Order { get; set; }
-        public void LoadValue(int value)
-        {
-            Order = value;
-        }
+        Order = value;
     }
 }
