@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace CustomComponents;
 
-[SerializeField]
 public struct CCColor
 {
     public byte R;
@@ -20,7 +19,6 @@ public struct CCColor
     }
 }
 
-[SerializeField]
 public struct TagColor
 {
     public string Color { get; set; }
@@ -33,38 +31,6 @@ public struct TagColor
         return UnityEngine.Color.magenta;
     }
 }
-
-[Flags]
-
-public enum DType
-{
-    NONE = 0,
-    SalvageProccess = 1,
-    Hardpoints = 1 << 1,
-    DefaultsBuild = 1 << 2,
-    ComponentInstall = 1 << 3,
-    MechValidation = 1 << 4,
-    CCLoading = 1 << 5,
-    CCLoadingSummary = 1 << 6,
-    InstallCost = 1 << 7,
-    FixedCheck = 1 << 8,
-    DefaultHandle = 1 << 9,
-    ClearInventory = 1 << 10,
-    CustomResource = 1 << 11,
-    Flags = 1 << 12,
-    AutoFix = 1 << 13,
-    Filter = 1 << 14,
-    Color = 1 << 15,
-    Icons = 1 << 16,
-    AutoFixFAKE = 1 << 17,
-    AutoFixBase = 1 << 18,
-    InventoryOperaions = 1 << 19,
-    AutofixValidate = 1 << 20,
-    UnitType = 1 << 21,
-    WeaponDefaults = 1 << 22,
-    FULL = 0xffffff,
-}
-
 
 [Serializable]
 public class Tooltips

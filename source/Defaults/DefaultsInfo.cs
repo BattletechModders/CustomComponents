@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace CustomComponents;
 
-[SerializeField]
 public class DefaultsInfoRecord
 {
     public ChassisLocations Location { get; set; } = ChassisLocations.None;
@@ -36,8 +35,6 @@ public class UnitTypeDefaultsRecord
     }
 }
 
-
-[SerializeField]
 public class DefaultsInfo
 {
     public string CategoryID { get; set; }
