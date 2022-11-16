@@ -2,7 +2,6 @@
 using BattleTech.UI;
 using Harmony;
 
-
 namespace CustomComponents.Patches;
 
 [HarmonyPatch(typeof(MechLabPanel))]

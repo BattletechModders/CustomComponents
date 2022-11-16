@@ -1,10 +1,10 @@
-﻿using BattleTech;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using BattleTech;
 using BattleTech.UI;
 using Harmony;
 using HBS.Collections;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
 
 namespace CustomComponents;
 

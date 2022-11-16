@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using BattleTech;
 using BattleTech.UI;
+using Localize;
 
 namespace CustomComponents;
 
@@ -53,22 +54,22 @@ public class TonnageLimited : SimpleCustomComponent, IMechLabFilter, IMechValida
             tonnage > Max)
         {
             if (Min == Max)
-                return (new Localize.Text(Control.Settings.Message.Tonnage_AddAllow, item.ComponentRef.Def.Description.UIName, Min)).ToString();
+                return (new Text(Control.Settings.Message.Tonnage_AddAllow, item.ComponentRef.Def.Description.UIName, Min)).ToString();
             else
-                return (new Localize.Text(Control.Settings.Message.Tonnage_AddLimit, item.ComponentRef.Def.Description.UIName, Min, Max)).ToString();
+                return (new Text(Control.Settings.Message.Tonnage_AddLimit, item.ComponentRef.Def.Description.UIName, Min, Max)).ToString();
         }
 
         return string.Empty;
     }
 
-    public void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
+    public void ValidateMech(Dictionary<MechValidationType, List<Text>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
     {
         if (mechDef.Chassis.Tonnage < Min && mechDef.Chassis.Tonnage > Max)
 
             if (Min == Max)
-                errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(Control.Settings.Message.Tonnage_ValidateAllow, componentRef.Def.Description.UIName, Min));
+                errors[MechValidationType.InvalidInventorySlots].Add(new Text(Control.Settings.Message.Tonnage_ValidateAllow, componentRef.Def.Description.UIName, Min));
             else
-                errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(Control.Settings.Message.Tonnage_ValidateLimit, componentRef.Def.Description.UIName, Min, Max));
+                errors[MechValidationType.InvalidInventorySlots].Add(new Text(Control.Settings.Message.Tonnage_ValidateLimit, componentRef.Def.Description.UIName, Min, Max));
     }
 
     public bool ValidateMechCanBeFielded(MechDef mechDef, MechComponentRef componentRef)

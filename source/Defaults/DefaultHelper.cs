@@ -1,9 +1,8 @@
-﻿using BattleTech;
+﻿using System.Collections.Generic;
+using System.Linq;
+using BattleTech;
 using BattleTech.UI;
 using CustomComponents.Changes;
-using System.Collections.Generic;
-using System.Linq;
-
 
 namespace CustomComponents;
 

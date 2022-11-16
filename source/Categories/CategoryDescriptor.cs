@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 using BattleTech;
-using fastJSON;
+using Newtonsoft.Json;
 
 namespace CustomComponents;
 
@@ -73,7 +73,7 @@ public class CategoryDescriptorRecord
 
     public bool PartialOverride = false;
 
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public Dictionary<ChassisLocations, CategoryLimit> LocationLimits;
 
     public CategoryDescriptorRecord()
@@ -85,9 +85,9 @@ public class CategoryDescriptorRecord
         Limits = baseLimits;
     }
 
-    [Newtonsoft.Json.JsonIgnore] public bool MinLimited { get; set; }
-    [Newtonsoft.Json.JsonIgnore] public bool MaxLimited { get; set; }
-    [Newtonsoft.Json.JsonIgnore] public bool Limited => MaxLimited || MinLimited;
+    [JsonIgnore] public bool MinLimited { get; set; }
+    [JsonIgnore] public bool MaxLimited { get; set; }
+    [JsonIgnore] public bool Limited => MaxLimited || MinLimited;
 
 
     public void Complete(CategoryDescriptor cat_info)
@@ -120,7 +120,7 @@ public class CategoryDescriptor
 {
     public string DisplayName = "";
     public string Name { get; set; }
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public string _DisplayName
     {
         get => string.IsNullOrEmpty(DisplayName) ? Name : DisplayName;
@@ -145,12 +145,12 @@ public class CategoryDescriptor
     public string ValidateMixed = null;
 
 
-    [JsonIgnore]
+    [fastJSON.JsonIgnore]
     public CategoryDescriptorRecord DefaultLimits { get; set; }
 
     private CategoryDescriptorRecord._record[] BaseLimits { get; set; }
     public List<CategoryDescriptorRecord> UnitLimits = new List<CategoryDescriptorRecord>();
-    [Newtonsoft.Json.JsonIgnore] private Dictionary<string, CategoryDescriptorRecord> records = new Dictionary<string, CategoryDescriptorRecord>();
+    [JsonIgnore] private Dictionary<string, CategoryDescriptorRecord> records = new Dictionary<string, CategoryDescriptorRecord>();
 
     public CategoryDescriptorRecord this[MechDef mech]
     {

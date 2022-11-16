@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Text;
 using BattleTech;
-using HBS.Collections;
 using Harmony;
+using HBS.Collections;
 
 namespace CustomComponents;
 

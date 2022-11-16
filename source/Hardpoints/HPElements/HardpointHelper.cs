@@ -7,7 +7,6 @@ using SVGImporter;
 using UnityEngine;
 using UnityEngine.UI;
 using Text = Localize.Text;
-using UIColor = BattleTech.UI.UIColor;
 
 namespace CustomComponents;
 

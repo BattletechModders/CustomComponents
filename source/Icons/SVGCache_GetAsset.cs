@@ -1,7 +1,7 @@
-﻿using BattleTech.Data;
+﻿using System;
+using BattleTech.Data;
 using Harmony;
 using SVGImporter;
-using System;
 
 namespace CustomComponents.Icons;
 

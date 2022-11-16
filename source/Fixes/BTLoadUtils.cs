@@ -1,6 +1,6 @@
-﻿using BattleTech;
+﻿using System;
+using BattleTech;
 using BattleTech.Data;
-using System;
 
 namespace CustomComponents;
 

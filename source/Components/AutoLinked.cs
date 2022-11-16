@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using BattleTech;
 using System.Linq;
+using BattleTech;
 using CustomComponents.Changes;
 using Localize;
 

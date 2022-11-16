@@ -1,7 +1,8 @@
-﻿using BattleTech;
-using BattleTech.UI;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using BattleTech;
+using BattleTech.UI;
+using Localize;
 
 namespace CustomComponents;
 
@@ -109,7 +110,7 @@ public static class Validator
         if (lhelper.widget.loadout.CurrentInternalStructure <= 0f)
         {
             // 0 - item Name, 1 - Location name, 2 - item.uiname
-            return new Localize.Text(Control.Settings.Message.Base_LocationDestroyed, component.Description.Name, lhelper.LocationName, component.Description.UIName).ToString();
+            return new Text(Control.Settings.Message.Base_LocationDestroyed, component.Description.Name, lhelper.LocationName, component.Description.UIName).ToString();
         }
 
         return string.Empty;
@@ -126,7 +127,7 @@ public static class Validator
         foreach(var record in items_by_location)
         {
             if (record.size > mechDef.Chassis.GetLocationDef(record.location).InventorySlots)
-                return (new Localize.Text(Control.Settings.Message.Base_AddInventorySize,drop_item.ComponentRef.Def.Description.Name, record.location)).ToString();
+                return (new Text(Control.Settings.Message.Base_AddInventorySize,drop_item.ComponentRef.Def.Description.Name, record.location)).ToString();
         }
 
         return string.Empty;
@@ -142,7 +143,7 @@ public static class Validator
     }
 
 
-    internal static void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors,
+    internal static void ValidateMech(Dictionary<MechValidationType, List<Text>> errors,
         MechValidationLevel validationLevel, MechDef mechDef)
     {
         foreach (var validator in mech_validators)
@@ -159,7 +160,7 @@ public static class Validator
         {
             if (mechDef.GetChassisLocationDef(size.location).InventorySlots < size.size)
             {
-                errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text($"{size.location} no space left, remove excess equipment"));
+                errors[MechValidationType.InvalidInventorySlots].Add(new Text($"{size.location} no space left, remove excess equipment"));
             }
         }
     }

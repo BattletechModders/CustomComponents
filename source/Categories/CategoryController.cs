@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 using BattleTech.UI;
+using Localize;
 
 namespace CustomComponents;
 /// <summary>
@@ -79,7 +80,7 @@ public class CategoryController
     }
 
 
-    internal void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors,
+    internal void ValidateMech(Dictionary<MechValidationType, List<Text>> errors,
         MechValidationLevel validationLevel, MechDef mechDef)
     {
 
@@ -128,7 +129,7 @@ public class CategoryController
                     var count = items == null ? 0 : items.Where(i => pair.Key.HasFlag(i.location)).Sum(i => i.num);
 
                     if (count < pair.Value.Min)
-                        errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(category.ValidateMinimum,
+                        errors[MechValidationType.InvalidInventorySlots].Add(new Text(category.ValidateMinimum,
                             category._DisplayName, pair.Value.Min, count, mechDef.Description.UIName,
                             mechDef.Description.Name, pair.Key == ChassisLocations.All ? "All Locations" : pair.Key.ToString()));
                 }
@@ -138,7 +139,7 @@ public class CategoryController
                     var count = items == null ? 0 : items.Where(i => pair.Key.HasFlag(i.location)).Sum(i => i.num);
 
                     if (count > pair.Value.Max)
-                        errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(category.ValidateMaximum,
+                        errors[MechValidationType.InvalidInventorySlots].Add(new Text(category.ValidateMaximum,
                             category._DisplayName, pair.Value.Max, count, mechDef.Description.UIName,
                             mechDef.Description.Name, pair.Key == ChassisLocations.All ? "All Locations" : pair.Key.ToString()));
                 }
@@ -164,7 +165,7 @@ public class CategoryController
                     bool mixed = pair.Value.Any(i => i.mix != "*" && i.mix != null && i.mix != first_tag);
                     if (mixed)
                     {
-                        errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(pair.Key.ValidateMixed,
+                        errors[MechValidationType.InvalidInventorySlots].Add(new Text(pair.Key.ValidateMixed,
                             pair.Key._DisplayName));
                     }
                 }
@@ -303,7 +304,7 @@ public class CategoryController
                     var count = items == null ? 0 : items.Where(i => pair.Key.HasFlag(i.location)).Sum(i => i.num);
 
                     if (count < pair.Value.Min)
-                        return (new Localize.Text(category.ValidateMinimum,
+                        return (new Text(category.ValidateMinimum,
                             category._DisplayName, pair.Value.Min, count, mechDef.Description.UIName,
                             mechDef.Description.Name, pair.Key == ChassisLocations.All ? "All Locations" : pair.Key.ToString())).ToString();
                 }
@@ -313,7 +314,7 @@ public class CategoryController
                     var count = items == null ? 0 : items.Where(i => pair.Key.HasFlag(i.location)).Sum(i => i.num);
 
                     if (count > pair.Value.Max)
-                        return (new Localize.Text(category.ValidateMaximum,
+                        return (new Text(category.ValidateMaximum,
                             category._DisplayName, pair.Value.Max, count, mechDef.Description.UIName,
                             mechDef.Description.Name, pair.Key == ChassisLocations.All ? "All Locations" : pair.Key.ToString())).ToString();
                 }
@@ -340,7 +341,7 @@ public class CategoryController
                 bool mixed = pair.Value.Any(i => i.mix != "*" && i.mix != null && i.mix != first_tag);
                 if (mixed)
                 {
-                    return (new Localize.Text(pair.Key.ValidateMixed,
+                    return (new Text(pair.Key.ValidateMixed,
                         pair.Key._DisplayName)).ToString();
                 }
             }

@@ -1,7 +1,7 @@
-﻿using BattleTech.Data;
+﻿using System.Collections.Generic;
+using BattleTech.Data;
 using BattleTech.UI;
 using Harmony;
-using System.Collections.Generic;
 
 namespace CustomComponents;
 

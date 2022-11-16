@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using BattleTech;
+using Localize;
 
 namespace CustomComponents;
 
@@ -14,7 +15,7 @@ public interface IMechValidate
     /// <param name="errors">list of errors</param>
     /// <param name="validationLevel">level of validation</param>
     /// <param name="mechDef">mech to check</param>
-    void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors,
+    void ValidateMech(Dictionary<MechValidationType, List<Text>> errors,
         MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef);
 
     bool ValidateMechCanBeFielded(MechDef mechDef, MechComponentRef componentRef);
@@ -26,7 +27,7 @@ public interface IMechValidate
 /// <param name="errors">list of errors</param>
 /// <param name="validationLevel">level of validation</param>
 /// <param name="mechDef">mech to validate</param>
-public delegate void ValidateMechDelegate(Dictionary<MechValidationType, List<Localize.Text>> errors,
+public delegate void ValidateMechDelegate(Dictionary<MechValidationType, List<Text>> errors,
     MechValidationLevel validationLevel, MechDef mechDef);
 
 

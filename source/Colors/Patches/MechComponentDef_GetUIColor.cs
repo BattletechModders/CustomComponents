@@ -1,7 +1,7 @@
-﻿using BattleTech;
+﻿using System;
+using BattleTech;
 using BattleTech.UI;
 using Harmony;
-using System;
 
 namespace CustomComponents.Patches;
 

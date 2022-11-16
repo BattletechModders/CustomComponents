@@ -1,5 +1,5 @@
-﻿using BattleTech.UI;
-using BattleTech;
+﻿using BattleTech;
+using BattleTech.UI;
 
 namespace CustomComponents;
 

@@ -1,6 +1,6 @@
-﻿using BattleTech;
+﻿using System;
+using BattleTech;
 using Harmony;
-using System;
 
 namespace CustomComponents.Fixes;
 

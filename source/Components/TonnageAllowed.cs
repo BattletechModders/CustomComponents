@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using BattleTech;
 using BattleTech.UI;
+using Localize;
 
 namespace CustomComponents;
 
@@ -22,17 +23,17 @@ public class TonnageAllowed : SimpleCustomComponent, IMechLabFilter, IMechValida
         var tonnage = MechLabHelper.CurrentMechLab.ActiveMech.Chassis.Tonnage;
         if (tonnage != Tonnage)
         {
-            return (new Localize.Text(Control.Settings.Message.Tonnage_AddAllow, item.ComponentRef.Def.Description.UIName, Tonnage)).ToString();
+            return (new Text(Control.Settings.Message.Tonnage_AddAllow, item.ComponentRef.Def.Description.UIName, Tonnage)).ToString();
         }
 
         return string.Empty;
     }
 
-    public void ValidateMech(Dictionary<MechValidationType, List<Localize.Text>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
+    public void ValidateMech(Dictionary<MechValidationType, List<Text>> errors, MechValidationLevel validationLevel, MechDef mechDef, MechComponentRef componentRef)
     {
         if (mechDef.Chassis.Tonnage != Tonnage)
         {
-            errors[MechValidationType.InvalidInventorySlots].Add(new Localize.Text(Control.Settings.Message.Tonnage_ValidateAllow, componentRef.Def.Description.UIName, Tonnage));
+            errors[MechValidationType.InvalidInventorySlots].Add(new Text(Control.Settings.Message.Tonnage_ValidateAllow, componentRef.Def.Description.UIName, Tonnage));
         }
     }
 

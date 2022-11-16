@@ -1,6 +1,6 @@
-﻿using BattleTech;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using BattleTech;
 
 namespace CustomComponents;
 

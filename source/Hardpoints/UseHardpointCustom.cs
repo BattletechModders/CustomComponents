@@ -4,6 +4,7 @@ using BattleTech;
 using BattleTech.UI;
 using CustomComponents.Changes;
 using CustomComponents.ExtendedDetails;
+using Localize;
 
 namespace CustomComponents;
 
@@ -81,7 +82,7 @@ public class UseHardpointCustom : SimpleCustomComponent, IValueComponent<string>
         if (lhepler.HardpointsUsage.All(i => !i.hpInfo.CompatibleID.Contains(WeaponCategory.ID)))
         {
             var mech = MechLabHelper.CurrentMechLab.ActiveMech;
-            return new Localize.Text(Control.Settings.Message.Base_AddNoHardpoints, mech.Description.UIName,
+            return new Text(Control.Settings.Message.Base_AddNoHardpoints, mech.Description.UIName,
                 Def.Description.Name, Def.Description.UIName, WeaponCategory.Name, WeaponCategory.FriendlyName,
                 location
             ).ToString();
@@ -133,7 +134,7 @@ public class UseHardpointCustom : SimpleCustomComponent, IValueComponent<string>
             }
             else if (!Control.Settings.AllowMechlabWrongHardpoints)
             {
-                return new Localize.Text(Control.Settings.Message.Base_AddNotEnoughHardpoints,
+                return new Text(Control.Settings.Message.Base_AddNotEnoughHardpoints,
                     MechLabHelper.CurrentMechLab.ActiveMech.Description.UIName, drop_item.ComponentRef.Def.Description.Name,
                     drop_item.ComponentRef.Def.Description.UIName, WeaponCategory.Name, WeaponCategory.FriendlyName,
                     location
@@ -148,7 +149,7 @@ public class UseHardpointCustom : SimpleCustomComponent, IValueComponent<string>
 
         if (candidants.Count == 0)
         {
-            return new Localize.Text(Control.Settings.Message.Base_AddNotEnoughHardpoints,
+            return new Text(Control.Settings.Message.Base_AddNotEnoughHardpoints,
                 MechLabHelper.CurrentMechLab.ActiveMech.Description.UIName, drop_item.ComponentRef.Def.Description.Name,
                 drop_item.ComponentRef.Def.Description.UIName, WeaponCategory.Name, WeaponCategory.FriendlyName,
                 location

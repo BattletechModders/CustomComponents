@@ -1,7 +1,7 @@
-﻿using BattleTech;
+﻿using System.Collections.Generic;
+using BattleTech;
 using BattleTech.Data;
 using Harmony;
-using System.Collections.Generic;
 
 namespace CustomComponents.Fixes;
 

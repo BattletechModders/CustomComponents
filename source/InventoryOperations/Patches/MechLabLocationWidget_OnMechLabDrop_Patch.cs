@@ -1,9 +1,9 @@
-﻿using BattleTech.UI;
+﻿using System;
+using System.Collections.Generic;
+using BattleTech.UI;
 using CustomComponents.Changes;
 using Harmony;
 using Localize;
-using System;
-using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
 namespace CustomComponents.Patches;
