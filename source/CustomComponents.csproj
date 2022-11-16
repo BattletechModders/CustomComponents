@@ -28,9 +28,6 @@
     <DebugSymbols>false</DebugSymbols>
     <Nullable>disable</Nullable>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug' ">
-    <DefineConstants>TRACE;DEBUG;CCDEBUG</DefineConstants>
-  </PropertyGroup>
   <Target Name="CopyFilesToGame" AfterTargets="CopyFilesToOutputDirectory">
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(CustomComponentsModPath)" />
   </Target>

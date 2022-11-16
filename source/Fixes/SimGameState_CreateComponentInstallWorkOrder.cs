@@ -38,7 +38,7 @@ namespace CustomComponents.Fixes
                 else
                 {
                     MechDef mechByID = __instance.GetMechByID(mechSimGameUID);
-#if CCDEBUG
+#if DEBUG
                     if (mechByID == null)
                         Log.InstallCost.Trace?.Log("-- no mech found!");
 #endif

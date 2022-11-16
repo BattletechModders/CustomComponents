@@ -1,4 +1,4 @@
-﻿#undef CCDEBUG
+﻿#undef DEBUG
 
 using System;
 using System.Collections.Generic;

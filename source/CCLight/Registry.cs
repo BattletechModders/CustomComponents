@@ -170,7 +170,7 @@ namespace CustomComponents
                 hp.AdjustDescription();
             }
 
-#if CCDEBUG
+#if DEBUG
             if (loaded)
             {
                 Log.CCLoadingSummary.Trace?.Log($"ProcessCustomCompontentFactories for {target.GetType()} ({target.GetHashCode()})");

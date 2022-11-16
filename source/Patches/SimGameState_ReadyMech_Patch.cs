@@ -14,7 +14,7 @@ namespace CustomComponents.Patches
 
         public static void Prefix(SimGameState __instance)
         {
-#if CCDEBUG
+#if DEBUG
             DEBUGTOOLS.NEEDTOSHOW = true;
 #endif
             state = __instance;

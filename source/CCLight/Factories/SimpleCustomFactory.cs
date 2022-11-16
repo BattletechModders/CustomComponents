@@ -1,4 +1,4 @@
-﻿#undef CCDEBUG
+﻿#undef DEBUG
 using System.Collections.Generic;
 using HBS.Util;
 
@@ -45,12 +45,12 @@ namespace CustomComponents
             }
 
 
-#if CCDEBUG
+#if DEBUG
             Control.Logger.LogDebug($"Factory {CustomName} for {customSettingsObject})");
 #endif
             if (componentSettingsObject is Dictionary<string, object> compDictionary)
             {
-#if CCDEBUG
+#if DEBUG
                 Control.Logger.LogDebug($"-- Dictionary - return one {compDictionary}");
                 foreach (var pair in compDictionary)
                 {
@@ -65,7 +65,7 @@ namespace CustomComponents
             }
             else if (componentSettingsObject is IEnumerable<object> compList)
             {
-#if CCDEBUG
+#if DEBUG
                 Control.Logger.LogDebug($"-- List - return {compList.Count()} items {compList}");
 #endif
                 foreach (var item in compList)
@@ -76,7 +76,7 @@ namespace CustomComponents
                         JSONSerializationUtility.RehydrateObjectFromDictionary(obj, compDictItem);
                         obj.Def = def;
 
-#if CCDEBUG
+#if DEBUG
                         Control.Logger.LogDebug($"---- Factory for {obj}");
 #endif
 

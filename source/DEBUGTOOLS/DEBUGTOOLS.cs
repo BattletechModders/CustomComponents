@@ -13,7 +13,7 @@ namespace CustomComponents
     {
         public static bool NEEDTOSHOW = false;
 
-        [Conditional("CCDEBUG")]
+        [Conditional("DEBUG")]
         public static void ShowInventory(MechDef mech)
         {
             Log.Main.Info?.Log($"SHOW INVENTORY FOR {mech.Name}");

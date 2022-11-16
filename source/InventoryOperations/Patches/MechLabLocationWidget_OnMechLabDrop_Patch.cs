@@ -69,7 +69,7 @@ namespace CustomComponents.Patches
 
 
 
-#if CCDEBUG
+#if DEBUG
                 if (Log.ComponentInstall.Debug != null)
                 {
                     if (changes.Count == 1)
