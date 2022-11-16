@@ -25,7 +25,7 @@ public class UnitTypeDefaultsRecord
 
     public override string ToString()
     {
-        string result = "\n- " + UnitType;
+        var result = "\n- " + UnitType;
         if(Defaults != null && Defaults.Length > 0)
             foreach (var defaultsInfoRecord in Defaults)
                 result += "\n-- " + defaultsInfoRecord;
@@ -42,7 +42,7 @@ public class DefaultsInfo
 
     public override string ToString()
     {
-        string result = "Defaults for " + CategoryID;
+        var result = "Defaults for " + CategoryID;
         if (Defaults != null && Defaults.Length > 0)
         {
             result += "\n- Defaults";

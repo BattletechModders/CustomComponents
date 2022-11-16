@@ -88,7 +88,7 @@ public static class Validator
             def.ComponentSubType != MechComponentType.ElectronicWarfare)
             return string.Empty;
 
-        int count = MechLabHelper.CurrentMechLab.ActiveMech.Inventory.Count(cref => cref.Def.ComponentSubType == def.ComponentSubType);
+        var count = MechLabHelper.CurrentMechLab.ActiveMech.Inventory.Count(cref => cref.Def.ComponentSubType == def.ComponentSubType);
 
         if (count > 0)
             if (def.ComponentSubType == MechComponentType.ElectronicWarfare || def.ComponentSubType == MechComponentType.Prototype_ElectronicWarfare)

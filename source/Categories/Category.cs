@@ -160,7 +160,7 @@ public class Category : SimpleCustomComponent, IAfterLoad, IReplaceValidateDrop,
                 ).ToString();
             }
 
-            int need_free = Weight - free.free;
+            var need_free = Weight - free.free;
 
             foreach (var item in free.items)
             {

@@ -63,7 +63,7 @@ internal static class MechLabLocationWidget_OnMechLabDrop_Patch
 
             changes.Enqueue(new Change_Add(dragItem, __instance.loadout.Location));
 
-            foreach (ReplaceValidateDropDelegate rep_validator in Validator.GetReplace(newComponentDef))
+            foreach (var rep_validator in Validator.GetReplace(newComponentDef))
                 if (do_cancel(rep_validator(dragItem, location, changes)))
                     return false;
 
@@ -103,7 +103,7 @@ internal static class MechLabLocationWidget_OnMechLabDrop_Patch
 
             foreach (var pst_validator in Validator.GetPost(newComponentDef))
             {
-                int n = changes.Count;
+                var n = changes.Count;
                 if (do_cancel(pst_validator(dragItem, state.Inventory)))
                     return false;
             }

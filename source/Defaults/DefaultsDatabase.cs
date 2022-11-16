@@ -123,7 +123,7 @@ public class DefaultsDatabase
 
         public override string ToString()
         {
-            string result = "MechDefaultInfo:";
+            var result = "MechDefaultInfo:";
             if (Multi != null && Multi.HasRecords)
             {
                 result += "\n- MultiRecords";

@@ -42,7 +42,7 @@ public static class CustomCombatTagsHelper {
   }
   private static TagSet prepareTags(MechComponent target) {
     //Control.Log($"Prepating tags for "+target.defId);
-    string GUID = target.getCCGUID();
+    var GUID = target.getCCGUID();
     TagSet tags = null;
     if (tagsCache.ContainsKey(GUID) == false) {
       //Control.Log($" not in cache");
@@ -51,7 +51,7 @@ public static class CustomCombatTagsHelper {
         tags = new TagSet();
         tags.AddRange(target.componentDef.ComponentTags);
       } else {
-        string tags_string = target.StatCollection.GetStatistic(CCComponentTagsStatName).Value<string>();
+        var tags_string = target.StatCollection.GetStatistic(CCComponentTagsStatName).Value<string>();
         tags = TagSet.Parse(tags_string);
         //Control.Log($" have statistic value:" + CustomCombatTagsHelper.CCComponentTagsStatName+":"+tags_string);
       }
@@ -71,30 +71,30 @@ public static class CustomCombatTagsHelper {
     }
   }
   public static TagSet ComponentTags(this MechComponent target) {
-    TagSet tags = prepareTags(target);
+    var tags = prepareTags(target);
     if (tags == null) { tags = target.componentDef.ComponentTags; };
     return tags;
   }
   public static void AddTag(this MechComponent target, string tag) {
-    TagSet tags = prepareTags(target);
+    var tags = prepareTags(target);
     if (tags == null) { return; }
     tags.Add(tag);
     saveTags(target,tags);
   }
   public static void AddTags(this MechComponent target, IEnumerable<string> itemsToAdd) {
-    TagSet tags = prepareTags(target);
+    var tags = prepareTags(target);
     if (tags == null) { return; }
     tags.AddRange(itemsToAdd);
     saveTags(target, tags);
   }
   public static void RemoveTag(this MechComponent target, string tag) {
-    TagSet tags = prepareTags(target);
+    var tags = prepareTags(target);
     if (tags == null) { return; }
     tags.Remove(tag);
     saveTags(target, tags);
   }
   public static void RemoveTags(this MechComponent target, IEnumerable<string> itemsToRemove) {
-    TagSet tags = prepareTags(target);
+    var tags = prepareTags(target);
     if (tags == null) { return; }
     tags.RemoveRange(itemsToRemove);
     saveTags(target, tags);

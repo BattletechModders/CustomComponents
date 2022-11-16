@@ -53,7 +53,7 @@ public static class Contract_GenerateSalvage
             var Constants = simgame.Constants;
 
             Log.SalvageProcess.Trace?.Log($"- Lost Units {__instance.Name}");
-            for (int i = 0; i < lostUnits.Count; i++)
+            for (var i = 0; i < lostUnits.Count; i++)
             {
                 var mech = lostUnits[i].mech;
 
@@ -69,7 +69,7 @@ public static class Contract_GenerateSalvage
                 {
                     Log.SalvageProcess.Trace?.Log($"-- Recovery {mech.Name} CC method");
 
-                    float chance = Constants.Salvage.DestroyedMechRecoveryChance;
+                    var chance = Constants.Salvage.DestroyedMechRecoveryChance;
 
                     chance -= mech.IsLocationDamaged(ChassisLocations.Head)
                         ? Control.Settings.HeadRecoveryPenaly
@@ -103,7 +103,7 @@ public static class Contract_GenerateSalvage
                         : 0;
 
 
-                    float num = simgame.NetworkRandom.Float(0f, 1f);
+                    var num = simgame.NetworkRandom.Float(0f, 1f);
 
                     lostUnits[i].mechLost = chance < num;
 
@@ -119,7 +119,7 @@ public static class Contract_GenerateSalvage
                 else
                 {
                     Log.SalvageProcess.Trace?.Log($"-- Recovery {mech.Name} vanila method");
-                    float num = simgame.NetworkRandom.Float(0f, 1f);
+                    var num = simgame.NetworkRandom.Float(0f, 1f);
 
                     if (mech.IsLocationDestroyed(ChassisLocations.CenterTorso))
                     {
@@ -146,12 +146,12 @@ public static class Contract_GenerateSalvage
                         AddMechToSalvage(mech, contract, simgame, Constants, ___finalPotentialSalvage);
                     else
                     {
-                        int old_diff = __instance.Override.finalDifficulty;
+                        var old_diff = __instance.Override.finalDifficulty;
 
-                        float old_rare_u = Constants.Salvage.RareUpgradeChance;
-                        float old_rare_w = Constants.Salvage.RareWeaponChance;
-                        float old_vrare_i = Constants.Salvage.VeryRareUpgradeChance;
-                        float old_vrare_w = Constants.Salvage.VeryRareWeaponChance;
+                        var old_rare_u = Constants.Salvage.RareUpgradeChance;
+                        var old_rare_w = Constants.Salvage.RareWeaponChance;
+                        var old_vrare_i = Constants.Salvage.VeryRareUpgradeChance;
+                        var old_vrare_w = Constants.Salvage.VeryRareWeaponChance;
 
                         Constants.Salvage.RareUpgradeChance = 0;
                         Constants.Salvage.RareWeaponChance = 0;
@@ -203,9 +203,9 @@ public static class Contract_GenerateSalvage
             }
 
             contract.FilterPotentialSalvage(___finalPotentialSalvage);
-            int num2 = __instance.SalvagePotential;
-            float num3 = Constants.Salvage.VictorySalvageChance;
-            float num4 = Constants.Salvage.VictorySalvageLostPerMechDestroyed;
+            var num2 = __instance.SalvagePotential;
+            var num3 = Constants.Salvage.VictorySalvageChance;
+            var num4 = Constants.Salvage.VictorySalvageLostPerMechDestroyed;
             if (__instance.State == Contract.ContractState.Failed)
             {
                 num3 = Constants.Salvage.DefeatSalvageChance;
@@ -216,14 +216,14 @@ public static class Contract_GenerateSalvage
                 num3 = Constants.Salvage.RetreatSalvageChance;
                 num4 = Constants.Salvage.RetreatSalvageLostPerMechDestroyed;
             }
-            float num5 = num3;
-            float num6 = (float)num2 * __instance.PercentageContractSalvage;
+            var num5 = num3;
+            var num6 = (float)num2 * __instance.PercentageContractSalvage;
             if (num2 > 0)
             {
                 num6 += (float)Constants.Finances.ContractFloorSalvageBonus;
             }
             num3 = Mathf.Max(0f, num5 - num4 * (float)lostUnits.Count);
-            int num7 = Mathf.FloorToInt(num6 * num3);
+            var num7 = Mathf.FloorToInt(num6 * num3);
             if (num2 > 0)
             {
                 num2 += Constants.Finances.ContractFloorSalvageBonus;
@@ -245,7 +245,7 @@ public static class Contract_GenerateSalvage
     {
         Log.SalvageProcess.Trace?.Log($"-- Salvaging {mech.Name}");
 
-        int numparts = 0;
+        var numparts = 0;
 
         if (Control.Settings.OverrideMechPartCalculation)
         {
@@ -253,10 +253,10 @@ public static class Contract_GenerateSalvage
                 numparts = Control.Settings.CenterTorsoDestroyedParts;
             else
             {
-                float total = Control.Settings.SalvageArmWeight * 2 + Control.Settings.SalvageHeadWeight +
-                              Control.Settings.SalvageLegWeight * 2 + Control.Settings.SalvageTorsoWeight * 2 + 1;
+                var total = Control.Settings.SalvageArmWeight * 2 + Control.Settings.SalvageHeadWeight +
+                            Control.Settings.SalvageLegWeight * 2 + Control.Settings.SalvageTorsoWeight * 2 + 1;
 
-                float val = total;
+                var val = total;
 
                 val -= mech.IsLocationDestroyed(ChassisLocations.Head) ? Control.Settings.SalvageHeadWeight : 0;
 

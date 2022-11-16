@@ -66,7 +66,7 @@ internal static class Contract_AddToFilnaSalvagePatch
         if (component == null || component.Flags<CCFlags>().NoSalvage)
             return false;
 
-        SalvageDef salvageDef = new SalvageDef();
+        var salvageDef = new SalvageDef();
         salvageDef.MechComponentDef = component;
         salvageDef.Description = new DescriptionDef(component.Description);
         salvageDef.RewardID = def.RewardID;

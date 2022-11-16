@@ -21,7 +21,7 @@ internal static class MechLabInventoryWidget_ApplyFiltering_Patch
                 return;
 
             Log.Filter.Trace?.Log("StartFilter");
-            int empty_item = 0;
+            var empty_item = 0;
             foreach (var item in ___localInventory)
             {
                 if (item == null)

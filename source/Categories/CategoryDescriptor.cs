@@ -104,7 +104,7 @@ public class CategoryDescriptorRecord
 
     public override string ToString()
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         if (!string.IsNullOrEmpty(UnitType))
             sb.Append(UnitType + ": ");
         sb.AppendLine($"MinL: {MinLimited}, MaxL: {MaxLimited}");

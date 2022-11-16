@@ -156,13 +156,13 @@ public class CategoryController
             //check if cateory mix tags
             if (!pair.Key.AllowMixTags)
             {
-                string first_tag = pair.Value
+                var first_tag = pair.Value
                     .Select(i => i.mix == null ? "!null!" : i.mix)
                     .FirstOrDefault(i => i != "*");
 
                 if (first_tag != null)
                 {
-                    bool mixed = pair.Value.Any(i => i.mix != "*" && i.mix != null && i.mix != first_tag);
+                    var mixed = pair.Value.Any(i => i.mix != "*" && i.mix != null && i.mix != first_tag);
                     if (mixed)
                     {
                         errors[MechValidationType.InvalidInventorySlots].Add(new Text(pair.Key.ValidateMixed,
@@ -237,13 +237,13 @@ public class CategoryController
             //check if cateory mix tags
             if (!pair.Key.AllowMixTags)
             {
-                string first_tag = pair.Value
+                var first_tag = pair.Value
                     .Select(i => i.mix == null ? "!null!" : i.mix)
                     .FirstOrDefault(i => i != "*");
 
                 if (first_tag != null)
                 {
-                    bool mixed = pair.Value.Any(i => i.mix != "*" && i.mix != null && i.mix != first_tag);
+                    var mixed = pair.Value.Any(i => i.mix != "*" && i.mix != null && i.mix != first_tag);
                     if (mixed)
                     {
                         return false;
@@ -332,13 +332,13 @@ public class CategoryController
             if (pair.Key.AllowMixTags || pair.Key.AllowMixTagsMechlab)
                 continue;
 
-            string first_tag = pair.Value
+            var first_tag = pair.Value
                 .Select(i => i.mix ?? "*")
                 .FirstOrDefault(i => i != "*");
 
             if (first_tag != null)
             {
-                bool mixed = pair.Value.Any(i => i.mix != "*" && i.mix != null && i.mix != first_tag);
+                var mixed = pair.Value.Any(i => i.mix != "*" && i.mix != null && i.mix != first_tag);
                 if (mixed)
                 {
                     return (new Text(pair.Key.ValidateMixed,

@@ -32,7 +32,7 @@ public static class SimGameState_GetMechComponentRefForUID
                 Log.ComponentInstall.Trace?.Log("- Component not found! start to check");
                 Log.ComponentInstall.Trace?.Log("-- reserved");
 
-                foreach (MechComponentRef r in __instance.WorkOrderComponents)
+                foreach (var r in __instance.WorkOrderComponents)
                 {
                     Log.ComponentInstall.Trace?.Log($"--- id:{r.ComponentDefID} uid:{r.SimGameUID} type:{r.ComponentDefType}");
                 }

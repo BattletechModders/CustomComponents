@@ -31,7 +31,7 @@ public class AddHardpoint : SimpleCustomComponent, IValueComponent<string>, IPre
 
         var hardpoints = MechLabHelper.CurrentMechLab.ActiveMech.GetAllHardpoints(location);
 
-        int n = 0;
+        var n = 0;
         foreach (var  hardpoint in hardpoints)
         {
             if (hardpoint.hpInfo.Visible)

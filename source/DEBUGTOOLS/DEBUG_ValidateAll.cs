@@ -22,7 +22,7 @@ public static class DEBUG_ValidateAll
                 }
                 if (Control.Settings.IgnoreValidationTags != null && Control.Settings.IgnoreValidationTags.Length > 0)
                 {
-                    bool skip = false;
+                    var skip = false;
                     foreach (var tag in Control.Settings.IgnoreValidationTags)
                     {
                         if ((mechDef.Chassis.ChassisTags != null && mechDef.Chassis.ChassisTags.Contains(tag)) ||
@@ -47,7 +47,7 @@ public static class DEBUG_ValidateAll
                     }
                 }
 
-                bool bad_mech = false;
+                var bad_mech = false;
                 foreach (var pair in error)
                 {
                     if (pair.Value.Count > 0)

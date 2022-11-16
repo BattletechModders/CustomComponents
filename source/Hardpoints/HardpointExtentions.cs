@@ -243,9 +243,9 @@ public static class HardpointExtentions
                      .Where(i => i != null && !i.WeaponCategory.Is_NotSet))
         {
             HPUsage first = null;
-            bool found = false;
+            var found = false;
 
-            for (int i = 0; i < result.Count; i++)
+            for (var i = 0; i < result.Count; i++)
             {
                 var hp = result[i];
 

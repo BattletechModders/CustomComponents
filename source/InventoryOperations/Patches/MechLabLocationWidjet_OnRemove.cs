@@ -11,7 +11,7 @@ public static class MechLabLocationWidjet_OnRemove
     [HarmonyTranspiler]
     public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
     {
-        int i = 0;
+        var i = 0;
 
         foreach (var codeInstruction in instructions)
         {

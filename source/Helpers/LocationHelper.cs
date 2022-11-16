@@ -39,8 +39,8 @@ public class LocationHelper
 
             //Control.Log($"{Location} - refresh hardpoints");
 
-            int active_hp = 0;
-            for (int i = 0; i < 4; i++)
+            var active_hp = 0;
+            for (var i = 0; i < 4; i++)
             {
                 var widget = HardpointWidgets[i];
 

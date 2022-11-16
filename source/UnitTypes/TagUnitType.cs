@@ -19,7 +19,7 @@ public class TagUnitType : IUnitType
         if (mechdef?.Chassis == null)
             return false;
 
-        TagSet tags = new TagSet();
+        var tags = new TagSet();
         if(mechdef.MechTags != null)
             tags.UnionWith(mechdef.MechTags);
 
@@ -46,12 +46,12 @@ public class TagUnitType : IUnitType
     {
         string show_array(string name, string[] tags)
         {
-            string result = "\n- " + name + ": [";
+            var result = "\n- " + name + ": [";
             result += tags.Join(null, " ") + "]";
             return result;
         }
 
-        StringBuilder sb = new StringBuilder("TagUnitType: " + Name);
+        var sb = new StringBuilder("TagUnitType: " + Name);
         if (RequiredTags != null && RequiredTags.Length > 0)
         {
             sb.Append(show_array("RequiredTags", RequiredTags));

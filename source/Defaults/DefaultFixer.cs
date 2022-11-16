@@ -320,7 +320,7 @@ public class DefaultFixer
             //Control.Log($"-- {(usageRecord.DefId)} {usageRecord.Location} {usageRecord.crecord.Category.Weight}");
 
             used_records.Clear();
-            bool fit = true;
+            var fit = true;
             foreach (var freeRecord in free.Where(i => i.location.HasFlag(usageRecord.Location)))
             {
                 //Control.Log($"-- free {freeRecord.location} {freeRecord.free}");

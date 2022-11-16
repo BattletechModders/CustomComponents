@@ -74,7 +74,7 @@ public class Change_Remove : IChange_Apply, IChange_Optimize
 
     public void DoOptimization(List<IChange_Apply> current)
     {
-        for (int i = current.Count - 2; i >= 0; i--)
+        for (var i = current.Count - 2; i >= 0; i--)
         {
             var change = current[i];
             if (!change.Initial && change is Change_Add add && !add.Applied && add.Location == Location && add.ItemID == ItemID)

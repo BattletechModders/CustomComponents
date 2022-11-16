@@ -59,7 +59,7 @@ public class Change_Add : IChange_Apply, IChange_Optimize
         {
             if (mechLab.InSimGame)
             {
-                WorkOrderEntry_InstallComponent subEntry = mechLab.MechLab.Sim.CreateComponentInstallWorkOrder(
+                var subEntry = mechLab.MechLab.Sim.CreateComponentInstallWorkOrder(
                     mechLab.MechLab.baseWorkOrder.MechID,
                     slot.ComponentRef, Location, slot.MountedLocation);
                 mechLab.MechLab.baseWorkOrder.AddSubEntry(subEntry);
@@ -75,7 +75,7 @@ public class Change_Add : IChange_Apply, IChange_Optimize
 
     public void DoOptimization(List<IChange_Apply> current)
     {
-        for (int i = current.Count - 2; i >= 0; i--)
+        for (var i = current.Count - 2; i >= 0; i--)
         {
             var change = current[i];
             if (!change.Initial && change is Change_Remove remove && !remove.Applied && remove.Location == Location && remove.ItemID == ItemID)

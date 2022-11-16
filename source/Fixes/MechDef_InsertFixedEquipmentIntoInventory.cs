@@ -21,8 +21,8 @@ public static class MechDef_InsertFixedEquipmentIntoInventory
             {
                 return false;
             }
-            int found = 0;
-            for (int i = 0; i < ___inventory.Length; i++)
+            var found = 0;
+            for (var i = 0; i < ___inventory.Length; i++)
             {
                 if (!string.IsNullOrEmpty(___inventory[i].SimGameUID) && ___inventory[i].SimGameUID.Contains("FixedEquipment"))
                 {
@@ -33,10 +33,10 @@ public static class MechDef_InsertFixedEquipmentIntoInventory
 
             if (found > 0)
                 return false;
-            List<MechComponentRef> list = new List<MechComponentRef>();
-            for (int j = 0; j < __instance.Chassis.FixedEquipment.Length; j++)
+            var list = new List<MechComponentRef>();
+            for (var j = 0; j < __instance.Chassis.FixedEquipment.Length; j++)
             {
-                MechComponentRef mechComponentRef = new MechComponentRef(__instance.Chassis.FixedEquipment[j], null);
+                var mechComponentRef = new MechComponentRef(__instance.Chassis.FixedEquipment[j], null);
                 mechComponentRef.RefreshDef();
                 mechComponentRef.SetSimGameUID($"FixedEquipment-{Guid.NewGuid().ToString()}");
                 list.Add(mechComponentRef);

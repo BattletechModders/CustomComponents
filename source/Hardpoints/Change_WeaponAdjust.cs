@@ -54,7 +54,7 @@ public class Change_WeaponAdjust : IChange_Adjust
             .ToList();
 
 
-        for (int i = loc_items.Count - 1; i >= 0; i--)
+        for (var i = loc_items.Count - 1; i >= 0; i--)
         {
             var invItem = loc_items[i];
             var item = usage.FirstOrDefault(i => !i.used_now && i.weapon.Def.Description.Id == invItem.item.ComponentDefID);

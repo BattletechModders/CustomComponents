@@ -37,7 +37,7 @@ public static class SimGameState_CreateComponentInstallWorkOrder
             }
             else
             {
-                MechDef mechByID = __instance.GetMechByID(mechSimGameUID);
+                var mechByID = __instance.GetMechByID(mechSimGameUID);
 #if DEBUG
                     if (mechByID == null)
                         Log.InstallCost.Trace?.Log("-- no mech found!");

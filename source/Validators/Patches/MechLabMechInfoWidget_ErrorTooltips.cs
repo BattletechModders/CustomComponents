@@ -15,7 +15,7 @@ public static class SetTooltips
         var tooltip = go.GetComponent<HBSTooltip>();
         if (tooltip != null)
         {
-            string text = errors.Join(i => i.ToString(), "\n");
+            var text = errors.Join(i => i.ToString(), "\n");
             var desc = new BaseDescriptionDef("tooltip", caption, text, null);
 
             tooltip.SetDefaultStateData(TooltipUtilities.GetStateDataFromObject(desc));
