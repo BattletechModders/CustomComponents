@@ -47,8 +47,7 @@ public class Category : SimpleCustomComponent, IAfterLoad, IReplaceValidateDrop,
     {
         if (string.IsNullOrEmpty(Tag))
             return Def.Description.Id;
-        else
-            return Tag;
+        return Tag;
     }
 
     [JsonIgnore]
@@ -85,7 +84,7 @@ public class Category : SimpleCustomComponent, IAfterLoad, IReplaceValidateDrop,
 
         if (record == null || !record.MaxLimited)
         {
-            Log.ComponentInstall.Trace?.Log($"--- no replace needed");
+            Log.ComponentInstall.Trace?.Log("--- no replace needed");
             return String.Empty;
         }
 

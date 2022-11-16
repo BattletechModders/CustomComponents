@@ -37,7 +37,7 @@ public class FlagsController<T>
 
             var child_attribute = propertyInfo.GetCustomAttribute<SubFlagsAttribute>();
 
-            var flag = new FlagInfo()
+            var flag = new FlagInfo
             {
                 Name = flag_attribute.FlagName,
                 Setter = (obj, value) => propertyInfo.SetValue(obj, value),

@@ -141,7 +141,7 @@ public static class Control
         }
     }
 
-    public static bool Loaded { get; private set; } = false;
+    public static bool Loaded { get; private set; }
     public static void FinishedLoading(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
     {
         var Manifests = customResources;

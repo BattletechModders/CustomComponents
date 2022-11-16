@@ -46,7 +46,7 @@ public class UnitTypeDatabase
         var old = types.FirstOrDefault(i => i.Name == unitType.Name);
         if (old != null)
         {
-            Log.UnitType.Trace?.Log($"-- removed old one");
+            Log.UnitType.Trace?.Log("-- removed old one");
             types.Remove(old);
         }
 

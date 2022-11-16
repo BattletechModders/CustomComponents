@@ -26,7 +26,7 @@ public static class JSONSerializationUtility_RehydrateObjectFromDictionary_Patch
         }
         catch (Exception e)
         {
-            Log.Main.Error?.Log($"Error loading item", e);
+            Log.Main.Error?.Log("Error loading item", e);
         }
     }
 

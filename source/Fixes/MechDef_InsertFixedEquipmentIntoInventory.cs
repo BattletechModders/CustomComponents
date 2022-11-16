@@ -36,7 +36,7 @@ public static class MechDef_InsertFixedEquipmentIntoInventory
             var list = new List<MechComponentRef>();
             for (var j = 0; j < __instance.Chassis.FixedEquipment.Length; j++)
             {
-                var mechComponentRef = new MechComponentRef(__instance.Chassis.FixedEquipment[j], null);
+                var mechComponentRef = new MechComponentRef(__instance.Chassis.FixedEquipment[j]);
                 mechComponentRef.RefreshDef();
                 mechComponentRef.SetSimGameUID($"FixedEquipment-{Guid.NewGuid().ToString()}");
                 list.Add(mechComponentRef);

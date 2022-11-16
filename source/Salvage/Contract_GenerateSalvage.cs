@@ -103,7 +103,7 @@ public static class Contract_GenerateSalvage
                         : 0;
 
 
-                    var num = simgame.NetworkRandom.Float(0f, 1f);
+                    var num = simgame.NetworkRandom.Float();
 
                     lostUnits[i].mechLost = chance < num;
 
@@ -119,11 +119,11 @@ public static class Contract_GenerateSalvage
                 else
                 {
                     Log.SalvageProcess.Trace?.Log($"-- Recovery {mech.Name} vanila method");
-                    var num = simgame.NetworkRandom.Float(0f, 1f);
+                    var num = simgame.NetworkRandom.Float();
 
                     if (mech.IsLocationDestroyed(ChassisLocations.CenterTorso))
                     {
-                        Log.SalvageProcess.Trace?.Log($"--- CenterTorso Destroyed - no recovery");
+                        Log.SalvageProcess.Trace?.Log("--- CenterTorso Destroyed - no recovery");
                         lostUnits[i].mechLost = true;
                     }
                     else
@@ -185,7 +185,7 @@ public static class Contract_GenerateSalvage
                 else
                 {
                     Log.SalvageProcess.Trace?.Log($"-- Salvaging {unit.mech.Name}");
-                    Log.SalvageProcess.Trace?.Log($"--- not destroyed, skipping");
+                    Log.SalvageProcess.Trace?.Log("--- not destroyed, skipping");
                 }
             }
 
@@ -198,7 +198,7 @@ public static class Contract_GenerateSalvage
                 {
                     Log.SalvageProcess.Trace?.Log($"--- Adding {component.ComponentDefID}");
                     contract.AddMechComponentToSalvage(___finalPotentialSalvage, component.Def, ComponentDamageLevel.Functional, false,
-                        Constants, simgame.NetworkRandom, true);
+                        Constants, simgame.NetworkRandom);
                 }
             }
 
@@ -217,12 +217,12 @@ public static class Contract_GenerateSalvage
                 num4 = Constants.Salvage.RetreatSalvageLostPerMechDestroyed;
             }
             var num5 = num3;
-            var num6 = (float)num2 * __instance.PercentageContractSalvage;
+            var num6 = num2 * __instance.PercentageContractSalvage;
             if (num2 > 0)
             {
-                num6 += (float)Constants.Finances.ContractFloorSalvageBonus;
+                num6 += Constants.Finances.ContractFloorSalvageBonus;
             }
-            num3 = Mathf.Max(0f, num5 - num4 * (float)lostUnits.Count);
+            num3 = Mathf.Max(0f, num5 - num4 * lostUnits.Count);
             var num7 = Mathf.FloorToInt(num6 * num3);
             if (num2 > 0)
             {
@@ -230,7 +230,7 @@ public static class Contract_GenerateSalvage
             }
 
             contract.FinalSalvageCount = num7;
-            contract.FinalPrioritySalvageCount = Math.Min(7, Mathf.FloorToInt((float)num7 * Constants.Salvage.PrioritySalvageModifier));
+            contract.FinalPrioritySalvageCount = Math.Min(7, Mathf.FloorToInt(num7 * Constants.Salvage.PrioritySalvageModifier));
 
         }
         catch (Exception e)
@@ -304,7 +304,7 @@ public static class Contract_GenerateSalvage
         {
             if (Control.Settings.NoLootCTDestroyed && mech.IsLocationDestroyed(ChassisLocations.CenterTorso))
             {
-                Log.SalvageProcess.Trace?.Log($"--- CT Destroyed - no component loot");
+                Log.SalvageProcess.Trace?.Log("--- CT Destroyed - no component loot");
             }
             else
                 foreach (var component in mech.Inventory.Where(item =>
@@ -313,7 +313,7 @@ public static class Contract_GenerateSalvage
                 {
                     Log.SalvageProcess.Trace?.Log($"--- Adding {component.ComponentDefID}");
                     contract.AddMechComponentToSalvage(salvage, component.Def, ComponentDamageLevel.Functional, false,
-                        constants, simgame.NetworkRandom, true);
+                        constants, simgame.NetworkRandom);
                 }
         }
         catch (Exception e)

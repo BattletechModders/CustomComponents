@@ -19,7 +19,7 @@ public static class DefaultHelper
         Log.FixedCheck.Trace?.Log($"IsModuleFixed: {item.ComponentDefID}");
         if (!item.IsFixed)
         {
-            Log.FixedCheck.Trace?.Log($"-- false: not fixed");
+            Log.FixedCheck.Trace?.Log("-- false: not fixed");
             return false;
 
         }
@@ -31,12 +31,12 @@ public static class DefaultHelper
 
                 if (mref.MountedLocation == item.MountedLocation && item.ComponentDefID == mref.ComponentDefID)
                 {
-                    Log.FixedCheck.Trace?.Log($"-- true!");
+                    Log.FixedCheck.Trace?.Log("-- true!");
                     return true;
                 }
             }
 
-        Log.FixedCheck.Trace?.Log($"-- false: not really fixed");
+        Log.FixedCheck.Trace?.Log("-- false: not really fixed");
 
 
         return false;
@@ -148,7 +148,7 @@ public static class DefaultHelper
 
         if (target == null)
         {
-            Log.DefaultHandle.Trace?.Log($"DefaultHelper: Cannot add - wrong location ");
+            Log.DefaultHandle.Trace?.Log("DefaultHelper: Cannot add - wrong location ");
             return;
         }
 
@@ -186,7 +186,7 @@ public static class DefaultHelper
         {
 
             helper.widget.OnRemoveItem(slot, true);
-            Log.DefaultHandle.Trace?.Log($"- removed");
+            Log.DefaultHandle.Trace?.Log("- removed");
             slot.thisCanvasGroup.blocksRaycasts = true;
             MechLabHelper.CurrentMechLab.MechLab.dataManager.PoolGameObject(MechLabPanel.MECHCOMPONENT_ITEM_PREFAB, slot.GameObject);
         }
@@ -212,7 +212,7 @@ public static class DefaultHelper
         foreach (var invChange in to_apply)
             invChange.ApplyToInventory(source_mech, list);
 
-        Log.ClearInventory.Trace?.Log($"- setting guids");
+        Log.ClearInventory.Trace?.Log("- setting guids");
         foreach (var item in list)
         {
             if (string.IsNullOrEmpty(item.SimGameUID))

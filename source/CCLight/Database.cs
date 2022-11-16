@@ -59,11 +59,13 @@ public class Database
         {
             return mechComponentDef.Description.Id;
         }
-        else if (target is ChassisDef chassisDef)
+
+        if (target is ChassisDef chassisDef)
         {
             return chassisDef.Description.Id;
         }
-        else if (target is VehicleChassisDef vcd)
+
+        if (target is VehicleChassisDef vcd)
             return vcd.Description.Id;
 
         var descriptionProperty = target.GetType().GetProperty(nameof(MechComponentDef.Description), typeof(DescriptionDef));
@@ -161,7 +163,7 @@ public class Database
                 }
             }
 
-        Log.CCLoading.Trace?.Log($"--added");
+        Log.CCLoading.Trace?.Log("--added");
         ccs.Add(cc);
         return true;
     }

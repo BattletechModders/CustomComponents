@@ -31,7 +31,7 @@ public class CategoryDescriptorRecord
     public class _record
     {
         public ChassisLocations Location { get; set; } = ChassisLocations.All;
-        public int Min { get; set; } = 0;
+        public int Min { get; set; }
         public int Max { get; set; } = -1;
 
         public override bool Equals(object obj)
@@ -135,14 +135,14 @@ public class CategoryDescriptor
     //public bool AutoReplace = false;
     public bool AddCategoryToDescription = Control.Settings.CategoryDescriptionAddedByDefault;
     public bool AllowMixTags = true;
-    public Dictionary<string, object> DefaultCustoms = null;
+    public Dictionary<string, object> DefaultCustoms;
 
-    public string AddMaximumReached = null;
-    public string AddMixed = null;
+    public string AddMaximumReached;
+    public string AddMixed;
 
-    public string ValidateMinimum = null;
-    public string ValidateMaximum = null;
-    public string ValidateMixed = null;
+    public string ValidateMinimum;
+    public string ValidateMaximum;
+    public string ValidateMixed;
 
 
     [fastJSON.JsonIgnore]

@@ -22,7 +22,7 @@ internal class DEBUGTOOLS
             Log.Main.Info?.Log($" -- {comp.MountedLocation} -- {comp.ComponentDefID} -- F:{comp.IsFixed} -- {comp.SimGameUID}");
         }
 
-        Log.Main.Info?.Log($"========== done ============");
+        Log.Main.Info?.Log("========== done ============");
     }
 
     internal static void SHOWTAGS(List<MechDef> mechDefs, SimGameState simgame)
@@ -58,7 +58,7 @@ internal class DEBUGTOOLS
         if (root == null)
             return;
         Log.Main.Info?.Log(prefix + $" GameObject:[{root.name}]");
-        Log.Main.Info?.Log(prefix + $" |Components:");
+        Log.Main.Info?.Log(prefix + " |Components:");
 
         var rect = root.GetComponent<RectTransform>();
         if ( rect != null)
@@ -73,7 +73,7 @@ internal class DEBUGTOOLS
 
         if (root.transform.childCount > 0)
         {
-            Log.Main.Info?.Log(prefix + $" |Childs:");
+            Log.Main.Info?.Log(prefix + " |Childs:");
             foreach (Transform transform in root.transform)
             {
                 walk(transform.gameObject, prefix + "  ");

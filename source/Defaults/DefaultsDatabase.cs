@@ -39,8 +39,7 @@ public class CategoryDefault
 
 public class DefaultsDatabase
 {
-    public static ChassisLocations[] SingleLocations = new[]
-    {
+    public static ChassisLocations[] SingleLocations = {
         ChassisLocations.Head,
         ChassisLocations.CenterTorso,
 
@@ -287,7 +286,7 @@ public class DefaultsDatabase
                         continue;
                     }
 
-                    var cr = new CategoryDefaultRecord()
+                    var cr = new CategoryDefaultRecord
                     {
                         Category = c,
                         Item = def,
@@ -306,7 +305,7 @@ public class DefaultsDatabase
 
         var result = new MechDefaultInfo();
 
-        var multi = new MultiRecord() { Defaults = new() };
+        var multi = new MultiRecord { Defaults = new() };
 
         var mech_multi = GetMechMultiDefauls(mech);
 
@@ -360,7 +359,6 @@ public class DefaultsDatabase
                     else
                     {
                         Log.Main.Error?.Log($"MultiDefault _record for {mech.Description.Id} have unknown category [{category}] for {m.DefID}");
-                        continue;
                     }
                 }
 
@@ -401,7 +399,7 @@ public class DefaultsDatabase
 
         var mechut = UnitTypeDatabase.Instance.GetUnitTypes(mech);
         process_defaults(result, defaults_by_category
-            .Select(i => new temp_idefault()
+            .Select(i => new temp_idefault
             {
                 Defaults = i.Value.GetDefault(mechut),
                 CategoryID = i.Key

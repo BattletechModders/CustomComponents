@@ -30,7 +30,7 @@ public static class SimGameState_ML_InstallComponent_Patch
             state.DoChanges();
             state.ApplyInventory();
 
-            Log.ComponentInstall.Trace?.Log($"ML_InstallComponent complete");
+            Log.ComponentInstall.Trace?.Log("ML_InstallComponent complete");
         }
         catch (Exception e)
         {

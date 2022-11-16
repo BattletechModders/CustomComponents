@@ -37,7 +37,7 @@ public static class Contract_AddMechComponentToSalvage
 
         if (lootable == null)
         {
-            Log.SalvageProcess.Trace?.Log($"---- default, no lootable - skipped");
+            Log.SalvageProcess.Trace?.Log("---- default, no lootable - skipped");
 
             return false;
         }

@@ -27,7 +27,7 @@ public static class TColorExtentions
         }
         else
         {
-            Log.Color.Trace?.Log($"-- no color set to white");
+            Log.Color.Trace?.Log("-- no color set to white");
             color_text.SetUIColor(UIColor.White);
             if (color_icon != null)
                 color_icon.SetUIColor(UIColor.White);

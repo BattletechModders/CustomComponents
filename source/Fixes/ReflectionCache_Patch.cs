@@ -33,7 +33,7 @@ internal static class ReflectionCache_Invoke_Patch
     }
 }
 
-[HarmonyPatch()]
+[HarmonyPatch]
 internal static class ReflectionCache_TryCacheMember_Patch
 {
     public static MethodInfo TargetMethod()
@@ -54,7 +54,7 @@ internal static class ReflectionCache_TryCacheMember_Patch
     }
 }
 
-[HarmonyPatch()]
+[HarmonyPatch]
 internal static class ReflectionCache_TryCacheMethod_Patch
 {
     public static MethodInfo TargetMethod()

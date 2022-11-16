@@ -48,7 +48,7 @@ internal static class MechLabLocationWidget_OnMechLabDrop_Patch
                 return true;
             }
 
-            Log.ComponentInstall.Trace?.Log($"- pre validation");
+            Log.ComponentInstall.Trace?.Log("- pre validation");
 
             foreach (var pre_validator in Validator.GetPre(newComponentDef))
             {
@@ -57,7 +57,7 @@ internal static class MechLabLocationWidget_OnMechLabDrop_Patch
                     return false;
             }
 
-            Log.ComponentInstall.Trace?.Log($"- replace validation");
+            Log.ComponentInstall.Trace?.Log("- replace validation");
 
             var changes = new Queue<IChange>();
 
@@ -93,13 +93,13 @@ internal static class MechLabLocationWidget_OnMechLabDrop_Patch
 #endif
 
 
-            Log.ComponentInstall.Trace?.Log($"- adjusting");
+            Log.ComponentInstall.Trace?.Log("- adjusting");
 
             var state = new InventoryOperationState(changes, ___mechLab.activeMechDef);
             state.DoChanges();
             var inv = state.Inventory;
 
-            Log.ComponentInstall.Trace?.Log($"- post validation");
+            Log.ComponentInstall.Trace?.Log("- post validation");
 
             foreach (var pst_validator in Validator.GetPost(newComponentDef))
             {

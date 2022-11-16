@@ -54,7 +54,7 @@ public class DefaultFixer
         public MultiCategoryDefault mrecord;
         public CategoryDefaultRecord crecord;
         public bool used_now => item != null;
-        public bool used_after = false;
+        public bool used_after;
         public MechComponentRef item;
 
         public bool mode { get; private set; }
@@ -149,7 +149,7 @@ public class DefaultFixer
             i => i.Key,
             i => i.Value.LocationLimits
                 .Where(a => a.Value.Limited)
-                .Select(a => new free_record()
+                .Select(a => new free_record
                 {
                     free = a.Value.Limit,
                     location = a.Key,
@@ -177,10 +177,7 @@ public class DefaultFixer
                             freeRecord.free -= cat.Weight;
                     }
             }
-            else
-            {
-                //Control.Log($"--- Skipped {invItem.Item.ComponentDefID}");
-            }
+            //Control.Log($"--- Skipped {invItem.Item.ComponentDefID}");
         }
 
         var used_records = new List<(free_record record, int value)>();

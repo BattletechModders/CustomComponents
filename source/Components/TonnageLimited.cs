@@ -55,8 +55,7 @@ public class TonnageLimited : SimpleCustomComponent, IMechLabFilter, IMechValida
         {
             if (Min == Max)
                 return (new Text(Control.Settings.Message.Tonnage_AddAllow, item.ComponentRef.Def.Description.UIName, Min)).ToString();
-            else
-                return (new Text(Control.Settings.Message.Tonnage_AddLimit, item.ComponentRef.Def.Description.UIName, Min, Max)).ToString();
+            return (new Text(Control.Settings.Message.Tonnage_AddLimit, item.ComponentRef.Def.Description.UIName, Min, Max)).ToString();
         }
 
         return string.Empty;

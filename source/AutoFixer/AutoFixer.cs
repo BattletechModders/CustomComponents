@@ -94,11 +94,11 @@ public class AutoFixer
             foreach (var mechDef in mechDefs)
             {
                 var ut = mechDef.GetUnitTypes();
-                Log.UnitType.Trace?.Log($"{mechDef.Description.Id}: [{ (ut == null ? "null" : ut.Join(null, ", "))}]");
+                Log.UnitType.Trace?.Log($"{mechDef.Description.Id}: [{ (ut == null ? "null" : ut.Join())}]");
             }
         }
 
-        Log.AutoFixBase.Trace?.Log($"-- done");
+        Log.AutoFixBase.Trace?.Log("-- done");
 
     }
 
@@ -174,7 +174,6 @@ public class AutoFixer
 
     internal void EmptyFixer(List<MechDef> mechDefs, SimGameState state)
     {
-        return;
     }
 
     internal void ReAddFixed(List<MechDef> mechDefs, SimGameState state)

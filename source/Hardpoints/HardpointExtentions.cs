@@ -115,7 +115,7 @@ public static class HardpointExtentions
                 continue;
             }
 
-            var rec = new WeaponDefaultRecord()
+            var rec = new WeaponDefaultRecord
             {
                 WeaponCategory = wc,
                 Def = def,

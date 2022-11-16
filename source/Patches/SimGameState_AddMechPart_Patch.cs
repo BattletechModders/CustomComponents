@@ -36,7 +36,7 @@ public static class SimGameState_AddMechPart_Patch
     {
         Log.ClearInventory.Trace?.Log($"Create mech from parts need_equip:{need_equip}");
 
-        var result = new MechDef(mechDef, simguid, true);
+        var result = new MechDef(mechDef, simguid);
         if (!need_equip)
         {
             result.SetInventory(DefaultHelper.ClearInventory(mechDef, state));

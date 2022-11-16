@@ -44,7 +44,7 @@ internal static class MechLabInventoryWidget_ApplyFiltering_Patch
                     if(item.ComponentRef.Flags<CCFlags>().HideFromInv)
                     {
                         item.gameObject.SetActive(false);
-                        Log.Filter.Trace?.Log($"---- filterd, hide from inventory/default");
+                        Log.Filter.Trace?.Log("---- filterd, hide from inventory/default");
                     }
                     foreach (var filter in item.ComponentRef.GetComponents<IMechLabFilter>())
                     {
@@ -54,7 +54,7 @@ internal static class MechLabInventoryWidget_ApplyFiltering_Patch
                             if (!filter.CheckFilter(mechlab))
                             {
                                 item.gameObject.SetActive(false);
-                                Log.Filter.Trace?.Log($"---- filterd, stoped");
+                                Log.Filter.Trace?.Log("---- filterd, stoped");
                                 break;
                             }
                         }
@@ -66,7 +66,7 @@ internal static class MechLabInventoryWidget_ApplyFiltering_Patch
                 }
                 else
                 {
-                    Log.Filter.Trace?.Log($"-- ITEM IS NULL!");
+                    Log.Filter.Trace?.Log("-- ITEM IS NULL!");
                 }
             }
 

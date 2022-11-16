@@ -76,7 +76,8 @@ public static class Registry
                     genericTypes = new[] { type, defType,argument };
                     break;
                 }
-                else if (intType.GetGenericTypeDefinition() == typeof(IListComponent<>))
+
+                if (intType.GetGenericTypeDefinition() == typeof(IListComponent<>))
                 {
                     var argument = intType.GetGenericArguments()[0];
                     factoryGenericType = argument.IsEnum ? typeof(EnumListCustomFactory<,,>) : typeof(ListCustomFactory<,,>);
@@ -126,7 +127,7 @@ public static class Registry
     {
         if (target == null)
         {
-            Log.Main.Error?.Log($"NULL item loaded");
+            Log.Main.Error?.Log("NULL item loaded");
             foreach (var value in values)
             {
                 Log.Main.Error?.Log($"- {value.Key}: {value.Value}");

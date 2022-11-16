@@ -27,7 +27,7 @@ public class HardpointInfo
     {
         if (ID == null)
         {
-            Log.Main.Error?.Log($"Empty WeaponCategory");
+            Log.Main.Error?.Log("Empty WeaponCategory");
             return false;
         }
 

@@ -13,7 +13,7 @@ internal static class MechValidationRules_ValidateMechCanBeFielded_Patch
         {
             if (mechDef == null)
             {
-                Log.MechValidation.Trace?.Log($"Mech validation for NULL return");
+                Log.MechValidation.Trace?.Log("Mech validation for NULL return");
                 return;
             }
 
@@ -33,19 +33,19 @@ internal static class MechValidationRules_ValidateMechCanBeFielded_Patch
 
             if (!__result)
             {
-                Log.MechValidation.Trace?.Log($"- failed base validation");
+                Log.MechValidation.Trace?.Log("- failed base validation");
                 return;
             }
 
-            Log.MechValidation.Trace?.Log($"- fixed validation");
+            Log.MechValidation.Trace?.Log("- fixed validation");
             if (!Validator.ValidateMechCanBeFielded(mechDef))
             {
                 __result = false;
-                Log.MechValidation.Trace?.Log($"- failed fixed validation");
+                Log.MechValidation.Trace?.Log("- failed fixed validation");
                 return;
             }
 
-            Log.MechValidation.Trace?.Log($"- component validation");
+            Log.MechValidation.Trace?.Log("- component validation");
             foreach (var component in mechDef.Inventory)
             {
                 foreach (var mechValidate in component.GetComponents<IMechValidate>())
@@ -54,7 +54,7 @@ internal static class MechValidationRules_ValidateMechCanBeFielded_Patch
                     if (!mechValidate.ValidateMechCanBeFielded(mechDef, component))
                     {
                         __result = false;
-                        Log.MechValidation.Trace?.Log($"- failed component validation");
+                        Log.MechValidation.Trace?.Log("- failed component validation");
                         return;
                     }
                 }
@@ -64,13 +64,13 @@ internal static class MechValidationRules_ValidateMechCanBeFielded_Patch
                     && (component.MountedLocation & locations.GetLocationsFor(mechDef)) <= ChassisLocations.None)
                 {
                     __result = false;
-                    Log.MechValidation.Trace?.Log($"- failed component location validation");
+                    Log.MechValidation.Trace?.Log("- failed component location validation");
                     return;
                 }
 
             }
 
-            Log.MechValidation.Trace?.Log($"- validation passed");
+            Log.MechValidation.Trace?.Log("- validation passed");
         }
 
         catch (Exception e)

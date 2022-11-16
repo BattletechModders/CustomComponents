@@ -21,7 +21,7 @@ public static class SettingsResourcesTools
     {
         if (customResources == null)
         {
-            Log.CustomResource.Trace?.Log($"customResources not found");
+            Log.CustomResource.Trace?.Log("customResources not found");
             yield break;
         }
 

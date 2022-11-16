@@ -11,7 +11,7 @@ namespace CustomComponents;
 [HarmonyPatch(typeof(CombatHUD))]
 [HarmonyPatch("Init")]
 [HarmonyPatch(MethodType.Normal)]
-[HarmonyPatch(new Type[] { typeof(CombatGameState) })]
+[HarmonyPatch(new[] { typeof(CombatGameState) })]
 public static class CombatHUD_InitTags {
   public static bool Prefix(CombatHUD __instance, CombatGameState Combat) {
     Log.Main.Info?.Log("Clearing tags cache");
@@ -34,7 +34,7 @@ public static class CustomCombatTagsHelper {
     string GUID;
     if (checkExistance(target.StatCollection, CCComponentGUIDStatName) == false) {
       GUID = Guid.NewGuid().ToString();
-      target.StatCollection.AddStatistic<string>(CCComponentGUIDStatName, GUID);
+      target.StatCollection.AddStatistic(CCComponentGUIDStatName, GUID);
     } else {
       GUID = target.StatCollection.GetStatistic(CCComponentGUIDStatName).Value<string>();
     }
@@ -63,11 +63,11 @@ public static class CustomCombatTagsHelper {
     return tags;
   }
   private static void saveTags(MechComponent target,TagSet tags) {
-    Log.Main.Info?.Log($"saving tags "+target.defId+":"+tags);
+    Log.Main.Info?.Log("saving tags "+target.defId+":"+tags);
     if (checkExistance(target.StatCollection, CCComponentTagsStatName) == false) {
-      target.StatCollection.AddStatistic<string>(CCComponentTagsStatName, tags.ToString());
+      target.StatCollection.AddStatistic(CCComponentTagsStatName, tags.ToString());
     } else {
-      target.StatCollection.Set<string>(CCComponentTagsStatName, tags.ToString());
+      target.StatCollection.Set(CCComponentTagsStatName, tags.ToString());
     }
   }
   public static TagSet ComponentTags(this MechComponent target) {

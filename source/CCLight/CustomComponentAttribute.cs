@@ -18,6 +18,6 @@ public class CustomComponentAttribute : Attribute
         AllowArray = allowarray;
     }
 
-    public CustomComponentAttribute(string name) : this(name,false, "")
+    public CustomComponentAttribute(string name) : this(name,false)
     { }
 }

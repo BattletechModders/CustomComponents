@@ -16,7 +16,7 @@ public static class IconController
 
     internal static void LoadIcons(Dictionary<string, VersionManifestEntry> icons_ressourses)
     {
-        Log.Icons.Trace?.Log($"Get data:");
+        Log.Icons.Trace?.Log("Get data:");
         foreach (var pair in icons_ressourses)
         {
             Log.Icons.Trace?.Log($"- {pair.Key}: {pair.Value.FileName} {pair.Value.FilePath} {pair.Value.Name}");

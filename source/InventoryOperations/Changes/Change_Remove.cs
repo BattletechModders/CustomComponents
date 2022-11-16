@@ -10,7 +10,7 @@ public class Change_Remove : IChange_Apply, IChange_Optimize
     private MechComponentRef item;
 
     public bool Initial { get; set; }
-    public bool Applied { get; private set; } = false;
+    public bool Applied { get; private set; }
     public string ItemID { get; set; }
     public ChassisLocations Location { get; set; }
     public void AdjustChange(InventoryOperationState state)

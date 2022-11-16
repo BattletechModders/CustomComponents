@@ -86,12 +86,12 @@ public class CategoryController
 
         var items_by_category = mechDef.Inventory
             .Select(item => new { item, def = item.Def.GetComponents<Category>() })
-            .Where(@t => @t.def != null)
-            .SelectMany(@t => t.def.Select(item => new
+            .Where(t => t.def != null)
+            .SelectMany(t => t.def.Select(item => new
             {
                 category = item.CategoryDescriptor,
-                itemdef = @t.item.Def,
-                itemref = @t.item,
+                itemdef = t.item.Def,
+                itemref = t.item,
                 location = t.item.MountedLocation,
                 mix = item.GetTag(),
                 num = item.Weight
@@ -182,12 +182,12 @@ public class CategoryController
     {
         var items_by_category = mechDef.Inventory
             .Select(item => new { item, def = item.Def.GetComponents<Category>() })
-            .Where(@t => @t.def != null)
-            .SelectMany(@t => t.def.Select(item => new
+            .Where(t => t.def != null)
+            .SelectMany(t => t.def.Select(item => new
             {
                 category = item.CategoryDescriptor,
-                itemdef = @t.item.Def,
-                itemref = @t.item,
+                itemdef = t.item.Def,
+                itemref = t.item,
                 location = t.item.MountedLocation,
                 mix = item.GetTag(),
                 num = item.Weight
