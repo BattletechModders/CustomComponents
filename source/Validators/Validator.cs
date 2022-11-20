@@ -43,6 +43,9 @@ public static class Validator
 
     internal static IEnumerable<PreValidateDropDelegate> GetPre(MechComponentDef component)
     {
+        if (Control.Settings.DEBUG_DropValidationDisabled)
+            yield break;
+
         yield return ValidateBase;
 
         if (Control.Settings.BaseECMValidation)
@@ -57,7 +60,8 @@ public static class Validator
 
     internal static IEnumerable<ReplaceValidateDropDelegate> GetReplace(MechComponentDef component)
     {
-
+        if (Control.Settings.DEBUG_DropValidationDisabled)
+            yield break;
 
         foreach (var item in component.GetComponents<IReplaceValidateDrop>())
             yield return item.ReplaceValidateDrop;
@@ -68,6 +72,8 @@ public static class Validator
 
     internal static IEnumerable<PostValidateDropDelegate> GetPost(MechComponentDef component)
     {
+        if (Control.Settings.DEBUG_DropValidationDisabled)
+            yield break;
 
         foreach (var validator in component.GetComponents<IPostValidateDrop>())
             yield return validator.PostValidateDrop;

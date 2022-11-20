@@ -126,6 +126,7 @@ public class CustomComponentSettings
     public bool DEBUG_ShowLoadedDefaults = true;
     public bool DEBUG_ShowLoadedAlLocations = true;
     public bool DEBUG_ShowLoadedHardpoints = true;
+    public bool DEBUG_DropValidationDisabled = false;
 
     public bool DEBUG_ShowMechUT = false;
 

@@ -21,6 +21,7 @@
 		"DEBUG_ShowLoadedHardpoints": true,
 		"DEBUG_EnableAllTags": false,
 		"DEBUG_ShowMechUT": false,
+		"DEBUG_DropValidationDisabled": false,
 
 		"Message": {
 
