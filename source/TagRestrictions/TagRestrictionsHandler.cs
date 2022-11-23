@@ -19,11 +19,11 @@ internal class TagRestrictionsHandler
         _restrictions = SettingsResourcesTools.Enumerate<TagRestrictions>("CCTagRestrictions", customResources)
             .ToDictionary(entry => entry.Tag);
 
-        if (Log.CustomResource.Debug != null)
+        if (Log.CustomResource.Trace != null)
         {
             foreach (var pair in _restrictions)
             {
-                Log.CustomResource.Debug.Log($" -- {pair.Key}");
+                Log.CustomResource.Trace.Log($" -- {pair.Key}");
             }
         }
     }

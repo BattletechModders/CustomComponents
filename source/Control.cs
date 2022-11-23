@@ -46,18 +46,18 @@ public static class Control
 
             var version = Assembly.GetExecutingAssembly().GetName().Version;
             Log.Main.Info?.Log($"Loaded CustomComponents {version.ToString(3)} for bt 1.9.1");
-            Log.Main.Info?.Log("- DumpMechDefs:" + Settings.DEBUG_DumpMechDefs);
-            Log.Main.Info?.Log("-- MechDefsDir: " + Settings.DEBUG_MechDefsDir);
-            Log.Main.Info?.Log("- ValidateMechDefs: " + Settings.DEBUG_ValidateMechDefs);
-            Log.Main.Info?.Log("-- ShowOnlyErrors: " + Settings.DEBUG_ShowOnlyErrors);
-            Log.Main.Info?.Log("- ShowAllUnitTypes: " + Settings.DEBUG_ShowAllUnitTypes);
-            Log.Main.Info?.Log("- EnableAllTags: " + Settings.DEBUG_EnableAllTags);
-            Log.Main.Info?.Log("- ShowConfig: " + Settings.DEBUG_ShowConfig);
-            Log.Main.Info?.Log("- ShowLoadedCategory: " + Settings.DEBUG_ShowLoadedCategory);
-            Log.Main.Info?.Log("- ShowLoadedDefaults: " + Settings.DEBUG_ShowLoadedDefaults);
-            Log.Main.Info?.Log("- ShowLoadedAlLocations: " + Settings.DEBUG_ShowLoadedAlLocations);
-            Log.Main.Info?.Log("- ShowMechUT: " + Settings.DEBUG_ShowMechUT);
-            Log.Main.Info?.Log("- ShowLoadedHardpoints: " + Settings.DEBUG_ShowLoadedHardpoints);
+            Log.Main.Debug?.Log("- DumpMechDefs:" + Settings.DEBUG_DumpMechDefs);
+            Log.Main.Debug?.Log("-- MechDefsDir: " + Settings.DEBUG_MechDefsDir);
+            Log.Main.Debug?.Log("- ValidateMechDefs: " + Settings.DEBUG_ValidateMechDefs);
+            Log.Main.Debug?.Log("-- ShowOnlyErrors: " + Settings.DEBUG_ShowOnlyErrors);
+            Log.Main.Debug?.Log("- ShowAllUnitTypes: " + Settings.DEBUG_ShowAllUnitTypes);
+            Log.Main.Debug?.Log("- EnableAllTags: " + Settings.DEBUG_EnableAllTags);
+            Log.Main.Debug?.Log("- ShowConfig: " + Settings.DEBUG_ShowConfig);
+            Log.Main.Debug?.Log("- ShowLoadedCategory: " + Settings.DEBUG_ShowLoadedCategory);
+            Log.Main.Debug?.Log("- ShowLoadedDefaults: " + Settings.DEBUG_ShowLoadedDefaults);
+            Log.Main.Debug?.Log("- ShowLoadedAlLocations: " + Settings.DEBUG_ShowLoadedAlLocations);
+            Log.Main.Debug?.Log("- ShowMechUT: " + Settings.DEBUG_ShowMechUT);
+            Log.Main.Debug?.Log("- ShowLoadedHardpoints: " + Settings.DEBUG_ShowLoadedHardpoints);
 
 
             Validator.RegisterMechValidator(CategoryController.Shared.ValidateMech, CategoryController.Shared.ValidateMechCanBeFielded);
