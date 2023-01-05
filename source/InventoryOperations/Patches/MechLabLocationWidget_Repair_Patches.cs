@@ -7,7 +7,7 @@ using Harmony;
 
 namespace CustomComponents.Patches;
 
-[HarmonyPatch(typeof(MechLabLocationWidget), "RepairAll")]
+[HarmonyPatch(typeof(MechLabLocationWidget), nameof(MechLabLocationWidget.RepairAll))]
 public static class MechLabLocationWidget_RepairAll_Patch
 {
     public static bool RepairAll(bool forceRepairStructure, bool validate, MechLabLocationWidget __instance)
@@ -25,8 +25,8 @@ public static class MechLabLocationWidget_RepairAll_Patch
         var lheleper = mechLab.GetLocationHelper(__instance.loadout.Location);
 
         foreach (var item in lheleper.LocalInventory.Where(i =>
-                     i.ComponentRef.DamageLevel == ComponentDamageLevel.Functional
-                     || i.ComponentRef.DamageLevel != ComponentDamageLevel.Installing))
+                     i.ComponentRef.DamageLevel != ComponentDamageLevel.Functional
+                     && i.ComponentRef.DamageLevel != ComponentDamageLevel.Installing))
         {
             if (item.ComponentRef.IsFixed || item.ComponentRef.Flags<CCFlags>().AutoRepair)
             {
