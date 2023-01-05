@@ -250,14 +250,14 @@ public class DefaultFixer
 
     public void DoDefaultsChange(InventoryOperationState state, string categoryId)
     {
-        //Control.Log($"- DoDefaultsChange");
+        Log.DefaultHandle.Trace?.Log("- DoDefaultsChange");
         var mech = state.Mech;
         var record = DefaultsDatabase.Instance[mech];
 
 
         if (!record.Defaults.TryGetValue(categoryId, out var defaults) || defaults?.Defaults == null)
         {
-            //Control.Log($"- empty defaults list, clearing");
+            Log.DefaultHandle.Trace?.Log("- empty defaults list, clearing");
             foreach (var item in state.Inventory)
             {
                 if (item.Item.IsCategory(categoryId) && record.IsSingleCatDefault(item.Item.ComponentDefID, categoryId) &&
@@ -270,14 +270,14 @@ public class DefaultFixer
             return;
         }
 
-        //Control.Log($"- usage create");
+        Log.DefaultHandle.Trace?.Log("- usage create");
 
         var usage = defaults.Defaults
             .Select(i => new usage_record(i))
             .ToList();
-        //Control.Log($"-- {(usage == null ? "null" : usage.Count.ToString() + " items")}");
+        Log.DefaultHandle.Trace?.Log($"-- {usage.Count} items");
 
-        //Control.Log($"- free create");
+        Log.DefaultHandle.Trace?.Log("- free create");
         var free = defaults.CategoryRecord.LocationLimits
             .Where(i => i.Value.Limited)
             .Select(i =>
@@ -288,39 +288,39 @@ public class DefaultFixer
                 })
             .ToList();
 
-        //Control.Log($"-- {(free == null ? "null" : free.Count.ToString() + " items")}");
+        Log.DefaultHandle.Trace?.Log($"-- {free.Count} items");
 
 
-        //Control.Log($"- start inventory");
+        Log.DefaultHandle.Trace?.Log("- start inventory");
         foreach (var invItem in state.Inventory)
         {
             var item = usage.FirstOrDefault(i => i.DefId == invItem.Item.ComponentDefID
                                                  && i.Location == invItem.Location && !i.used_now);
             if (item != null)
             {
-                //Control.Log($"-- {invItem.Item.ComponentDefID} is in defaults, added");
+                Log.DefaultHandle.Trace?.Log($"-- {invItem.Item.ComponentDefID} is in defaults, added");
                 item.item = invItem.Item;
             }
             else if (invItem.Item.IsCategory(categoryId, out var cat))
             {
-                //Control.Log($"-- {invItem.Item.ComponentDefID} not in defaults, decrease free space");
+                Log.DefaultHandle.Trace?.Log($"-- {invItem.Item.ComponentDefID} not in defaults, decrease free space");
                 foreach (var freeRecord in free.Where(i => i.location.HasFlag(invItem.Location)))
                     freeRecord.free -= cat.Weight;
             }
         }
-        //Control.Log($"- end inventory");
+        Log.DefaultHandle.Trace?.Log("- end inventory");
         var used_records = new List<(free_record record, int value)>();
 
-        //Control.Log($"- start usage");
+        Log.DefaultHandle.Trace?.Log("- start usage");
         foreach (var usageRecord in usage)
         {
-            //Control.Log($"-- {(usageRecord.DefId)} {usageRecord.Location} {usageRecord.crecord.Category.Weight}");
+            Log.DefaultHandle.Trace?.Log($"-- {usageRecord.DefId} {usageRecord.Location} {usageRecord.crecord.Category.Weight}");
 
             used_records.Clear();
             var fit = true;
             foreach (var freeRecord in free.Where(i => i.location.HasFlag(usageRecord.Location)))
             {
-                //Control.Log($"-- free {freeRecord.location} {freeRecord.free}");
+                Log.DefaultHandle.Trace?.Log($"-- free {freeRecord.location} {freeRecord.free}");
 
                 if (freeRecord.free >= usageRecord.crecord.Category.Weight)
                     used_records.Add((freeRecord, usageRecord.crecord.Category.Weight));
@@ -329,35 +329,35 @@ public class DefaultFixer
                     fit = false;
                     break;
                 }
-                //Control.Log($"-- category {(usageRecord.crecord.Category.Weight)}");
+                Log.DefaultHandle.Trace?.Log($"-- category {usageRecord.crecord.Category.Weight}");
             }
-            //Control.Log($"-- {usageRecord.DefId} fit: {fit}");
+            Log.DefaultHandle.Trace?.Log($"-- {usageRecord.DefId} fit: {fit}");
 
             fit = fit && used_records.Count > 0;
 
             usageRecord.used_after = fit;
             if (fit)
             {
-                //Control.Log($"-- decrease free space");
+                Log.DefaultHandle.Trace?.Log("-- decrease free space");
                 foreach (var used in used_records)
                     used.record.free -= used.value;
             }
 
             if (usageRecord.used_after != usageRecord.used_now)
             {
-                //Control.Log($"-- create change");
+                Log.DefaultHandle.Trace?.Log("-- create change");
                 if (usageRecord.used_after)
                 {
-                    //Control.Log($"-- Add {usageRecord.DefId} => {usageRecord.Location}");
+                    Log.DefaultHandle.Trace?.Log($"-- Add {usageRecord.DefId} => {usageRecord.Location}");
                     state.AddChange(new Change_Add(usageRecord.DefId, usageRecord.Type, usageRecord.Location));
                 }
                 else
                 {
-                    //Control.Log($"-- Remove {usageRecord.DefId} =X {usageRecord.Location}");
+                    Log.DefaultHandle.Trace?.Log($"-- Remove {usageRecord.DefId} =X {usageRecord.Location}");
                     state.AddChange(new Change_Remove(usageRecord.DefId, usageRecord.Location));
                 }
             }
         }
-        //Control.Log($"- done");
+        Log.DefaultHandle.Trace?.Log("- done");
     }
 }
