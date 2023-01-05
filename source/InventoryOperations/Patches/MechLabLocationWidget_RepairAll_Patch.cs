@@ -10,7 +10,7 @@ namespace CustomComponents.Patches;
 [HarmonyPatch(typeof(MechLabLocationWidget), nameof(MechLabLocationWidget.RepairAll))]
 public static class MechLabLocationWidget_RepairAll_Patch
 {
-    public static bool RepairAll(bool forceRepairStructure, bool validate, MechLabLocationWidget __instance)
+    public static bool Prefix(MechLabLocationWidget __instance, bool forceRepairStructure, bool validate)
     {
         var mechLab = MechLabHelper.CurrentMechLab;
         if (!mechLab.InMechLab || !mechLab.InSimGame)
