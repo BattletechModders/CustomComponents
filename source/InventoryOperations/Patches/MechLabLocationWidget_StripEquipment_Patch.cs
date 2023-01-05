@@ -5,7 +5,7 @@ using Harmony;
 
 namespace CustomComponents.Patches;
 
-[HarmonyPatch(typeof(MechLabLocationWidget), "StripEquipment")]
+[HarmonyPatch(typeof(MechLabLocationWidget), nameof(MechLabLocationWidget.StripEquipment))]
 internal static class MechLabLocationWidget_StripEquipment_Patch
 {
     [HarmonyPrefix]

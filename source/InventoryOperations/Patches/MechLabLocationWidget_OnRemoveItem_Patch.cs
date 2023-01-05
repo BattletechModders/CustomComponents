@@ -5,8 +5,8 @@ using Harmony;
 
 namespace CustomComponents.Patches;
 
-[HarmonyPatch(typeof(MechLabLocationWidget), "OnRemoveItem")]
-public static class MechLabLocationWidjet_OnRemove
+[HarmonyPatch(typeof(MechLabLocationWidget), nameof(MechLabLocationWidget.OnRemoveItem))]
+public static class MechLabLocationWidget_OnRemoveItem_Patch
 {
     [HarmonyTranspiler]
     public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)

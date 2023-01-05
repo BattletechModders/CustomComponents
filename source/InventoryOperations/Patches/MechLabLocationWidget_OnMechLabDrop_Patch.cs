@@ -8,7 +8,7 @@ using UnityEngine.EventSystems;
 
 namespace CustomComponents.Patches;
 
-[HarmonyPatch(typeof(MechLabLocationWidget), "OnMechLabDrop")]
+[HarmonyPatch(typeof(MechLabLocationWidget), nameof(MechLabLocationWidget.OnMechLabDrop))]
 internal static class MechLabLocationWidget_OnMechLabDrop_Patch
 {
     [HarmonyPriority(Priority.Low)]

@@ -11,8 +11,8 @@ namespace CustomComponents.Patches;
 /// <summary>
 /// ItemGrab path for IDefaultReplace
 /// </summary>
-[HarmonyPatch(typeof(MechLabLocationWidget), "OnItemGrab")]
-internal static class MechLabLocationWidget_OnItemGrab_Patch_IDefaultReplace
+[HarmonyPatch(typeof(MechLabLocationWidget), nameof(MechLabLocationWidget.OnItemGrab))]
+internal static class MechLabLocationWidget_OnItemGrab_Patch
 {
     public static bool Prefix(IMechLabDraggableItem item, ref bool __result, MechLabPanel ___mechLab, ref MechComponentRef __state)
     {

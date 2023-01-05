@@ -6,7 +6,7 @@ using Harmony;
 
 namespace CustomComponents.Patches;
 
-[HarmonyPatch(typeof(SimGameState), "ML_InstallComponent")]
+[HarmonyPatch(typeof(SimGameState), nameof(SimGameState.ML_InstallComponent))]
 public static class SimGameState_ML_InstallComponent_Patch
 {
     public static void Postfix(WorkOrderEntry_InstallComponent order, SimGameState __instance)
