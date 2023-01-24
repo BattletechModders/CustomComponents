@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using BattleTech;
 
 namespace CustomComponents;
 
 public static class Registry
 {
     private static readonly List<IPreProcessor> PreProcessors = new();
+    private static readonly List<IPostProcessor> PostProcessors = new();
     private static readonly List<ICustomFactory> Factories = new();
     private static readonly HashSet<string> SimpleIdentifiers = new();
 
@@ -24,6 +24,11 @@ public static class Registry
     public static void RegisterPreProcessor(IPreProcessor preProcessor)
     {
         PreProcessors.Add(preProcessor);
+    }
+
+    internal static void RegisterPostProcessor(IPostProcessor postProcessor)
+    {
+        PostProcessors.Add(postProcessor);
     }
 
     public static void RegisterFactory(ICustomFactory factory)
@@ -163,12 +168,9 @@ public static class Registry
             }
         }
 
-        if (target is WeaponDef weapon)
+        foreach (var postProcessor in PostProcessors)
         {
-            var hp = new UseHardpointCustom();
-            weapon.AddComponent(hp);
-            hp.LoadValue(weapon.WeaponCategoryValue.Name);
-            hp.AdjustDescription();
+            postProcessor.PostProcess(target, values);
         }
 
 #if DEBUG

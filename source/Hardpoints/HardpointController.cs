@@ -134,6 +134,7 @@ public class HardpointController
     public void Setup(Dictionary<string, Dictionary<string, VersionManifestEntry>> customResources)
     {
         //SetupDefaults();
+        Registry.RegisterPostProcessor(new AddCustomToWeaponPostProcessor());
 
         foreach (var hp in SettingsResourcesTools.Enumerate<HardpointInfo>("CCHardpoints", customResources))
         {
