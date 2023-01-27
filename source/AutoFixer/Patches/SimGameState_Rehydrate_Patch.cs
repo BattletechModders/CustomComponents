@@ -6,7 +6,7 @@ using Harmony;
 
 namespace CustomComponents.Patches;
 
-[HarmonyPatch(typeof(SimGameState), "Rehydrate")]
+[HarmonyPatch(typeof(SimGameState), nameof(SimGameState.Rehydrate))]
 public static class SimGameState_Rehydrate_Patch
 {
     [HarmonyPostfix]
@@ -15,7 +15,7 @@ public static class SimGameState_Rehydrate_Patch
         try
         {
             var mechDefs = ___ActiveMechs.Values.Union(___ReadyingMechs.Values).ToList();
-            AutoFixer.Shared.FixSavedMech(mechDefs, __instance);
+            MechDefProcessing.Instance.Process(mechDefs);
         }
         catch (Exception e)
         {

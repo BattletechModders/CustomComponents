@@ -157,7 +157,6 @@ public class CustomComponentSettings
     public bool RunAutofixer = true;
     public bool FixDeletedComponents = true;
     public bool FixDefaults = true;
-    public bool FixSaveGameMech = false;
     public bool TagRestrictionDropValidateRequiredTags = false;
     public bool TagRestrictionDropValidateIncompatibleTags = true;
     public bool CheckCriticalComponent = true;

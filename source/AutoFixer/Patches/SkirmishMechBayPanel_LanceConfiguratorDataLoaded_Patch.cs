@@ -6,17 +6,17 @@ using Harmony;
 
 namespace CustomComponents.Patches;
 
-[HarmonyPatch(typeof(SkirmishMechBayPanel), "LanceConfiguratorDataLoaded")]
+[HarmonyPatch(typeof(SkirmishMechBayPanel), nameof(SkirmishMechBayPanel.LanceConfiguratorDataLoaded))]
 public static class SkirmishMechBayPanel_LanceConfiguratorDataLoaded_Patch
 {
     [HarmonyPrefix]
     [HarmonyPriority(Priority.High)]
-    public static void FixDefaults(SkirmishMechBayPanel __instance)
+    public static void Prefix(SkirmishMechBayPanel __instance)
     {
         try
         {
             var mechDefs = __instance.dataManager.MechDefs.Select(pair => pair.Value).ToList();
-            AutoFixer.Shared.FixMechDef(mechDefs);
+            MechDefProcessing.Instance.Process(mechDefs);
 
             if (Control.Settings.DEBUG_DumpMechDefs && Directory.Exists(Control.Settings.DEBUG_MechDefsDir))
             {

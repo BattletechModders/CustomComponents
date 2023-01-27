@@ -5,17 +5,17 @@ using Harmony;
 
 namespace CustomComponents;
 
-[HarmonyPatch(typeof(SimGameState), "RespondToDefsLoadComplete")]
+[HarmonyPatch(typeof(SimGameState), nameof(SimGameState.RespondToDefsLoadComplete))]
 public static class SimGameState_RespondToDefsLoadComplete_Patch
 {
     [HarmonyPrefix]
     [HarmonyPriority(Priority.High)]
-    public static void FixDefaults(SimGameState __instance)
+    public static void Prefix(SimGameState __instance)
     {
         try
         {
             var mechDefs = __instance.DataManager.MechDefs.Select(pair => pair.Value).ToList();
-            AutoFixer.Shared.FixMechDef(mechDefs);
+            MechDefProcessing.Instance.Process(mechDefs);
         }
         catch (Exception e)
         {

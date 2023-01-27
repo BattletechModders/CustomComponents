@@ -90,13 +90,13 @@ public class DefaultFixer
         }
     }
 
-    internal void FixMechs(List<MechDef> mechDefs, SimGameState simgame)
+    internal void FixMechs(List<MechDef> mechDefs)
     {
         foreach (var mechDef in mechDefs)
         {
             try
             {
-                FixMech(simgame, mechDef);
+                FixMech(mechDef);
             }
             catch (Exception e)
             {
@@ -105,7 +105,7 @@ public class DefaultFixer
         }
     }
 
-    private void FixMech(SimGameState simgame, MechDef mechDef)
+    private void FixMech(MechDef mechDef)
     {
         var defaults = DefaultsDatabase.Instance[mechDef];
         if (defaults == null)

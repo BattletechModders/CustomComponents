@@ -281,7 +281,7 @@ public class HardpointController
 
         return true;
     }
-    public void FixMechs(List<MechDef> mechdefs, SimGameState simgame)
+    public void FixMechs(List<MechDef> mechdefs)
     {
         foreach (var mechdef in mechdefs)
         {

@@ -80,10 +80,11 @@ public static class Control
 
             if (Settings.RunAutofixer)
             {
+                MechDefProcessing.Instance.Register(AutoFixer.Shared);
                 if (Settings.FixDeletedComponents)
-                    AutoFixer.Shared.RegisterMechFixer(AutoFixer.Shared.RemoveEmptyRefs);
-                if (Settings.FixSaveGameMech)
-                    AutoFixer.Shared.RegisterSaveMechFixer(AutoFixer.Shared.ReAddFixed);
+                {
+                    AutoFixer.Shared.RegisterMechFixer(MechDefInventoryCleanup.RemoveEmptyRefs);
+                }
                 if (Settings.FixDefaults)
                 {
                     AutoFixer.Shared.RegisterMechFixer(DefaultFixer.Instance.FixMechs);

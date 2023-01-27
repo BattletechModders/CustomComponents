@@ -7,7 +7,7 @@ using Harmony;
 
 namespace CustomComponents.Patches;
 
-[HarmonyPatch(typeof(SkirmishSettings_Beta), "OnLoadComplete")]
+[HarmonyPatch(typeof(SkirmishSettings_Beta), nameof(SkirmishSettings_Beta.OnLoadComplete))]
 public class SkirmishSettings_Beta_OnLoadComplete_Patch
 {
     [HarmonyPrefix]
@@ -17,7 +17,7 @@ public class SkirmishSettings_Beta_OnLoadComplete_Patch
         try
         {
             var mechDefs = ___uiManager.dataManager.MechDefs.Select(pair => pair.Value).ToList();
-            AutoFixer.Shared.FixMechDef(mechDefs);
+            MechDefProcessing.Instance.Process(mechDefs);
 
             ___stockMechs = mechDefs.Where(x => MechValidationRules.MechIsValidForSkirmish(x, false)).ToList();
         }
