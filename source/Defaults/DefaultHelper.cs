@@ -49,9 +49,11 @@ public static class DefaultHelper
         var component_ref = new MechComponentRef(id, string.Empty, type, ChassisLocations.None);
         component_ref.RefreshDef();
 
-        var state = UnityGameInstance.BattleTechGame.Simulation;
-        if (state != null)
+        if (IsSimGameStateReady(out var state))
+        {
             component_ref.SetSimGameUID(state.GenerateSimGameUID());
+        }
+
         return component_ref;
     }
 
@@ -61,11 +63,23 @@ public static class DefaultHelper
         component_ref.SetData(location,0, ComponentDamageLevel.Functional, false);
         component_ref.RefreshDef();
 
-
-        var state = UnityGameInstance.BattleTechGame.Simulation;
-        if (state != null)
+        if (IsSimGameStateReady(out var state))
+        {
             component_ref.SetSimGameUID(state.GenerateSimGameUID());
+        }
+
         return component_ref;
+    }
+
+    private static bool IsSimGameStateReady(out SimGameState state)
+    {
+        state = UnityGameInstance.BattleTechGame.Simulation;
+        if (state == null)
+        {
+            return false;
+        }
+        return !state.HasInitStateBits(SimGameState.InitStates.FROM_SAVE) ||
+               state.HasInitStateBits(SimGameState.InitStates.HEADLESS_STATE);
     }
 
     public static MechComponentDef GetComponentDef(string id, ComponentType type)
