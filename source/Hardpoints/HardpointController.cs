@@ -151,12 +151,10 @@ public class HardpointController
         HardpointInfo omni;
         if (HardpointsByID.TryGetValue(Control.Settings.OmniCategoryID, out omni))
         {
-            var list = HardpointsList
-                .Where(i => i.Visible && i.AllowOnWeapon)
-                .Select(i => new { name = i.ID, id = i.WeaponCategory.ID })
-                .ToArray();
-
-            omni.CompatibleID = list.Select(i => i.id).ToHashSet();
+            omni.CompatibleID = HardpointsList
+                .Where(i => i.AllowOmni)
+                .Select(i => i.WeaponCategory.ID)
+                .ToHashSet();
         }
 
         if (Control.Settings.DEBUG_ShowLoadedHardpoints)
