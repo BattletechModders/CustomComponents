@@ -27,6 +27,7 @@ public class FormulaEvaluator
 
     public object Evaluate(string expression, Dictionary<string, string> variables = null)
     {
+        var originalExpression = expression;
         if (variables != null)
         {
             var keys = new HashSet<string>();
@@ -43,11 +44,27 @@ public class FormulaEvaluator
                     value = "1"; // avoids division by zero issues
                 }
                 var placeholder = "[[" + key + "]]";
-                //Control.mod.Logger.LogDebug($"key={key} value={value}");
                 expression = expression.Replace(placeholder, value);
             }
         }
 
-        return Compute(expression);
+        try
+        {
+            return Compute(expression);
+        }
+        catch (Exception)
+        {
+            var log = "Could not process expression=" + expression;
+            if (expression != originalExpression)
+            {
+                log += " originalExpression=" + originalExpression;
+            }
+            if (variables != null)
+            {
+                log += " variables=" + string.Join(",", variables);
+            }
+            Log.Main.Error?.Log(log);
+            throw;
+        }
     }
 }
