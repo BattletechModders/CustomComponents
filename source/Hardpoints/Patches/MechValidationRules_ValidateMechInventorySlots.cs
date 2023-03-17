@@ -7,8 +7,9 @@ namespace CustomComponents.Patches;
 public static class MechValidationRules_ValidateMechInventorySlots
 {
     [HarmonyPrefix]
-    public static bool CancelVanilaValidation()
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal)
     {
-        return false;
+        __runOriginal = false;
     }
 }

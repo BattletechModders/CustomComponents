@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -25,20 +24,7 @@ public static class Control
             if (Settings.DEBUG_ShowConfig)
                 Log.Main.Info?.Log(JSONSerializationUtility.ToJSON(Settings));
 
-            var harmony = HarmonyInstance.Create("io.github.denadan.CustomComponents");
-            try
-            {
-                harmony.PatchAll(Assembly.GetExecutingAssembly());
-            }
-            catch (AmbiguousMatchException ame)
-            {
-                var values = "";
-                foreach (DictionaryEntry dictionaryEntry in ame.Data)
-                {
-                    values += $"  {dictionaryEntry.Key} : {dictionaryEntry.Value}\n";
-                }
-                Log.Main.Error?.Log("AmbiguousMatchException\n" + values);
-            }
+            Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), "io.github.denadan.CustomComponents");
 
             Registry.RegisterPreProcessor(new CategoryDefaultCustomsPreProcessor());
             Registry.RegisterSimpleCustomComponents(Assembly.GetExecutingAssembly());

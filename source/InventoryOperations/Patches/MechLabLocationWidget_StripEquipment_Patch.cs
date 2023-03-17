@@ -9,8 +9,14 @@ namespace CustomComponents.Patches;
 internal static class MechLabLocationWidget_StripEquipment_Patch
 {
     [HarmonyPrefix]
-    public static bool StripLocation(MechLabLocationWidget __instance)
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, MechLabLocationWidget __instance)
     {
+        if (!__runOriginal)
+        {
+            return;
+        }
+
         Log.InventoryOperations.Trace?.Log($"StripEquipment in {__instance.loadout.Location}");
         var lhelper = MechLabHelper.CurrentMechLab.GetLocationHelper(__instance.loadout.Location);
 
@@ -40,6 +46,6 @@ internal static class MechLabLocationWidget_StripEquipment_Patch
         state.DoChanges();
         state.ApplyMechlab();
 
-        return false;
+        __runOriginal = false;
     }
 }

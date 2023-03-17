@@ -9,47 +9,52 @@ namespace CustomComponents.Fixes;
 public static class MechDef_InsertFixedEquipmentIntoInventory
 {
     [HarmonyPrefix]
-    public static bool FIX(MechDef __instance, ref MechComponentRef[] ___inventory, DataManager ___dataManager)
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, MechDef __instance, ref MechComponentRef[] ___inventory, DataManager ___dataManager)
     {
-        try
+        if (!__runOriginal)
         {
-            if (__instance.Chassis == null)
-                return false;
+            return;
+        }
 
-            if (__instance.Chassis.FixedEquipment == null || __instance.Chassis.FixedEquipment.Length == 0)
-            {
-                return false;
-            }
-            var found = 0;
-            for (var i = 0; i < ___inventory.Length; i++)
-            {
-                if (!string.IsNullOrEmpty(___inventory[i].SimGameUID) && ___inventory[i].SimGameUID.Contains("FixedEquipment"))
-                {
-                    ___inventory[i].SetData(___inventory[i].HardpointSlot, ___inventory[i].DamageLevel, true);
-                    found += 1;
-                }
-            }
+        if (__instance.Chassis == null)
+        {
+            __runOriginal = false;
+            return;
+        }
 
-            if (found > 0)
-                return false;
-            var list = new List<MechComponentRef>();
-            for (var j = 0; j < __instance.Chassis.FixedEquipment.Length; j++)
+        if (__instance.Chassis.FixedEquipment == null || __instance.Chassis.FixedEquipment.Length == 0)
+        {
+            __runOriginal = false;
+            return;
+        }
+        var found = 0;
+        for (var i = 0; i < ___inventory.Length; i++)
+        {
+            if (!string.IsNullOrEmpty(___inventory[i].SimGameUID) && ___inventory[i].SimGameUID.Contains("FixedEquipment"))
             {
-                var mechComponentRef = new MechComponentRef(__instance.Chassis.FixedEquipment[j]);
-                mechComponentRef.RefreshDef();
-                mechComponentRef.SetSimGameUID($"FixedEquipment-{Guid.NewGuid().ToString()}");
-                list.Add(mechComponentRef);
-
+                ___inventory[i].SetData(___inventory[i].HardpointSlot, ___inventory[i].DamageLevel, true);
+                found += 1;
             }
-            list.AddRange(___inventory);
-            ___inventory = list.ToArray();
-            return false;
+        }
+
+        if (found > 0)
+        {
+            __runOriginal = false;
+            return;
+        }
+
+        var list = new List<MechComponentRef>();
+        for (var j = 0; j < __instance.Chassis.FixedEquipment.Length; j++)
+        {
+            var mechComponentRef = new MechComponentRef(__instance.Chassis.FixedEquipment[j]);
+            mechComponentRef.RefreshDef();
+            mechComponentRef.SetSimGameUID($"FixedEquipment-{Guid.NewGuid().ToString()}");
+            list.Add(mechComponentRef);
 
         }
-        catch (Exception e)
-        {
-            Log.Main.Error?.Log(e);
-        }
-        return true;
+        list.AddRange(___inventory);
+        ___inventory = list.ToArray();
+        __runOriginal = false;
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using BattleTech;
+﻿using BattleTech;
 using BattleTech.UI;
 
 namespace CustomComponents.Patches;
@@ -9,25 +8,18 @@ internal static class MechComponentDef_GetUIColor
 {
 
     [HarmonyPostfix]
+    [HarmonyWrapSafe]
     public static void Postfix(MechComponentDef componentDef,
         ref UIColor __result)
     {
-        try
+        var f = componentDef.Flags<CCFlags>();
+        if (f.Invalid)
         {
-            var f = componentDef.Flags<CCFlags>();
-            if (f.Invalid)
-            {
-                __result = Control.Settings.InvalidFlagBackgroundColor;
-            }
-            else if (f.Default)
-            {
-                __result = Control.Settings.DefaultFlagBackgroundColor;
-            }
+            __result = Control.Settings.InvalidFlagBackgroundColor;
         }
-        catch (Exception e)
+        else if (f.Default)
         {
-            Log.Main.Error?.Log(e);
+            __result = Control.Settings.DefaultFlagBackgroundColor;
         }
-
     }
 }

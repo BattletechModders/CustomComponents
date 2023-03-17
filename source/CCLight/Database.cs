@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 using BattleTech.Data;
@@ -179,18 +178,18 @@ public class Database
     [HarmonyPatch(typeof(DataManager), nameof(DataManager.Clear))]
     public static class DataManager_Clear_Patch
     {
-        public static void Prefix(bool defs)
+        [HarmonyPrefix]
+        [HarmonyWrapSafe]
+        public static void Prefix(ref bool __runOriginal, bool defs)
         {
-            try
+            if (!__runOriginal)
             {
-                if (defs)
-                {
-                    Shared.Clear();
-                }
+                return;
             }
-            catch (Exception e)
+
+            if (defs)
             {
-                Log.Main.Error?.Log(e);
+                Shared.Clear();
             }
         }
     }

@@ -1,20 +1,19 @@
-﻿using System;
-using BattleTech;
+﻿using BattleTech;
 
 namespace CustomComponents.SorterMechInventory.Patches;
 
 [HarmonyPatch(typeof(MechDef), nameof(MechDef.SetInventory))]
 public static class MechDef_SetInventory_Patch
 {
-    public static void Prefix(ref MechComponentRef[] newInventory)
+    [HarmonyPrefix]
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, ref MechComponentRef[] newInventory)
     {
-        try
+        if (!__runOriginal)
         {
-            SorterUtils.SortMechDefInventory(newInventory);
+            return;
         }
-        catch (Exception e)
-        {
-            Log.Main.Error?.Log(e);
-        }
+
+        SorterUtils.SortMechDefInventory(newInventory);
     }
 }

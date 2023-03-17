@@ -7,8 +7,14 @@ namespace CustomComponents.Patches;
 public static class InventoryDataObject_ShopWeapon_RefreshItemColor
 {
     [HarmonyPrefix]
-    public static bool ChangeColor(InventoryItemElement theWidget, InventoryDataObject_ShopWeapon __instance)
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, InventoryItemElement theWidget, InventoryDataObject_ShopWeapon __instance)
     {
+        if (!__runOriginal)
+        {
+            return;
+        }
+
         try
         {
             ColorExtentions.ChangeBackColor(__instance.weaponDef, theWidget);
@@ -18,7 +24,8 @@ public static class InventoryDataObject_ShopWeapon_RefreshItemColor
         {
             Log.Main.Error?.Log(ex);
         }
-        return false;
+
+        __runOriginal = false;
     }
 }
 
@@ -26,17 +33,17 @@ public static class InventoryDataObject_ShopWeapon_RefreshItemColor
 public static class IInventoryDataObject_ShopGear_RefreshItemColor
 {
     [HarmonyPrefix]
-    public static bool ChangeColor(InventoryItemElement theWidget, InventoryDataObject_ShopGear __instance)
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, InventoryItemElement theWidget, InventoryDataObject_ShopGear __instance)
     {
-        try
+        if (!__runOriginal)
         {
-            ColorExtentions.ChangeBackColor(__instance.componentDef, theWidget);
-            TColorExtentions.ChangeTextIconColor(__instance.componentDef, theWidget);
+            return;
         }
-        catch (Exception ex)
-        {
-            Log.Main.Error?.Log(ex);
-        }
-        return false;
+
+        ColorExtentions.ChangeBackColor(__instance.componentDef, theWidget);
+        TColorExtentions.ChangeTextIconColor(__instance.componentDef, theWidget);
+
+        __runOriginal = false;
     }
 }

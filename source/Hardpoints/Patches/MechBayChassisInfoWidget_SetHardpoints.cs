@@ -1,5 +1,4 @@
-﻿using System;
-using BattleTech;
+﻿using BattleTech;
 using BattleTech.UI;
 using BattleTech.UI.TMProWrapper;
 
@@ -10,29 +9,27 @@ namespace CustomComponents.Patches;
 public static class MechBayChassisInfoWidget_SetHardpoints
 {
     [HarmonyPrefix]
-    public static bool SetHardpoints(MechBayChassisInfoWidget __instance, LocalizableText ___jumpjetHardpointText,
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, MechBayChassisInfoWidget __instance, LocalizableText ___jumpjetHardpointText,
         LocalizableText ___ballisticHardpointText, ChassisDef ___selectedChassis)
     {
-
-        try
+        if (!__runOriginal)
         {
-            var hardpoints = __instance.GetComponent<UIModuleHPHandler>();
-            if (hardpoints == null)
-            {
-                hardpoints = __instance.gameObject.AddComponent<UIModuleHPHandler>();
-                hardpoints.Init(__instance, ___ballisticHardpointText.gameObject,
-                    ___jumpjetHardpointText.gameObject, new(320,-25));
-            }
-
-            var usage = ___selectedChassis.GetHardpoints();
-            hardpoints.SetDataTotal(usage);
-            hardpoints.SetJJ(___selectedChassis);
-
+            return;
         }
-        catch (Exception e)
+
+        var hardpoints = __instance.GetComponent<UIModuleHPHandler>();
+        if (hardpoints == null)
         {
-            Log.Main.Error?.Log(e);
+            hardpoints = __instance.gameObject.AddComponent<UIModuleHPHandler>();
+            hardpoints.Init(__instance, ___ballisticHardpointText.gameObject,
+                ___jumpjetHardpointText.gameObject, new(320,-25));
         }
-        return false;
+
+        var usage = ___selectedChassis.GetHardpoints();
+        hardpoints.SetDataTotal(usage);
+        hardpoints.SetJJ(___selectedChassis);
+
+        __runOriginal = false;
     }
 }

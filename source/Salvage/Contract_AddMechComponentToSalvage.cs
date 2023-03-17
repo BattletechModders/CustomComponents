@@ -1,23 +1,20 @@
-﻿using System;
-using BattleTech;
+﻿using BattleTech;
 
 namespace CustomComponents;
 
 [HarmonyPatch(typeof(Contract),"AddMechComponentToSalvage")]
 public static class Contract_AddMechComponentToSalvage
 {
-    public static bool Prefix(ref MechComponentDef def)
+    [HarmonyPrefix]
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, ref MechComponentDef def)
     {
-        try
+        if (!__runOriginal)
         {
-            return CheckDefaults(ref def);
-        }
-        catch (Exception e)
-        {
-            Log.Main.Error?.Log(e);
+            return;
         }
 
-        return true;
+        __runOriginal = CheckDefaults(ref def);
     }
 
     public static bool CheckDefaults(ref MechComponentDef def)

@@ -7,26 +7,27 @@ namespace CustomComponents;
 internal static class MechLabInventoryWidget_ApplySorting_Patch
 {
     private static Comparison<InventoryItemElement_NotListView> currentSort;
-    internal static void Prefix(MechLabInventoryWidget __instance)
+
+    [HarmonyPrefix]
+    [HarmonyWrapSafe]
+    internal static void Prefix(ref bool __runOriginal, MechLabInventoryWidget __instance)
     {
-        try
+        if (!__runOriginal)
         {
-            if (__instance.currentSort == null)
-            {
-                return;
-            }
-
-            if (__instance.currentSort == currentSort)
-            {
-                return;
-            }
-
-            currentSort = new InventorySorterNotListComparer(__instance.currentSort).Compare;
-            __instance.currentSort = currentSort;
+            return;
         }
-        catch (Exception e)
+
+        if (__instance.currentSort == null)
         {
-            Log.Main.Error?.Log(e);
+            return;
         }
+
+        if (__instance.currentSort == currentSort)
+        {
+            return;
+        }
+
+        currentSort = new InventorySorterNotListComparer(__instance.currentSort).Compare;
+        __instance.currentSort = currentSort;
     }
 }

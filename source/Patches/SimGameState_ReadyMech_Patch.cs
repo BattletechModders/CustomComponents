@@ -11,8 +11,15 @@ internal class SimGameState_ReadyMech_Patch
 {
     private static SimGameState state;
 
-    public static void Prefix(SimGameState __instance)
+    [HarmonyPrefix]
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, SimGameState __instance)
     {
+        if (!__runOriginal)
+        {
+            return;
+        }
+
 #if DEBUG
             DEBUGTOOLS.NEEDTOSHOW = true;
 #endif

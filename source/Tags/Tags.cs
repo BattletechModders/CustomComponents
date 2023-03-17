@@ -12,10 +12,16 @@ namespace CustomComponents;
 [HarmonyPatch(MethodType.Normal)]
 [HarmonyPatch(new[] { typeof(CombatGameState) })]
 public static class CombatHUD_InitTags {
-  public static bool Prefix(CombatHUD __instance, CombatGameState Combat) {
+  [HarmonyPrefix]
+  [HarmonyWrapSafe]
+  public static void Prefix(ref bool __runOriginal, CombatHUD __instance, CombatGameState Combat) {
+    if (!__runOriginal)
+    {
+      return;
+    }
+
     Log.Main.Info?.Log("Clearing tags cache");
     CustomCombatTagsHelper.ClearTagsCache();
-    return true;
   }
 }
 public static class CustomCombatTagsHelper {

@@ -7,18 +7,18 @@ namespace CustomComponents.Patches;
 public class InventoryDataObject_InventoryGear_RefreshItemColor
 {
     [HarmonyPrefix]
-    public static bool ChangeColor(InventoryDataObject_InventoryGear __instance, InventoryItemElement theWidget)
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, InventoryDataObject_InventoryGear __instance, InventoryItemElement theWidget)
     {
-        try
+        if (!__runOriginal)
         {
-            ColorExtentions.ChangeBackColor(__instance.componentRef.Def, theWidget);
-            TColorExtentions.ChangeTextIconColor(__instance.componentRef.Def, theWidget);
+            return;
         }
-        catch
-        {
-            return true;
-        }
-        return false;
+
+        ColorExtentions.ChangeBackColor(__instance.componentRef.Def, theWidget);
+        TColorExtentions.ChangeTextIconColor(__instance.componentRef.Def, theWidget);
+
+        __runOriginal = false;
     }
 }
 
@@ -26,18 +26,18 @@ public class InventoryDataObject_InventoryGear_RefreshItemColor
 public class InventoryDataObject_InventoryWeapon_RefreshItemColor
 {
     [HarmonyPrefix]
-    public static bool ChangeColor(InventoryDataObject_InventoryWeapon __instance, InventoryItemElement theWidget)
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, InventoryDataObject_InventoryWeapon __instance, InventoryItemElement theWidget)
     {
-        try
+        if (!__runOriginal)
         {
-            ColorExtentions.ChangeBackColor(__instance.componentRef.Def, theWidget);
-            TColorExtentions.ChangeTextIconColor(__instance.componentRef.Def, theWidget);
+            return;
         }
-        catch
-        {
-            return true;
-        }
-        return false;
+
+        ColorExtentions.ChangeBackColor(__instance.componentRef.Def, theWidget);
+        TColorExtentions.ChangeTextIconColor(__instance.componentRef.Def, theWidget);
+
+        __runOriginal = false;
     }
 }
 
@@ -45,18 +45,18 @@ public class InventoryDataObject_InventoryWeapon_RefreshItemColor
 public class InventoryItemElement_RefreshItemColor
 {
     [HarmonyPrefix]
-    public static bool ChangeColor(InventoryItemElement __instance, MechComponentRef ___componentRef)
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, InventoryItemElement __instance, MechComponentRef ___componentRef)
     {
-        try
+        if (!__runOriginal)
         {
-            ColorExtentions.ChangeBackColor(___componentRef.Def, __instance);
-            TColorExtentions.ChangeTextIconColor(___componentRef.Def, __instance);
+            return;
         }
-        catch
-        {
-            return true;
-        }
-        return false;
+
+        ColorExtentions.ChangeBackColor(___componentRef.Def, __instance);
+        TColorExtentions.ChangeTextIconColor(___componentRef.Def, __instance);
+
+        __runOriginal = false;
     }
 }
 
@@ -64,18 +64,18 @@ public class InventoryItemElement_RefreshItemColor
 public class InventoryItemElement_NotListView_RefreshItemColor
 {
     [HarmonyPrefix]
-    public static bool ChangeColor(InventoryItemElement_NotListView __instance, MechComponentRef ___componentRef)
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, InventoryItemElement_NotListView __instance, MechComponentRef ___componentRef)
     {
-        try
+        if (!__runOriginal)
         {
-            ColorExtentions.ChangeBackColor(___componentRef.Def, __instance);
-            TColorExtentions.ChangeTextIconColor(___componentRef.Def, __instance);
+            return;
         }
-        catch
-        {
-            return true;
-        }
-        return false;
+
+        ColorExtentions.ChangeBackColor(___componentRef.Def, __instance);
+        TColorExtentions.ChangeTextIconColor(___componentRef.Def, __instance);
+
+        __runOriginal = false;
     }
 }
 
@@ -84,18 +84,18 @@ public class InventoryItemElement_NotListView_RefreshItemColor
 public class ListElementController_InventoryGear_NotListView_RefreshItemColor
 {
     [HarmonyPrefix]
-    public static bool ChangeColor(ListElementController_InventoryGear_NotListView __instance, InventoryItemElement_NotListView theWidget)
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, ListElementController_InventoryGear_NotListView __instance, InventoryItemElement_NotListView theWidget)
     {
-        try
+        if (!__runOriginal)
         {
-            ColorExtentions.ChangeBackColor(__instance.componentRef.Def, theWidget);
-            TColorExtentions.ChangeTextIconColor(__instance.componentRef.Def, theWidget);
+            return;
         }
-        catch
-        {
-            return true;
-        }
-        return false;
+
+        ColorExtentions.ChangeBackColor(__instance.componentRef.Def, theWidget);
+        TColorExtentions.ChangeTextIconColor(__instance.componentRef.Def, theWidget);
+
+        __runOriginal = false;
     }
 }
 
@@ -103,17 +103,17 @@ public class ListElementController_InventoryGear_NotListView_RefreshItemColor
 public class ListElementController_InventoryWeapon_NotListViewn_RefreshItemColor
 {
     [HarmonyPrefix]
-    public static bool ChangeColor(ListElementController_InventoryWeapon_NotListView __instance, InventoryItemElement_NotListView theWidget)
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, ListElementController_InventoryWeapon_NotListView __instance, InventoryItemElement_NotListView theWidget)
     {
-        try
+        if (!__runOriginal)
         {
-            ColorExtentions.ChangeBackColor(__instance.componentRef.Def, theWidget);
-            TColorExtentions.ChangeTextIconColor(__instance.componentRef.Def, theWidget);
+            return;
         }
-        catch
-        {
-            return true;
-        }
-        return false;
+
+        ColorExtentions.ChangeBackColor(__instance.componentRef.Def, theWidget);
+        TColorExtentions.ChangeTextIconColor(__instance.componentRef.Def, theWidget);
+
+        __runOriginal = false;
     }
 }

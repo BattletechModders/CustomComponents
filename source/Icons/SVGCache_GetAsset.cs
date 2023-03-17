@@ -1,5 +1,4 @@
-﻿using System;
-using BattleTech.Data;
+﻿using BattleTech.Data;
 using SVGImporter;
 
 namespace CustomComponents.Icons;
@@ -9,24 +8,24 @@ namespace CustomComponents.Icons;
 public static class SVGCache_GetAsset
 {
     [HarmonyPrefix]
-    public static bool GetAsset(string id, ref SVGAsset __result)
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, string id, ref SVGAsset __result)
     {
-        try
+        if (!__runOriginal)
         {
-            if (string.IsNullOrEmpty(id) || id[0] != '@')
-                return true;
+            return;
+        }
 
-            __result = IconController.Get(id);
-            if (__result == null)
-            {
-                Log.Main.Error?.Log($"Custom icon {id} not found!");
-            }
-            return false;
-        }
-        catch (Exception e)
+        if (string.IsNullOrEmpty(id) || id[0] != '@')
         {
-            Log.Main.Error?.Log(e);
+            return;
         }
-        return true;
+
+        __result = IconController.Get(id);
+        if (__result == null)
+        {
+            Log.Main.Error?.Log($"Custom icon {id} not found!");
+        }
+        __runOriginal = false;
     }
 }

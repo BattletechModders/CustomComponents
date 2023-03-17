@@ -6,9 +6,16 @@ namespace CustomComponents.Patches;
 [HarmonyPatch(typeof(MechLabPanel), "MechCanUseAmmo")]
 internal class MechLabPanel_MechCanUseAmmo_Patch
 {
-    public static bool Prefix(ref bool __result)
+    [HarmonyPrefix]
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, ref bool __result)
     {
+        if (!__runOriginal)
+        {
+            return;
+        }
+
         __result = true;
-        return false;
+        __runOriginal = false;
     }
 }

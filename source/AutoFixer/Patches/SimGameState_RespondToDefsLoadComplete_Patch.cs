@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using BattleTech;
 
 namespace CustomComponents;
@@ -8,17 +7,16 @@ namespace CustomComponents;
 public static class SimGameState_RespondToDefsLoadComplete_Patch
 {
     [HarmonyPrefix]
+    [HarmonyWrapSafe]
     [HarmonyPriority(Priority.High)]
-    public static void Prefix(SimGameState __instance)
+    public static void Prefix(ref bool __runOriginal, SimGameState __instance)
     {
-        try
+        if (!__runOriginal)
         {
-            var mechDefs = __instance.DataManager.MechDefs.Select(pair => pair.Value).ToList();
-            MechDefProcessing.Instance.Process(mechDefs);
+            return;
         }
-        catch (Exception e)
-        {
-            Log.Main.Error?.Log(e);
-        }
+
+        var mechDefs = __instance.DataManager.MechDefs.Select(pair => pair.Value).ToList();
+        MechDefProcessing.Instance.Process(mechDefs);
     }
 }

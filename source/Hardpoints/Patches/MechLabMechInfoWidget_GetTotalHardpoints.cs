@@ -7,11 +7,16 @@ namespace CustomComponents.Patches;
 public static class MechLabMechInfoWidget_GetTotalHardpoints
 {
     [HarmonyPrefix]
-    public static bool ShowHardpoints()
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal)
     {
+        if (!__runOriginal)
+        {
+            return;
+        }
+
         MechLabHelper.CurrentMechLab?.RefreshHardpoints();
 
-
-        return false;
+        __runOriginal = false;
     }
 }

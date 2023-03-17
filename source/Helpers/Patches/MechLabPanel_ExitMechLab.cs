@@ -7,7 +7,8 @@ namespace CustomComponents.Patches;
 public static class MechLabPanel_ExitMechLab
 {
     [HarmonyPostfix]
-    public static void OnMechLabClose()
+    [HarmonyWrapSafe]
+    public static void Postfix()
     {
         MechLabHelper.CloseMechLab();
     }

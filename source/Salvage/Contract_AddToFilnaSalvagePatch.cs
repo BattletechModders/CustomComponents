@@ -1,23 +1,20 @@
-﻿using System;
-using BattleTech;
+﻿using BattleTech;
 
 namespace CustomComponents;
 
 //    [HarmonyPatch(typeof(Contract), "AddToFinalSalvage")]
 internal static class Contract_AddToFilnaSalvagePatch
 {
-    public static bool Prefix(ref SalvageDef def)
+    [HarmonyPrefix]
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, ref SalvageDef def)
     {
-        try
+        if (!__runOriginal)
         {
-            return AddToFinalSalvage(ref def);
-        }
-        catch (Exception e)
-        {
-            Log.Main.Error?.Log(e);
+            return;
         }
 
-        return true;
+        __runOriginal = AddToFinalSalvage(ref def);
     }
 
     public static bool AddToFinalSalvage(ref SalvageDef def)

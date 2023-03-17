@@ -1,5 +1,4 @@
-﻿using System;
-using BattleTech;
+﻿using BattleTech;
 using BattleTech.UI.TMProWrapper;
 using BattleTech.UI.Tooltips;
 
@@ -10,31 +9,25 @@ namespace CustomComponents.Debug;
 public static class TooltipPrefab_Chassis_SetData
 {
     [HarmonyPostfix]
-    public static void SetHardpoints(object data, TooltipPrefab_Chassis __instance, LocalizableText ___jumpjetHPText)
+    [HarmonyWrapSafe]
+    public static void Postfix(object data, TooltipPrefab_Chassis __instance, LocalizableText ___jumpjetHPText)
     {
-        try
+        //Control.Log("tooltip mech");
+        var handler = __instance.GetComponent<TooltipHPHandler>();
+        if (handler == null)
         {
-            //Control.Log("tooltip mech");
-            var handler = __instance.GetComponent<TooltipHPHandler>();
-            if (handler == null)
-            {
-                //Control.Log("creating");
-                handler = __instance.gameObject.AddComponent<TooltipHPHandler>();
-                handler.Init(__instance, ___jumpjetHPText.transform.parent.gameObject);
-            }
-
-            var chassis = data as ChassisDef;
-            if (chassis != null)
-            {
-                //Control.Log($"set data for {mech.Description.Id}");
-                var usage = chassis.GetHardpoints();
-                handler.SetDataTotal(usage);
-                handler.SetJJ(chassis);
-            }
+            //Control.Log("creating");
+            handler = __instance.gameObject.AddComponent<TooltipHPHandler>();
+            handler.Init(__instance, ___jumpjetHPText.transform.parent.gameObject);
         }
-        catch (Exception e)
+
+        var chassis = data as ChassisDef;
+        if (chassis != null)
         {
-            Log.Main.Error?.Log(e);
+            //Control.Log($"set data for {mech.Description.Id}");
+            var usage = chassis.GetHardpoints();
+            handler.SetDataTotal(usage);
+            handler.SetJJ(chassis);
         }
     }
 }
@@ -45,8 +38,8 @@ public static class TooltipPrefab_Chassis_SetData
 public static class TooltipPrefab_Chassis_SetHardpointData
 {
     [HarmonyPrefix]
-    public static bool SetHardpoints(TooltipPrefab_Chassis __instance)
+    public static void Prefix(ref bool __runOriginal)
     {
-        return false;
+        __runOriginal = false;
     }
 }

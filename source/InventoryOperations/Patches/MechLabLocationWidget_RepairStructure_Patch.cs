@@ -8,8 +8,15 @@ namespace CustomComponents.Patches;
 [HarmonyPatch(typeof(MechLabLocationWidget), nameof(MechLabLocationWidget.RepairStructure))]
 public static class MechLabLocationWidget_RepairStructure_Patch
 {
-    public static void Prefix(MechLabLocationWidget __instance, ref Queue<IChange> __state)
+    [HarmonyPrefix]
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, MechLabLocationWidget __instance, ref Queue<IChange> __state)
     {
+        if (!__runOriginal)
+        {
+            return;
+        }
+
         if (!__instance.mechLab.IsSimGame)
         {
             return;
@@ -49,6 +56,8 @@ public static class MechLabLocationWidget_RepairStructure_Patch
         }
     }
 
+    [HarmonyPostfix]
+    [HarmonyWrapSafe]
     public static void Postfix(MechLabLocationWidget __instance, ref Queue<IChange> __state)
     {
         if (!__instance.mechLab.IsSimGame)

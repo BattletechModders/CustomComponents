@@ -27,7 +27,8 @@ public static class SetTooltips
 public static class MechLabMechInfoWidget_ToggleDamagedAlert
 {
     [HarmonyPostfix]
-    public static void SetTooltip(GameObject ___damagedAlert, List<Text> errors)
+    [HarmonyWrapSafe]
+    public static void Postfix(GameObject ___damagedAlert, List<Text> errors)
     {
         if (errors.Count > 0)
             ___damagedAlert.SetTooltip(errors, Control.Settings.ToolTips.Alert_Damaged);
@@ -40,7 +41,8 @@ public static class MechLabMechInfoWidget_ToggleDamagedAlert
 public static class MechLabMechInfoWidget_ToggleGenericAlert
 {
     [HarmonyPostfix]
-    public static void SetTooltip(GameObject ___genericAlert, List<Text> errors)
+    [HarmonyWrapSafe]
+    public static void Postfix(GameObject ___genericAlert, List<Text> errors)
     {
         if (errors.Count > 0)
             ___genericAlert.SetTooltip(errors, Control.Settings.ToolTips.Alert_Generic);
@@ -53,7 +55,8 @@ public static class MechLabMechInfoWidget_ToggleGenericAlert
 public static class MechLabMechInfoWidget_ToggleInventoryAlert
 {
     [HarmonyPostfix]
-    public static void SetTooltip(GameObject ___inventoryAlert, List<Text> errors)
+    [HarmonyWrapSafe]
+    public static void Postfix(GameObject ___inventoryAlert, List<Text> errors)
     {
         if (errors.Count > 0)
             ___inventoryAlert.SetTooltip(errors, Control.Settings.ToolTips.Alert_Inventory);
@@ -65,7 +68,8 @@ public static class MechLabMechInfoWidget_ToggleInventoryAlert
 public static class MechLabMechInfoWidget_ToggleMissingWeaponAlert
 {
     [HarmonyPostfix]
-    public static void SetTooltip(GameObject ___missingWeaponAlert, List<Text> errors)
+    [HarmonyWrapSafe]
+    public static void Postfix(GameObject ___missingWeaponAlert, List<Text> errors)
     {
         if (errors.Count > 0)
             ___missingWeaponAlert.SetTooltip(errors, Control.Settings.ToolTips.Alert_MissingWeapon);
@@ -77,7 +81,8 @@ public static class MechLabMechInfoWidget_ToggleMissingWeaponAlert
 public static class MechLabMechInfoWidget_ToggleNoAmmoAlert
 {
     [HarmonyPostfix]
-    public static void SetTooltip(GameObject ___noAmmoAlert, List<Text> errors)
+    [HarmonyWrapSafe]
+    public static void Postfix(GameObject ___noAmmoAlert, List<Text> errors)
     {
         if (errors.Count > 0)
             ___noAmmoAlert.SetTooltip(errors, Control.Settings.ToolTips.Alert_NoAmmo);
@@ -90,7 +95,8 @@ public static class MechLabMechInfoWidget_ToggleNoAmmoAlert
 public static class MechLabMechInfoWidget_ToggleDestroyedAlert
 {
     [HarmonyPostfix]
-    public static void SetTooltip(GameObject ___destroyedAlert, List<Text> errors)
+    [HarmonyWrapSafe]
+    public static void Postfix(GameObject ___destroyedAlert, List<Text> errors)
     {
         if (errors.Count > 0)
             ___destroyedAlert.SetTooltip(errors, Control.Settings.ToolTips.Alert_Destroyed);
@@ -104,7 +110,8 @@ public static class MechLabMechInfoWidget_ToggleDestroyedAlert
 public static class MechLabMechInfoWidget_ToggleOverweightAlert
 {
     [HarmonyPostfix]
-    public static void SetTooltip(GameObject ___overweightAlert, List<Text> errors)
+    [HarmonyWrapSafe]
+    public static void Postfix(GameObject ___overweightAlert, List<Text> errors)
     {
         if (errors.Count > 0)
             ___overweightAlert.SetTooltip(errors, Control.Settings.ToolTips.Alert_Overweight);
@@ -117,7 +124,8 @@ public static class MechLabMechInfoWidget_ToggleOverweightAlert
 public static class MechLabMechInfoWidget_ToggleUnderweightAlert
 {
     [HarmonyPostfix]
-    public static void SetTooltip(GameObject ___underweightAlert, List<Text> errors)
+    [HarmonyWrapSafe]
+    public static void Postfix(GameObject ___underweightAlert, List<Text> errors)
     {
         if (errors.Count > 0)
             ___underweightAlert.SetTooltip(errors, Control.Settings.ToolTips.Alert_Underweight);
@@ -130,7 +138,8 @@ public static class MechLabMechInfoWidget_ToggleUnderweightAlert
 public static class MechLabMechInfoWidget_ToggleUnneededAmmoAlert
 {
     [HarmonyPostfix]
-    public static void SetTooltip(GameObject ___unneededAmmoAlert, List<Text> errors)
+    [HarmonyWrapSafe]
+    public static void Postfix(GameObject ___unneededAmmoAlert, List<Text> errors)
     {
         if (errors.Count > 0)
             ___unneededAmmoAlert.SetTooltip(errors, Control.Settings.ToolTips.Alert_UnneededAmmo);

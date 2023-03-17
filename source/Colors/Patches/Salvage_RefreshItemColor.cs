@@ -1,5 +1,4 @@
-﻿using System;
-using BattleTech.UI;
+﻿using BattleTech.UI;
 
 namespace CustomComponents.Patches;
 
@@ -7,24 +6,23 @@ namespace CustomComponents.Patches;
 public static class InventoryDataObject_SalvageGear_RefreshItemColor
 {
     [HarmonyPrefix]
-    public static bool ChangeColor(InventoryDataObject_SalvageGear __instance, InventoryItemElement theWidget)
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, InventoryDataObject_SalvageGear __instance, InventoryItemElement theWidget)
     {
-        try
+        if (!__runOriginal)
         {
-            if (__instance.componentDef == null)
-                return true;
-
-            ColorExtentions.ChangeBackColor(__instance.componentDef, theWidget);
-            TColorExtentions.ChangeTextIconColor(__instance.componentDef, theWidget);
-
-            return false;
-
+            return;
         }
-        catch (Exception e)
+
+        if (__instance.componentDef == null)
         {
-            Log.Main.Error?.Log(e);
-            return true;
+            return;
         }
+
+        ColorExtentions.ChangeBackColor(__instance.componentDef, theWidget);
+        TColorExtentions.ChangeTextIconColor(__instance.componentDef, theWidget);
+
+        __runOriginal = false;
     }
 }
 
@@ -32,24 +30,23 @@ public static class InventoryDataObject_SalvageGear_RefreshItemColor
 public static class InventoryDataObject_SalvageWeapon_RefreshItemColor
 {
     [HarmonyPrefix]
-    public static bool ChangeColor(InventoryDataObject_SalvageWeapon __instance, InventoryItemElement theWidget)
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, InventoryDataObject_SalvageWeapon __instance, InventoryItemElement theWidget)
     {
-        try
+        if (!__runOriginal)
         {
-            if (__instance.componentDef == null)
-                return true;
-
-            ColorExtentions.ChangeBackColor(__instance.weaponDef ?? __instance.componentDef, theWidget);
-            TColorExtentions.ChangeTextIconColor(__instance.weaponDef ?? __instance.componentDef, theWidget);
-
-            return false;
-
+            return;
         }
-        catch (Exception e)
+
+        if (__instance.componentDef == null)
         {
-            Log.Main.Error?.Log(e);
-            return true;
+            return;
         }
+
+        ColorExtentions.ChangeBackColor(__instance.weaponDef ?? __instance.componentDef, theWidget);
+        TColorExtentions.ChangeTextIconColor(__instance.weaponDef ?? __instance.componentDef, theWidget);
+
+        __runOriginal = false;
     }
 }
 
@@ -57,24 +54,23 @@ public static class InventoryDataObject_SalvageWeapon_RefreshItemColor
 public static class ListElementController_SalvageGear_NotListView_RefreshItemColor
 {
     [HarmonyPrefix]
-    public static bool ChangeColor(ListElementController_SalvageGear_NotListView __instance,
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, ListElementController_SalvageGear_NotListView __instance,
         InventoryItemElement_NotListView theWidget)
     {
-        try
+        if (!__runOriginal)
         {
-            if (__instance.componentDef == null)
-                return true;
-
-            ColorExtentions.ChangeBackColor(__instance.componentDef, theWidget);
-            TColorExtentions.ChangeTextIconColor(__instance.componentDef, theWidget);
-            return false;
-
+            return;
         }
-        catch (Exception e)
+
+        if (__instance.componentDef == null)
         {
-            Log.Main.Error?.Log(e);
-            return true;
+            return;
         }
+
+        ColorExtentions.ChangeBackColor(__instance.componentDef, theWidget);
+        TColorExtentions.ChangeTextIconColor(__instance.componentDef, theWidget);
+        __runOriginal = false;
     }
 }
 
@@ -82,23 +78,24 @@ public static class ListElementController_SalvageGear_NotListView_RefreshItemCol
 public static class ListElementController_SalvageWeapon_NotListView_RefreshItemColor
 {
     [HarmonyPrefix]
-    public static bool ChangeColor(ListElementController_SalvageWeapon_NotListView __instance,
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, ListElementController_SalvageWeapon_NotListView __instance,
         InventoryItemElement_NotListView theWidget)
     {
-        try
+        if (!__runOriginal)
         {
-            if (__instance.componentDef == null)
-                return true;
-            ColorExtentions.ChangeBackColor(__instance.weaponDef ?? __instance.componentDef, theWidget);
-            TColorExtentions.ChangeTextIconColor(__instance.weaponDef ?? __instance.componentDef, theWidget);
+            return;
+        }
 
-            return false;
-        }
-        catch (Exception e)
+        if (__instance.componentDef == null)
         {
-            Log.Main.Error?.Log(e);
-            return true;
+            return;
         }
+
+        ColorExtentions.ChangeBackColor(__instance.weaponDef ?? __instance.componentDef, theWidget);
+        TColorExtentions.ChangeTextIconColor(__instance.weaponDef ?? __instance.componentDef, theWidget);
+
+        __runOriginal = false;
     }
 }
 
@@ -107,16 +104,15 @@ public static class ListElementController_SalvageWeapon_NotListView_RefreshItemC
 public static class InInventoryDataObject_SalvageFullMech_RefreshItemColor
 {
     [HarmonyPrefix]
-    public static void ChangeColor(InventoryDataObject_SalvageFullMech __instance, InventoryItemElement theWidget)
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, InventoryDataObject_SalvageFullMech __instance, InventoryItemElement theWidget)
     {
-        try
+        if (!__runOriginal)
         {
-            TColorExtentions.ResetTextIconColor(theWidget);
+            return;
         }
-        catch (Exception e)
-        {
-            Log.Main.Error?.Log(e);
-        }
+
+        TColorExtentions.ResetTextIconColor(theWidget);
     }
 }
 
@@ -124,17 +120,16 @@ public static class InInventoryDataObject_SalvageFullMech_RefreshItemColor
 public static class ListElementController_SalvageFullMech_NotListView_RefreshItemColor
 {
     [HarmonyPrefix]
-    public static void ChangeColor(ListElementController_SalvageFullMech_NotListView __instance,
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, ListElementController_SalvageFullMech_NotListView __instance,
         InventoryItemElement_NotListView theWidget)
     {
-        try
+        if (!__runOriginal)
         {
-            TColorExtentions.ResetTextIconColor(theWidget);
+            return;
         }
-        catch (Exception e)
-        {
-            Log.Main.Error?.Log(e);
-        }
+
+        TColorExtentions.ResetTextIconColor(theWidget);
     }
 }
 
@@ -142,16 +137,15 @@ public static class ListElementController_SalvageFullMech_NotListView_RefreshIte
 public static class InInventoryDataObject_SalvageMechPart_RefreshItemColor
 {
     [HarmonyPrefix]
-    public static void ChangeColor(InventoryDataObject_SalvageMechPart __instance, InventoryItemElement theWidget)
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, InventoryDataObject_SalvageMechPart __instance, InventoryItemElement theWidget)
     {
-        try
+        if (!__runOriginal)
         {
-            TColorExtentions.ResetTextIconColor(theWidget);
+            return;
         }
-        catch (Exception e)
-        {
-            Log.Main.Error?.Log(e);
-        }
+
+        TColorExtentions.ResetTextIconColor(theWidget);
     }
 }
 
@@ -159,16 +153,15 @@ public static class InInventoryDataObject_SalvageMechPart_RefreshItemColor
 public static class ListElementController_SalvageMechPart_NotListView_RefreshItemColor
 {
     [HarmonyPrefix]
-    public static void ChangeColor(ListElementController_SalvageMechPart_NotListView __instance,
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, ListElementController_SalvageMechPart_NotListView __instance,
         InventoryItemElement_NotListView theWidget)
     {
-        try
+        if (!__runOriginal)
         {
-            TColorExtentions.ResetTextIconColor(theWidget);
+            return;
         }
-        catch (Exception e)
-        {
-            Log.Main.Error?.Log(e);
-        }
+
+        TColorExtentions.ResetTextIconColor(theWidget);
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using BattleTech.UI;
 
@@ -9,33 +8,32 @@ namespace CustomComponents.Patches;
 public static class SkirmishMechBayPanel_LanceConfiguratorDataLoaded_Patch
 {
     [HarmonyPrefix]
+    [HarmonyWrapSafe]
     [HarmonyPriority(Priority.High)]
-    public static void Prefix(SkirmishMechBayPanel __instance)
+    public static void Prefix(ref bool __runOriginal, SkirmishMechBayPanel __instance)
     {
-        try
+        if (!__runOriginal)
         {
-            var mechDefs = __instance.dataManager.MechDefs.Select(pair => pair.Value).ToList();
-            MechDefProcessing.Instance.Process(mechDefs);
+            return;
+        }
 
-            if (Control.Settings.DEBUG_DumpMechDefs && Directory.Exists(Control.Settings.DEBUG_MechDefsDir))
+        var mechDefs = __instance.dataManager.MechDefs.Select(pair => pair.Value).ToList();
+        MechDefProcessing.Instance.Process(mechDefs);
+
+        if (Control.Settings.DEBUG_DumpMechDefs && Directory.Exists(Control.Settings.DEBUG_MechDefsDir))
+        {
+            foreach (var mechDef in mechDefs)
             {
-                foreach (var mechDef in mechDefs)
+                var str = mechDef.ToJSON();
+                using (var fs = new FileStream(Path.Combine(Control.Settings.DEBUG_MechDefsDir, $"{mechDef.Description.Id}.json"), FileMode.Create))
                 {
-                    var str = mechDef.ToJSON();
-                    using (var fs = new FileStream(Path.Combine(Control.Settings.DEBUG_MechDefsDir, $"{mechDef.Description.Id}.json"), FileMode.Create))
+                    using (var sw = new StreamWriter(fs))
                     {
-                        using (var sw = new StreamWriter(fs))
-                        {
-                            sw.Write(str);
-                            sw.Flush();
-                        }
+                        sw.Write(str);
+                        sw.Flush();
                     }
                 }
             }
-        }
-        catch (Exception e)
-        {
-            Log.Main.Error?.Log(e);
         }
     }
 }

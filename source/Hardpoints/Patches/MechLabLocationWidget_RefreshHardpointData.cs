@@ -8,15 +8,24 @@ public static class MechLabLocationWidget_RefreshHardpointData
 {
         
     [HarmonyPrefix]
-    public static bool RefreshHardpoints(MechLabLocationWidget __instance)
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, MechLabLocationWidget __instance)
     {
+        if (!__runOriginal)
+        {
+            return;
+        }
+
         if (MechLabHelper.CurrentMechLab == null || !MechLabHelper.CurrentMechLab.InMechLab)
-            return false;
+        {
+            __runOriginal = false;
+            return;
+        }
 
         var lhelper = MechLabHelper.CurrentMechLab.GetLocationHelper(__instance.loadout.Location);
         if(lhelper != null)
             lhelper.RefreshHardpoints();
 
-        return false;
+        __runOriginal = false;
     }
 }

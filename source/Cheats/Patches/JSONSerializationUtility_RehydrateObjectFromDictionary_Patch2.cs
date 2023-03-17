@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using HBS.Util;
 
@@ -19,40 +18,41 @@ public static class JSONSerializationUtility_RehydrateObjectFromDictionary_Patch
             .GetMethod("RehydrateObjectFromDictionary", BindingFlags.NonPublic | BindingFlags.Static);
     }
 
-    public static void Prefix(object target, Dictionary<string, object> values)
+    [HarmonyPrefix]
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, object target, Dictionary<string, object> values)
     {
-        try
+        if (!__runOriginal)
         {
-            var baseTags = new[] { "ComponentTags", "MechTags" };
-            foreach (var baseTag in baseTags)
-                if (values.TryGetValue(baseTag, out var Tags))
+            return;
+        }
+
+        var baseTags = new[] { "ComponentTags", "MechTags" };
+        foreach (var baseTag in baseTags)
+        {
+            if (values.TryGetValue(baseTag, out var Tags))
+            {
+                if (!(Tags is Dictionary<string, object> tags))
                 {
-                    if (!(Tags is Dictionary<string, object> tags))
+                    continue;
+                }
+
+                if (tags.TryGetValue("items", out var Items))
+                {
+                    if (!(Items is List<object> items))
                     {
                         continue;
                     }
 
-                    if (tags.TryGetValue("items", out var Items))
-                    {
-                        if (!(Items is List<object> items))
-                        {
-                            continue;
-                        }
+                    items.Remove("BLACKLISTED");
+                    items.Remove("component_type_debug");
+                    items.Remove("component_type_lostech");
+                    items.Add("component_type_stock");
 
-                        items.Remove("BLACKLISTED");
-                        items.Remove("component_type_debug");
-                        items.Remove("component_type_lostech");
-                        items.Add("component_type_stock");
-
-                        //items.Remove("unit_custom");
-                        items.Add("unit_release");
-                    }
+                    //items.Remove("unit_custom");
+                    items.Add("unit_release");
                 }
-
-        }
-        catch (Exception e)
-        {
-            Log.Main.Error?.Log(e);
+            }
         }
     }
 }

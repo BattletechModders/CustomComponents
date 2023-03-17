@@ -10,12 +10,19 @@ namespace CustomComponents.Patches;
 public static class MechLabLocationWidget_ShowHighlightFrame
 {
     [HarmonyPrefix]
-    public static bool ShowHighlightFrame(MechLabLocationWidget __instance, MechComponentRef cRef, bool isOriginalLocation, bool canBeAdded)
+    [HarmonyWrapSafe]
+    public static void Prefix(ref bool __runOriginal, MechLabLocationWidget __instance, MechComponentRef cRef, bool isOriginalLocation, bool canBeAdded)
     {
+        if (!__runOriginal)
+        {
+            return;
+        }
+
         if (cRef == null)
         {
             __instance.ShowHighlightFrame(false);
-            return false;
+            __runOriginal = false;
+            return;
         }
 
         var show = !cRef.Flags<CCFlags>().NoRemove;
@@ -48,7 +55,6 @@ public static class MechLabLocationWidget_ShowHighlightFrame
         }
 
         __instance.ShowHighlightFrame(show, isOriginalLocation ? UIColor.Blue : UIColor.Gold);
-
-        return false;
+        __runOriginal = false;
     }
 }
