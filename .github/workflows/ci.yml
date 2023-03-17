@@ -19,6 +19,6 @@ jobs:
             -xr!source "-xr!.*"
         )
       release-notes: |
-        Works best with ModTek V3
+        Requires ModTek V4 or later
         - CustomComponents.zip contains the compiled framework
     secrets: inherit
