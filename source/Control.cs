@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using BattleTech;
-using Harmony;
 using HBS.Util;
 
 namespace CustomComponents;

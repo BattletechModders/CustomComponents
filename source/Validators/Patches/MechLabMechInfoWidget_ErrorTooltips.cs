@@ -2,7 +2,6 @@
 using BattleTech;
 using BattleTech.UI;
 using BattleTech.UI.Tooltips;
-using Harmony;
 using Localize;
 using UnityEngine;
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using BattleTech;
 using BattleTech.UI;
 using BattleTech.UI.TMProWrapper;
-using Harmony;
 using UnityEngine;
 
 namespace CustomComponents.Patches;

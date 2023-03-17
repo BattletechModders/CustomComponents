@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using BattleTech;
 using CustomComponents.Changes;
-using Harmony;
 
 namespace CustomComponents.Patches;
 

@@ -1,5 +1,4 @@
 ﻿using BattleTech.Data;
-using Harmony;
 
 namespace CustomComponents.Icons;
 

@@ -2,7 +2,6 @@
 using BattleTech;
 using BattleTech.UI;
 using CustomComponents.Changes;
-using Harmony;
 
 namespace CustomComponents.Patches;
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using BattleTech.Data;
-using Harmony;
 using SVGImporter;
 
 namespace CustomComponents.Icons;

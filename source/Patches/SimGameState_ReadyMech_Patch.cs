@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using BattleTech;
-using Harmony;
 
 namespace CustomComponents.Patches;
 

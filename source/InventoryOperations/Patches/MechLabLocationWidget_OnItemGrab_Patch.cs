@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using BattleTech;
 using BattleTech.UI;
 using CustomComponents.Changes;
-using Harmony;
-using Localize;
 
 namespace CustomComponents.Patches;
 
