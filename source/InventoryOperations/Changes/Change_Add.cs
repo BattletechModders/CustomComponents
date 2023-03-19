@@ -17,7 +17,11 @@ public class Change_Add : IChange_Apply, IChange_Optimize
 
     public void AdjustChange(InventoryOperationState state)
     {
-        if (item == null) return;
+        if (item == null)
+        {
+            return;
+        }
+
         foreach (var add_handler in item.GetComponents<IOnAdd>())
         {
             add_handler.OnAdd(Location, state);
@@ -34,26 +38,38 @@ public class Change_Add : IChange_Apply, IChange_Optimize
         }
 
         if(i != null)
+        {
             state.Inventory.Add(i);
+        }
     }
 
     public void ApplyToInventory(MechDef mech, List<MechComponentRef> inventory)
     {
         if (Applied)
+        {
             return;
+        }
+
         var r = DefaultHelper.CreateRef(ItemID, Type, Location);
         if (r.IsDefault())
+        {
             inventory.Add(r);
+        }
     }
 
     public void ApplyToMechlab()
     {
         if (Applied)
+        {
             return;
+        }
+
         var mechLab = MechLabHelper.CurrentMechLab;
         var lhelper = mechLab.GetLocationHelper(Location);
         if (lhelper == null)
+        {
             return;
+        }
 
         if (slot != null)
         {
@@ -66,7 +82,9 @@ public class Change_Add : IChange_Apply, IChange_Optimize
             }
         }
         else
+        {
             slot = DefaultHelper.CreateSlot(ItemID, Type);
+        }
 
         lhelper.widget.OnAddItem(slot, true);
         slot.MountedLocation = Location;

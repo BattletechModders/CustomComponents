@@ -21,7 +21,9 @@ public class MechlabHardpointHelper : HardpointHelper
             color = hpinfo.HPColor;
         }
         else
+        {
             uicolor = hpinfo.WeaponCategory.GetUIColor();
+        }
 
         Text = hpgo.GetComponentInChildren<LocalizableText>();
         Icon = hpgo.GetComponentInChildren<SVGImage>();
@@ -38,12 +40,16 @@ public class MechlabHardpointHelper : HardpointHelper
     public override void Hide()
     {
         if (go.activeSelf)
+        {
             go.SetActive(false);
+        }
     }
 
     public override void Show()
     {
         if (!go.activeSelf)
+        {
             go.SetActive(true);
+        }
     }
 }

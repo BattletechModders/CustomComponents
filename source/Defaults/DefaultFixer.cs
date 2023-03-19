@@ -85,7 +85,10 @@ public class DefaultFixer
         get
         {
             if (_instance == null)
+            {
                 _instance = new();
+            }
+
             return _instance;
         }
     }
@@ -109,21 +112,31 @@ public class DefaultFixer
     {
         var defaults = DefaultsDatabase.Instance[mechDef];
         if (defaults == null)
+        {
             return;
+        }
 
         var changes = new Queue<IChange>();
         var used = new List<string>();
         if (defaults.Multi != null && defaults.Multi.HasRecords)
+        {
             used.AddRange(defaults.Multi.UsedCategories.Keys);
+        }
 
         if (defaults.Defaults != null && defaults.Defaults.Count > 0)
+        {
             used.AddRange(defaults.Defaults.Keys);
+        }
 
         foreach (var category in used.Distinct())
+        {
             changes.Enqueue(new Change_CategoryAdjust(category));
+        }
 
         if (changes.Count == 0)
+        {
             return;
+        }
 
         var state = new InventoryOperationState(changes, mechDef);
         state.DoChanges();
@@ -139,7 +152,9 @@ public class DefaultFixer
         var defaults = DefaultsDatabase.Instance[mech];
 
         if (defaults?.Multi == null || !defaults.Multi.HasRecords)
+        {
             return;
+        }
 
         var usage = defaults.Multi.Defaults
             .Select(i => new usage_record(i))
@@ -171,11 +186,15 @@ public class DefaultFixer
             {
                 //Control.Log($"--- Not Found {invItem.Item.ComponentDefID}");
                 foreach (var catid in defaults.Multi.UsedCategories.Keys)
+                {
                     if (invItem.Item.IsCategory(catid, out var cat))
                     {
                         foreach (var freeRecord in free[catid].Where(i => i.location.HasFlag(invItem.Location)))
+                        {
                             freeRecord.free -= cat.Weight;
+                        }
                     }
+                }
             }
             //Control.Log($"--- Skipped {invItem.Item.ComponentDefID}");
         }
@@ -214,7 +233,9 @@ public class DefaultFixer
                 }
 
                 if (!fit)
+                {
                     break;
+                }
             }
 
             fit = fit && used_records.Count > 0;
@@ -223,11 +244,13 @@ public class DefaultFixer
             //Control.Log($"--- used records : {used_records.Count}");
 
             if (fit)
+            {
                 foreach (var value in used_records)
                 {
                     //Control.Log($"---- {value.record.location}: {value.record.free}-{value.value}");
                     value.record.free -= value.value;
                 }
+            }
 
             //Control.Log($"-- after {usageRecord.DefId} - {usageRecord.Location} - now:{usageRecord.used_now} - after:{usageRecord.used_after}");
             if (usageRecord.used_after != usageRecord.used_now)
@@ -305,7 +328,9 @@ public class DefaultFixer
             {
                 Log.DefaultHandle.Trace?.Log($"-- {invItem.Item.ComponentDefID} not in defaults, decrease free space");
                 foreach (var freeRecord in free.Where(i => i.location.HasFlag(invItem.Location)))
+                {
                     freeRecord.free -= cat.Weight;
+                }
             }
         }
         Log.DefaultHandle.Trace?.Log("- end inventory");
@@ -323,7 +348,9 @@ public class DefaultFixer
                 Log.DefaultHandle.Trace?.Log($"-- free {freeRecord.location} {freeRecord.free}");
 
                 if (freeRecord.free >= usageRecord.crecord.Category.Weight)
+                {
                     used_records.Add((freeRecord, usageRecord.crecord.Category.Weight));
+                }
                 else
                 {
                     fit = false;
@@ -340,7 +367,9 @@ public class DefaultFixer
             {
                 Log.DefaultHandle.Trace?.Log("-- decrease free space");
                 foreach (var used in used_records)
+                {
                     used.record.free -= used.value;
+                }
             }
 
             if (usageRecord.used_after != usageRecord.used_now)

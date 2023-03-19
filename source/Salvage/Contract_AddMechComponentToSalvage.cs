@@ -27,7 +27,9 @@ public static class Contract_AddMechComponentToSalvage
 
 
         if (!def.Flags<CCFlags>().NoSalvage)
+        {
             return true;
+        }
 
         var lootable = def.GetComponent<LootableDefault>();
 
@@ -44,26 +46,41 @@ public static class Contract_AddMechComponentToSalvage
         {
             case ComponentType.AmmunitionBox:
                 if (UnityGameInstance.BattleTechGame.DataManager.AmmoBoxDefs.Exists(lootable.ItemID))
+                {
                     component = UnityGameInstance.BattleTechGame.DataManager.AmmoBoxDefs.Get(lootable.ItemID);
+                }
+
                 break;
 
             case ComponentType.Weapon:
                 if (UnityGameInstance.BattleTechGame.DataManager.WeaponDefs.Exists(lootable.ItemID))
+                {
                     component = UnityGameInstance.BattleTechGame.DataManager.WeaponDefs.Get(lootable.ItemID);
+                }
+
                 break;
 
             case ComponentType.Upgrade:
                 if (UnityGameInstance.BattleTechGame.DataManager.UpgradeDefs.Exists(lootable.ItemID))
+                {
                     component = UnityGameInstance.BattleTechGame.DataManager.UpgradeDefs.Get(lootable.ItemID);
+                }
+
                 break;
 
             case ComponentType.HeatSink:
                 if (UnityGameInstance.BattleTechGame.DataManager.HeatSinkDefs.Exists(lootable.ItemID))
+                {
                     component = UnityGameInstance.BattleTechGame.DataManager.HeatSinkDefs.Get(lootable.ItemID);
+                }
+
                 break;
             case ComponentType.JumpJet:
                 if (UnityGameInstance.BattleTechGame.DataManager.JumpJetDefs.Exists(lootable.ItemID))
+                {
                     component = UnityGameInstance.BattleTechGame.DataManager.JumpJetDefs.Get(lootable.ItemID);
+                }
+
                 break;
         }
 

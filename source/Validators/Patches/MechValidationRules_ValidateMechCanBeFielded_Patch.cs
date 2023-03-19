@@ -19,6 +19,7 @@ internal static class MechValidationRules_ValidateMechCanBeFielded_Patch
             Log.MechValidation.Trace?.Log($"Mech validation for {mechDef.Name} start from {__result}");
 
             if(Control.Settings.IgnoreValidationTags != null && Control.Settings.IgnoreValidationTags.Length > 0)
+            {
                 foreach (var tag in Control.Settings.IgnoreValidationTags)
                 {
                     if ((mechDef.Chassis.ChassisTags != null && mechDef.Chassis.ChassisTags.Contains(tag)) ||
@@ -29,6 +30,7 @@ internal static class MechValidationRules_ValidateMechCanBeFielded_Patch
                         return;
                     }
                 }
+            }
 
             if (!__result)
             {

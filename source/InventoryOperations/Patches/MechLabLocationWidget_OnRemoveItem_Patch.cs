@@ -16,9 +16,13 @@ public static class MechLabLocationWidget_OnRemoveItem_Patch
         {
                
             if (i >=3 && i <=8)
+            {
                 yield return new(OpCodes.Nop);
+            }
             else
+            {
                 yield return codeInstruction;
+            }
 
             i++;
         }

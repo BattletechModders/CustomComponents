@@ -16,27 +16,47 @@ public class TagUnitType : IUnitType
     public bool IsThisType(MechDef mechdef)
     {
         if (mechdef?.Chassis == null)
+        {
             return false;
+        }
 
         var tags = new TagSet();
         if(mechdef.MechTags != null)
+        {
             tags.UnionWith(mechdef.MechTags);
+        }
 
         if(mechdef.Chassis.ChassisTags != null)
+        {
             tags.UnionWith(mechdef.Chassis.ChassisTags);
+        }
 
         if(RequiredTags != null && RequiredTags.Length > 0)
+        {
             foreach (var tag in RequiredTags)
+            {
                 if (!tags.Contains(tag))
+                {
                     return false;
+                }
+            }
+        }
 
         if (ForbiddenTags != null && ForbiddenTags.Length > 0)
+        {
             foreach (var tag in ForbiddenTags)
+            {
                 if (tags.Contains(tag))
+                {
                     return false;
+                }
+            }
+        }
 
         if (AnyTags == null || AnyTags.Length == 0)
+        {
             return true;
+        }
 
         return AnyTags.Any(i => tags.Contains(i));
     }

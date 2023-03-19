@@ -15,9 +15,13 @@ public class TagColorComponent : SimpleCustomComponent, IColorComponent, IValueC
     public void LoadValue(string value)
     {
         if (Control.Settings.ColorTagsDictionary.TryGetValue(value, out var color))
+        {
             RGBColor = color;
+        }
         else
+        {
             RGBColor = Color.magenta;
+        }
     }
 }
 
@@ -37,8 +41,12 @@ public class TTagColorComponent : SimpleCustomComponent, ITColorComponent, IAfte
     public void OnLoaded(Dictionary<string, object> values)
     {
         if (Control.Settings.ColorTagsDictionary.TryGetValue(Tag, out var color))
+        {
             RGBColor = color;
+        }
         else
+        {
             RGBColor = Color.white;
+        }
     }
 }

@@ -18,9 +18,13 @@ public class MechLabHelper
         {
             var ut = mechlab.activeMechDef.GetUnitTypes();
             if (ut == null)
+            {
                 Log.Main.Info?.Log($"Enter MechLab for {mechlab.activeMechDef.Description.Id}, UT:[ ]");
+            }
             else
+            {
                 Log.Main.Info?.Log($"Enter MechLab for {mechlab.activeMechDef.Description.Id}, UT:[{ut.Join()}]");
+            }
         }
 
         CurrentMechLab = new(mechlab);
@@ -158,7 +162,9 @@ public class MechLabHelper
         all_helpers.Add(LHelper_LL);
         all_helpers.Add(LHelper_RL);
         if (LHelper_SP != null)
+        {
             all_helpers.Add(LHelper_SP);
+        }
     }
 
 
@@ -202,17 +208,21 @@ public class MechLabHelper
             locationHelper.RefreshHardpoints();
 
             if(locationHelper.HardpointsUsage != null)
+            {
                 foreach (var hpUsage in locationHelper.HardpointsUsage)
                 {
                     var item = usage.FirstOrDefault(i => i.hpInfo.WeaponCategory.ID == hpUsage.WeaponCategoryID);
                     if (item == null)
+                    {
                         usage.Add(new(hpUsage));
+                    }
                     else
                     {
                         item.Total += hpUsage.Total;
                         item.Used += hpUsage.Used;
                     }
                 }
+            }
         }
 
         if (hardpoints != null)

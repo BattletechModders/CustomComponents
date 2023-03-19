@@ -54,7 +54,10 @@ public class TonnageLimited : SimpleCustomComponent, IMechLabFilter, IMechValida
             tonnage > Max)
         {
             if (Min == Max)
+            {
                 return (new Text(Control.Settings.Message.Tonnage_AddAllow, item.ComponentRef.Def.Description.UIName, Min)).ToString();
+            }
+
             return (new Text(Control.Settings.Message.Tonnage_AddLimit, item.ComponentRef.Def.Description.UIName, Min, Max)).ToString();
         }
 
@@ -65,10 +68,16 @@ public class TonnageLimited : SimpleCustomComponent, IMechLabFilter, IMechValida
     {
         if (mechDef.Chassis.Tonnage < Min && mechDef.Chassis.Tonnage > Max)
 
+        {
             if (Min == Max)
+            {
                 errors[MechValidationType.InvalidInventorySlots].Add(new(Control.Settings.Message.Tonnage_ValidateAllow, componentRef.Def.Description.UIName, Min));
+            }
             else
+            {
                 errors[MechValidationType.InvalidInventorySlots].Add(new(Control.Settings.Message.Tonnage_ValidateLimit, componentRef.Def.Description.UIName, Min, Max));
+            }
+        }
     }
 
     public bool ValidateMechCanBeFielded(MechDef mechDef, MechComponentRef componentRef)

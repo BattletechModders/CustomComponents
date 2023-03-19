@@ -18,16 +18,22 @@ public class AddHardpoint : SimpleCustomComponent, IValueComponent<string>, IPre
         WeaponCategory = WeaponCategoryEnumeration.GetWeaponCategoryByName(value);
 
         if (WeaponCategory == null)
+        {
             WeaponCategory = WeaponCategoryEnumeration.GetNotSetValue();
+        }
 
         if (!WeaponCategory.Is_NotSet)
+        {
             HPinfo = HardpointController.Instance[WeaponCategory];
+        }
     }
 
     public string PreValidateDrop(MechLabItemSlotElement item, ChassisLocations location)
     {
         if (!Valid)
+        {
             return string.Empty;
+        }
 
         var hardpoints = MechLabHelper.CurrentMechLab.ActiveMech.GetAllHardpoints(location);
 
@@ -38,7 +44,9 @@ public class AddHardpoint : SimpleCustomComponent, IValueComponent<string>, IPre
             {
                 n += 1;
                 if (hardpoint.hpInfo.WeaponCategory.ID == WeaponCategory.ID)
+                {
                     return string.Empty;
+                }
             }
         }
 
@@ -53,11 +61,15 @@ public class AddHardpoint : SimpleCustomComponent, IValueComponent<string>, IPre
     public void AdjustDescription()
     {
         if (!Valid)
+        {
             return;
+        }
 
         var hpinfo = HardpointController.Instance[WeaponCategory];
         if (hpinfo == null || !hpinfo.Visible)
+        {
             return;
+        }
 
         ExtendedDetails.ExtendedDetails.GetOrCreate(Def).AddIfMissing(
             new ExtendedDetail
@@ -89,12 +101,16 @@ public class ReplaceHardpoint : SimpleCustomComponent, IAfterLoad, IPreValidateD
         AddWeaponCategory = WeaponCategoryEnumeration.GetWeaponCategoryByName(AddHardpoint);
 
         if (AddWeaponCategory == null)
+        {
             AddWeaponCategory = WeaponCategoryEnumeration.GetNotSetValue();
+        }
 
         UseWeaponCategory = WeaponCategoryEnumeration.GetWeaponCategoryByName(UseHardpoint);
 
         if (UseWeaponCategory == null)
+        {
             UseWeaponCategory = WeaponCategoryEnumeration.GetNotSetValue();
+        }
     }
 
     public string PreValidateDrop(MechLabItemSlotElement item, ChassisLocations location)
@@ -105,7 +121,9 @@ public class ReplaceHardpoint : SimpleCustomComponent, IAfterLoad, IPreValidateD
     public void AdjustDescription()
     {
         if (!Valid)
+        {
             return;
+        }
 
         var ahpinfo = HardpointController.Instance[AddWeaponCategory];
         var rhpinfo = HardpointController.Instance[UseWeaponCategory];

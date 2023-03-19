@@ -47,7 +47,9 @@ public static class SimGameState_CreateComponentInstallWorkOrder
 
 
             if (__result.Cost == 0)
+            {
                 __result.Cost = 1;
+            }
         }
     }
 }

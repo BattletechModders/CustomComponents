@@ -49,7 +49,9 @@ public abstract class HardpointHelper
 
             backcolor.a = Control.Settings.HardpointBackAlpha;
             if (BackImage != null)
+            {
                 BackImage.color = backcolor;
+            }
         }
 
         SetIconColor();
@@ -61,7 +63,9 @@ public abstract class HardpointHelper
     protected virtual void SetTooltip(string caption, string text)
     {
         if (Tooltip == null)
+        {
             return;
+        }
 
         var loctext = new Text(text);
         var captest = new Text(caption);
@@ -78,10 +82,14 @@ public abstract class HardpointHelper
         {
             TextColor.SetUIColor(uicolor);
             if (uicolor == UIColor.Custom)
+            {
                 TextColor.OverrideWithColor(color);
+            }
         }
         else
+        {
             TextColor.SetUIColor(Control.Settings.HardpointTextDefaultColor);
+        }
     }
 
     private void SetIconColor()
@@ -90,11 +98,14 @@ public abstract class HardpointHelper
         {
             IconColor.SetUIColor(uicolor);
             if (uicolor == UIColor.Custom)
+            {
                 IconColor.OverrideWithColor(color);
+            }
         }
         else
+        {
             IconColor.SetUIColor(Control.Settings.HardpointIconDefaultColor);
-
+        }
     }
 
 
@@ -102,10 +113,13 @@ public abstract class HardpointHelper
     {
         SetText($"{used}/{max}");
         if (used > max)
+        {
             TextColor.SetUIColor(UIColor.Red);
+        }
         else
+        {
             SetTextColor();
-
+        }
     }
 
     public virtual void SetText(int n)

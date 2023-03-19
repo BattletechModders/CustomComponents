@@ -17,7 +17,10 @@ public static class Registry
     public static CustomComponentAttribute GetAttributeByType(Type type)
     {
         if (attributes.TryGetValue(type, out var result))
+        {
             return result;
+        }
+
         return null;
     }
 

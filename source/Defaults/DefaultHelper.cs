@@ -26,6 +26,7 @@ public static class DefaultHelper
 
 
         if (mech.Chassis.FixedEquipment != null && mech.Chassis.FixedEquipment.Length > 0)
+        {
             foreach (var mref in mech.Chassis.FixedEquipment)
             {
 
@@ -35,6 +36,7 @@ public static class DefaultHelper
                     return true;
                 }
             }
+        }
 
         Log.FixedCheck.Trace?.Log("-- false: not really fixed");
 
@@ -144,7 +146,9 @@ public static class DefaultHelper
 
         var mechLab = MechLabHelper.CurrentMechLab.MechLab;
         if (mechLab.IsSimGame)
+        {
             component_ref.SetSimGameUID(mechLab.Sim.GenerateSimGameUID());
+        }
 
         return mechLab.CreateMechComponentItem(component_ref, false, ChassisLocations.None, mechLab);
     }
@@ -174,7 +178,10 @@ public static class DefaultHelper
     public static void AddMechLab(string id, ComponentType type, ChassisLocations location)
     {
         if (!MechLabHelper.CurrentMechLab.InMechLab)
+        {
             return;
+        }
+
         Log.DefaultHandle.Trace?.Log($"DefaultHelper.AddMechLab: adding {id} to {location}");
 
         var target = MechLabHelper.CurrentMechLab.GetLocationWidget(location);
@@ -192,7 +199,9 @@ public static class DefaultHelper
     public static void RemoveMechLab(ChassisLocations location, MechLabItemSlotElement slot)
     {
         if (slot == null)
+        {
             return;
+        }
 
         var helper = MechLabHelper.CurrentMechLab.GetLocationHelper(location);
 
@@ -218,19 +227,26 @@ public static class DefaultHelper
         var list = source_mech.Inventory.ToList();
         var changes = new Queue<IChange>();
         foreach (var mechComponentRef in list.Where(i => !i.IsFixed ))
+        {
             changes.Enqueue(new Change_Remove(mechComponentRef, mechComponentRef.MountedLocation));
+        }
 
         var inv_state = new InventoryOperationState(changes, source_mech);
         inv_state.DoChanges();
         var to_apply = inv_state.GetResults();
         foreach (var invChange in to_apply)
+        {
             invChange.ApplyToInventory(source_mech, list);
+        }
 
         Log.ClearInventory.Trace?.Log("- setting guids");
         foreach (var item in list)
         {
             if (string.IsNullOrEmpty(item.SimGameUID))
+            {
                 item.SetSimGameUID(state.GenerateSimGameUID());
+            }
+
             Log.ClearInventory.Trace?.Log($"-- {item.ComponentDefID} - {item.SimGameUID}");
         }
 

@@ -20,7 +20,9 @@ internal static class MechDefInventoryCleanup
             foreach (var r in mechDef.Inventory)
             {
                 if (r.Def == null)
+                {
                     Log.Main.Error?.Log($"--- NULL --- {r.ComponentDefID}");
+                }
             }
 
             mechDef.SetInventory(mechDef.Inventory.Where(i => i.Def != null).ToArray());

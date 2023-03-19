@@ -15,7 +15,11 @@ public class Change_Remove : IChange_Apply, IChange_Optimize
     public ChassisLocations Location { get; set; }
     public void AdjustChange(InventoryOperationState state)
     {
-        if (item == null) return;
+        if (item == null)
+        {
+            return;
+        }
+
         foreach (var rem_handler in item.GetComponents<IOnRemove>())
         {
             rem_handler.OnRemove(Location, state);
@@ -33,7 +37,9 @@ public class Change_Remove : IChange_Apply, IChange_Optimize
         }
 
         if (i == null)
+        {
             return;
+        }
 
         state.Inventory.Remove(i);
     }
@@ -41,19 +47,30 @@ public class Change_Remove : IChange_Apply, IChange_Optimize
     public void ApplyToInventory(MechDef mech, List<MechComponentRef> inventory)
     {
         if (Applied)
+        {
             return;
+        }
+
         var item = inventory.FirstOrDefault(i => i.MountedLocation == Location && i.ComponentDefID == ItemID);
         if (item != null)
+        {
             inventory.Remove(item);
+        }
     }
 
     public void ApplyToMechlab()
     {
         if (Applied)
+        {
             return;
+        }
+
         var lhelper = MechLabHelper.CurrentMechLab.GetLocationHelper(Location);
         if (lhelper == null)
+        {
             return;
+        }
+
         var item = lhelper.LocalInventory.FirstOrDefault(i =>
             i.ComponentRef.ComponentDefID == ItemID &&
             !i.ComponentRef.IsModuleFixed(MechLabHelper.CurrentMechLab.ActiveMech));

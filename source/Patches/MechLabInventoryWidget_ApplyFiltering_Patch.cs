@@ -17,7 +17,9 @@ internal static class MechLabInventoryWidget_ApplyFiltering_Patch
         try
         {
             if (Control.Settings.DontUseFilter)
+            {
                 return;
+            }
 
             Log.Filter.Trace?.Log("StartFilter");
             var empty_item = 0;
@@ -35,7 +37,9 @@ internal static class MechLabInventoryWidget_ApplyFiltering_Patch
 
                 //if item already hidden - skip
                 if (!item.GameObject.activeSelf)
+                {
                     continue;
+                }
 
                 var mechlab = __instance.ParentDropTarget as MechLabPanel;
                 if (item.ComponentRef != null)

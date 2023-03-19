@@ -18,7 +18,9 @@ public class ChassisCategory : SimpleCustomChassis, IAfterLoad
         {
             var r = obj as _record;
             if (r == null)
+            {
                 return false;
+            }
 
             return Location == r.Location;
         }
@@ -40,9 +42,12 @@ public class ChassisCategory : SimpleCustomChassis, IAfterLoad
         var desc = CategoryController.Shared.GetCategory(CategoryID);
 
         if (Limits == null || Limits.Length == 0)
+        {
             LocationLimits = new();
+        }
         else
+        {
             LocationLimits = Limits.Distinct().ToDictionary(i => i.Location, i => new CategoryLimit(i.Min, i.Max, desc?.ReplaceDefaultsFirst ?? true));
-
+        }
     }
 }

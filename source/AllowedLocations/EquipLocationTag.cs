@@ -20,8 +20,13 @@ public class EquipLocationTag
         var sb = new StringBuilder("Allowed Locations for " + Tag);
         sb.Append("\n- Default: " + Default);
         if(UnitTypes != null && UnitTypes.Length > 0)
+        {
             foreach (var unitType in UnitTypes)
+            {
                 sb.Append("\n- " + unitType.UnitType + ": " + unitType.Location);
+            }
+        }
+
         return sb.ToString();
     }
 }

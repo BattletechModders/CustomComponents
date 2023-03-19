@@ -29,7 +29,9 @@ public class Change_WeaponAdjust : IChange_Adjust
     {
         var defaults = state.Mech.GetWeaponDefaults();
         if (defaults == null)
+        {
             return;
+        }
 
         //Control.Log("1");
 
@@ -81,11 +83,17 @@ public class Change_WeaponAdjust : IChange_Adjust
             }
 
             if (usageRecord.used_after != usageRecord.used_now)
+            {
                 if (usageRecord.used_after)
+                {
                     state.AddChange(new Change_Add(usageRecord.weapon.Def.Description.Id,
                         usageRecord.weapon.Def.ComponentType, usageRecord.weapon.Location));
+                }
                 else
+                {
                     state.AddChange(new Change_Remove(usageRecord.weapon.Def.Description.Id, usageRecord.weapon.Location));
+                }
+            }
         }
 
     }

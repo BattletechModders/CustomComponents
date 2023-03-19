@@ -44,7 +44,9 @@ public class LocationHardpointHelper : HardpointHelper
             uicolor = UIColor.Custom;
         }
         else
+        {
             uicolor = HPInfo.WeaponCategory.GetUIColor();
+        }
 
         init(HPInfo.WeaponCategory.GetIcon(), hpinfo.TooltipCaption, hpinfo.Description);
     }

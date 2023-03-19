@@ -16,7 +16,9 @@ public class HardpointController
         get
         {
             if (_instance == null)
+            {
                 _instance = new();
+            }
 
             return _instance;
         }
@@ -111,7 +113,10 @@ public class HardpointController
         get
         {
             if (HardpointsByName.TryGetValue(wcname, out var result))
+            {
                 return result;
+            }
+
             Log.Main.Error?.Log($"{wcname} - dont have weapon category info!");
             return null;
         }
@@ -123,7 +128,10 @@ public class HardpointController
         get
         {
             if (HardpointsByID.TryGetValue(wcid, out var result))
+            {
                 return result;
+            }
+
             Log.Main.Error?.Log($"{wcid} - dont have weapon category info!");
             return null;
 
@@ -141,7 +149,10 @@ public class HardpointController
             if (hp.Complete())
             {
                 if(Control.Settings.DEBUG_ShowLoadedHardpoints)
+                {
                     Log.Main.Info?.Log($"Hardpoint {hp.ID} loaded, [{hp.CompatibleID.Aggregate("", (last, next) => last + " " + WeaponCategoryEnumeration.GetWeaponCategoryByID(next).FriendlyName)}]");
+                }
+
                 HardpointsByName[hp.ID] = hp;
                 HardpointsByID[hp.WeaponCategory.ID] = hp;
             }
@@ -161,16 +172,22 @@ public class HardpointController
         {
             Log.Main.Info?.Log($"Hardpoints: Total {HardpointsList?.Count ?? 0} Loaded");
             if(omni != null)
+            {
                 Log.Main.Info?.Log($"- omni list [{omni.CompatibleID.Aggregate("", (last, next) => last + " " + WeaponCategoryEnumeration.GetWeaponCategoryByID(next).FriendlyName)}]");
+            }
             else
+            {
                 Log.Main.Info?.Log("- no omni hardpoint definition load");
+            }
         }
     }
 
     public string PostValidatorDrop(MechLabItemSlotElement drop_item, List<InvItem> new_inventory)
     {
         if (Control.Settings.AllowMechlabWrongHardpoints)
+        {
             return string.Empty;
+        }
 
         var mechDef = MechLabHelper.CurrentMechLab.ActiveMech;
 
@@ -198,15 +215,18 @@ public class HardpointController
                 {
                     var nearest = hardpoints.FirstOrDefault(i => i.Total > i.Used && i.hpInfo.CompatibleID.Contains(hpInfo.WeaponCategory.ID));
                     if (nearest != null)
+                    {
                         nearest.Used += 1;
+                    }
                     else
+                    {
                         return new Text(Control.Settings.Message.Base_AddNotEnoughHardpoints,
                             mechDef.Description.UIName, recrd.item.Def.Description.Name,
                             recrd.item.Def.Description.UIName,
                             recrd.wcat.Name, recrd.wcat.FriendlyName,
                             w_location.location
                         ).ToString();
-
+                    }
                 }
             }
         }
@@ -234,8 +254,11 @@ public class HardpointController
                 {
                     var nearest = hardpoints.FirstOrDefault(i => i.Total> i.Used && i.hpInfo.CompatibleID.Contains(hpInfo.WeaponCategory.ID));
                     if (nearest != null)
+                    {
                         nearest.Used += 1;
+                    }
                     else
+                    {
                         errors[MechValidationType.InvalidInventorySlots].Add(new(
                             Control.Settings.Message.Base_AddNotEnoughHardpoints,
                             mechdef.Description.UIName, recrd.item.Def.Description.Name,
@@ -243,7 +266,7 @@ public class HardpointController
                             recrd.wcat.Name, recrd.wcat.FriendlyName,
                             w_location.location
                         ));
-
+                    }
                 }
             }
         }
@@ -270,9 +293,13 @@ public class HardpointController
                 {
                     var nearest = hardpoints.FirstOrDefault(i => i.Total > i.Used && i.hpInfo.CompatibleID.Contains(hpInfo.WeaponCategory.ID));
                     if (nearest != null)
+                    {
                         nearest.Used += 1;
+                    }
                     else
+                    {
                         return false;
+                    }
                 }
             }
         }
@@ -285,16 +312,22 @@ public class HardpointController
         {
             var defaults = mechdef.GetWeaponDefaults();
             if (defaults == null)
+            {
                 continue;
+            }
 
             var def_list = defaults.ToList();
 
             if (def_list.Count == 0)
+            {
                 continue;
+            }
 
             var changes = new Queue<IChange>();
             foreach (var weaponDefault in defaults)
+            {
                 changes.Enqueue(new Change_WeaponAdjust(weaponDefault.Location));
+            }
 
             var state = new InventoryOperationState(changes, mechdef);
             state.DoChanges();

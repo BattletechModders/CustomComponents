@@ -31,7 +31,10 @@ internal class DEBUGTOOLS
         {
             var builder = new StringBuilder("[");
             foreach (var tag in list)
+            {
                 builder.Append(tag + " ");
+            }
+
             builder.Append("]");
             return builder.ToString();
         }
@@ -48,7 +51,10 @@ internal class DEBUGTOOLS
     public static void ShowHierarchy(GameObject go)
     {
         if (go == null)
+        {
             return;
+        }
+
         Log.Main.Info?.Log($"show hierarchy for {go.name}");
         walk(go, "");
     }
@@ -56,7 +62,10 @@ internal class DEBUGTOOLS
     private static void walk(GameObject root, string prefix)
     {
         if (root == null)
+        {
             return;
+        }
+
         Log.Main.Info?.Log(prefix + $" GameObject:[{root.name}]");
         Log.Main.Info?.Log(prefix + " |Components:");
 

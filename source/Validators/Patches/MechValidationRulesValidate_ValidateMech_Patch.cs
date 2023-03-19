@@ -14,8 +14,12 @@ internal static class MechValidationRulesValidate_ValidateMech_Patch
         try
         {
             if(mechDef == null)
+            {
                 return;
+            }
+
             if (Control.Settings.IgnoreValidationTags != null && Control.Settings.IgnoreValidationTags.Length > 0)
+            {
                 foreach (var tag in Control.Settings.IgnoreValidationTags)
                 {
                     if ((mechDef.Chassis.ChassisTags != null && mechDef.Chassis.ChassisTags.Contains(tag)) ||
@@ -29,6 +33,7 @@ internal static class MechValidationRulesValidate_ValidateMech_Patch
                         return;
                     }
                 }
+            }
 
 
             Validator.ValidateMech(__result, validationLevel, mechDef);

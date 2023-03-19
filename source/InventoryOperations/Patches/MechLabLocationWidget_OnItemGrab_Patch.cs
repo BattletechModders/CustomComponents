@@ -34,7 +34,10 @@ internal static class MechLabLocationWidget_OnItemGrab_Patch
             if (!grab_handler.OnItemGrab(item, ___mechLab, out var error))
             {
                 if (!string.IsNullOrEmpty(error))
+                {
                     ___mechLab.ShowDropErrorMessage(new(error));
+                }
+
                 __result = false;
                 __runOriginal = false;
                 return;
@@ -48,7 +51,9 @@ internal static class MechLabLocationWidget_OnItemGrab_Patch
         MechLabPanel ___mechLab, MechLabLocationWidget __instance)
     {
         if (!__result)
+        {
             return;
+        }
 
         var changes = new Queue<IChange>();
         changes.Enqueue(new Change_Remove(item.ComponentRef, __instance.loadout.Location, true));

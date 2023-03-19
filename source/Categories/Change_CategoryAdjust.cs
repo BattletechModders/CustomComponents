@@ -17,7 +17,9 @@ public class Change_CategoryAdjust : IChange_Adjust
         var mech = state.Mech;
         var record = DefaultsDatabase.Instance[mech];
         if (record == null || mech == null)
+        {
             return;
+        }
 
         if (record.Multi != null)
         {

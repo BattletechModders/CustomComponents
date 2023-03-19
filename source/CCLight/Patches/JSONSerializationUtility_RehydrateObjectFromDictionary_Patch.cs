@@ -17,7 +17,9 @@ public static class JSONSerializationUtility_RehydrateObjectFromDictionary_Patch
     public static void Postfix(object target, Dictionary<string, object> values)
     {
         if (!Control.Loaded)
+        {
             return;
+        }
 
         try
         {

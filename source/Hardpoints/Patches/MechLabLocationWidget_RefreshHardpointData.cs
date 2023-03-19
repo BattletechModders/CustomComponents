@@ -24,7 +24,9 @@ public static class MechLabLocationWidget_RefreshHardpointData
 
         var lhelper = MechLabHelper.CurrentMechLab.GetLocationHelper(__instance.loadout.Location);
         if(lhelper != null)
+        {
             lhelper.RefreshHardpoints();
+        }
 
         __runOriginal = false;
     }

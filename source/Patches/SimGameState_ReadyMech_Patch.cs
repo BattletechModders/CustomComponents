@@ -37,7 +37,9 @@ internal class SimGameState_ReadyMech_Patch
                     ((Func<ChassisDef, string, MechDef, MechDef>)CreateMech).Method);
             }
             else
+            {
                 yield return codeInstruction;
+            }
         }
     }
 

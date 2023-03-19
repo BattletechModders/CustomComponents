@@ -10,7 +10,10 @@ public static class BaseComponentRef_RefreshComponentDef
     public static void Postfix(BaseComponentRef __instance)
     {
         if (__instance.Def == null)
+        {
             return;
+        }
+
         if (__instance.Def.Flags<CCFlags>().NoRemove)
         {
             __instance.IsFixed = true;

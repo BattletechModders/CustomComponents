@@ -34,7 +34,9 @@ public static class DEBUG_ValidateAll
                         }
                     }
                     if (skip)
+                    {
                         continue;
+                    }
                 }
 
                 var error = MechValidationRules.ValidateMechDef(MechValidationLevel.Full, dm,

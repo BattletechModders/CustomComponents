@@ -71,6 +71,7 @@ public class DefaultsDatabase
             all_id = new();
 
             if (Multi != null && Multi.HasRecords)
+            {
                 foreach (var d in Multi.Defaults)
                 {
                     foreach (var cat in d.Categories)
@@ -84,8 +85,10 @@ public class DefaultsDatabase
                         h.Add(d.DefID);
                     }
                 }
+            }
 
             if (Defaults != null && Defaults.Count > 0)
+            {
                 foreach (var def in Defaults.Where(def => def.Value?.Defaults != null && def.Value.Defaults.Count > 0))
                 {
                     if (!all_id.TryGetValue(def.Key, out var ha))
@@ -102,6 +105,7 @@ public class DefaultsDatabase
                         hs.Add(cdr.Item.Description.Id);
                     }
                 }
+            }
         }
 
         public bool IsCatDefault(string id)
@@ -126,7 +130,10 @@ public class DefaultsDatabase
             {
                 result += "\n- MultiRecords";
                 foreach (var mcd in Multi.Defaults)
+                {
                     result += $"\n-- {mcd.DefID} => {mcd.Location}";
+                }
+
                 result += "\n--- Categories: " + Multi.UsedCategories.Keys.Join();
             }
 
@@ -164,7 +171,10 @@ public class DefaultsDatabase
         get
         {
             if (_instance == null)
+            {
                 _instance = new();
+            }
+
             return _instance;
         }
     }
@@ -174,7 +184,9 @@ public class DefaultsDatabase
         get
         {
             if (mech == null)
+            {
                 return null;
+            }
 
             if (!database.TryGetValue(mech.ChassisID, out var result))
             {
@@ -191,7 +203,9 @@ public class DefaultsDatabase
         foreach (var entry in SettingsResourcesTools.Enumerate<DefaultsInfo>("CCDefaults", customResources))
         {
             if(string.IsNullOrEmpty(entry.CategoryID))
+            {
                 continue;
+            }
 
             defaults_by_category[entry.CategoryID] = entry;
 
@@ -199,7 +213,9 @@ public class DefaultsDatabase
 
             entry.Complete();
             if(Control.Settings.DEBUG_ShowLoadedDefaults)
+            {
                 Log.Main.Info?.Log(entry.ToString());
+            }
         }
     }
 
@@ -220,7 +236,9 @@ public class DefaultsDatabase
         void process_defaults(MechDefaultInfo result, IEnumerable<IDefault> defaults)
         {
             if(defaults == null)
+            {
                 return;
+            }
 
             var seen = new HashSet<string>(result.Defaults.Keys);
 
@@ -296,9 +314,13 @@ public class DefaultsDatabase
                 }
 
                 if (category.Defaults.Count > 0)
+                {
                     result.Defaults[item.CategoryID] = category;
+                }
                 else
+                {
                     result.Defaults[item.CategoryID] = null;
+                }
             }
         }
 
@@ -418,14 +440,18 @@ public class DefaultsDatabase
         if (def_cache.TryGetValue(defId, out var def))
         {
             if (def.ComponentType == type)
+            {
                 return def;
+            }
 
             return null;
         }
 
         def = DefaultHelper.GetComponentDef(defId, type);
         if (def != null)
+        {
             def_cache[def.Description.Id] = def;
+        }
 
         return def;
     }

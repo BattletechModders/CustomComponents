@@ -106,13 +106,17 @@ public class EnumValueCustomFactory<TCustom, TDef, TValue> : ICustomFactory
         }
 
         if (val is string str)
+        {
             if (Enum.TryParse(str, true, out TValue res))
+            {
                 return res;
+            }
             else
             {
                 Log.Main.Error?.Log($"{val} is wrong value for {CustomName} for {Database.Identifier(def)} used {default(TValue)}");
                 return default;
             }
+        }
 
         try
         {

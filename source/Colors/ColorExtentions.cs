@@ -13,7 +13,9 @@ public static class ColorExtentions
     {
         color_tracker.SetUIColor(uicolor);
         if (uicolor == UIColor.Custom)
+        {
             color_tracker.OverrideWithColor(color);
+        }
     }
 
     public static void SetCustomColor(this IEnumerable<UIColorRefTracker> color_trackers, UIColor uicolor, Color color)
@@ -22,7 +24,9 @@ public static class ColorExtentions
         {
             color_tracker.SetUIColor(uicolor);
             if (uicolor == UIColor.Custom)
+            {
                 color_tracker.OverrideWithColor(color);
+            }
         }
     }
 
@@ -35,38 +39,54 @@ public static class ColorExtentions
     public static void SetColor(this UIColorRefTracker color_tracker, MechComponentRef cref)
     {
         if (cref.Is<IColorComponent>(out var color))
+        {
             color_tracker.SetCustomColor(color.UIColor, color.RGBColor);
+        }
         else
+        {
             color_tracker.SetUIColor(MechComponentRef.GetUIColor(cref));
+        }
     }
 
     public static void SetColor(this UIColorRefTracker color_tracker, MechComponentDef cdef)
     {
         if (cdef.Is<IColorComponent>(out var color))
+        {
             color_tracker.SetCustomColor(color.UIColor, color.RGBColor);
+        }
         else
+        {
             color_tracker.SetUIColor(MechComponentDef.GetUIColor(cdef));
+        }
     }
 
     public static void SetColor(this IEnumerable<UIColorRefTracker> color_trackers, MechComponentRef cref)
     {
         if (cref.Is<IColorComponent>(out var color))
+        {
             color_trackers.SetCustomColor(color.UIColor, color.RGBColor);
+        }
         else
         {
             foreach (var color_tracker in color_trackers)
+            {
                 color_tracker.SetUIColor(MechComponentRef.GetUIColor(cref));
+            }
         }
     }
 
     public static void SetColor(this IEnumerable<UIColorRefTracker> color_trackers, MechComponentDef cdef)
     {
         if (cdef.Is<IColorComponent>(out var color))
+        {
             color_trackers.SetCustomColor(color.UIColor, color.RGBColor);
+        }
         else
         {
             foreach (var color_tracker in color_trackers)
+            {
                 color_tracker.SetUIColor(MechComponentDef.GetUIColor(cdef));
+            }
         }
     }
 

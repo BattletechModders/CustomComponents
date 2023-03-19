@@ -38,7 +38,9 @@ public class CategoryDescriptorRecord
         {
             var r = obj as _record;
             if (r == null)
+            {
                 return false;
+            }
 
             return Location == r.Location;
         }
@@ -93,10 +95,16 @@ public class CategoryDescriptorRecord
     public void Complete(CategoryDescriptor cat_info)
     {
         if (LocationLimits == null)
+        {
             if (Limits == null || Limits.Length == 0)
+            {
                 LocationLimits = new();
+            }
             else
+            {
                 LocationLimits = Limits.Distinct().ToDictionary(i => i.Location, i => new CategoryLimit(i.Min, i.Max, cat_info?.ReplaceDefaultsFirst ?? true));
+            }
+        }
 
         MinLimited = LocationLimits.Count > 0 && LocationLimits.Values.Any(i => i.Min > 0);
         MaxLimited = LocationLimits.Count > 0 && LocationLimits.Values.Any(i => i.Max >= 0);
@@ -106,11 +114,18 @@ public class CategoryDescriptorRecord
     {
         var sb = new StringBuilder();
         if (!string.IsNullOrEmpty(UnitType))
+        {
             sb.Append(UnitType + ": ");
+        }
+
         sb.AppendLine($"MinL: {MinLimited}, MaxL: {MaxLimited}");
         if (LocationLimits != null)
+        {
             foreach (var pair in LocationLimits)
+            {
                 sb.AppendLine($"--- {pair.Key}: min: {pair.Value.Min}, max: {pair.Value.Max}, limit:{pair.Value.Limit}");
+            }
+        }
 
         return sb.ToString();
     }
@@ -157,10 +172,14 @@ public class CategoryDescriptor
         get
         {
             if (mech == null)
+            {
                 return DefaultLimits;
+            }
 
             if (records.TryGetValue(mech.ChassisID, out var result))
+            {
                 return result;
+            }
 
             var chassis_limits = GetMechCategoryCustom(mech);
             if (chassis_limits != null)
@@ -199,7 +218,9 @@ public class CategoryDescriptor
             }
 
             if (result == null)
+            {
                 result = DefaultLimits;
+            }
 
             if (result != null)
             {
@@ -222,7 +243,9 @@ public class CategoryDescriptor
         var custom = mech.Chassis.GetComponents<ChassisCategory>().FirstOrDefault(i => i.CategoryID == Name);
 
         if (custom != null)
+        {
             return custom.LocationLimits;
+        }
 
         return null;
     }
@@ -235,16 +258,29 @@ public class CategoryDescriptor
         AddCategoryToDescription = source.AddCategoryToDescription;
 
         if (!string.IsNullOrEmpty(source.AddMaximumReached))
+        {
             AddMaximumReached = source.AddMaximumReached;
+        }
+
         if (!string.IsNullOrEmpty(source.AddMixed))
+        {
             AddMixed = source.AddMixed;
+        }
 
         if (!string.IsNullOrEmpty(source.ValidateMinimum))
+        {
             ValidateMinimum = source.ValidateMinimum;
+        }
+
         if (!string.IsNullOrEmpty(source.ValidateMaximum))
+        {
             ValidateMaximum = source.ValidateMaximum;
+        }
+
         if (!string.IsNullOrEmpty(source.ValidateMixed))
+        {
             ValidateMixed = source.ValidateMixed;
+        }
 
         UnitLimits = source.UnitLimits;
         BaseLimits = source.BaseLimits;
@@ -256,30 +292,51 @@ public class CategoryDescriptor
 
         var limits = UnitLimits.FirstOrDefault(i => i.UnitType == "*");
         if (limits != null)
+        {
             UnitLimits.Remove(limits);
+        }
 
         if (BaseLimits == null)
         {
             if (limits == null)
+            {
                 DefaultLimits = new();
+            }
             else
+            {
                 DefaultLimits = limits;
+            }
         }
         else
+        {
             DefaultLimits = new(BaseLimits);
-
+        }
 
 
         if (string.IsNullOrEmpty(AddMaximumReached))
+        {
             AddMaximumReached = Control.Settings.Message.Category_MaximumReached;
+        }
+
         if (string.IsNullOrEmpty(AddMixed))
+        {
             AddMixed = Control.Settings.Message.Category_Mixed;
+        }
+
         if (string.IsNullOrEmpty(ValidateMinimum))
+        {
             ValidateMinimum = Control.Settings.Message.Category_ValidateMinimum;
+        }
+
         if (string.IsNullOrEmpty(ValidateMaximum))
+        {
             ValidateMaximum = Control.Settings.Message.Category_ValidateMaximum;
+        }
+
         if (string.IsNullOrEmpty(ValidateMixed))
+        {
             ValidateMixed = Control.Settings.Message.Category_ValidateMixed;
+        }
     }
 
     public override string ToString()
@@ -299,17 +356,25 @@ public class CategoryDescriptor
         if (DefaultLimits != null)
         {
             if (DefaultLimits.LocationLimits == null)
+            {
                 DefaultLimits.Complete(this);
+            }
+
             sb.Append("- DefaultLimits: " + DefaultLimits);
         }
 
         if (UnitLimits != null)
+        {
             foreach (var record in UnitLimits)
             {
                 if (record.LocationLimits == null)
+                {
                     record.Complete(this);
+                }
+
                 sb.Append("-- " + record);
             }
+        }
 
         return sb.ToString();
     }

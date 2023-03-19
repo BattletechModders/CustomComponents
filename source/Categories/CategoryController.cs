@@ -48,17 +48,24 @@ public class CategoryController
             category = c;
         }
         else
+        {
             Categories[category.Name] = category;
+        }
 
         category.Init();
         if (Control.Settings.DEBUG_ShowLoadedCategory)
+        {
             Log.Main.Info?.Log(category.ToString());
+        }
     }
 
     internal CategoryDescriptor GetOrCreateCategory(string name)
     {
         if (Categories.TryGetValue(name, out var c))
+        {
             return c;
+        }
+
         c = new() { Name = name };
         //Control.Log("create empty " + name + " for " + Environment.StackTrace);
         Categories.Add(name, c);
@@ -118,7 +125,9 @@ public class CategoryController
             }
 
             if (record == null || record.LocationLimits.Count == 0)
+            {
                 continue;
+            }
 
             items_by_category.TryGetValue(category, out var items);
 
@@ -129,9 +138,11 @@ public class CategoryController
                     var count = items == null ? 0 : items.Where(i => pair.Key.HasFlag(i.location)).Sum(i => i.num);
 
                     if (count < pair.Value.Min)
+                    {
                         errors[MechValidationType.InvalidInventorySlots].Add(new(category.ValidateMinimum,
                             category._DisplayName, pair.Value.Min, count, mechDef.Description.UIName,
                             mechDef.Description.Name, pair.Key == ChassisLocations.All ? "All Locations" : pair.Key.ToString()));
+                    }
                 }
 
                 if (pair.Value.Max >= 0)
@@ -139,9 +150,11 @@ public class CategoryController
                     var count = items == null ? 0 : items.Where(i => pair.Key.HasFlag(i.location)).Sum(i => i.num);
 
                     if (count > pair.Value.Max)
+                    {
                         errors[MechValidationType.InvalidInventorySlots].Add(new(category.ValidateMaximum,
                             category._DisplayName, pair.Value.Max, count, mechDef.Description.UIName,
                             mechDef.Description.Name, pair.Key == ChassisLocations.All ? "All Locations" : pair.Key.ToString()));
+                    }
                 }
             }
 
@@ -151,7 +164,9 @@ public class CategoryController
         {
             var record = pair.Key[mechDef];
             if (record == null)
+            {
                 continue;
+            }
 
             //check if cateory mix tags
             if (!pair.Key.AllowMixTags)
@@ -203,7 +218,9 @@ public class CategoryController
             var record = category[mechDef];
 
             if (record == null || record.LocationLimits.Count == 0)
+            {
                 continue;
+            }
 
             items_by_category.TryGetValue(category, out var items);
 
@@ -214,7 +231,9 @@ public class CategoryController
                     var count = items == null ? 0 : items.Where(i => pair.Key.HasFlag(i.location)).Sum(i => i.num);
 
                     if (count < pair.Value.Min)
+                    {
                         return false;
+                    }
                 }
 
                 if (pair.Value.Max >= 0)
@@ -222,7 +241,9 @@ public class CategoryController
                     var count = items == null ? 0 : items.Where(i => pair.Key.HasFlag(i.location)).Sum(i => i.num);
 
                     if (count > pair.Value.Max)
+                    {
                         return false;
+                    }
                 }
             }
 
@@ -232,7 +253,9 @@ public class CategoryController
         {
             var record = pair.Key[mechDef];
             if (record == null)
+            {
                 continue;
+            }
 
             //check if cateory mix tags
             if (!pair.Key.AllowMixTags)
@@ -279,7 +302,9 @@ public class CategoryController
             CategoryDescriptorRecord record;
 
             if (category.AllowMinOverflow && category.AllowMaxOverflow)
+            {
                 continue;
+            }
 
             try
             {
@@ -293,7 +318,9 @@ public class CategoryController
             }
 
             if (record == null || record.LocationLimits.Count == 0)
+            {
                 continue;
+            }
 
             items_by_category.TryGetValue(category, out var items);
 
@@ -304,9 +331,11 @@ public class CategoryController
                     var count = items == null ? 0 : items.Where(i => pair.Key.HasFlag(i.location)).Sum(i => i.num);
 
                     if (count < pair.Value.Min)
+                    {
                         return (new Text(category.ValidateMinimum,
                             category._DisplayName, pair.Value.Min, count, mechDef.Description.UIName,
                             mechDef.Description.Name, pair.Key == ChassisLocations.All ? "All Locations" : pair.Key.ToString())).ToString();
+                    }
                 }
 
                 if (!category.AllowMaxOverflow && pair.Value.Max >= 0)
@@ -314,9 +343,11 @@ public class CategoryController
                     var count = items == null ? 0 : items.Where(i => pair.Key.HasFlag(i.location)).Sum(i => i.num);
 
                     if (count > pair.Value.Max)
+                    {
                         return (new Text(category.ValidateMaximum,
                             category._DisplayName, pair.Value.Max, count, mechDef.Description.UIName,
                             mechDef.Description.Name, pair.Key == ChassisLocations.All ? "All Locations" : pair.Key.ToString())).ToString();
+                    }
                 }
             }
 
@@ -326,11 +357,15 @@ public class CategoryController
         {
             var record = pair.Key[mechDef];
             if (record == null)
+            {
                 continue;
+            }
 
             //check if cateory mix tags
             if (pair.Key.AllowMixTags || pair.Key.AllowMixTagsMechlab)
+            {
                 continue;
+            }
 
             var first_tag = pair.Value
                 .Select(i => i.mix ?? "*")

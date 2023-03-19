@@ -34,12 +34,16 @@ public class JJHardpointHeler : HardpointHelper
     public override void Hide()
     {
         if (go.activeSelf)
+        {
             go.SetActive(false);
+        }
     }
 
     public override void Show()
     {
         if (!go.activeSelf)
+        {
             go.SetActive(true);
+        }
     }
 }

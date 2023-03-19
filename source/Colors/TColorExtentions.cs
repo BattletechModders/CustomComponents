@@ -16,21 +16,34 @@ public static class TColorExtentions
             Log.Color.Trace?.Log($"-- color found set to {color.UIColor}/{color.RGBColor}");
 
             if(color.SkipText)
+            {
                 color_text.SetUIColor(UIColor.White);
+            }
             else
+            {
                 color_text.SetCustomColor(color.UIColor, color.RGBColor);
+            }
+
             if (color_icon != null)
+            {
                 if (color.SkipIcon)
+                {
                     color_icon.SetUIColor(UIColor.White);
+                }
                 else
+                {
                     color_icon.SetCustomColor(color.UIColor, color.RGBColor);
+                }
+            }
         }
         else
         {
             Log.Color.Trace?.Log("-- no color set to white");
             color_text.SetUIColor(UIColor.White);
             if (color_icon != null)
+            {
                 color_icon.SetUIColor(UIColor.White);
+            }
         }
     }
 
@@ -40,20 +53,33 @@ public static class TColorExtentions
         if (cdef.Is<ITColorComponent>(out var color))
         {
             if (color.SkipText)
+            {
                 color_text.SetUIColor(UIColor.White);
+            }
             else
+            {
                 color_text.SetCustomColor(color.UIColor, color.RGBColor);
+            }
+
             if (color_icon != null)
+            {
                 if (color.SkipIcon)
+                {
                     color_icon.SetUIColor(UIColor.White);
+                }
                 else
+                {
                     color_icon.SetCustomColor(color.UIColor, color.RGBColor);
+                }
+            }
         }
         else
         {
             color_text.SetUIColor(UIColor.White);
             if (color_icon != null)
+            {
                 color_icon.SetUIColor(UIColor.White);
+            }
         }
     }
 
@@ -63,21 +89,37 @@ public static class TColorExtentions
         if (cref.Is<ITColorComponent>(out var color))
         {
             if (color.SkipText)
+            {
                 color_text.SetCustomColor(UIColor.White, Color.white);
+            }
             else
+            {
                 color_text.SetCustomColor(color.UIColor, color.RGBColor);
+            }
+
             if (color_icon != null)
+            {
                 if (color.SkipIcon)
+                {
                     color_icon.SetUIColor(UIColor.White);
+                }
                 else
+                {
                     color_icon.SetCustomColor(color.UIColor, color.RGBColor);
+                }
+            }
         }
         else
         {
             foreach (var color_tracker in color_text)
+            {
                 color_tracker.SetUIColor(UIColor.White);
+            }
+
             if (color_icon != null)
+            {
                 color_icon.SetUIColor(UIColor.White);
+            }
         }
     }
 
@@ -87,21 +129,37 @@ public static class TColorExtentions
         if (cdef.Is<ITColorComponent>(out var color))
         {
             if (color.SkipText)
+            {
                 color_text.SetCustomColor(UIColor.White, Color.white);
+            }
             else
+            {
                 color_text.SetCustomColor(color.UIColor, color.RGBColor);
+            }
+
             if (color_icon != null)
+            {
                 if (color.SkipIcon)
+                {
                     color_icon.SetUIColor(UIColor.White);
+                }
                 else
+                {
                     color_icon.SetCustomColor(color.UIColor, color.RGBColor);
+                }
+            }
         }
         else
         {
             foreach (var color_tracker in color_text)
+            {
                 color_tracker.SetUIColor(UIColor.White);
+            }
+
             if (color_icon != null)
+            {
                 color_icon.SetUIColor(UIColor.White);
+            }
         }
     }
 
@@ -118,14 +176,25 @@ public static class TColorExtentions
         if (cdef.Is<ITColorComponent>(out var color))
         {
             if (color.SkipText)
+            {
                 color_text.SetCustomColor(UIColor.White, Color.white);
+            }
             else
+            {
                 color_text.SetCustomColor(color.UIColor, color.RGBColor);
+            }
+
             if (color_icon != null)
+            {
                 if (color.SkipIcon)
+                {
                     color_icon.SetUIColor(UIColor.White);
+                }
                 else
+                {
                     color_icon.SetCustomColor(color.UIColor, color.RGBColor);
+                }
+            }
         }
         else
         {
@@ -148,14 +217,25 @@ public static class TColorExtentions
         if (cdef.Is<ITColorComponent>(out var color))
         {
             if (color.SkipText)
+            {
                 color_text.SetCustomColor(UIColor.White, Color.white);
+            }
             else
+            {
                 color_text.SetCustomColor(color.UIColor, color.RGBColor);
+            }
+
             if (color_icon != null)
+            {
                 if (color.SkipIcon)
+                {
                     color_icon.SetUIColor(UIColor.White);
+                }
                 else
+                {
                     color_icon.SetCustomColor(color.UIColor, color.RGBColor);
+                }
+            }
         }
         else
         {

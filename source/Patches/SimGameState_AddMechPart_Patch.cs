@@ -34,7 +34,9 @@ public static class SimGameState_AddMechPart_Patch
                     ((Func<MechDef, string, bool, MechDef>)CreateMech).Method);
             }
             else
+            {
                 yield return codeInstruction;
+            }
         }
     }
 

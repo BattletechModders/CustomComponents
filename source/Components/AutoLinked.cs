@@ -36,13 +36,17 @@ public class AutoLinked : SimpleCustomComponent, IOnAdd, IOnRemove
                     i.ComponentDefID == item.link.ComponentDefId && i.MountedLocation == item.link.Location);
 
                 if (found == null)
+                {
                     errors[MechValidationType.InvalidInventorySlots].Add(new(
                         Control.Settings.Message.Linked_Validate,
                         mechDef.Description.UIName, item.custom.Def.Description.Name,
                         item.custom.Def.Description.UIName,
                         item.link.Location));
+                }
                 else
+                {
                     inv.Remove(found);
+                }
             }
         }
     }
@@ -64,8 +68,9 @@ public class AutoLinked : SimpleCustomComponent, IOnAdd, IOnRemove
                     i.ComponentDefID == item.link.ComponentDefId && i.MountedLocation == item.link.Location);
 
                 if (found == null)
+                {
                     return false;
-
+                }
             }
         }
 
@@ -76,18 +81,26 @@ public class AutoLinked : SimpleCustomComponent, IOnAdd, IOnRemove
     public void OnAdd(ChassisLocations location, InventoryOperationState state)
     {
         if (Links == null || Links.Length == 0)
+        {
             return;
+        }
 
         foreach (var link in Links)
+        {
             state.AddChange(new Change_Add(link.ComponentDefId, link.ComponentDefType.HasValue ? link.ComponentDefType.Value : Def.ComponentType, link.Location ));
+        }
     }
 
     public void OnRemove(ChassisLocations location, InventoryOperationState state)
     {
         if (Links == null || Links.Length == 0)
+        {
             return;
+        }
 
         foreach (var link in Links)
+        {
             state.AddChange(new Change_Remove(link.ComponentDefId, link.Location));
+        }
     }
 }

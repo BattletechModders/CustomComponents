@@ -47,7 +47,9 @@ public class HardpointInfo
         else
         {
             if (!Compatible.Contains(ID))
+            {
                 Compatible.Add(ID);
+            }
         }
 
         CompatibleID = Compatible

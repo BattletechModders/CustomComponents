@@ -27,6 +27,8 @@ internal static class LanceMechEquipmentListItem_SetTooltipData
     {
         ___backgroundColor.SetColor(MechDef);
         if (LanceMechEquipmentListItem_SetData.DamageLevel == ComponentDamageLevel.Functional)
+        {
             ___itemTextColor.SetTColor(null, MechDef);
+        }
     }
 }

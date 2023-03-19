@@ -31,7 +31,9 @@ public abstract class HPHandler : MonoBehaviour
     internal void SetJJ(ChassisDef chassisDef)
     {
         if (jjhardpoint == null)
+        {
             return;
+        }
 
         var max = GetJumpJetMaxByChassisDef(chassisDef);
         if (max >= 0)
@@ -48,7 +50,9 @@ public abstract class HPHandler : MonoBehaviour
     internal void SetData(List<HPUsage> usage)
     {
         if (hardpoints == null)
+        {
             return;
+        }
 
         foreach (var widget in hardpoints)
         {
@@ -59,14 +63,18 @@ public abstract class HPHandler : MonoBehaviour
                 widget.Value.SetText(item.Used, item.Total);
             }
             else
+            {
                 widget.Value.Hide();
+            }
         }
     }
 
     internal void SetDataTotal(List<HPUsage> usage)
     {
         if (hardpoints == null)
+        {
             return;
+        }
 
 
         foreach (var widget in hardpoints)
@@ -78,7 +86,9 @@ public abstract class HPHandler : MonoBehaviour
                 widget.Value.SetText(item.Total);
             }
             else
+            {
                 widget.Value.Hide();
+            }
         }
     }
 }

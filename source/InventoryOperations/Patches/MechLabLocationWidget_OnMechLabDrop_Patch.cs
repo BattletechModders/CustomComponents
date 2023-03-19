@@ -41,7 +41,9 @@ internal static class MechLabLocationWidget_OnMechLabDrop_Patch
             bool do_cancel(string error)
             {
                 if (string.IsNullOrEmpty(error))
+                {
                     return false;
+                }
 
                 Log.ComponentInstall.Trace?.Log($"- Canceled: {error}");
 
@@ -70,11 +72,13 @@ internal static class MechLabLocationWidget_OnMechLabDrop_Patch
             changes.Enqueue(new Change_Add(dragItem, __instance.loadout.Location));
 
             foreach (var rep_validator in Validator.GetReplace(newComponentDef))
+            {
                 if (do_cancel(rep_validator(dragItem, location, changes)))
                 {
                     __runOriginal = false;
                     return;
                 }
+            }
 
 #if DEBUG
             if (Log.ComponentInstall.Debug != null)

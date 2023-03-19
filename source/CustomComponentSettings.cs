@@ -27,7 +27,10 @@ public struct TagColor
     public Color ToColor()
     {
         if (ColorUtility.TryParseHtmlString(Color, out var color))
+        {
             return color;
+        }
+
         return UnityEngine.Color.magenta;
     }
 }
@@ -227,12 +230,19 @@ public class CustomComponentSettings
 
         ColorTagsDictionary = new();
         if (ColorTags != null)
+        {
             foreach (var colorTag in ColorTags)
             {
                 if (!ColorTagsDictionary.ContainsKey(colorTag.Tag))
+                {
                     ColorTagsDictionary.Add(colorTag.Tag, colorTag.ToColor());
+                }
             }
+        }
+
         if(ToolTips == null)
+        {
             ToolTips = new();
+        }
     }
 }

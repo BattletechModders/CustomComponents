@@ -46,7 +46,10 @@ public class Category : SimpleCustomComponent, IAfterLoad, IReplaceValidateDrop,
     public string GetTag()
     {
         if (string.IsNullOrEmpty(Tag))
+        {
             return Def.Description.Id;
+        }
+
         return Tag;
     }
 
@@ -119,7 +122,9 @@ public class Category : SimpleCustomComponent, IAfterLoad, IReplaceValidateDrop,
             foreach (var item_info in inventory.Where(i => limit.Key.HasFlag(i.item.Location)))
             {
                 if (item_info.fixd)
+                {
                     free.free -= item_info.cat.Weight;
+                }
                 else if (!item_info.canfree)
                 {
                     free.free -= item_info.cat.Weight;
@@ -146,7 +151,9 @@ public class Category : SimpleCustomComponent, IAfterLoad, IReplaceValidateDrop,
             }
 
             if (free.free >= Weight)
+            {
                 continue;
+            }
 
             if (free.free + free.can_free < Weight)
             {
@@ -164,7 +171,10 @@ public class Category : SimpleCustomComponent, IAfterLoad, IReplaceValidateDrop,
             foreach (var item in free.items)
             {
                 if (need_free <= 0)
+                {
                     break;
+                }
+
                 to_remove.Add(item);
                 need_free -= item.weight;
             }
@@ -187,7 +197,9 @@ public class Category : SimpleCustomComponent, IAfterLoad, IReplaceValidateDrop,
     public string PreValidateDrop(MechLabItemSlotElement item, ChassisLocations location)
     {
         if (CategoryDescriptor.AllowMixTagsMechlab || CategoryDescriptor.AllowMixTags || Tag == "*")
+        {
             return string.Empty;
+        }
 
         var check = MechLabHelper.CurrentMechLab.ActiveMech.Inventory
             .Select(i => i.GetCategory(CategoryID))

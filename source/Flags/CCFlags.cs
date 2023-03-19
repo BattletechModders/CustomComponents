@@ -52,13 +52,19 @@ public class CCFlags
             var f = item.Flags<CCFlags>();
 
             if (f.Invalid)
+            {
                 return false;
+            }
 
             if (item.DamageLevel == ComponentDamageLevel.Destroyed && (f.NotBroken || f.NotDestroyed))
+            {
                 return false;
+            }
 
             if (item.DamageLevel == ComponentDamageLevel.Penalized && f.NotBroken)
+            {
                 return false;
+            }
         }
         return true;
     }
@@ -70,8 +76,10 @@ public class CCFlags
             var f = item.Flags<CCFlags>();
 
             if (f.Invalid)
+            {
                 errors[MechValidationType.InvalidInventorySlots].Add(new(
                     Control.Settings.Message.Flags_InvaildComponent, item.Def.Description.Name, item.Def.Description.UIName));
+            }
 
             if (item.DamageLevel == ComponentDamageLevel.Destroyed && (f.NotBroken || f.NotDestroyed))
             {
@@ -91,23 +99,49 @@ public class CCFlags
     {
         var result = "";
         if (Default)
+        {
             result += "Default ";
+        }
+
         if (NoRemove)
+        {
             result += "NoRemove ";
+        }
+
         if (Vital)
+        {
             result += "Vital ";
+        }
+
         if (AutoRepair)
+        {
             result += "AutoRepair ";
+        }
+
         if (HideFromInv)
+        {
             result += "HideFromInv ";
+        }
+
         if (NotBroken)
+        {
             result += "NotBroken ";
+        }
+
         if (NotDestroyed)
+        {
             result += "NotDestroyed ";
+        }
+
         if (Invalid)
+        {
             result += "Invalid ";
+        }
+
         if (NoSalvage)
+        {
             result += "NoSalvage ";
+        }
 
         return result;
     }

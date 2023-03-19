@@ -69,7 +69,9 @@ public class MechLabHPHandler : HPHandler
         foreach (Transform child in hp_layout)
         {
             if (child != sample)
+            {
                 Destroy(child.gameObject);
+            }
         }
 
         var jjgo = Instantiate(sample.gameObject);

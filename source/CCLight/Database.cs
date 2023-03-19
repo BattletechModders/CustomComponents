@@ -64,7 +64,9 @@ public class Database
         }
 
         if (target is VehicleChassisDef vcd)
+        {
             return vcd.Description.Id;
+        }
 
         var descriptionProperty = target.GetType().GetProperty(nameof(MechComponentDef.Description), typeof(DescriptionDef));
         var description = descriptionProperty?.GetValue(target, null) as DescriptionDef;
@@ -123,25 +125,32 @@ public class Database
         var attribute = Registry.GetAttributeByType(cc.GetType());
 
         if (attribute != null)
+        {
             for (var i = 0; i < ccs.Count; i++)
             {
                 var custom = ccs[i];
                 var attribute2 = Registry.GetAttributeByType(custom.GetType());
                     
                 if (attribute2 == null)
+                {
                     continue;
+                }
 
                 var same_type = string.IsNullOrEmpty(attribute.Group)
                     ? attribute.Name == attribute2.Name
                     : attribute.Group == attribute2.Group;
 
                 if (!same_type)
+                {
                     continue;
+                }
 
                 if (attribute.AllowArray)
                 {
                     if (!(cc is IReplaceIdentifier cci1))
+                    {
                         break;
+                    }
 
                     if (custom is IReplaceIdentifier cci2 &&
                         cci1.ReplaceID == cci2.ReplaceID)
@@ -160,6 +169,7 @@ public class Database
                     return true;
                 }
             }
+        }
 
         Log.CCLoading.Trace?.Log("--added");
         ccs.Add(cc);

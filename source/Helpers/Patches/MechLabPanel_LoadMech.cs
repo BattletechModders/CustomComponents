@@ -12,6 +12,8 @@ public static class MechLabPanel_LoadMech
     public static void Postfix(MechDef newMechDef, MechLabPanel __instance)
     {
         if (newMechDef != null)
+        {
             MechLabHelper.EnterMechLab(__instance);
+        }
     }
 }

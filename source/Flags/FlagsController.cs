@@ -33,7 +33,9 @@ public class FlagsController<T>
         {
             var flag_attribute = propertyInfo.GetCustomAttribute<CustomFlagAttribute>();
             if (flag_attribute == null)
+            {
                 continue;
+            }
 
             var child_attribute = propertyInfo.GetCustomAttribute<SubFlagsAttribute>();
 
@@ -48,25 +50,33 @@ public class FlagsController<T>
         }
 
         if (flags.Count == 0)
+        {
             Log.Main.Error?.Log($"{type} cannot be used as CustomFlags, no flags");
+        }
 
         foreach (var flagInfo in flags)
         {
             var child = flagInfo.Value.ChildFlags;
             if (child == null || child.Length == 0)
+            {
                 flagInfo.Value.Childs = null;
+            }
             else
+            {
                 flagInfo.Value.Childs = child
                     .Select(i => flags.TryGetValue(i, out var f) ? f : null)
                     .Where(i => i != null)
                     .ToList();
+            }
         }
 
         foreach (var minfo in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic))
         {
             var setter_attribute = minfo.GetCustomAttribute<CustomSetterAttribute>();
             if (setter_attribute == null)
+            {
                 continue;
+            }
 
             if(!flags.TryGetValue(setter_attribute.Flag, out var f))
             {
@@ -109,7 +119,10 @@ public class FlagsController<T>
         get
         {
             if(_shared == null)
+            {
                 _shared = new();
+            }
+
             return _shared;
         }
     }
@@ -119,7 +132,9 @@ public class FlagsController<T>
         get
         {
             if (item == null)
+            {
                 return null;
+            }
 
             if (!flags_database.TryGetValue(item.Description.Id, out var flags))
             {
@@ -137,8 +152,12 @@ public class FlagsController<T>
         {
             values[flag.Name] = true;
             if(flag.Childs != null)
+            {
                 foreach (var flagChild in flag.Childs)
+                {
                     set_recursive(flagChild, values);
+                }
+            }
         }
 
         Log.Flags.Trace?.Log("BuildFlags for " + item.Description.Id);
@@ -148,17 +167,25 @@ public class FlagsController<T>
         var temp_f = flags.ToDictionary(i => i.Key, i => false);
 
         if (f != null)
+        {
             foreach (var flag in flags)
+            {
                 temp_f[flag.Key] = f.flags.Contains(flag.Key);
+            }
+        }
 
         foreach (var flag in flags)
         {
             var value = temp_f[flag.Key];
             if (!value && flag.Value.CustomSetter != null)
+            {
                 value = flag.Value.CustomSetter(result, item);
+            }
 
             if(value)
+            {
                 set_recursive(flag.Value, temp_f);
+            }
         }
 
         foreach (var flag in flags)

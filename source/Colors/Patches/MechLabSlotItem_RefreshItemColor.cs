@@ -22,7 +22,9 @@ public static class MechLabSlotItem_RefreshItemColor
         ___backgroundColor.SetColor(__instance.ComponentRef);
 
         if (__instance.ComponentRef.DamageLevel == ComponentDamageLevel.Functional)
+        {
             ___nameTextColor.SetTColor(___iconColor, __instance.ComponentRef);
+        }
         else
         {
             ___iconColor.SetUIColor(UIColor.White);
@@ -37,7 +39,10 @@ public static class MechLabSlotItem_RefreshItemColor
                 __instance.ComponentRef.Def.Description.Icon,
                 (id, icon) =>
                 {
-                    if (icon != null) ___icon.vectorGraphics = icon;
+                    if (icon != null)
+                    {
+                        ___icon.vectorGraphics = icon;
+                    }
                 });
             loadrequest.ProcessRequests();
         }

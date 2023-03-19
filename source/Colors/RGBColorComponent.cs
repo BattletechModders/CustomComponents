@@ -20,7 +20,9 @@ public class RGBColorComponent : SimpleCustomComponent, IColorComponent, IValueC
             RGBColor = color;
         }
         else
+        {
             RGBColor = Color.magenta;
+        }
     }
 }
 
@@ -44,6 +46,8 @@ public class TRGBColorComponent : SimpleCustomComponent, ITColorComponent, IAfte
             RGBColor = color;
         }
         else
+        {
             RGBColor = UnityEngine.Color.magenta;
+        }
     }
 }

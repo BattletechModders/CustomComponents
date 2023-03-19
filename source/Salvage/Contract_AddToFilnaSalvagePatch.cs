@@ -20,16 +20,22 @@ internal static class Contract_AddToFilnaSalvagePatch
     public static bool AddToFinalSalvage(ref SalvageDef def)
     {
         if (def.MechComponentDef == null)
+        {
             return true;
+        }
 
 
         if (!def.MechComponentDef.Flags<CCFlags>().NoSalvage)
+        {
             return true;
+        }
 
         var lootable = def.MechComponentDef.GetComponent<LootableDefault>();
 
         if (lootable == null)
+        {
             return false;
+        }
 
         MechComponentDef component = null;
 
@@ -37,31 +43,48 @@ internal static class Contract_AddToFilnaSalvagePatch
         {
             case ComponentType.AmmunitionBox:
                 if(UnityGameInstance.BattleTechGame.DataManager.AmmoBoxDefs.Exists(lootable.ItemID))
+                {
                     component = UnityGameInstance.BattleTechGame.DataManager.AmmoBoxDefs.Get(lootable.ItemID);
+                }
+
                 break;
 
             case ComponentType.Weapon:
                 if (UnityGameInstance.BattleTechGame.DataManager.WeaponDefs.Exists(lootable.ItemID))
+                {
                     component = UnityGameInstance.BattleTechGame.DataManager.WeaponDefs.Get(lootable.ItemID);
+                }
+
                 break;
 
             case ComponentType.Upgrade:
                 if (UnityGameInstance.BattleTechGame.DataManager.UpgradeDefs.Exists(lootable.ItemID))
+                {
                     component = UnityGameInstance.BattleTechGame.DataManager.UpgradeDefs.Get(lootable.ItemID);
+                }
+
                 break;
 
             case ComponentType.HeatSink:
                 if (UnityGameInstance.BattleTechGame.DataManager.HeatSinkDefs.Exists(lootable.ItemID))
+                {
                     component = UnityGameInstance.BattleTechGame.DataManager.HeatSinkDefs.Get(lootable.ItemID);
+                }
+
                 break;
             case ComponentType.JumpJet:
                 if (UnityGameInstance.BattleTechGame.DataManager.JumpJetDefs.Exists(lootable.ItemID))
+                {
                     component = UnityGameInstance.BattleTechGame.DataManager.JumpJetDefs.Get(lootable.ItemID);
+                }
+
                 break;
         }
 
         if (component == null || component.Flags<CCFlags>().NoSalvage)
+        {
             return false;
+        }
 
         var salvageDef = new SalvageDef();
         salvageDef.MechComponentDef = component;

@@ -107,7 +107,10 @@ public class ExtendedDetailList : ExtendedDetail
     public void AddUnique(string s)
     {
         if(Values.Contains(s))
+        {
             return;
+        }
+
         Values.Add(s);
     }
 

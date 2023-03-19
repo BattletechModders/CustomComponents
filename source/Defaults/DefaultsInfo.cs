@@ -27,8 +27,12 @@ public class UnitTypeDefaultsRecord
     {
         var result = "\n- " + UnitType;
         if(Defaults != null && Defaults.Length > 0)
+        {
             foreach (var defaultsInfoRecord in Defaults)
+            {
                 result += "\n-- " + defaultsInfoRecord;
+            }
+        }
 
         return result;
     }
@@ -47,12 +51,19 @@ public class DefaultsInfo
         {
             result += "\n- Defaults";
             foreach (var defaultsInfoRecord in Defaults)
+            {
                 result += "\n-- " + defaultsInfoRecord;
+            }
         }
 
         if (UnitTypes != null && UnitTypes.Length > 0)
+        {
             foreach (var record in UnitTypes)
+            {
                 result += record.ToString();
+            }
+        }
+
         return result;
     }
 
@@ -62,7 +73,9 @@ public class DefaultsInfo
         {
             var item = UnitTypes.FirstOrDefault(i => i.UnitType == "*");
             if (item != null)
+            {
                 Defaults = item.Defaults;
+            }
         }
     }
 
@@ -71,12 +84,16 @@ public class DefaultsInfo
         try
         {
             if (unit_types == null || UnitTypes == null || UnitTypes.Length == 0)
+            {
                 return Defaults;
+            }
 
             foreach (var record in UnitTypes)
             {
                 if (unit_types.Contains(record.UnitType))
+                {
                     return record.Defaults;
+                }
             }
         }
         catch (Exception e)

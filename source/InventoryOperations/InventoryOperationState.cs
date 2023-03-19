@@ -59,7 +59,9 @@ public class InventoryOperationState
             {
                 done_changes.Add(iichange);
                 if (iichange is IChange_Optimize ioc)
+                {
                     ioc.DoOptimization(done_changes);
+                }
             }
         }
     }
@@ -76,7 +78,9 @@ public class InventoryOperationState
         change.Initial = false;
         pending_changes.Enqueue(change);
         if(change is IChange_Apply iichange)
+        {
             iichange.PreviewApply(this);
+        }
     }
 
     public void ApplyInventory()

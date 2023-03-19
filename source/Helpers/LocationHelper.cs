@@ -35,7 +35,9 @@ public class LocationHelper
         try
         {
             if (HardpointWidgets == null || HardpointWidgets.Length != 4)
+            {
                 return;
+            }
 
             //Control.Log($"{Location} - refresh hardpoints");
 
@@ -65,13 +67,17 @@ public class LocationHelper
                     }
 
                     if (widget.WeaponCategory == null || widget.WeaponCategory.ID != HardpointsUsage[active_hp].hpInfo.WeaponCategory.ID)
+                    {
                         widget.Init(hp.hpInfo);
+                    }
                     //Control.Log($"- {i} set to {hp.Used}/{hp.Total}");
 
                     widget.SetText(hp.Used, hp.Total);
                 }
                 else
+                {
                     widget.Hide();
+                }
 
                 active_hp += 1;
             }

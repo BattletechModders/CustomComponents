@@ -12,11 +12,15 @@ public static class Contract_GenerateSalvage
     public static bool IsDestroyed(MechDef mech)
     {
         if (mech.IsDestroyed)
+        {
             return true;
+        }
 
         if (Control.Settings.CheckCriticalComponent && mech.Inventory.Any(i =>
                 i.Def.CriticalComponent && i.DamageLevel == ComponentDamageLevel.Destroyed))
+        {
             return true;
+        }
 
         return mech.Inventory.Any(item => (item.DamageLevel == ComponentDamageLevel.Destroyed && item.Flags<CCFlags>().Vital) || item.GetComponents<IIsDestroyed>().Any(isDestroyed => isDestroyed.IsMechDestroyed(item, mech)));
     }
@@ -150,7 +154,9 @@ public static class Contract_GenerateSalvage
             if (lostUnits[i].mechLost)
             {
                 if (Control.Settings.SalvageUnrecoveredMech)
+                {
                     AddMechToSalvage(mech, contract, simgame, Constants, ___finalPotentialSalvage);
+                }
                 else
                 {
                     var old_diff = __instance.Override.finalDifficulty;
@@ -188,7 +194,9 @@ public static class Contract_GenerateSalvage
         foreach (var unit in enemyMechs)
         {
             if (unit.pilot.IsIncapacitated || IsDestroyed(unit.mech) || unit.pilot.HasEjected)
+            {
                 AddMechToSalvage(unit.mech, contract, simgame, Constants, ___finalPotentialSalvage);
+            }
             else
             {
                 Log.SalvageProcess.Trace?.Log($"-- Salvaging {unit.mech.Name}");
@@ -249,7 +257,9 @@ public static class Contract_GenerateSalvage
         if (Control.Settings.OverrideMechPartCalculation)
         {
             if (mech.IsLocationDestroyed(ChassisLocations.CenterTorso))
+            {
                 numparts = Control.Settings.CenterTorsoDestroyedParts;
+            }
             else
             {
                 var total = Control.Settings.SalvageArmWeight * 2 + Control.Settings.SalvageHeadWeight +
@@ -274,19 +284,28 @@ public static class Contract_GenerateSalvage
 
                 numparts = (int)(constants.Story.DefaultMechPartMax * val / total + 0.5f);
                 if (numparts <= 0)
+                {
                     numparts = 1;
+                }
+
                 if (numparts > constants.Story.DefaultMechPartMax)
+                {
                     numparts = constants.Story.DefaultMechPartMax;
+                }
             }
         }
         else
         {
             numparts = 3;
             if (mech.IsLocationDestroyed(ChassisLocations.CenterTorso))
+            {
                 numparts = 1;
+            }
             else if (mech.IsLocationDestroyed(ChassisLocations.LeftLeg) &&
                      mech.IsLocationDestroyed(ChassisLocations.RightLeg))
+            {
                 numparts = 2;
+            }
         }
 
         try
@@ -306,6 +325,7 @@ public static class Contract_GenerateSalvage
                 Log.SalvageProcess.Trace?.Log("--- CT Destroyed - no component loot");
             }
             else
+            {
                 foreach (var component in mech.Inventory.Where(item =>
                              !mech.IsLocationDestroyed(item.MountedLocation) &&
                              item.DamageLevel != ComponentDamageLevel.Destroyed))
@@ -314,6 +334,7 @@ public static class Contract_GenerateSalvage
                     contract.AddMechComponentToSalvage(salvage, component.Def, ComponentDamageLevel.Functional, false,
                         constants, simgame.NetworkRandom);
                 }
+            }
         }
         catch (Exception e)
         {

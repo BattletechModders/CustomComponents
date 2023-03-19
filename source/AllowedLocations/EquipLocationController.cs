@@ -15,7 +15,9 @@ public class EquipLocationController
         get
         {
             if (_instance == null)
+            {
                 _instance = new();
+            }
 
             return _instance;
         }
@@ -28,7 +30,9 @@ public class EquipLocationController
         get
         {
             if (mechdef == null || itemdef == null)
+            {
                 return ChassisLocations.None;
+            }
 
             if (!Locations.TryGetValue(mechdef.ChassisID, out var mech_locations))
             {
@@ -49,7 +53,9 @@ public class EquipLocationController
 
                             var ut = mechdef.GetUnitTypes();
                             if (record.UnitTypes == null || record.UnitTypes.Length == 0 || ut == null)
+                            {
                                 location = itemdef.AllowedLocations & record.Default;
+                            }
                             else
                             {
                                 var lr = record.UnitTypes.FirstOrDefault(i => ut.Contains(i.UnitType));
@@ -57,11 +63,14 @@ public class EquipLocationController
                             }
                         }
                         else
+                        {
                             location = itemdef.AllowedLocations;
+                        }
                     }
                     else
+                    {
                         location = info.Locations;
-
+                    }
                 }
                 else
                 {
@@ -86,7 +95,9 @@ public class EquipLocationController
             Tags[tag.Tag] = tag;
             Log.Main.Info?.Log($"LocationTag {tag.Tag} registered");
             if (Control.Settings.DEBUG_ShowLoadedAlLocations)
+            {
                 Log.Main.Info?.Log(tag.ToString());
+            }
         }
     }
 
@@ -98,9 +109,11 @@ public class EquipLocationController
 
 
         if ((location & allowed) <= ChassisLocations.None)
+        {
             return new Text(Control.Settings.Message.Base_AddWrongLocation,
                 item.ComponentRef.Def.Description.Name, location, 
                 item.ComponentRef.Def.Description.UIName).ToString();
+        }
 
         return string.Empty;
     }
@@ -114,9 +127,11 @@ public class EquipLocationController
                 : item.Def.AllowedLocations;
 
             if ((location & item.MountedLocation) <= ChassisLocations.None)
+            {
                 errors[MechValidationType.InvalidInventorySlots].Add(
                     new(Control.Settings.Message.Base_ValidateWrongLocation, item.Def.Description.Name)
                 );
+            }
         }
     }
 
@@ -129,7 +144,9 @@ public class EquipLocationController
                 : item.Def.AllowedLocations;
 
             if ((location & item.MountedLocation) <= ChassisLocations.None)
+            {
                 return false;
+            }
         }
 
         return true;

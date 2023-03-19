@@ -22,7 +22,9 @@ public static class Control
             Settings.Complete();
 
             if (Settings.DEBUG_ShowConfig)
+            {
                 Log.Main.Info?.Log(JSONSerializationUtility.ToJSON(Settings));
+            }
 
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), "io.github.denadan.CustomComponents");
 
@@ -142,7 +144,10 @@ public static class Control
         HardpointController.Instance.Setup(Manifests);
 
         if (Manifests.TryGetValue("CustomSVGIcon", out var icons))
+        {
             IconController.LoadIcons(icons);
+        }
+
         Log.CustomResource.Trace?.Log(" - done");
         Loaded = true;
     }

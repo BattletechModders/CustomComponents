@@ -17,7 +17,10 @@ public class UnitTypeDatabase
         get
         {
             if(_instance ==null)
+            {
                 _instance = new();
+            }
+
             return _instance;
         }
     }
@@ -57,15 +60,21 @@ public class UnitTypeDatabase
     public HashSet<string> GetUnitTypes(ChassisDef chassis)
     {
         if (chassis == null)
+        {
             return new();
+        }
 
         if (known.TryGetValue(chassis.Description.Id, out var result))
+        {
             return result;
+        }
 
         var mechid = GetMechIDFromChassisID(chassis.Description.Id);
         var mech = UnityGameInstance.BattleTechGame.DataManager.MechDefs.Get(mechid);
         if(mech == null)
+        {
             return new();
+        }
 
         return BuildUnitTypes(mech);
     }
@@ -75,10 +84,14 @@ public class UnitTypeDatabase
     public HashSet<string> GetUnitTypes(MechDef mech)
     {
         if (mech == null)
+        {
             return new();
+        }
 
         if (known.TryGetValue(mech.ChassisID, out var result))
+        {
             return result;
+        }
 
         return BuildUnitTypes(mech);
     }

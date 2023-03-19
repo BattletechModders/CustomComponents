@@ -32,7 +32,9 @@ public static class HardpointExtentions
     public static bool HasWeaponDefaults(this MechDef mech, ChassisLocations location)
     {
         if (mech == null)
+        {
             return false;
+        }
 
         if (!have_defaults.TryGetValue(mech.ChassisID, out var result))
         {
@@ -66,7 +68,9 @@ public static class HardpointExtentions
     public static bool HasWeaponDefaults(this ChassisDef chassis, ChassisLocations location)
     {
         if (chassis == null)
+        {
             return false;
+        }
 
         if (!have_defaults.TryGetValue(chassis.Description.Id, out var result))
         {
@@ -77,8 +81,9 @@ public static class HardpointExtentions
             {
                 var list = defs.ToList();
                 foreach (var wd in list)
+                {
                     result = result.Set(wd.Location);
-
+                }
             }
             have_defaults[chassis.Description.Id] = result;
         }
@@ -89,7 +94,9 @@ public static class HardpointExtentions
     {
         var components = GetWeaponDefaultComponents(chassis).ToList();
         if (components.Count == 0)
+        {
             return null;
+        }
 
         var result = new List<WeaponDefaultRecord>();
 
@@ -136,7 +143,9 @@ public static class HardpointExtentions
     public static IEnumerable<WeaponDefaultRecord> GetWeaponDefaults(this MechDef mech)
     {
         if (mech == null)
+        {
             return null;
+        }
 
         if (!defaults.TryGetValue(mech.ChassisID, out var result))
         {
@@ -149,7 +158,9 @@ public static class HardpointExtentions
     public static IEnumerable<WeaponDefaultRecord> GetWeaponDefaults(this ChassisDef chassis)
     {
         if (chassis == null)
+        {
             return null;
+        }
 
         if (!defaults.TryGetValue(chassis.Description.Id, out var result))
         {
@@ -168,7 +179,9 @@ public static class HardpointExtentions
     public static List<HPUsage> GetHardpoints(this ChassisDef chassis, ChassisLocations location)
     {
         if (chassis == null || !DefaultsDatabase.SingleLocations.Contains(location))
+        {
             return null;
+        }
 
         var id = chassis.Description.Id;
         if (!hp_database.TryGetValue(id, out var dictionary))
@@ -194,15 +207,21 @@ public static class HardpointExtentions
     public static List<HPUsage> GetHardpoints(this ChassisDef chassis, SortOrder sort = SortOrder.Usage)
     {
         if (chassis == null)
+        {
             return null;
+        }
 
         var result = new List<HPUsage>();
         foreach (var location in DefaultsDatabase.SingleLocations)
         {
             var usage = GetHardpoints(chassis, location);
             if (usage != null && usage.Count > 0)
+            {
                 foreach (var hpUsage in usage)
+                {
                     AddToList(result, hpUsage);
+                }
+            }
         }
 
         switch (sort)
@@ -225,16 +244,23 @@ public static class HardpointExtentions
     {
         var item = list.FirstOrDefault(i => i.WeaponCategoryID == hp.WeaponCategoryID);
         if (item != null)
+        {
             item.Total += hp.Total;
+        }
         else
+        {
             list.Add(new(hp));
+        }
     }
 
 
     public static List<HPUsage> GetHardpointUsage(this MechDef mech, ChassisLocations location, IEnumerable<InvItem> inventory = null)
     {
         if (inventory == null)
+        {
             inventory = mech.Inventory.ToInvItems();
+        }
+
         var inv = inventory.ToList();
 
         var result = mech.GetAllHardpoints(location, inv);
@@ -250,7 +276,10 @@ public static class HardpointExtentions
                 var hp = result[i];
 
                 if (!hp.hpInfo.CompatibleID.Contains(item.WeaponCategory.ID))
+                {
                     continue;
+                }
+
                 if (hp.Used < hp.Total)
                 {
                     found = true;
@@ -261,10 +290,16 @@ public static class HardpointExtentions
             }
 
             if (!found)
+            {
                 if (first == null)
+                {
                     result.Add(new HPUsage(item.hpInfo, 0, -1));
+                }
                 else
+                {
                     first.Used += 1;
+                }
+            }
         }
 
         return result;
@@ -275,23 +310,29 @@ public static class HardpointExtentions
         var result = new List<HPUsage>();
 
         if (mech != null)
+        {
             foreach (var location in DefaultsDatabase.SingleLocations)
             {
                 var usage = mech.GetHardpointUsage(location, inventory);
 
                 if (usage != null)
+                {
                     foreach (var hpUsage in usage)
                     {
                         var item = result.FirstOrDefault(i => i.hpInfo.WeaponCategory.ID == hpUsage.WeaponCategoryID);
                         if (item == null)
+                        {
                             result.Add(new(hpUsage));
+                        }
                         else
                         {
                             item.Total += hpUsage.Total;
                             item.Used += hpUsage.Used;
                         }
                     }
+                }
             }
+        }
 
         return result;
     }
@@ -306,7 +347,9 @@ public static class HardpointExtentions
         IEnumerable<InvItem> inventory)
     {
         if (chassis == null)
+        {
             return null;
+        }
 
         var result = chassis.GetHardpoints(location).Select(a => new HPUsage(a, true)).ToList();
 
@@ -340,9 +383,14 @@ public static class HardpointExtentions
                 {
                     var wc = hpDef.WeaponMountValue;
                     if (hpDef.Omni)
+                    {
                         wc = WeaponCategoryEnumeration.GetWeaponCategoryByID(Control.Settings.OmniCategoryID);
+                    }
+
                     if (wc == null || wc.Is_NotSet)
+                    {
                         continue;
+                    }
 
                     AddToList(list, wc);
                 }
@@ -358,12 +406,16 @@ public static class HardpointExtentions
     {
         var item = list.FirstOrDefault(i => i.WeaponCategoryID == wc.ID);
         if (item != null)
+        {
             item.Total += 1;
+        }
         else
         {
             item = new(HardpointController.Instance[wc.ID], 1);
             if (item.hpInfo != null)
+            {
                 list.Add(new(item, true));
+            }
         }
     }
     private static void SubFromList(List<HPUsage> list, WeaponCategoryValue wc, bool remove = false)
@@ -373,7 +425,9 @@ public static class HardpointExtentions
         {
             item.Total -= 1;
             if (item.Total <= 0 && remove)
+            {
                 list.Remove(item);
+            }
         }
     }
 
@@ -385,10 +439,14 @@ public static class HardpointExtentions
     public static WeaponCategoryValue GetWeaponCategory(this MechComponentDef cdef)
     {
         if (cdef == null)
+        {
             return notSet;
+        }
 
         if (cdef is WeaponDef w)
+        {
             return w.WeaponCategoryValue;
+        }
 
         if (!categories.TryGetValue(cdef.Description.Id, out var result))
         {
@@ -403,10 +461,14 @@ public static class HardpointExtentions
     public static WeaponCategoryValue GetWeaponCategory(this MechComponentRef cref)
     {
         if (cref == null)
+        {
             return notSet;
+        }
 
         if (cref.ComponentDefType == ComponentType.Weapon)
+        {
             return (cref.Def as WeaponDef)?.WeaponCategoryValue ?? notSet;
+        }
 
         if (!categories.TryGetValue(cref.ComponentDefID, out var result))
         {

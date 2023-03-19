@@ -19,7 +19,9 @@ public class AutoFixer: IMechDefProcessor
         {
             var ut = mechDef.GetUnitTypes();
             if(ut == null || !ut.Contains(Control.Settings.IgnoreAutofixUnitType))
+            {
                 work_list.Add(mechDef);
+            }
         }
 
         Log.AutoFixBase.Trace?.Log($"-- default: mechdefs:{work_list.Count} af:{fixers.Count}");
@@ -42,7 +44,9 @@ public class AutoFixer: IMechDefProcessor
             {
                 var ut = mechDef.GetUnitTypes();
                 if (ut == null || !ut.Contains(Control.Settings.IgnoreAutofixUnitType))
+                {
                     work_list.Add(mechDef);
+                }
             }
             DEBUG_ValidateAll.Validate(work_list);
         }

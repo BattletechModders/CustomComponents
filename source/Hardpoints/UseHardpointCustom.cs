@@ -44,17 +44,23 @@ public class UseHardpointCustom : SimpleCustomComponent, IValueComponent<string>
     public void OnRemove(ChassisLocations location, InventoryOperationState state)
     {
         if (!Def.IsDefault() && state.Mech.HasWeaponDefaults(location))
+        {
             state.AddChange(new Change_WeaponAdjust(location));
+        }
     }
 
     public void AdjustDescription()
     {
         if (WeaponCategory.Is_NotSet)
+        {
             return;
+        }
 
         var hpinfo = HardpointController.Instance[WeaponCategory];
         if (hpinfo == null || !hpinfo.Visible || !Control.Settings.HardpointDescriptionAddedByDefault)
+        {
             return;
+        }
 
         ExtendedDetails.ExtendedDetails.GetOrCreate(Def).AddIfMissing(
             new ExtendedDetail
@@ -71,7 +77,9 @@ public class UseHardpointCustom : SimpleCustomComponent, IValueComponent<string>
     public string PreValidateDrop(MechLabItemSlotElement item, ChassisLocations location)
     {
         if (WeaponCategory.Is_NotSet)
+        {
             return string.Empty;
+        }
 
         Log.Hardpoints.Trace?.Log($"PreValidateDrop {Def.Description.Id}[{WeaponCategory.Name}]");
 
@@ -95,7 +103,9 @@ public class UseHardpointCustom : SimpleCustomComponent, IValueComponent<string>
     {
 
         if (WeaponCategory.Is_NotSet || hpInfo == null)
+        {
             return string.Empty;
+        }
 
 
         var removed = changes.OfType<Change_Remove>().ToList();
@@ -117,10 +127,14 @@ public class UseHardpointCustom : SimpleCustomComponent, IValueComponent<string>
             }
 
             if (!slotitem.ComponentRef.Is<UseHardpointCustom>(out var oth_use_hp))
+            {
                 continue;
+            }
 
             if (slotitem.ComponentRef.IsDefault() && !slotitem.ComponentRef.IsModuleFixed(MechLabHelper.CurrentMechLab.ActiveMech))
+            {
                 continue;
+            }
 
             var hardpoint = hardpoints.FirstOrDefault(i => i.Used < i.Total && i.hpInfo.CompatibleID.Contains(oth_use_hp.WeaponCategory.ID));
 
@@ -143,7 +157,9 @@ public class UseHardpointCustom : SimpleCustomComponent, IValueComponent<string>
         }
 
         if (hardpoints.Any(i => i.Used < i.Total && i.hpInfo.CompatibleID.Contains(hpInfo.WeaponCategory.ID)))
+        {
             return string.Empty;
+        }
 
         candidants.RemoveAll(i => i.ComponentRef.IsFixed);
 
