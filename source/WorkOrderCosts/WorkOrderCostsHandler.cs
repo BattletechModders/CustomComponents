@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using BattleTech;
+﻿using BattleTech;
 
 namespace CustomComponents;
 
@@ -18,22 +15,20 @@ internal class WorkOrderCostsHandler
             return;
         }
 
-        var variables = mechDef == null ? null : TemplateVariables(mechDef);
-
         if (newLocation == ChassisLocations.None) // remove
         {
             if (mechComponent.DamageLevel == ComponentDamageLevel.Destroyed)
             {
-                ApplyCosts(result, workOrderCosts.RemoveDestroyed, variables);
+                ApplyCosts(result, workOrderCosts.RemoveDestroyed, mechDef);
             }
             else
             {
-                ApplyCosts(result, workOrderCosts.Remove, variables);
+                ApplyCosts(result, workOrderCosts.Remove, mechDef);
             }
         }
         else // install
         {
-            ApplyCosts(result, workOrderCosts.Install, variables);
+            ApplyCosts(result, workOrderCosts.Install, mechDef);
         }
     }
 
@@ -47,43 +42,28 @@ internal class WorkOrderCostsHandler
 
         if (mechComponent.DamageLevel == ComponentDamageLevel.Destroyed)
         {
-            ApplyCosts(result, workOrderCosts.RepairDestroyed);
+            ApplyCosts(result, workOrderCosts.RepairDestroyed, null);
         }
         else
         {
-            ApplyCosts(result, workOrderCosts.Repair);
+            ApplyCosts(result, workOrderCosts.Repair, null);
         }
     }
 
-    private Dictionary<string, string> TemplateVariables(MechDef mechDef)
-    {
-        if (mechDef == null)
-        {
-            return null;
-        }
-
-        var variables = new Dictionary<string, string>
-        {
-            ["Chassis.Tonnage"] = mechDef.Chassis.Tonnage.ToString(CultureInfo.InvariantCulture)
-        };
-
-        return variables;
-    }
-
-    private void ApplyCosts(WorkOrderEntry_MechLab workOrder, WorkOrderCosts.Costs costs, Dictionary<string, string> variables = null)
+    private void ApplyCosts(WorkOrderEntry_MechLab workOrder, WorkOrderCosts.Costs costs, MechDef mechDef)
     {
         if (costs == null)
         {
             return;
         }
 
-        if (!string.IsNullOrEmpty(costs.CBillCost))
+        if (costs.CBillCostFunc is not null)
         {
-            workOrder.CBillCost = Convert.ToInt32(FormulaEvaluator.Shared.Evaluate(costs.CBillCost, variables));
+            workOrder.CBillCost = (int)costs.CBillCostFunc(mechDef);
         }
-        if (!string.IsNullOrEmpty(costs.TechCost))
+        if (costs.TechCostFunc is not null)
         {
-            workOrder.Cost = Convert.ToInt32(FormulaEvaluator.Shared.Evaluate(costs.TechCost, variables));
+            workOrder.Cost = (int)costs.TechCostFunc(mechDef);
         }
     }
 }

@@ -1,70 +1,78 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
+using BattleTech;
 
 namespace CustomComponents;
 
-public class FormulaEvaluator
+internal static class FormulaEvaluator
 {
-    public static FormulaEvaluator Shared = new();
-
-    private readonly DataTable table;
-    private FormulaEvaluator()
+    internal static Func<MechDef, double> CompileMechDef(string expressionAsString)
     {
-        table =  new();
-        table.Columns.Add("column", typeof(double));
-        table.Rows.Add(1.0);
-    }
-
-    private object Compute(string expr)
-    {
-        var value = table.Compute(expr, null);
-        return value != DBNull.Value ? value : null;
-    }
-
-    private static readonly Regex Regex = new(@"(?:\[\[([^\]]+)\]\])", RegexOptions.Singleline | RegexOptions.Compiled);
-
-    public object Evaluate(string expression, Dictionary<string, string> variables = null)
-    {
-        var originalExpression = expression;
-        if (variables != null)
-        {
-            var keys = new HashSet<string>();
-            foreach (Match match in Regex.Matches(expression))
-            {
-                var key = match.Groups[1].Value;
-                keys.Add(key);
-            }
-
-            foreach (var key in keys)
-            {
-                if (!variables.TryGetValue(key, out var value))
-                {
-                    value = "1"; // avoids division by zero issues
-                }
-                var placeholder = "[[" + key + "]]";
-                expression = expression.Replace(placeholder, value);
-            }
-        }
-
         try
         {
-            return Compute(expression);
+            return CompileMechDefInternal(expressionAsString);
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            var log = "Could not process expression=" + expression;
-            if (expression != originalExpression)
-            {
-                log += " originalExpression=" + originalExpression;
-            }
-            if (variables != null)
-            {
-                log += " variables=" + string.Join(",", variables);
-            }
-            Log.Main.Error?.Log(log);
-            throw;
+            Log.Main.Error?.Log($"Can't compile expression: {expressionAsString}", e);
+            return null;
         }
+    }
+
+    // TODO make [[Chassis.Tonnage]] a dynamic access thing, allow property and field access, and maybe even custom access
+    // TODO support float and int
+    private static Func<MechDef, double> CompileMechDefInternal(string expressionAsString)
+    {
+        var inputParameter = Expression.Parameter(typeof(MechDef), "m");
+        Expression<Func<MechDef, double>> chassisTonnageFunc = m => m.Chassis.Tonnage;
+        var chassisTonnageInvoke = Expression.Convert(Expression.Invoke(chassisTonnageFunc, inputParameter), typeof(double));
+        var dict = new Dictionary<string, Expression>
+        {
+            { "[[Chassis.Tonnage]]", chassisTonnageInvoke }
+        };
+        return CompileWithPlaceholders<MechDef>(expressionAsString, inputParameter, dict);
+    }
+
+    private static Func<TI, double> CompileWithPlaceholders<TI>(
+        string expressionAsString,
+        ParameterExpression inputParameter,
+        IReadOnlyDictionary<string, Expression> expressions
+    )
+    {
+        var tokenRegex = new Regex(@"([\+\-\*\/])");
+        var tokens = tokenRegex.Split(expressionAsString.Replace(" ", ""));
+        var operationTokens = new Queue<string>();
+        var valueExpressions = new Queue<Expression>();
+        foreach (var token in tokens)
+        {
+            if (token is "*" or "/" or "+" or "-")
+            {
+                operationTokens.Enqueue(token);
+            }
+            else if (expressions.TryGetValue(token, out var expression))
+            {
+                valueExpressions.Enqueue(expression);
+            }
+            else
+            {
+                valueExpressions.Enqueue(Expression.Constant(double.Parse(token)));
+            }
+        }
+
+        var lastExpression = valueExpressions.Dequeue();
+        foreach (var token in operationTokens)
+        {
+            lastExpression = token switch
+            {
+                "*" => Expression.Multiply(lastExpression, valueExpressions.Dequeue()),
+                "/" => Expression.Divide(lastExpression, valueExpressions.Dequeue()),
+                "+" => Expression.Add(lastExpression, valueExpressions.Dequeue()),
+                "-" => Expression.Subtract(lastExpression, valueExpressions.Dequeue()),
+                _ => throw new InvalidOperationException()
+            };
+        }
+        return Expression.Lambda<Func<TI, double>>(lastExpression, inputParameter).Compile();
     }
 }
