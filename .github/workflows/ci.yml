@@ -9,7 +9,10 @@ jobs:
       build-script: |
         (
           cd source
-          dotnet build -c Release -p:BattleTechGameDir="$BATTLETECH_DIR/"
+          cp -a Directory.Build.props.template Directory.Build.props
+          sed -i "s|<BattleTechGameDir>.*</BattleTechGameDir>|<BattleTechGameDir>$BATTLETECH_DIR</BattleTechGameDir>|" Directory.Build.props
+          dotnet build -c Release
+          dotnet test
         )
         (
           cd ..
