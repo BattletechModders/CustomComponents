@@ -14,6 +14,7 @@ public class FormulaEvaluatorTests
     [TestCase("3 * [[PropertyA]]", 3)]
     [TestCase("3 * [[PropertyA]] * 2", 6)]
     [TestCase("3 * [[Property1.PropertyB]] * 2", 60)]
+    [TestCase("[[Property1._fieldB]]", 22)]
     public void Compile(string expressionAsString, double result)
     {
         var func = FormulaEvaluator.Compile<ClassTestData>(expressionAsString);
@@ -29,6 +30,8 @@ public class FormulaEvaluatorTests
         internal class MyNestedClass
         {
             internal int PropertyB => 10;
+
+            private float _fieldB = 22;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -44,7 +45,7 @@ internal static class FormulaEvaluator
                 var match = propertyTraverseRegex.Match(token);
                 if (match.Success)
                 {
-                    var expression = CreatePropertyTraverseExpression(
+                    var expression = CreateTraverseExpression(
                         inputParameter,
                         match.Groups[1].Captures[0].Value
                     );
@@ -71,22 +72,27 @@ internal static class FormulaEvaluator
         return Expression.Lambda<Func<TI, double>>(lastExpression, inputParameter).Compile();
     }
 
-    private static Expression CreatePropertyTraverseExpression(Expression rootExpression, string expressionAsString)
+    private static Expression CreateTraverseExpression(Expression rootExpression, string expressionAsString)
     {
         var type = rootExpression.Type;
         var expression = rootExpression;
 
-        foreach (var property in expressionAsString.Split('.'))
+        foreach (var memberName in expressionAsString.Split('.'))
         {
-            var propertyInfo = type.GetProperty(property, BindingFlags.GetProperty|BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance);
+            var binding = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+            var memberInfo = type.GetMember(
+                memberName,
+                MemberTypes.Property|MemberTypes.Field,
+                binding
+            ).FirstOrDefault();
 
-            if (propertyInfo == null)
+            if (memberInfo == null)
             {
-                throw new ArgumentException($"Can't find property named {property} from expression {expressionAsString}");
+                throw new ArgumentException($"Can't find field or property named {memberName} from expression {expressionAsString}");
             }
 
-            type = propertyInfo.PropertyType;
-            expression = Expression.Property(expression, propertyInfo);
+            expression = Expression.MakeMemberAccess(expression, memberInfo);
+            type = expression.Type;
         }
 
         return expression;
