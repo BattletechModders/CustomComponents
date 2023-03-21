@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using BattleTech;
 
@@ -12,7 +13,7 @@ internal static class FormulaEvaluator
     {
         try
         {
-            return CompileMechDefInternal(expressionAsString);
+            return Compile<MechDef>(expressionAsString);
         }
         catch (Exception e)
         {
@@ -21,26 +22,12 @@ internal static class FormulaEvaluator
         }
     }
 
-    // TODO make [[Chassis.Tonnage]] a dynamic access thing, allow property and field access, and maybe even custom access
     // TODO support float and int
-    private static Func<MechDef, double> CompileMechDefInternal(string expressionAsString)
+    internal static Func<TI, double> Compile<TI>(string expressionAsString)
     {
-        var inputParameter = Expression.Parameter(typeof(MechDef), "m");
-        Expression<Func<MechDef, double>> chassisTonnageFunc = m => m.Chassis.Tonnage;
-        var chassisTonnageInvoke = Expression.Convert(Expression.Invoke(chassisTonnageFunc, inputParameter), typeof(double));
-        var dict = new Dictionary<string, Expression>
-        {
-            { "[[Chassis.Tonnage]]", chassisTonnageInvoke }
-        };
-        return CompileWithPlaceholders<MechDef>(expressionAsString, inputParameter, dict);
-    }
+        var inputParameter = Expression.Parameter(typeof(TI), "input");
 
-    private static Func<TI, double> CompileWithPlaceholders<TI>(
-        string expressionAsString,
-        ParameterExpression inputParameter,
-        IReadOnlyDictionary<string, Expression> expressions
-    )
-    {
+        var propertyTraverseRegex = new Regex(@"\[\[([^\]]+)\]\]");
         var tokenRegex = new Regex(@"([\+\-\*\/])");
         var tokens = tokenRegex.Split(expressionAsString.Replace(" ", ""));
         var operationTokens = new Queue<string>();
@@ -50,15 +37,23 @@ internal static class FormulaEvaluator
             if (token is "*" or "/" or "+" or "-")
             {
                 operationTokens.Enqueue(token);
+                continue;
             }
-            else if (expressions.TryGetValue(token, out var expression))
+
             {
-                valueExpressions.Enqueue(expression);
+                var match = propertyTraverseRegex.Match(token);
+                if (match.Success)
+                {
+                    var expression = CreatePropertyTraverseExpression(
+                        inputParameter,
+                        match.Groups[1].Captures[0].Value
+                    );
+                    valueExpressions.Enqueue(Expression.Convert(expression, typeof(double)));
+                    continue;
+                }
             }
-            else
-            {
-                valueExpressions.Enqueue(Expression.Constant(double.Parse(token)));
-            }
+
+            valueExpressions.Enqueue(Expression.Constant(double.Parse(token)));
         }
 
         var lastExpression = valueExpressions.Dequeue();
@@ -74,5 +69,26 @@ internal static class FormulaEvaluator
             };
         }
         return Expression.Lambda<Func<TI, double>>(lastExpression, inputParameter).Compile();
+    }
+
+    private static Expression CreatePropertyTraverseExpression(Expression rootExpression, string expressionAsString)
+    {
+        var type = rootExpression.Type;
+        var expression = rootExpression;
+
+        foreach (var property in expressionAsString.Split('.'))
+        {
+            var propertyInfo = type.GetProperty(property, BindingFlags.GetProperty|BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance);
+
+            if (propertyInfo == null)
+            {
+                throw new ArgumentException($"Can't find property named {property} from expression {expressionAsString}");
+            }
+
+            type = propertyInfo.PropertyType;
+            expression = Expression.Property(expression, propertyInfo);
+        }
+
+        return expression;
     }
 }
