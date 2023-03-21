@@ -12,7 +12,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(CustomComponentsModPath)' == ''">
     <!-- sources dir -->
-    <CustomComponentsModPath>$(MSBuildProjectDirectory)\..</CustomComponentsModPath>
+    <CustomComponentsModPath>$(MSBuildProjectDirectory)\..\..</CustomComponentsModPath>
   </PropertyGroup>
   <PropertyGroup>
     <OutputType>Library</OutputType>
@@ -24,13 +24,16 @@
       $(BattleTechGameDir)\BattleTech_Data\Managed\;
     </AssemblySearchPaths>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
-    <DebugType>none</DebugType>
-    <DebugSymbols>false</DebugSymbols>
+    <DebugType>embedded</DebugType>
+    <DebugSymbols>true</DebugSymbols>
     <Nullable>disable</Nullable>
   </PropertyGroup>
   <Target Name="CopyFilesToGame" AfterTargets="CopyFilesToOutputDirectory">
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(CustomComponentsModPath)" />
   </Target>
+  <ItemGroup>
+    <InternalsVisibleTo Include="CustomComponentsTests" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.0">
       <PrivateAssets>all</PrivateAssets>
@@ -89,8 +92,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\*.json" />
-    <None Include="..\advancedjsonmerge\loglevels.json" />
+    <None Include="..\..\*.json" />
+    <None Include="..\..\advancedjsonmerge\loglevels.json" />
     <None Include="$(BattleTechGameDir)\Mods\.modtek\battletech_log.txt" />
   </ItemGroup>
   <ItemGroup>
