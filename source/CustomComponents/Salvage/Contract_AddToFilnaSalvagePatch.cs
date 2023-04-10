@@ -25,7 +25,7 @@ internal static class Contract_AddToFilnaSalvagePatch
         }
 
 
-        if (!def.MechComponentDef.Flags<CCFlags>().NoSalvage)
+        if (!def.MechComponentDef.CCFlags().NoSalvage)
         {
             return true;
         }
@@ -81,7 +81,7 @@ internal static class Contract_AddToFilnaSalvagePatch
                 break;
         }
 
-        if (component == null || component.Flags<CCFlags>().NoSalvage)
+        if (component == null || component.CCFlags().NoSalvage)
         {
             return false;
         }

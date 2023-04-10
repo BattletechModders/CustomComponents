@@ -12,7 +12,7 @@ internal static class MechComponentDef_GetUIColor
     public static void Postfix(MechComponentDef componentDef,
         ref UIColor __result)
     {
-        var f = componentDef.Flags<CCFlags>();
+        var f = componentDef.CCFlags();
         if (f.Invalid)
         {
             __result = Control.Settings.InvalidFlagBackgroundColor;

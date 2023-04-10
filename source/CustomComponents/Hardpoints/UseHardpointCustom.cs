@@ -35,7 +35,7 @@ public class UseHardpointCustom : SimpleCustomComponent, IValueComponent<string>
 
     public void OnAdd(ChassisLocations location, InventoryOperationState state)
     {
-        if (!Def.IsDefault() && state.Mech.HasWeaponDefaults(location))
+        if (!Def.CCFlags().Default && state.Mech.HasWeaponDefaults(location))
         {
             state.AddChange(new Change_WeaponAdjust(location));
         }
@@ -43,7 +43,7 @@ public class UseHardpointCustom : SimpleCustomComponent, IValueComponent<string>
 
     public void OnRemove(ChassisLocations location, InventoryOperationState state)
     {
-        if (!Def.IsDefault() && state.Mech.HasWeaponDefaults(location))
+        if (!Def.CCFlags().Default && state.Mech.HasWeaponDefaults(location))
         {
             state.AddChange(new Change_WeaponAdjust(location));
         }
@@ -131,7 +131,7 @@ public class UseHardpointCustom : SimpleCustomComponent, IValueComponent<string>
                 continue;
             }
 
-            if (slotitem.ComponentRef.IsDefault() && !slotitem.ComponentRef.IsModuleFixed(MechLabHelper.CurrentMechLab.ActiveMech))
+            if (slotitem.ComponentRef.Def.CCFlags().Default && !slotitem.ComponentRef.IsModuleFixed(MechLabHelper.CurrentMechLab.ActiveMech))
             {
                 continue;
             }

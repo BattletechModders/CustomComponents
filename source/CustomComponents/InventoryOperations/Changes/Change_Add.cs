@@ -51,7 +51,7 @@ public class Change_Add : IChange_Apply, IChange_Optimize
         }
 
         var r = DefaultHelper.CreateRef(ItemID, Type, Location);
-        if (r.IsDefault())
+        if (r.Def.CCFlags().Default)
         {
             inventory.Add(r);
         }

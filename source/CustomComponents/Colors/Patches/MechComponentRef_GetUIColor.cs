@@ -13,7 +13,7 @@ internal static class MechComponentRef_GetUIColor
         ref UIColor __result,
         MechComponentRef componentRef)
     {
-        var f = componentRef.Flags<CCFlags>();
+        var f = componentRef.Def.CCFlags();
         if (f.Invalid)
         {
             __result = Control.Settings.InvalidFlagBackgroundColor;

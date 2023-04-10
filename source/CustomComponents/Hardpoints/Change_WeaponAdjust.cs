@@ -49,7 +49,7 @@ public class Change_WeaponAdjust : IChange_Adjust
                 item = i.Item,
                 location = i.Location,
                 usehp = i.Item.GetWeaponCategory(),
-                def = i.Item.IsDefault() && i.Item.IsModuleFixed(state.Mech),
+                def = i.Item.Def.CCFlags().Default && i.Item.IsModuleFixed(state.Mech),
                 cats = i.Item.GetComponents<Category>().Select(i => i.CategoryID).ToHashSet()
             })
             .Where(i => i.usehp != null)

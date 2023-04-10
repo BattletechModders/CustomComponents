@@ -7,49 +7,42 @@ namespace CustomComponents;
 
 public class CCFlags
 {
-    [CustomFlag("autorepair")]
-    public bool AutoRepair { get; set; } = false;
-    [CustomFlag("no_remove")]
-    public bool NoRemove { get; set; } = false;
-    [CustomFlag("hide")]
-    public bool HideFromInv { get; set; } = false;
-    [CustomFlag("hide_equip")]
-    public bool HideFromEquip { get; set; } = false;
-    [CustomFlag("no_salvage")]
-    public bool NoSalvage { get; set; } = false;
-    [CustomFlag("default")]
-    [SubFlags("autorepair", "no_remove", "hide", "no_salvage")]
-    public bool Default { get; set; } = false;
+    public bool Default { get; }
+    public bool AutoRepair { get; }
+    public bool NoRemove { get; }
+    public bool NoSalvage { get; }
+    public bool HideFromInv { get; }
 
-    [CustomFlag("not_broken")]
-    public bool NotBroken { get; set; } = false;
-    [CustomFlag("vital")]
-    public bool Vital { get; set; } = false;
-    [CustomFlag("not_destroyed")]
-    public bool NotDestroyed { get; set; } = false;
-    [CustomFlag("invalid")]
-    public bool Invalid { get; set; } = false;
+    public bool HideFromEquip { get; }
+    public bool NotBroken { get; }
+    public bool Vital { get; }
+    public bool NotDestroyed { get; }
+    public bool Invalid { get; }
 
-
-    [CustomSetter("default")]
-    private bool SetDefault(MechComponentDef item)
+    internal CCFlags()
     {
-        return item.Is<IDefaultComponent>();
     }
 
-    [CustomSetter("invalid")]
-    private bool SetInvalid(MechComponentDef item)
+    internal CCFlags(Flags flags)
     {
-        var comps = item.GetComponents<IValid>();
-        return comps == null || comps.All(i => i.Valid);
-    }
+        Default = flags.IsSet("default");
+        AutoRepair = Default || flags.IsSet("autorepair");
+        NoRemove = Default || flags.IsSet("no_remove");
+        NoSalvage = Default || flags.IsSet("no_salvage");
+        HideFromInv = Default || flags.IsSet("hide");
 
+        HideFromEquip = flags.IsSet("hide_equip");
+        NotBroken = flags.IsSet("not_broken");
+        Vital = flags.IsSet("vital");
+        NotDestroyed = flags.IsSet("not_destroyed");
+        Invalid = flags.IsSet("invalid");
+    }
 
     internal static bool CanBeFielded(MechDef mechDef)
     {
         foreach (var item in mechDef.Inventory)
         {
-            var f = item.Flags<CCFlags>();
+            var f = item.Def.CCFlags();
 
             if (f.Invalid)
             {
@@ -73,7 +66,7 @@ public class CCFlags
     {
         foreach (var item in mechDef.Inventory)
         {
-            var f = item.Flags<CCFlags>();
+            var f = item.Def.CCFlags();
 
             if (f.Invalid)
             {
@@ -97,52 +90,11 @@ public class CCFlags
 
     public override string ToString()
     {
-        var result = "";
-        if (Default)
-        {
-            result += "Default ";
-        }
-
-        if (NoRemove)
-        {
-            result += "NoRemove ";
-        }
-
-        if (Vital)
-        {
-            result += "Vital ";
-        }
-
-        if (AutoRepair)
-        {
-            result += "AutoRepair ";
-        }
-
-        if (HideFromInv)
-        {
-            result += "HideFromInv ";
-        }
-
-        if (NotBroken)
-        {
-            result += "NotBroken ";
-        }
-
-        if (NotDestroyed)
-        {
-            result += "NotDestroyed ";
-        }
-
-        if (Invalid)
-        {
-            result += "Invalid ";
-        }
-
-        if (NoSalvage)
-        {
-            result += "NoSalvage ";
-        }
-
-        return result;
+        var flagsActive = GetType()
+            .GetProperties()
+            .Where(propertyInfo => (bool)propertyInfo.GetValue(this))
+            .Select(propertyInfo => propertyInfo.Name)
+            .ToList();
+        return string.Join(" ", flagsActive);
     }
 }

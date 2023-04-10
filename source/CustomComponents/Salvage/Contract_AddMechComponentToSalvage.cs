@@ -26,7 +26,7 @@ public static class Contract_AddMechComponentToSalvage
         }
 
 
-        if (!def.Flags<CCFlags>().NoSalvage)
+        if (!def.CCFlags().NoSalvage)
         {
             return true;
         }
@@ -84,7 +84,7 @@ public static class Contract_AddMechComponentToSalvage
                 break;
         }
 
-        if (component == null || component.Flags<CCFlags>().NoSalvage)
+        if (component == null || component.CCFlags().NoSalvage)
         {
             Log.SalvageProcess.Trace?.Log($"---- default, lootable {lootable.ItemID} not found or notsalvagable - skipped");
             return false;

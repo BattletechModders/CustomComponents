@@ -41,7 +41,7 @@ public static class LanceMechEquipmentList_SetLoadout_Patch
 
     public static ChassisLocations MountedLocation(this MechComponentRef componentRef)
     {
-        if (componentRef.Flags<CCFlags>().HideFromEquip)
+        if (componentRef.Def.CCFlags().HideFromEquip)
         {
             return ChassisLocations.None;
         }

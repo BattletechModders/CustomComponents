@@ -1,72 +1,18 @@
-﻿using BattleTech;
+﻿using System;
+using BattleTech;
 
 namespace CustomComponents;
 
 public static class FlagsExtentions
 {
-    public static T Flags<T>(this MechComponentDef item)
-        where T : class, new()
+    [Obsolete("use FlagExtensions.CCFlags()")]
+    public static T Flags<T>(this MechComponentDef def) where T : class
     {
-        return FlagsController<T>.Shared[item];
+        return def.CCFlags() as T ?? throw new ArgumentException("Only CCFlags are currently supported");
     }
-    public static T Flags<T>(this MechComponentRef item)
-        where T : class, new()
+    [Obsolete("use FlagExtensions.CCFlags()")]
+    public static T Flags<T>(this MechComponentRef item) where T : class
     {
-        return FlagsController<T>.Shared[item?.Def];
+        return Flags<T>(item?.Def);
     }
-
-    public static T Flags<T>(this BaseComponentRef item)
-        where T : class, new()
-    {
-        return FlagsController<T>.Shared[item?.Def];
-    }
-
-    public static bool IsDefault(this MechComponentDef item)
-    {
-        if (item == null)
-        {
-            return false;
-        }
-
-        var f = item.Flags<CCFlags>();
-        if (f == null)
-        {
-            return false;
-        }
-
-        return f.Default;
-
-    }
-    public static bool IsDefault(this MechComponentRef item)
-    {
-        if (item?.Def == null)
-        {
-            return false;
-        }
-
-        var f = item.Flags<CCFlags>();
-        if (f == null)
-        {
-            return false;
-        }
-
-        return f.Default;
-    }
-
-    public static bool IsDefault(this BaseComponentRef item)
-    {
-        if (item?.Def == null)
-        {
-            return false;
-        }
-
-        var f = item.Flags<CCFlags>();
-        if (f == null)
-        {
-            return false;
-        }
-
-        return f.Default;
-    }
-
 }

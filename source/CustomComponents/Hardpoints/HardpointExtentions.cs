@@ -109,7 +109,7 @@ public static class HardpointExtentions
                 continue;
             }
 
-            if (!def.IsDefault())
+            if (!def.CCFlags().Default)
             {
                 Log.Main.Error?.Log($"Weapon default {weaponDefault.DefID} is not default");
                 continue;

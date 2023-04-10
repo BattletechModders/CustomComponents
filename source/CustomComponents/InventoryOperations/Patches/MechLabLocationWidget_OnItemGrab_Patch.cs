@@ -24,7 +24,7 @@ internal static class MechLabLocationWidget_OnItemGrab_Patch
 
         foreach (var grab_handler in item.ComponentRef.Def.GetComponents<IOnItemGrab>())
         {
-            if (item.ComponentRef.Flags<CCFlags>().NoRemove)
+            if (item.ComponentRef.Def.CCFlags().NoRemove)
             {
                 __result = false;
                 __runOriginal = false;

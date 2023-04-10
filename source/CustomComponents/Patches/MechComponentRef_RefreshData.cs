@@ -2,7 +2,7 @@
 
 namespace CustomComponents.Patches;
 
-[HarmonyPatch(typeof(BaseComponentRef), "RefreshComponentDef")]
+[HarmonyPatch(typeof(BaseComponentRef), nameof(BaseComponentRef.RefreshComponentDef))]
 public static class BaseComponentRef_RefreshComponentDef
 {
     [HarmonyPostfix]
@@ -14,7 +14,7 @@ public static class BaseComponentRef_RefreshComponentDef
             return;
         }
 
-        if (__instance.Def.Flags<CCFlags>().NoRemove)
+        if (__instance.Def.CCFlags().NoRemove)
         {
             __instance.IsFixed = true;
         }

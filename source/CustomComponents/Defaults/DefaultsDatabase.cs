@@ -297,7 +297,7 @@ public class DefaultsDatabase
                         Log.Main.Error?.Log($"{mech.ChassisID} default {default_record.DefID} dont have category {item.CategoryID}");
                         continue;
                     }
-                    if (!def.Flags<CCFlags>().Default)
+                    if (!def.CCFlags().Default)
                     {
                         Log.Main.Error?.Log($"{mech.ChassisID} default {default_record.DefID} dont have `default` flag");
                         continue;

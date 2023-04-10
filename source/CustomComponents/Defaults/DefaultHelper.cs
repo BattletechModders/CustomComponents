@@ -139,7 +139,7 @@ public static class DefaultHelper
         var component_ref = new MechComponentRef(id, string.Empty, type, ChassisLocations.None, isFixed: true);
         component_ref.RefreshDef();
 
-        if (!component_ref.IsDefault())
+        if (!component_ref.Def.CCFlags().Default)
         {
             Log.Main.Error?.Log($"CreateDefault: {id} not default or not exist");
         }

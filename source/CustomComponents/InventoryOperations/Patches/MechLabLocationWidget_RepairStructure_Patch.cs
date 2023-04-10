@@ -36,7 +36,7 @@ public static class MechLabLocationWidget_RepairStructure_Patch
             }
 
             // see AutoRepairFixedEquipment
-            if (cRef.IsFixed || cRef.Flags<CCFlags>().AutoRepair)
+            if (cRef.IsFixed || cRef.Def.CCFlags().AutoRepair)
             {
                 Log.InventoryOperations.Trace?.Log("-- repair no validation - is fixed or auto repair");
                 cRef.DamageLevel = ComponentDamageLevel.Penalized;

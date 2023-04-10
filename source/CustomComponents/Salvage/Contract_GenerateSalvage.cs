@@ -22,7 +22,7 @@ public static class Contract_GenerateSalvage
             return true;
         }
 
-        return mech.Inventory.Any(item => (item.DamageLevel == ComponentDamageLevel.Destroyed && item.Flags<CCFlags>().Vital) || item.GetComponents<IIsDestroyed>().Any(isDestroyed => isDestroyed.IsMechDestroyed(item, mech)));
+        return mech.Inventory.Any(item => (item.DamageLevel == ComponentDamageLevel.Destroyed && item.Def.CCFlags().Vital) || item.GetComponents<IIsDestroyed>().Any(isDestroyed => isDestroyed.IsMechDestroyed(item, mech)));
     }
 
     [HarmonyPrefix]

@@ -44,7 +44,7 @@ internal static class MechLabInventoryWidget_ApplyFiltering_Patch
                 var mechlab = __instance.ParentDropTarget as MechLabPanel;
                 if (item.ComponentRef != null)
                 {
-                    if(item.ComponentRef.Flags<CCFlags>().HideFromInv)
+                    if(item.ComponentRef.Def.CCFlags().HideFromInv)
                     {
                         item.gameObject.SetActive(false);
                         Log.Filter.Trace?.Log("---- filterd, hide from inventory/default");

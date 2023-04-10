@@ -77,7 +77,7 @@ public class Change_Remove : IChange_Apply, IChange_Optimize
         if (item != null)
         {
             lhelper.widget.OnRemoveItem(item, true);
-            if (item.ComponentRef.IsDefault())
+            if (item.ComponentRef.Def.CCFlags().Default)
             {
                 item.thisCanvasGroup.blocksRaycasts = true;
                 MechLabHelper.CurrentMechLab.MechLab.dataManager.PoolGameObject(MechLabPanel.MECHCOMPONENT_ITEM_PREFAB, item.gameObject);

@@ -25,7 +25,7 @@ public static class MechLabLocationWidget_ShowHighlightFrame
             return;
         }
 
-        var show = !cRef.Flags<CCFlags>().NoRemove;
+        var show = !cRef.Def.CCFlags().NoRemove;
         if (show)
         {
             show = !cRef.IsFixed;

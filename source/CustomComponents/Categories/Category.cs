@@ -105,7 +105,7 @@ public class Category : SimpleCustomComponent, IAfterLoad, IReplaceValidateDrop,
                 item = i,
                 canfree = defaults?.IsCatDefault(i.Item.ComponentDefID, CategoryID) ?? false,
                 fixd = i.Item.IsModuleFixed(mech),
-                def = i.Item.IsDefault(),
+                def = i.Item.Def.CCFlags().Default,
                 cat = i.Item.IsCategory(CategoryID, out var c) ? c : null
             })
             .Where(i => i.cat != null)
