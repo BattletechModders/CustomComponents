@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace CustomComponents;
 
 [CustomComponent("Flags")]
 public class Flags : SimpleCustomComponent, IListComponent<string>
 {
-    [Obsolete("this should be internal, don't use directly from other mods")]
-    public HashSet<string> flags;
+    internal HashSet<string> flags;
 
     public override string ToString()
     {

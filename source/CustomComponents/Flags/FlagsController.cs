@@ -5,9 +5,7 @@ using BattleTech;
 
 namespace CustomComponents;
 
-public delegate bool CheckFlagDelegate(MechComponentDef item);
-
-public class FlagsController<T>
+internal class FlagsController<T>
     where T : class, new()
 {
     private class FlagInfo
@@ -127,7 +125,7 @@ public class FlagsController<T>
         }
     }
 
-    public T this[MechComponentDef item]
+    internal T this[MechComponentDef item]
     {
         get
         {

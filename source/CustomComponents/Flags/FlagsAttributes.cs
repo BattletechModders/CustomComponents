@@ -3,7 +3,7 @@
 namespace CustomComponents;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class CustomFlagAttribute : Attribute
+internal class CustomFlagAttribute : Attribute
 {
     public string FlagName { get; private set; }
 
@@ -14,7 +14,7 @@ public class CustomFlagAttribute : Attribute
 }
 
 [AttributeUsage(AttributeTargets.Property)]
-public class SubFlagsAttribute : Attribute
+internal class SubFlagsAttribute : Attribute
 {
     public string[] Childs { get; private set; }
 
@@ -25,7 +25,7 @@ public class SubFlagsAttribute : Attribute
 }
 
 [AttributeUsage(AttributeTargets.Method)]
-public class CustomSetterAttribute : Attribute
+internal class CustomSetterAttribute : Attribute
 {
     public string Flag { get; private set;  }
 
