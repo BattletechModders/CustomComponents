@@ -123,6 +123,7 @@ public class UnitTypeDatabase
         }
 
         known[mech.ChassisID] = result;
+        Log.UnitType.Debug?.Log($"ChassisID={mech.ChassisID} UnitTypes=[{string.Join(",", result)}]");
         return result;
     }
 
