@@ -14,7 +14,7 @@ public static class Registry
 
     private static Dictionary<Type, CustomComponentAttribute> attributes = new();
 
-    public static CustomComponentAttribute GetAttributeByType(Type type)
+    internal static CustomComponentAttribute GetAttributeByType(Type type)
     {
         if (attributes.TryGetValue(type, out var result))
         {
@@ -34,7 +34,7 @@ public static class Registry
         PostProcessors.Add(postProcessor);
     }
 
-    public static void RegisterFactory(ICustomFactory factory)
+    private static void RegisterFactory(ICustomFactory factory)
     {
         Factories.Add(factory);
     }
@@ -102,12 +102,12 @@ public static class Registry
 
             var factoryType = factoryGenericType.MakeGenericType(genericTypes);
             var factory = Activator.CreateInstance(factoryType, name) as ICustomFactory;
-            Factories.Add(factory);
+            RegisterFactory(factory);
             Log.Main.Info?.Log($"SimpleCustom {name} registered for type {defType}");
         }
     }
 
-    public static Type GetTypeWithGenericType(Type givenType, Type genericType)
+    private static Type GetTypeWithGenericType(Type givenType, Type genericType)
     {
         var type = givenType.GetInterfaces().FirstOrDefault(it => it.IsGenericType && it.GetGenericTypeDefinition() == genericType);
         if (type != null)
