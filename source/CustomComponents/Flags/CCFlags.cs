@@ -7,6 +7,8 @@ namespace CustomComponents;
 
 public class CCFlags
 {
+    public bool InvUnlimited { get; }
+
     public bool Default { get; }
     public bool AutoRepair { get; }
     public bool NoRemove { get; }
@@ -19,18 +21,18 @@ public class CCFlags
     public bool NotDestroyed { get; }
     public bool Invalid { get; }
 
-    public bool InvUnlimited { get; }
-
     internal CCFlags()
     {
     }
 
     internal CCFlags(Flags flags)
     {
+        InvUnlimited = flags.IsSet("inv_unlimited");
+
         Default = flags.IsSet("default");
         AutoRepair = Default || flags.IsSet("autorepair");
         NoRemove = Default || flags.IsSet("no_remove");
-        NoSalvage = Default || flags.IsSet("no_salvage");
+        NoSalvage = Default || InvUnlimited || flags.IsSet("no_salvage");
         HideFromInv = Default || flags.IsSet("hide");
 
         HideFromEquip = flags.IsSet("hide_equip");
@@ -38,8 +40,6 @@ public class CCFlags
         Vital = flags.IsSet("vital");
         NotDestroyed = flags.IsSet("not_destroyed");
         Invalid = flags.IsSet("invalid");
-
-        InvUnlimited = flags.IsSet("inv_unlimited");
     }
 
     internal static bool CanBeFielded(MechDef mechDef)
