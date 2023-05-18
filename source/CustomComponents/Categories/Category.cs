@@ -13,9 +13,9 @@ namespace CustomComponents;
 /// <summary>
 /// component use category logic
 /// </summary>
-[CustomComponent(CategoryCustomName, true)]
+[CustomComponent(CategoryCustomName, AllowArray = true)]
 public class Category : SimpleCustomComponent, IAfterLoad, IReplaceValidateDrop,
-    IReplaceIdentifier, IAdjustDescription, IOnRemove, IOnAdd, IPreValidateDrop
+    IAdjustDescription, IOnRemove, IOnAdd, IPreValidateDrop
 {
     internal const string CategoryCustomName = "Category";
 

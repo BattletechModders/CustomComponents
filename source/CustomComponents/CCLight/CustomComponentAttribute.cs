@@ -5,19 +5,19 @@ namespace CustomComponents;
 [AttributeUsage(AttributeTargets.Class)]
 public class CustomComponentAttribute : Attribute
 {
-    public string Name { get; set; }
-    public string ArrayName { get; set; }
+    public string Name { get; }
 
-    public bool AllowArray { get; set; }
-    public string Group { get; set; }
+    public bool AllowArray { get; init; }
 
+    [Obsolete("group is not supported anymore, AllowArray should be set using init syntax")]
     public CustomComponentAttribute(string name, bool allowarray = false, String group = "")
     {
         Name = name;
-        Group = group;
         AllowArray = allowarray;
     }
 
-    public CustomComponentAttribute(string name) : this(name,false)
-    { }
+    public CustomComponentAttribute(string name)
+    {
+        Name = name;
+    }
 }

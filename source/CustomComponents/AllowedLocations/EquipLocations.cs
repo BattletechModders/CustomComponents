@@ -25,7 +25,7 @@ public interface IChassisAllowedLocations
 }
 
 
-[CustomComponent("ChassisAllowedLocations", true)]
+[CustomComponent("ChassisAllowedLocations", AllowArray = true)]
 public class CEquipLocations : SimpleCustomChassis, IChassisAllowedLocations
 {
     public string Tag { get; set; }

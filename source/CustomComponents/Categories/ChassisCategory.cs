@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace CustomComponents;
 
-[CustomComponent("ChassisCategory", true)]
+[CustomComponent("ChassisCategory", AllowArray = true)]
 public class ChassisCategory : SimpleCustomChassis, IAfterLoad
 {
     public class _record

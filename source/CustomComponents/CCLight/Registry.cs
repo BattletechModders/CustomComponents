@@ -10,19 +10,7 @@ public static class Registry
     private static readonly List<IPreProcessor> PreProcessors = new();
     private static readonly List<IPostProcessor> PostProcessors = new();
     private static readonly List<ICustomFactory> Factories = new();
-    private static readonly HashSet<string> SimpleIdentifiers = new();
-
-    private static Dictionary<Type, CustomComponentAttribute> attributes = new();
-
-    internal static CustomComponentAttribute GetAttributeByType(Type type)
-    {
-        if (attributes.TryGetValue(type, out var result))
-        {
-            return result;
-        }
-
-        return null;
-    }
+    private static readonly HashSet<string> FactoryIdentifiers = new();
 
     public static void RegisterPreProcessor(IPreProcessor preProcessor)
     {
@@ -34,17 +22,10 @@ public static class Registry
         PostProcessors.Add(postProcessor);
     }
 
-    private static void RegisterFactory(ICustomFactory factory)
-    {
-        Factories.Add(factory);
-    }
-
     public static void RegisterSimpleCustomComponents(Assembly assembly)
     {
         RegisterSimpleCustomComponents(assembly.GetTypes());
     }
-
-    #region here be dragons
 
     public static void RegisterSimpleCustomComponents(params Type[] types)
     {
@@ -62,13 +43,11 @@ public static class Registry
             }
 
             var name = customAttribute.Name;
-            if (!SimpleIdentifiers.Add(name))
+            if (!FactoryIdentifiers.Add(name))
             {
                 Log.Main.Info?.Log($"SimpleCustom {name} already registered");
                 continue;
             }
-
-            attributes.Add(tuple.type, customAttribute);
 
             var typeWithGenericType = tuple.typeWithGenericType;
             var defType = typeWithGenericType.GetGenericArguments()[0];
@@ -102,7 +81,7 @@ public static class Registry
 
             var factoryType = factoryGenericType.MakeGenericType(genericTypes);
             var factory = Activator.CreateInstance(factoryType, name) as ICustomFactory;
-            RegisterFactory(factory);
+            Factories.Add(factory);
             Log.Main.Info?.Log($"SimpleCustom {name} registered for type {defType}");
         }
     }
@@ -128,8 +107,6 @@ public static class Registry
 
         return GetTypeWithGenericType(type, genericType);
     }
-
-    #endregion
 
     internal static void ProcessCustomFactories(object target, Dictionary<string, object> values)
     {
@@ -212,7 +189,7 @@ public static class Registry
 
             Log.CCLoading.Trace?.Log($"Created {component} for {identifier}");
 
-            if (Database.SetCustomWithIdentifier(identifier, component))
+            if (Database.AddCustom(identifier, component))
             {
                 if (component is IAfterLoad load)
                 {

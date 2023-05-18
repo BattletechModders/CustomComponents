@@ -2,7 +2,7 @@
 
 namespace CustomComponents;
 
-[CustomComponent("ChassisDefaults", true)]
+[CustomComponent("ChassisDefaults", AllowArray = true)]
 public class ChassisDefaults : SimpleCustomChassis, IDefault
 {
     public string CategoryID { get; set; }
@@ -15,7 +15,7 @@ public class ChassisDefaults : SimpleCustomChassis, IDefault
 
 }
 
-[CustomComponent("MultiDefaults", true)]
+[CustomComponent("MultiDefaults", AllowArray = true)]
 public class MultiDefaults : SimpleCustomChassis, IMultiCategoryDefault
 {
     public ChassisLocations Location { get; set; }

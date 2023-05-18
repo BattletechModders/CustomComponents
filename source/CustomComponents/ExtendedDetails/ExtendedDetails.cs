@@ -7,6 +7,7 @@ using fastJSON;
 namespace CustomComponents.ExtendedDetails;
 
 // this custom is not be used directly from jsons, this is a helper component used by any mod that wants to add custom description details
+[CustomComponent("ExtendedDetails")]
 public class ExtendedDetails : ICustom
 {
     [JsonIgnore]
@@ -14,7 +15,8 @@ public class ExtendedDetails : ICustom
     [JsonIgnore]
     private readonly SortedSet<ExtendedDetail> Details = new();
 
-    public  DescriptionDef Def;
+    [JsonIgnore]
+    public DescriptionDef Def;
 
     public static ExtendedDetails GetOrCreate(MechComponentDef def)
     {

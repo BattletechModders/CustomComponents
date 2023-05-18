@@ -7,7 +7,7 @@ namespace CustomComponents;
 /// <summary>
 /// component has specific color
 /// </summary>
-[CustomComponent("Color", group: "ColorType")]
+[CustomComponent("Color")]
 public class ColorComponent : SimpleCustomComponent, IColorComponent, IValueComponent<UIColor>
 {
     /// <summary>
@@ -28,7 +28,7 @@ public class ColorComponent : SimpleCustomComponent, IColorComponent, IValueComp
 /// <summary>
 /// component has specific color
 /// </summary>
-[CustomComponent("TColor", group: "TColorType")]
+[CustomComponent("TColor")]
 public class TColorComponent : SimpleCustomComponent, ITColorComponent
 {
     /// <summary>

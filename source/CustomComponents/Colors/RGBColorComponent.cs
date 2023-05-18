@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace CustomComponents;
 
-[CustomComponent("RGBColor", group: "ColorType")]
+[CustomComponent("RGBColor")]
 public class RGBColorComponent : SimpleCustomComponent, IColorComponent, IValueComponent<string>
 {
     [JsonIgnore]
@@ -26,7 +26,7 @@ public class RGBColorComponent : SimpleCustomComponent, IColorComponent, IValueC
     }
 }
 
-[CustomComponent("TRGBColor", group: "TColorType")]
+[CustomComponent("TRGBColor")]
 public class TRGBColorComponent : SimpleCustomComponent, ITColorComponent, IAfterLoad
 {
     [JsonIgnore]

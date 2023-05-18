@@ -10,7 +10,7 @@ public interface IWeaponDefault
     string[] ReplaceCategories { get;  }
 }
 
-[CustomComponent("WeaponDefault", true)]
+[CustomComponent("WeaponDefault", AllowArray = true)]
 public class WeaponDefault : SimpleCustomChassis, IWeaponDefault
 {
     public string DefID { get; set; }

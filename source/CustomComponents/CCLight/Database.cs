@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 
@@ -6,9 +7,15 @@ namespace CustomComponents;
 
 public class Database
 {
-    internal static bool SetCustomWithIdentifier(string identifier, ICustom cc)
+    internal static void AddCustom(object target, ICustom cc)
     {
-        return Shared.SetCustomInternal(identifier, cc);
+        var identifier = Identifier(target);
+        AddCustom(identifier, cc);
+    }
+
+    internal static bool AddCustom(string identifier, ICustom cc)
+    {
+        return Shared.AddCustomInternal(identifier, cc);
     }
 
     public static IEnumerable<T> GetCustoms<T>(object target)
@@ -32,13 +39,6 @@ public class Database
     internal static bool Is<T>(object target)
     {
         return GetCustom<T>(target) != null;
-    }
-
-    internal static void AddCustom(object target, ICustom cc)
-    {
-        var identifier = Identifier(target);
-        var ccs = Shared.GetOrCreateCustomsList(identifier);
-        ccs.Add(cc);
     }
         
     internal static string Identifier(object target)
@@ -114,64 +114,42 @@ public class Database
         return ccs;
     }
 
-    private bool SetCustomInternal(string key, ICustom cc)
+    private bool AddCustomInternal(string identifier, ICustom cc)
     {
-        Log.CCLoading.Trace?.Log($"SetCustomInternal key={key} cc={cc}");
+        Log.CCLoading.Trace?.Log($"{nameof(AddCustomInternal)} identifier={identifier} cc={cc} cc.type={cc.GetType()}");
 
-        var ccs = GetOrCreateCustomsList(key);
+        var attribute = GetAttributeByType(cc.GetType());
+        Log.CCLoading.Trace?.Log($"--{nameof(CustomComponentAttribute)} {nameof(attribute.Name)}={attribute.Name} {nameof(attribute.AllowArray)}={attribute.AllowArray}");
 
-        var attribute = Registry.GetAttributeByType(cc.GetType());
+        var ccs = GetOrCreateCustomsList(identifier);
 
-        if (attribute != null)
+        if (ccs.Count > 0 && !attribute.AllowArray)
         {
-            for (var i = 0; i < ccs.Count; i++)
+            var isDuplicate = ccs
+                .Select(custom => GetAttributeByType(custom.GetType()))
+                .Any(attribute2 => attribute.Name == attribute2.Name);
+
+            if (isDuplicate)
             {
-                var custom = ccs[i];
-                var attribute2 = Registry.GetAttributeByType(custom.GetType());
-                    
-                if (attribute2 == null)
-                {
-                    continue;
-                }
-
-                var same_type = string.IsNullOrEmpty(attribute.Group)
-                    ? attribute.Name == attribute2.Name
-                    : attribute.Group == attribute2.Group;
-
-                if (!same_type)
-                {
-                    continue;
-                }
-
-                if (attribute.AllowArray)
-                {
-                    if (!(cc is IReplaceIdentifier cci1))
-                    {
-                        break;
-                    }
-
-                    if (custom is IReplaceIdentifier cci2 &&
-                        cci1.ReplaceID == cci2.ReplaceID)
-                    {
-                        Log.CCLoading.Trace?.Log($"--find replace: add:{attribute.Name} fnd:{attribute2.Name} grp:{attribute.Group} rid:{cci1.ReplaceID}");
-                        Log.CCLoading.Trace?.Log($"--replace: from:{custom} to:{cc}");
-                        ccs[i] = cc;
-                        return true;
-                    }
-                }
-                else
-                {
-                    Log.CCLoading.Trace?.Log($"--find replace: add:{attribute.Name} fnd:{attribute2.Name} grp:{attribute.Group}");
-                    Log.CCLoading.Trace?.Log($"--replace: from:{custom} to:{cc}");
-                    ccs[i] = cc;
-                    return true;
-                }
+                Log.CCLoading.Warning?.Log($"Not adding duplicate for identifier={identifier} {nameof(attribute.Name)}={attribute.Name} {nameof(attribute.AllowArray)}={attribute.AllowArray}");
+                return false;
             }
         }
 
         Log.CCLoading.Trace?.Log("--added");
         ccs.Add(cc);
         return true;
+    }
+
+    private static readonly Dictionary<Type, CustomComponentAttribute> Attributes = new();
+    private static CustomComponentAttribute GetAttributeByType(Type type)
+    {
+        if (!Attributes.TryGetValue(type, out var attribute))
+        {
+            attribute = type.GetCustomAttributes(false).OfType<CustomComponentAttribute>().FirstOrDefault();
+            Attributes[type] = attribute ?? throw new($"{type} is missing CustomComponentAttribute");
+        }
+        return attribute;
     }
 
     private void ClearCustoms()
