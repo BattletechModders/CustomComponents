@@ -1,14 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
-using BattleTech.Data;
 
 namespace CustomComponents;
 
 public class Database
 {
-    #region internal
-
     internal static bool SetCustomWithIdentifier(string identifier, ICustom cc)
     {
         return Shared.SetCustomInternal(identifier, cc);
@@ -73,9 +70,10 @@ public class Database
         return description?.Id;
     }
 
-    #endregion
-
-    #region private
+    internal static void Clear()
+    {
+        Shared.ClearCustoms();
+    }
 
     private static readonly Database Shared = new();
 
@@ -176,33 +174,8 @@ public class Database
         return true;
     }
 
-    private void Clear()
+    private void ClearCustoms()
     {
         customs.Clear();
     }
-
-    #endregion
-
-    #region embedded
-
-    [HarmonyPatch(typeof(DataManager), nameof(DataManager.Clear))]
-    public static class DataManager_Clear_Patch
-    {
-        [HarmonyPrefix]
-        [HarmonyWrapSafe]
-        public static void Prefix(ref bool __runOriginal, bool defs)
-        {
-            if (!__runOriginal)
-            {
-                return;
-            }
-
-            if (defs)
-            {
-                Shared.Clear();
-            }
-        }
-    }
-
-    #endregion
 }
