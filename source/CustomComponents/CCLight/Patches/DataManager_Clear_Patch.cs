@@ -1,4 +1,5 @@
 using BattleTech.Data;
+using CustomComponents.InventoryUnlimited;
 
 namespace CustomComponents.CCLight.Patches;
 
@@ -16,6 +17,7 @@ public static class DataManager_Clear_Patch
 
         if (defs)
         {
+            UnlimitedFeature.Clear();
             Database.Clear();
         }
     }

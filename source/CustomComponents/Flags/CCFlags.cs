@@ -19,6 +19,8 @@ public class CCFlags
     public bool NotDestroyed { get; }
     public bool Invalid { get; }
 
+    public bool InvUnlimited { get; }
+
     internal CCFlags()
     {
     }
@@ -36,6 +38,8 @@ public class CCFlags
         Vital = flags.IsSet("vital");
         NotDestroyed = flags.IsSet("not_destroyed");
         Invalid = flags.IsSet("invalid");
+
+        InvUnlimited = flags.IsSet("inv_unlimited");
     }
 
     internal static bool CanBeFielded(MechDef mechDef)

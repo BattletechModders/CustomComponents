@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CustomComponents.InventoryUnlimited;
 
 namespace CustomComponents;
 
@@ -16,6 +17,11 @@ public class Flags : SimpleCustomComponent, IListComponent<string>
     {
         flags = items.ToHashSet();
         CCFlags = new(this);
+
+        if (CCFlags.InvUnlimited)
+        {
+            UnlimitedFeature.Register(Def);
+        }
     }
 
     // compatibility with CC <v2.0
