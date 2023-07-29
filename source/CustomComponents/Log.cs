@@ -34,6 +34,7 @@ internal static class Log
     internal static readonly NullableLogger InstallCost = GetSubLogger(nameof(InstallCost));
     internal static readonly NullableLogger InventoryOperations = GetSubLogger(nameof(InventoryOperations));
     internal static readonly NullableLogger MechValidation = GetSubLogger(nameof(MechValidation));
+    internal static readonly NullableLogger PrefabOverrideCache = GetSubLogger(nameof(PrefabOverrideCache));
     internal static readonly NullableLogger SalvageProcess = GetSubLogger(nameof(SalvageProcess));
     internal static readonly NullableLogger UnitType = GetSubLogger(nameof(UnitType));
     internal static readonly NullableLogger WeaponDefaults = GetSubLogger(nameof(WeaponDefaults));
