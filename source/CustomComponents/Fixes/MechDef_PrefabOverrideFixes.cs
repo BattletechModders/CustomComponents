@@ -14,18 +14,23 @@ internal static class MechDef_PrefabOverrideFixes
     public static void MechDef_FromJSON_Postfix(MechDef __instance)
     {
         var mechDef = __instance;
-        if (string.IsNullOrEmpty(mechDef.chassisID))
+
+        if (string.IsNullOrEmpty(mechDef.prefabOverride))
+        {
+            return;
+        }
+
+        var chassisId = mechDef.chassisID;
+        if (string.IsNullOrEmpty(chassisId))
         {
             Log.PrefabOverrideCache.Warning?.Log($"chassisID missing for MechDef {mechDef.Description.Id}");
             return;
         }
 
-        if (string.IsNullOrEmpty(mechDef.prefabOverride))
+        var expectedMechDefId = chassisId.Replace("chassisdef_", "mechdef_");
+        if (mechDef.Description.Id != expectedMechDefId)
         {
-            if (PrefabOverridesCache.Remove(mechDef.chassisID))
-            {
-                Log.PrefabOverrideCache.Debug?.Log($"Removed prefabOverride for {mechDef.chassisID}");
-            }
+            Log.PrefabOverrideCache.Trace?.Log($"Ignoring prefabOverride from MechDef {mechDef.Description.Id} as it does not match ChassisDef {chassisId}");
             return;
         }
 
