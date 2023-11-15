@@ -6,6 +6,7 @@ internal class WorkOrderCostsHandler
 {
     public static readonly WorkOrderCostsHandler Shared = new();
 
+    public MechDef ActiveMechDef { get; set; } = null;
     public void ComponentInstallWorkOrder(MechDef mechDef, MechComponentRef mechComponent, ChassisLocations newLocation, WorkOrderEntry_InstallComponent result)
     {
 
@@ -42,11 +43,11 @@ internal class WorkOrderCostsHandler
 
         if (mechComponent.DamageLevel == ComponentDamageLevel.Destroyed)
         {
-            ApplyCosts(result, workOrderCosts.RepairDestroyed, null);
+            ApplyCosts(result, workOrderCosts.RepairDestroyed, isOnMech ? ActiveMechDef : null);
         }
         else
         {
-            ApplyCosts(result, workOrderCosts.Repair, null);
+            ApplyCosts(result, workOrderCosts.Repair, isOnMech ? ActiveMechDef : null);
         }
     }
 
