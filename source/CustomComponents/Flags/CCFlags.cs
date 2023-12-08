@@ -16,6 +16,7 @@ public class CCFlags
     public bool HideFromInv { get; }
 
     public bool HideFromEquip { get; }
+    public bool HideFromCombat { get; }
     public bool NotBroken { get; }
     public bool Vital { get; }
     public bool NotDestroyed { get; }
@@ -36,6 +37,7 @@ public class CCFlags
         HideFromInv = Default || flags.IsSet("hide");
 
         HideFromEquip = flags.IsSet("hide_equip");
+        HideFromCombat = flags.IsSet("hide_combat");
         NotBroken = flags.IsSet("not_broken");
         Vital = flags.IsSet("vital");
         NotDestroyed = flags.IsSet("not_destroyed");
