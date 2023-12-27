@@ -21,6 +21,11 @@ internal class TagsChecker
         chassisDef = mechDef.Chassis;
         inventory = mechDef.Inventory.ToList();
 
+        if (Control.Settings.TagRestrictionUseMechTags)
+        {
+            tagsOnMech.UnionWith(mechDef.MechTags);
+        }
+
         CollectChassisTags();
         CollectComponentTags();
     }

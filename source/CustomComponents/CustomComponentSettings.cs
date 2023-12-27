@@ -162,6 +162,7 @@ public class CustomComponentSettings
     public bool FixDefaults = true;
     public bool TagRestrictionDropValidateRequiredTags = false;
     public bool TagRestrictionDropValidateIncompatibleTags = true;
+    public bool TagRestrictionUseMechTags = false;
     public bool CheckCriticalComponent = true;
     public bool UseDefaultFixedColor = false;
     public bool AddWeightToCategory = true;
