@@ -8,9 +8,6 @@ namespace CustomComponents;
 
 internal class TagsChecker
 {
-    private readonly ChassisDef chassisDef;
-    private readonly List<MechComponentRef> inventory;
-
     private readonly Dictionary<ChassisLocations, HashSet<string>> tagsOnLocations = new();
     private readonly HashSet<string> tagsOnMech = new();
     private string error;
@@ -18,16 +15,9 @@ internal class TagsChecker
 
     internal TagsChecker(MechDef mechDef)
     {
-        chassisDef = mechDef.Chassis;
-        inventory = mechDef.Inventory.ToList();
-
-        if (Control.Settings.TagRestrictionUseMechTags)
-        {
-            tagsOnMech.UnionWith(mechDef.MechTags);
-        }
-
-        CollectChassisTags();
-        CollectComponentTags();
+        CollectMechTags(mechDef);
+        CollectChassisTags(mechDef.Chassis);
+        CollectComponentTags(mechDef.Inventory);
     }
 
     internal string Validate(Dictionary<MechValidationType, List<Text>> errors = null)
@@ -333,7 +323,21 @@ internal class TagsChecker
         return false;
     }
 
-    private void CollectChassisTags()
+    private void CollectMechTags(MechDef mechDef)
+    {
+        if (!Control.Settings.TagRestrictionUseMechTags)
+        {
+            return;
+        }
+
+        // tags
+        if (mechDef.MechTags != null)
+        {
+            tagsOnMech.UnionWith(mechDef.MechTags);
+        }
+    }
+
+    private void CollectChassisTags(ChassisDef chassisDef)
     {
         // tags
         if (chassisDef.ChassisTags != null)
@@ -346,7 +350,7 @@ internal class TagsChecker
         tagsOnMech.Add(identifier);
     }
 
-    private void CollectComponentTags()
+    private void CollectComponentTags(MechComponentRef[] inventory)
     {
         foreach (var def in inventory)
         {
