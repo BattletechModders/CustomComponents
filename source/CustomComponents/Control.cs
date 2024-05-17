@@ -84,6 +84,7 @@ public static class Control
         catch (Exception e)
         {
             Log.Main.Error?.Log(e);
+            throw;
         }
     }
 
