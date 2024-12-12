@@ -27,7 +27,7 @@ public class TagColorComponent : SimpleCustomComponent, IColorComponent, IValueC
 
 
 [CustomComponent("TColorTag")]
-public class TTagColorComponent : SimpleCustomComponent, ITColorComponent, IAfterLoad
+public class TTagColorComponent : SimpleCustomComponent, ITColorComponent, IOnLoaded
 {
     [JsonIgnore] public UIColor UIColor => UIColor.Custom;
     [JsonIgnore]
@@ -38,7 +38,7 @@ public class TTagColorComponent : SimpleCustomComponent, ITColorComponent, IAfte
 
     public string Tag { get; set; }
 
-    public void OnLoaded(Dictionary<string, object> values)
+    public void OnLoaded()
     {
         if (Control.Settings.ColorTagsDictionary.TryGetValue(Tag, out var color))
         {

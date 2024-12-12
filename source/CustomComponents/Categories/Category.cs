@@ -14,7 +14,7 @@ namespace CustomComponents;
 /// component use category logic
 /// </summary>
 [CustomComponent(CategoryCustomName, AllowArray = true)]
-public class Category : SimpleCustomComponent, IAfterLoad, IReplaceValidateDrop,
+public class Category : SimpleCustomComponent, IOnLoaded, IReplaceValidateDrop,
     IAdjustDescription, IOnRemove, IOnAdd, IPreValidateDrop
 {
     internal const string CategoryCustomName = "Category";
@@ -56,7 +56,7 @@ public class Category : SimpleCustomComponent, IAfterLoad, IReplaceValidateDrop,
     [JsonIgnore]
     public CategoryDescriptor CategoryDescriptor { get; set; }
 
-    public void OnLoaded(Dictionary<string, object> values)
+    public void OnLoaded()
     {
         CategoryDescriptor = CategoryController.Shared.GetOrCreateCategory(CategoryID);
     }

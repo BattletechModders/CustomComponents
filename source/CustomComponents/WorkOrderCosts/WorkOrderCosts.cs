@@ -6,7 +6,7 @@ using fastJSON;
 namespace CustomComponents;
 
 [CustomComponent("WorkOrderCosts")]
-public class WorkOrderCosts : SimpleCustomComponent, IAfterLoad
+public class WorkOrderCosts : SimpleCustomComponent, IOnLoaded
 {
     public Costs Default { get; set; }
     public Costs Install { get; set; }
@@ -38,7 +38,7 @@ public class WorkOrderCosts : SimpleCustomComponent, IAfterLoad
         }
     }
 
-    public void OnLoaded(Dictionary<string, object> values)
+    public void OnLoaded()
     {
         Default?.Compile();
         Install?.Compile();

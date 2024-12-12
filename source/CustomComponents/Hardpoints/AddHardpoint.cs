@@ -85,7 +85,7 @@ public class AddHardpoint : SimpleCustomComponent, IValueComponent<string>, IPre
 }
 
 [CustomComponent("ReplaceHardpoint")]
-public class ReplaceHardpoint : SimpleCustomComponent, IAfterLoad, IPreValidateDrop, IAdjustDescription, IValid
+public class ReplaceHardpoint : SimpleCustomComponent, IOnLoaded, IPreValidateDrop, IAdjustDescription, IValid
 {
     private string UseHardpoint;
     private string AddHardpoint;
@@ -96,7 +96,7 @@ public class ReplaceHardpoint : SimpleCustomComponent, IAfterLoad, IPreValidateD
     public WeaponCategoryValue AddWeaponCategory { get; private set; }
     public WeaponCategoryValue UseWeaponCategory { get; private set; }
 
-    public void OnLoaded(Dictionary<string, object> values)
+    public void OnLoaded()
     {
         AddWeaponCategory = WeaponCategoryEnumeration.GetWeaponCategoryByName(AddHardpoint);
 

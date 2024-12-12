@@ -27,7 +27,7 @@ public class RGBColorComponent : SimpleCustomComponent, IColorComponent, IValueC
 }
 
 [CustomComponent("TRGBColor")]
-public class TRGBColorComponent : SimpleCustomComponent, ITColorComponent, IAfterLoad
+public class TRGBColorComponent : SimpleCustomComponent, ITColorComponent, IOnLoaded
 {
     [JsonIgnore]
     public UIColor UIColor => UIColor.Custom;
@@ -39,7 +39,7 @@ public class TRGBColorComponent : SimpleCustomComponent, ITColorComponent, IAfte
 
     public string Color { get; set; }
 
-    public void OnLoaded(Dictionary<string, object> values)
+    public void OnLoaded()
     {
         if (ColorUtility.TryParseHtmlString(Color, out var color))
         {

@@ -197,6 +197,12 @@ public static class Registry
                     load.OnLoaded(values);
                 }
 
+                if (component is IOnLoaded onLoaded)
+                {
+                    Log.CCLoading.Trace?.Log($"IOnLoaded: {identifier}");
+                    onLoaded.OnLoaded();
+                }
+
                 if (component is IAdjustDescription ed)
                 {
                     ed.AdjustDescription();

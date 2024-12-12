@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 namespace CustomComponents;
 
 [CustomComponent("ChassisCategory", AllowArray = true)]
-public class ChassisCategory : SimpleCustomChassis, IAfterLoad
+public class ChassisCategory : SimpleCustomChassis, IOnLoaded
 {
     public class _record
     {
@@ -37,7 +37,7 @@ public class ChassisCategory : SimpleCustomChassis, IAfterLoad
     [JsonIgnore]
     public Dictionary<ChassisLocations, CategoryLimit> LocationLimits { get; set; }
 
-    public void OnLoaded(Dictionary<string, object> values)
+    public void OnLoaded()
     {
         var desc = CategoryController.Shared.GetCategory(CategoryID);
 
