@@ -123,7 +123,6 @@ public class CustomComponentSettings
     public bool DEBUG_ValidateMechDefs = false;
     public bool DEBUG_ShowOnlyErrors = false;
     public bool DEBUG_ShowAllUnitTypes = true;
-    public bool DEBUG_EnableAllTags = false;
     public bool DEBUG_ShowConfig = false;
     public bool DEBUG_ShowLoadedCategory = true;
     public bool DEBUG_ShowLoadedDefaults = true;

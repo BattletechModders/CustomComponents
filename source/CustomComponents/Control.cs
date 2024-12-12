@@ -38,7 +38,6 @@ public static class Control
             Log.Main.Debug?.Log("- ValidateMechDefs: " + Settings.DEBUG_ValidateMechDefs);
             Log.Main.Debug?.Log("-- ShowOnlyErrors: " + Settings.DEBUG_ShowOnlyErrors);
             Log.Main.Debug?.Log("- ShowAllUnitTypes: " + Settings.DEBUG_ShowAllUnitTypes);
-            Log.Main.Debug?.Log("- EnableAllTags: " + Settings.DEBUG_EnableAllTags);
             Log.Main.Debug?.Log("- ShowConfig: " + Settings.DEBUG_ShowConfig);
             Log.Main.Debug?.Log("- ShowLoadedCategory: " + Settings.DEBUG_ShowLoadedCategory);
             Log.Main.Debug?.Log("- ShowLoadedDefaults: " + Settings.DEBUG_ShowLoadedDefaults);
