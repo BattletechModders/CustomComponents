@@ -87,8 +87,8 @@ public class AddHardpoint : SimpleCustomComponent, IValueComponent<string>, IPre
 [CustomComponent("ReplaceHardpoint")]
 public class ReplaceHardpoint : SimpleCustomComponent, IOnLoaded, IPreValidateDrop, IAdjustDescription, IValid
 {
-    private string UseHardpoint;
-    private string AddHardpoint;
+    public string UseHardpoint;
+    public string AddHardpoint;
 
     public bool Valid => AddWeaponCategory != null && !AddWeaponCategory.Is_NotSet
                                                    && UseWeaponCategory != null && !UseWeaponCategory.Is_NotSet;

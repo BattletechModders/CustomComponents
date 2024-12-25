@@ -1,6 +1,6 @@
 ﻿#nullable enable
 using HBS.Logging;
-using NullableLogging;
+using ModTek.Public;
 
 namespace CustomComponents;
 

@@ -22,6 +22,6 @@ jobs:
             -xr!source "-xr!.*"
         )
       release-notes: |
-        Requires ModTek V4 or later
-        - CustomComponents.zip contains the compiled framework
+        CustomComponents.zip contains the mod
+        Requires ModTek v4.3 or later.
     secrets: inherit
