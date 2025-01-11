@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using BattleTech;
 
 namespace CustomComponents;
@@ -45,30 +46,60 @@ public class Database
     {
         if (target == null)
         {
-            Log.Main.Error?.Log("Error - requested identifier for null!");
-            return string.Empty;
+            Log.Main.Error?.Log("Null object passed, therefore missing identifier!");
+            return null;
         }
 
         // this is for faster access
-        if (target is MechComponentDef mechComponentDef)
+        switch (target)
         {
-            return mechComponentDef.Description.Id;
+            case MechComponentDef def:
+                return def.Description.Id;
+            case BaseDescriptionDef def:
+                return def.Id;
+            case MechDef def:
+                return def.Description.Id;
+            case ChassisDef def:
+                return def.Description.Id;
+            case EffectData data:
+                return data.Description?.Id;
+            case VehicleChassisDef def:
+                return def.Description.Id;
+            case LanceDef def:
+                return def.Description.Id;
+            case PilotDef def:
+                return def.Description.Id;
+            case AmmunitionDef def:
+                return def.Description.Id;
+            case MovementCapabilitiesDef def:
+                return def.Description.Id;
+            case AbilityDef def:
+                return def.Description.Id;
+            case PathingCapabilitiesDef def:
+                return def.Description.Id;
+            case HeraldryDef def:
+                return def.Description.Id;
         }
 
-        if (target is ChassisDef chassisDef)
+        var targetType = target.GetType();
+        if (!_reflectionCache.TryGetValue(targetType, out var propertyInfo))
         {
-            return chassisDef.Description.Id;
-        }
+            propertyInfo = targetType.GetProperty(nameof(MechComponentDef.Description));
+            if (propertyInfo != null && typeof(BaseDescriptionDef).IsAssignableFrom(propertyInfo.PropertyType))
+            {
+                _reflectionCache[targetType] = propertyInfo;
+                Log.Main.Warning?.Log($"Don't know {targetType} but found a Description property, might want to add it to the fast access path");
+            }
+            else
+            {
 
-        if (target is VehicleChassisDef vcd)
-        {
-            return vcd.Description.Id;
+                _reflectionCache[targetType] = null;
+            }
         }
-
-        var descriptionProperty = target.GetType().GetProperty(nameof(MechComponentDef.Description), typeof(DescriptionDef));
-        var description = descriptionProperty?.GetValue(target, null) as DescriptionDef;
+        var description = propertyInfo?.GetValue(target, null) as BaseDescriptionDef;
         return description?.Id;
     }
+    private static readonly Dictionary<Type, PropertyInfo> _reflectionCache = new();
 
     internal static void Clear()
     {
