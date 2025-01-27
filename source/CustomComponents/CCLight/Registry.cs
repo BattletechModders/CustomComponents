@@ -12,7 +12,7 @@ public static class Registry
     private static readonly List<ICustomFactory> Factories = new();
     private static readonly HashSet<string> FactoryIdentifiers = new();
 
-    public static void RegisterPreProcessor(IPreProcessor preProcessor)
+    internal static void RegisterPreProcessor(IPreProcessor preProcessor)
     {
         PreProcessors.Add(preProcessor);
     }
@@ -150,7 +150,7 @@ public static class Registry
 
         foreach (var postProcessor in PostProcessors)
         {
-            postProcessor.PostProcess(target, values);
+            postProcessor.PostProcess(target);
         }
 
 #if DEBUG

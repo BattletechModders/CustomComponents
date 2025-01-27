@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-
-namespace CustomComponents;
+﻿namespace CustomComponents;
 
 internal interface IPostProcessor
 {
-    void PostProcess(object target, Dictionary<string, object> values);
+    void PostProcess(object target);
 }

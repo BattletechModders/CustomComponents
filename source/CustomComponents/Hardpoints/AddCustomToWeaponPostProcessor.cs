@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using BattleTech;
+﻿using BattleTech;
 
 namespace CustomComponents;
 
 class AddCustomToWeaponPostProcessor : IPostProcessor
 {
-    public void PostProcess(object target, Dictionary<string, object> values)
+    public void PostProcess(object target)
     {
         if (target is not WeaponDef weapon)
         {

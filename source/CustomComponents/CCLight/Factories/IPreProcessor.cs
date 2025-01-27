@@ -2,7 +2,7 @@
 
 namespace CustomComponents;
 
-public interface IPreProcessor
+internal interface IPreProcessor
 {
     void PreProcess(object target, Dictionary<string, object> values);
 }
