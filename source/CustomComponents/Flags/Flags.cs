@@ -22,6 +22,7 @@ public class Flags : SimpleCustomComponent, IListComponent<string>
         {
             UnlimitedFeature.Register(Def);
         }
+        Def.ccFlags = this;
     }
 
     // compatibility with CC <v2.0

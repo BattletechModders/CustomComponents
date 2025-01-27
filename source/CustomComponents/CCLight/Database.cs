@@ -19,13 +19,13 @@ public class Database
         return Shared.AddCustomInternal(identifier, cc);
     }
 
-    public static IEnumerable<T> GetCustoms<T>(object target)
+    internal static IEnumerable<T> GetCustoms<T>(object target)
     {
         var identifier = Identifier(target);
         return Shared.GetCustomsInternal<T>(identifier);
     }
 
-    public static T GetCustom<T>(object target)
+    internal static T GetCustom<T>(object target)
     {
         var identifier = Identifier(target);
         return Shared.GetCustomInternalFast<T>(identifier);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using BattleTech;
 
 namespace CustomComponents;
@@ -18,6 +19,11 @@ public static class MechComponentDefExtensions
 
     public static bool Is<T>(this MechComponentDef target, out T res)
     {
+        if (typeof(T) == typeof(Flags)) // improves MEs ignore_damage perf in combat
+        {
+            res = Unsafe.As<object, T>(ref target.ccFlags);
+            return res != null;
+        }
         return Database.Is(target, out res);
     }
 

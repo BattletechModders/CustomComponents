@@ -14,13 +14,20 @@
     <!-- sources dir -->
     <CustomComponentsModPath>$(MSBuildProjectDirectory)\..\..</CustomComponentsModPath>
   </PropertyGroup>
+
+  <!-- EXPERIMENTAL! run injectors without having to run BT -->
+  <Import Project="$(BattleTechGameDir)\Mods\ModTek\lib\ModTekInjectorsTask.props" />
+  <Target Name="CopySimpleInjectorConfig" BeforeTargets="ModTekInjectorsRunner">
+    <Copy SourceFiles="ModTekSimpleInjector.CustomComponents.xml" DestinationFolder="$(BattleTechGameDir)\Mods\ModTek\Injectors\" />
+  </Target>
+
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>net472</TargetFramework>
     <LangVersion>13</LangVersion>
     <AssemblySearchPaths>
-      $(ReferencePath);
       {HintPathFromItem};
+      $(BattleTechGameDir)\Mods\.modtek\AssembliesInjected\;
       $(BattleTechGameDir)\Mods\ModTek\lib\;
       $(BattleTechGameDir)\BattleTech_Data\Managed\
     </AssemblySearchPaths>
@@ -51,6 +58,9 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="MonoMod.Backports">
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp">
