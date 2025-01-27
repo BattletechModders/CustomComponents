@@ -17,7 +17,8 @@ jobs:
         (
           cd ..
           7z a -tzip -mx9 "$DIST_DIR/CustomComponents.zip" \
-            -ir!CustomComponents \
+            CustomComponents/ \
+            ModTek/Injectors/*.CustomComponents.xml \
             -xr!CCTestMod \
             -xr!source "-xr!.*"
         )
