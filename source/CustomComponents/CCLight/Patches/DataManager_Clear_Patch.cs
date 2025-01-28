@@ -18,7 +18,6 @@ public static class DataManager_Clear_Patch
         if (defs)
         {
             UnlimitedFeature.Clear();
-            Database.Clear();
         }
     }
 }

@@ -1,47 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
+using System.Runtime.CompilerServices;
 using BattleTech;
 
 namespace CustomComponents;
 
 public class Database
 {
-    internal static void AddCustom(object target, ICustom cc)
+    internal static bool AddCustom(string identifier, object target, ICustom cc)
     {
-        var identifier = Identifier(target);
-        AddCustom(identifier, cc);
+        ref var customs = ref DefToCustoms(target);
+        return AddCustomInternal(identifier, ref customs, cc);
+    }
+    private static ref object[] DefToCustoms(object target)
+    {
+        switch (target)
+        {
+            case MechComponentDef def1:
+                return ref def1.ccCustoms;
+            case MechDef def2:
+                return ref def2.ccCustoms;
+            case ChassisDef def3:
+                return ref def3.ccCustoms;
+            case VehicleChassisDef def4:
+                return ref def4.ccCustoms;
+            default:
+                throw new ArgumentException();
+        }
     }
 
-    internal static bool AddCustom(string identifier, ICustom cc)
+    internal static bool AddCustom(string identifier, ref object[] customs, ICustom cc)
     {
-        return Shared.AddCustomInternal(identifier, cc);
+        return AddCustomInternal(identifier, ref customs, cc);
     }
 
-    internal static IEnumerable<T> GetCustoms<T>(object target)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static IEnumerable<T> GetCustoms<T>(object[] customs)
     {
-        var identifier = Identifier(target);
-        return Shared.GetCustomsInternal<T>(identifier);
+        return GetCustomsInternal<T>(customs);
     }
 
-    internal static T GetCustom<T>(object target)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static T GetCustom<T>(object[] customs)
     {
-        var identifier = Identifier(target);
-        return Shared.GetCustomInternalFast<T>(identifier);
+        return GetCustomInternalFast<T>(customs);
     }
 
-    internal static bool Is<T>(object target, out T value)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static bool Is<T>(object[] customs, out T value)
     {
-        value = GetCustom<T>(target);
+        value = GetCustom<T>(customs);
         return value != null;
     }
 
-    internal static bool Is<T>(object target)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static bool Is<T>(object[] customs)
     {
-        return GetCustom<T>(target) != null;
+        return GetCustom<T>(customs) != null;
     }
-        
+
     internal static string Identifier(object target)
     {
         if (target == null)
@@ -49,130 +67,90 @@ public class Database
             Log.Main.Error?.Log("Null object passed, therefore missing identifier!");
             return null;
         }
-
-        // this is for faster access
-        switch (target)
+        return target switch
         {
-            case MechComponentDef def:
-                return def.Description.Id;
-            case BaseDescriptionDef def:
-                return def.Id;
-            case MechDef def:
-                return def.Description.Id;
-            case ChassisDef def:
-                return def.Description.Id;
-            case EffectData data:
-                return data.Description?.Id;
-            case VehicleChassisDef def:
-                return def.Description.Id;
-            case LanceDef def:
-                return def.Description.Id;
-            case PilotDef def:
-                return def.Description.Id;
-            case AmmunitionDef def:
-                return def.Description.Id;
-            case MovementCapabilitiesDef def:
-                return def.Description.Id;
-            case AbilityDef def:
-                return def.Description.Id;
-            case PathingCapabilitiesDef def:
-                return def.Description.Id;
-            case HeraldryDef def:
-                return def.Description.Id;
-        }
-
-        var targetType = target.GetType();
-        if (!_reflectionCache.TryGetValue(targetType, out var propertyInfo))
-        {
-            propertyInfo = targetType.GetProperty(nameof(MechComponentDef.Description));
-            if (propertyInfo != null && typeof(BaseDescriptionDef).IsAssignableFrom(propertyInfo.PropertyType))
-            {
-                _reflectionCache[targetType] = propertyInfo;
-                Log.Main.Warning?.Log($"Don't know {targetType} but found a Description property, might want to add it to the fast access path");
-            }
-            else
-            {
-
-                _reflectionCache[targetType] = null;
-            }
-        }
-        var description = propertyInfo?.GetValue(target, null) as BaseDescriptionDef;
-        return description?.Id;
-    }
-    private static readonly Dictionary<Type, PropertyInfo> _reflectionCache = new();
-
-    internal static void Clear()
-    {
-        Shared.ClearCustoms();
+            MechComponentDef def => def.Description.Id,
+            MechDef def => def.Description.Id,
+            ChassisDef def => def.Description.Id,
+            VehicleChassisDef def => def.Description.Id,
+            _ => null
+        };
     }
 
-    private static readonly Database Shared = new();
-
-    private readonly Dictionary<string, List<ICustom>> customs = new();
-
-    private IEnumerable<T> GetCustomsInternal<T>(string key)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static IEnumerable<T> GetCustomsInternal<T>(object[] customs)
     {
-        if (key == null || !customs.TryGetValue(key, out var ccs))
+        if (customs == null)
         {
-            return Enumerable.Empty<T>();
+            yield break;
         }
 
-        return ccs.OfType<T>();
-    }
-
-    private T GetCustomInternalFast<T>(string key)
-    {
-        if (key != null && customs.TryGetValue(key, out var ccs))
+        for (var index = 0; index < customs.Length; index++)
         {
-            for (var index = 0; index < ccs.Count; index++)
+            if (customs[index] is T csT)
             {
-                if (ccs[index] is T csT)
-                {
-                    return csT;
-                }
+                yield return csT;
             }
         }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static T GetCustomInternalFast<T>(object[] customs)
+    {
+        if (customs == null)
+        {
+            return default;
+        }
+
+        for (var index = 0; index < customs.Length; index++)
+        {
+            if (customs[index] is T csT)
+            {
+                return csT;
+            }
+        }
+
         return default;
     }
 
-    private List<ICustom> GetOrCreateCustomsList(string key)
-    {
-        if (!customs.TryGetValue(key, out var ccs))
-        {
-            ccs = new();
-            customs[key] = ccs;
-        }
-        return ccs;
-    }
-
-    private bool AddCustomInternal(string identifier, ICustom cc)
+    private static bool AddCustomInternal(string identifier, ref object[] customs, ICustom cc)
     {
         Log.CCLoading.Trace?.Log($"{nameof(AddCustomInternal)} identifier={identifier} cc={cc} cc.type={cc.GetType()}");
 
         var attribute = GetAttributeByType(cc.GetType());
         Log.CCLoading.Trace?.Log($"--{nameof(CustomComponentAttribute)} {nameof(attribute.Name)}={attribute.Name} {nameof(attribute.AllowArray)}={attribute.AllowArray}");
 
-        var ccs = GetOrCreateCustomsList(identifier);
-
-        if (ccs.Count > 0 && !attribute.AllowArray)
+        if (customs is { Length: > 0 } && !attribute.AllowArray)
         {
-            var isDuplicate = ccs
+            var isDuplicate = customs
                 .Select(custom => GetAttributeByType(custom.GetType()))
                 .Any(attribute2 => attribute.Name == attribute2.Name);
 
             if (isDuplicate)
             {
-                Log.CCLoading.Warning?.Log($"Not adding duplicate for identifier={identifier} {nameof(attribute.Name)}={attribute.Name} {nameof(attribute.AllowArray)}={attribute.AllowArray}");
+                Log.CCLoading.Warning?.Log(
+                    $"Not adding duplicate for identifier={identifier} {nameof(attribute.Name)}={attribute.Name} {nameof(attribute.AllowArray)}={attribute.AllowArray}");
                 return false;
             }
         }
 
         Log.CCLoading.Trace?.Log("--added");
-        ccs.Add(cc);
+        if (customs == null)
+        {
+            customs = [cc];
+        }
+        else
+        {
+            var newCustoms = new object[customs.Length + 1];
+            Array.Copy(customs, newCustoms, customs.Length);
+            newCustoms[customs.Length] = cc;
+            customs = newCustoms;
+        }
         return true;
     }
 
     private static readonly Dictionary<Type, CustomComponentAttribute> Attributes = new();
+
     private static CustomComponentAttribute GetAttributeByType(Type type)
     {
         if (!Attributes.TryGetValue(type, out var attribute))
@@ -180,11 +158,7 @@ public class Database
             attribute = type.GetCustomAttributes(false).OfType<CustomComponentAttribute>().FirstOrDefault();
             Attributes[type] = attribute ?? throw new($"{type} is missing CustomComponentAttribute");
         }
-        return attribute;
-    }
 
-    private void ClearCustoms()
-    {
-        customs.Clear();
+        return attribute;
     }
 }
