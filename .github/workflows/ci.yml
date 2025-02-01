@@ -23,6 +23,6 @@ jobs:
             -xr!source "-xr!.*"
         )
       release-notes: |
-        CustomComponents.zip contains the mod
-        Requires ModTek v4.3 or later.
+        Requires ModTek to be up-to-date.
+        CustomComponents.zip contains the mod.
     secrets: inherit
