@@ -8,56 +8,42 @@ namespace CustomComponents;
 
 public class Database
 {
-    internal static bool AddCustom(string identifier, object target, ICustom cc)
+    internal static T GetCustom<T>(object target)
     {
-        ref var customs = ref DefToCustoms(target);
-        return AddCustomInternal(identifier, ref customs, cc);
-    }
-    private static ref object[] DefToCustoms(object target)
-    {
-        switch (target)
+        var identifier = Identifier(target);
+
+        if (identifier == null)
         {
-            case MechComponentDef def1:
-                return ref def1.ccCustoms;
-            case MechDef def2:
-                return ref def2.ccCustoms;
-            case ChassisDef def3:
-                return ref def3.ccCustoms;
-            case VehicleChassisDef def4:
-                return ref def4.ccCustoms;
-            default:
-                throw new ArgumentException();
+            return default;
         }
-    }
 
-    internal static bool AddCustom(string identifier, ref object[] customs, ICustom cc)
-    {
-        return AddCustomInternal(identifier, ref customs, cc);
+        if (!Customs.TryGetValue(identifier, out var customs))
+        {
+            return default;
+        }
+
+        for (var index = 0; index < customs.Length; index++)
+        {
+            if (customs[index] is T csT)
+            {
+                return csT;
+            }
+        }
+
+        return default;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static IEnumerable<T> GetCustoms<T>(object[] customs)
+    internal static bool Is<T>(object target, out T value)
     {
-        return GetCustomsInternal<T>(customs);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static T GetCustom<T>(object[] customs)
-    {
-        return GetCustomInternalFast<T>(customs);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static bool Is<T>(object[] customs, out T value)
-    {
-        value = GetCustom<T>(customs);
+        value = GetCustom<T>(target);
         return value != null;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static bool Is<T>(object[] customs)
+    internal static bool Is<T>(object target)
     {
-        return GetCustom<T>(customs) != null;
+        return GetCustom<T>(target) != null;
     }
 
     internal static string Identifier(object target)
@@ -77,10 +63,16 @@ public class Database
         };
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static IEnumerable<T> GetCustomsInternal<T>(object[] customs)
+    internal static IEnumerable<T> GetCustoms<T>(object target)
     {
-        if (customs == null)
+        var identifier = Identifier(target);
+
+        if (identifier == null)
+        {
+            yield break;
+        }
+
+        if (!Customs.TryGetValue(identifier, out var customs))
         {
             yield break;
         }
@@ -94,28 +86,18 @@ public class Database
         }
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static T GetCustomInternalFast<T>(object[] customs)
+    private static readonly Dictionary<string, object[]> Customs = new(StringComparer.Ordinal);
+    internal static bool AddCustom(object target, ICustom cc)
     {
-        if (customs == null)
+        var identifier = Identifier(target);
+        if (identifier == null)
         {
-            return default;
+            return false;
         }
 
-        for (var index = 0; index < customs.Length; index++)
-        {
-            if (customs[index] is T csT)
-            {
-                return csT;
-            }
-        }
+        Customs.TryGetValue(identifier, out var customs);
 
-        return default;
-    }
-
-    private static bool AddCustomInternal(string identifier, ref object[] customs, ICustom cc)
-    {
-        Log.CCLoading.Trace?.Log($"{nameof(AddCustomInternal)} identifier={identifier} cc={cc} cc.type={cc.GetType()}");
+        Log.CCLoading.Trace?.Log($"{nameof(AddCustom)} identifier={identifier} cc={cc} cc.type={cc.GetType()}");
 
         var attribute = GetAttributeByType(cc.GetType());
         Log.CCLoading.Trace?.Log($"--{nameof(CustomComponentAttribute)} {nameof(attribute.Name)}={attribute.Name} {nameof(attribute.AllowArray)}={attribute.AllowArray}");
@@ -137,14 +119,14 @@ public class Database
         Log.CCLoading.Trace?.Log("--added");
         if (customs == null)
         {
-            customs = [cc];
+            Customs[identifier] = [cc];
         }
         else
         {
             var newCustoms = new object[customs.Length + 1];
             Array.Copy(customs, newCustoms, customs.Length);
             newCustoms[customs.Length] = cc;
-            customs = newCustoms;
+            Customs[identifier] = newCustoms;
         }
         return true;
     }

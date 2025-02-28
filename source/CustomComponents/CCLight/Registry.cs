@@ -189,7 +189,7 @@ public static class Registry
 
             Log.CCLoading.Trace?.Log($"Created {component} for {identifier}");
 
-            if (Database.AddCustom(identifier, target, component))
+            if (Database.AddCustom(target, component))
             {
                 if (component is IAfterLoad load)
                 {
