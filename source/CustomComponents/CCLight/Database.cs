@@ -8,21 +8,27 @@ namespace CustomComponents;
 
 public class Database
 {
-    internal static T GetCustom<T>(object target)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static CCFlags GetCCFlags(object target, ref List<object> customs)
     {
-        var identifier = Identifier(target);
+        var count = CustomsCountAndEnsureCustomsField(target, ref customs);
+        if (count == 0)
+        {
+            return null;
+        }
+        // CCFlags is kept in front to improve combat performance
+        return customs[0] as CCFlags;
+    }
 
-        if (identifier == null)
+    internal static T GetCustom<T>(object target, ref List<object> customs)
+    {
+        var count = CustomsCountAndEnsureCustomsField(target, ref customs);
+        if (count == 0)
         {
             return default;
         }
 
-        if (!Customs.TryGetValue(identifier, out var customs))
-        {
-            return default;
-        }
-
-        for (var index = 0; index < customs.Length; index++)
+        for (var index = 0; index < count; index++)
         {
             if (customs[index] is T csT)
             {
@@ -34,18 +40,37 @@ public class Database
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static bool Is<T>(object target, out T value)
+    internal static bool Is<T>(object target, ref List<object> customs, out T value)
     {
-        value = GetCustom<T>(target);
+        value = GetCustom<T>(target, ref customs);
         return value != null;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static bool Is<T>(object target)
+    internal static bool Is<T>(object target, ref List<object> customs)
     {
-        return GetCustom<T>(target) != null;
+        return GetCustom<T>(target, ref customs) != null;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static int CustomsCountAndEnsureCustomsField(object target, ref List<object> customs)
+    {
+        if (customs == null)
+        {
+            var identifier = Identifier(target);
+
+            if (identifier == null)
+            {
+                return 0;
+            }
+
+            if (!Customs.TryGetValue(identifier, out customs))
+            {
+                Customs[identifier] = customs = [];
+            }
+        }
+        return customs.Count;
+    }
     internal static string Identifier(object target)
     {
         if (target == null)
@@ -63,21 +88,17 @@ public class Database
         };
     }
 
-    internal static IEnumerable<T> GetCustoms<T>(object target)
+    internal static IEnumerable<T> GetCustoms<T>(object target, ref List<object> customs)
     {
-        var identifier = Identifier(target);
-
-        if (identifier == null)
-        {
-            yield break;
-        }
-
-        if (!Customs.TryGetValue(identifier, out var customs))
-        {
-            yield break;
-        }
-
-        for (var index = 0; index < customs.Length; index++)
+        var count = CustomsCountAndEnsureCustomsField(target, ref customs);
+        return count == 0
+            ? []
+            : GetCustomsIter<T>(customs, count);
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static IEnumerable<T> GetCustomsIter<T>(List<object> customs, int count)
+    {
+        for (var index = 0; index < count; index++)
         {
             if (customs[index] is T csT)
             {
@@ -86,23 +107,27 @@ public class Database
         }
     }
 
-    private static readonly Dictionary<string, object[]> Customs = new(StringComparer.Ordinal);
+    private static readonly Dictionary<string, List<object>> Customs = new(StringComparer.Ordinal);
     internal static bool AddCustom(object target, ICustom cc)
     {
         var identifier = Identifier(target);
+
         if (identifier == null)
         {
             return false;
         }
 
-        Customs.TryGetValue(identifier, out var customs);
+        if (!Customs.TryGetValue(identifier, out var customs))
+        {
+            Customs[identifier] = customs = [];
+        }
 
         Log.CCLoading.Trace?.Log($"{nameof(AddCustom)} identifier={identifier} cc={cc} cc.type={cc.GetType()}");
 
         var attribute = GetAttributeByType(cc.GetType());
         Log.CCLoading.Trace?.Log($"--{nameof(CustomComponentAttribute)} {nameof(attribute.Name)}={attribute.Name} {nameof(attribute.AllowArray)}={attribute.AllowArray}");
 
-        if (customs is { Length: > 0 } && !attribute.AllowArray)
+        if (customs is { Count: > 0 } && !attribute.AllowArray)
         {
             var isDuplicate = customs
                 .Select(custom => GetAttributeByType(custom.GetType()))
@@ -117,17 +142,16 @@ public class Database
         }
 
         Log.CCLoading.Trace?.Log("--added");
-        if (customs == null)
+        if (cc.GetType() == typeof(CCFlags))
         {
-            Customs[identifier] = [cc];
+            // CCFlags is kept in front to improve combat performance
+            customs.Insert(0, cc);
         }
         else
         {
-            var newCustoms = new object[customs.Length + 1];
-            Array.Copy(customs, newCustoms, customs.Length);
-            newCustoms[customs.Length] = cc;
-            Customs[identifier] = newCustoms;
+            customs.Add(cc);
         }
+
         return true;
     }
 

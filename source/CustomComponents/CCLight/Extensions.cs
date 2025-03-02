@@ -14,25 +14,31 @@ public static class MechComponentDefExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T GetComponent<T>(this MechComponentDef target)
     {
-        return Database.GetCustom<T>(target);
+        return Database.GetCustom<T>(target, ref target.ccCustoms);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<T> GetComponents<T>(this MechComponentDef target)
     {
-        return Database.GetCustoms<T>(target);
+        return Database.GetCustoms<T>(target, ref target.ccCustoms);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Is<T>(this MechComponentDef target, out T res)
     {
-        return Database.Is(target, out res);
+        if (typeof(T) == typeof(CCFlags))
+        {
+            // CCFlags is kept in front to improve combat performance
+            res = (T)(object)Database.GetCCFlags(target, ref target.ccCustoms);
+            return res != null;
+        }
+        return Database.Is(target, ref target.ccCustoms, out res);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Is<T>(this MechComponentDef target)
     {
-        return Database.Is<T>(target);
+        return Database.Is<T>(target, ref target.ccCustoms);
     }
 
     public static T AddComponent<T>(this MechComponentDef target, T component) where T : ICustom
@@ -61,25 +67,25 @@ public static class VehicleExtentions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T GetComponent<T>(this VehicleChassisDef target)
     {
-        return Database.GetCustom<T>(target);
+        return Database.GetCustom<T>(target, ref target.ccCustoms);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<T> GetComponents<T>(this VehicleChassisDef target)
     {
-        return Database.GetCustoms<T>(target);
+        return Database.GetCustoms<T>(target, ref target.ccCustoms);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Is<T>(this VehicleChassisDef target, out T res)
     {
-        return Database.Is(target, out res);
+        return Database.Is(target, ref target.ccCustoms, out res);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Is<T>(this VehicleChassisDef target)
     {
-        return Database.Is<T>(target);
+        return Database.Is<T>(target, ref target.ccCustoms);
     }
 }
 
@@ -88,25 +94,25 @@ public static class MechDefExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T GetComponent<T>(this MechDef target)
     {
-        return Database.GetCustom<T>(target);
+        return Database.GetCustom<T>(target, ref target.ccCustoms);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<T> GetComponents<T>(this MechDef target)
     {
-        return Database.GetCustoms<T>(target);
+        return Database.GetCustoms<T>(target, ref target.ccCustoms);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Is<T>(this MechDef target, out T res)
     {
-        return Database.Is(target, out res);
+        return Database.Is(target, ref target.ccCustoms, out res);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Is<T>(this MechDef target)
     {
-        return Database.Is<T>(target);
+        return Database.Is<T>(target, ref target.ccCustoms);
     }
 
     public static bool IsBroken(this MechDef def)
@@ -150,25 +156,25 @@ public static class ChassisDefExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T GetComponent<T>(this ChassisDef target)
     {
-        return Database.GetCustom<T>(target);
+        return Database.GetCustom<T>(target, ref target.ccCustoms);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<T> GetComponents<T>(this ChassisDef target)
     {
-        return Database.GetCustoms<T>(target);
+        return Database.GetCustoms<T>(target, ref target.ccCustoms);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Is<T>(this ChassisDef target, out T res)
     {
-        return Database.Is(target, out res);
+        return Database.Is(target, ref target.ccCustoms, out res);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Is<T>(this ChassisDef target)
     {
-        return Database.Is<T>(target);
+        return Database.Is<T>(target, ref target.ccCustoms);
     }
 
     public static T AddComponent<T>(this ChassisDef target, T component) where T : ICustom
