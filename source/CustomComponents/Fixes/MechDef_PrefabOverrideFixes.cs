@@ -6,6 +6,9 @@ namespace CustomComponents.Fixes;
 [HarmonyPatch(typeof(MechDef))]
 internal static class MechDef_PrefabOverrideFixes
 {
+    [HarmonyPrepare]
+    public static bool Prepare() => Control.Settings.PrefabOverrideFixes;
+
     private static readonly Dictionary<string, string> PrefabOverridesCache = new();
 
     [HarmonyPatch(nameof(MechDef.FromJSON))]

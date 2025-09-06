@@ -205,6 +205,8 @@ public class CustomComponentSettings
     public string CheckInvalidInventorySlotsDescription => "Make sure invalid mech configurations can't be saved in skirmish and can't be fielded in the campaign. Also allows a Mech with InvalidInventorySlots in SimGame to be saved anyway.";
     public bool CheckInvalidInventorySlots = true;
 
+    public bool PrefabOverrideFixes = true;
+
     public ErrorMessages Message = new();
     public Tooltips ToolTips = new();
 
