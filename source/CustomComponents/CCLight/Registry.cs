@@ -135,12 +135,11 @@ public static class Registry
             preProcessor.PreProcess(target, values);
         }
 
-        var loaded = false;
         foreach (var factory in Factories)
         {
             try
             {
-                ProcessCustomFactory(factory, target, values, identifier, ref loaded);
+                ProcessCustomFactory(factory, target, values, identifier);
             }
             catch (Exception e)
             {
@@ -154,34 +153,18 @@ public static class Registry
         }
 
 #if DEBUG
-            if (loaded)
-            {
-                Log.CCLoadingSummary.Trace?.Log($"ProcessCustomCompontentFactories for {target.GetType()} ({target.GetHashCode()})");
-                Log.CCLoadingSummary.Trace?.Log($"- {identifier}");
-
-                Log.CCLoadingSummary.Trace?.Log("- Loaded:");
-
-                foreach (var custom in Database.GetCustoms<ICustom>(target))
-                {
-                    Log.CCLoadingSummary.Trace?.Log($"--- {custom}");
-                }
-
-                Log.CCLoadingSummary.Trace?.Log("- done");
-            }
+        Database.LogCustoms(target);
 #endif
-
     }
 
     private static void ProcessCustomFactory(
         ICustomFactory factory,
         object target,
         Dictionary<string, object> values,
-        string identifier,
-        ref bool loaded)
+        string identifier)
     {
         foreach (var component in factory.Create(target, values))
         {
-            loaded = true;
             if (component == null)
             {
                 continue;

@@ -107,6 +107,26 @@ public class Database
         }
     }
 
+    internal static void LogCustoms(object target)
+    {
+        var identifier = Identifier(target);
+        if (!Customs.TryGetValue(identifier, out var customs))
+        {
+            return;
+        }
+
+        Log.CCLoadingSummary.Trace?.Log($"Customs for {target.GetType()} ({target.GetHashCode()})");
+        Log.CCLoadingSummary.Trace?.Log($"- {identifier}");
+
+        Log.CCLoadingSummary.Trace?.Log("- Loaded:");
+        foreach (var custom in customs)
+        {
+            Log.CCLoadingSummary.Trace?.Log($"--- {custom}");
+        }
+
+        Log.CCLoadingSummary.Trace?.Log("- done");
+    }
+
     private static readonly Dictionary<string, List<object>> Customs = new(StringComparer.Ordinal);
     internal static bool AddCustom(object target, ICustom cc)
     {
