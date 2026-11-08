@@ -278,7 +278,7 @@ internal class TagsChecker
 
         foreach (var loc in locations)
         {
-            if (!tagsOnLocations.TryGetValue(location, out var tags))
+            if (!tagsOnLocations.TryGetValue(loc, out var tags))
             {
                 tags = new();
             }
